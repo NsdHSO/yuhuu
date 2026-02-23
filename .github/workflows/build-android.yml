@@ -85,11 +85,15 @@ jobs:
           fi
         env:
           EXPO_PUBLIC_GRAPHQL_URL: ${{ secrets.FAT_GRAPHQL_URL }}
+          EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}
+          EXPO_PUBLIC_AUTH_API_URL: ${{ secrets.EXPO_PUBLIC_AUTH_API_URL }}
 
       - name: Prebuild Android
         run: npx expo prebuild --platform android --clean
         env:
           EXPO_PUBLIC_GRAPHQL_URL: ${{ secrets.FAT_GRAPHQL_URL }}
+          EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}
+          EXPO_PUBLIC_AUTH_API_URL: ${{ secrets.EXPO_PUBLIC_AUTH_API_URL }}
           EXPO_PUBLIC_ENV: fat
 
       - name: Configure Android Signing
@@ -102,6 +106,8 @@ jobs:
         run: ./gradlew assembleRelease
         env:
           EXPO_PUBLIC_GRAPHQL_URL: ${{ secrets.FAT_GRAPHQL_URL }}
+          EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}
+          EXPO_PUBLIC_AUTH_API_URL: ${{ secrets.EXPO_PUBLIC_AUTH_API_URL }}
           EXPO_PUBLIC_ENV: fat
           MYAPP_RELEASE_STORE_FILE: app/release.keystore
           MYAPP_RELEASE_KEY_ALIAS: yuhuu-key
