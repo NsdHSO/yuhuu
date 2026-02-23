@@ -29,7 +29,7 @@ export function useMeQuery() {
   });
 }
 
-export function useMyProfileQuery() {
+export function useMyProfileQuery(opts?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ['me', 'profile'],
     queryFn: async () => {
@@ -41,6 +41,12 @@ export function useMyProfileQuery() {
         throw e;
       }
     },
+    enabled: opts?.enabled ?? true,
+    // When bootstrap seeds the cache, treat it as fresh and avoid refetch churn
+    staleTime: 5 * 60_000,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 }
 

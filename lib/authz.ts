@@ -36,3 +36,19 @@ export function hasRole(target: string): boolean {
 export function hasAnyRole(targets: string[]): boolean {
   return targets.some((r) => hasRole(r));
 }
+
+export function hasPermission(target: string): boolean {
+  const c = readClaims();
+  if (!c) return false;
+  const perms: string[] = Array.isArray((c as any).permissions)
+    ? ((c as any).permissions as string[])
+    : Array.isArray((c as any).perms)
+    ? ((c as any).perms as string[])
+    : [];
+  const set = new Set(perms.map((p) => p.toLowerCase()));
+  return set.has((target || '').toLowerCase());
+}
+
+export function hasAnyPermission(targets: string[]): boolean {
+  return targets.some((p) => hasPermission(p));
+}

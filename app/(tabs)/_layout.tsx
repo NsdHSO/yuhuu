@@ -6,21 +6,24 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useMyRolesQuery } from '@/features/roles/meRoles';
+import { useBootstrapGate } from '@/features/bootstrap/api';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const { data: myRoles } = useMyRolesQuery();
+  const ready = useBootstrapGate();
+  const { data: myRoles } = useMyRolesQuery({ enabled: ready });
   // Hide Home tab when user has only the Member role
   const isMemberOnly = myRoles ? myRoles.every((r) => r.role_name === 'Member') : true; // default hide to avoid flicker
 
   return (
-    <Tabs
+    <>
+      <Tabs
       initialRouteName="profile"
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
       }}
-    >
+>
       {/* Home tab - hidden for Member-only users */}
       <Tabs.Screen
         name="index"
@@ -41,5 +44,6 @@ export default function TabLayout() {
         }}
       />
     </Tabs>
+    </>
   );
 }

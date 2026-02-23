@@ -6,6 +6,7 @@ import { ThemedView } from '@/components/themed-view';
 import { useAuth } from '@/providers/AuthProvider';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
+import { useBootstrap } from '@/features/bootstrap/api';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -26,6 +27,7 @@ export default function LoginScreen() {
     placeholderColor: scheme === 'dark' ? '#9CA3AF' : '#6B7280',
     selectionColor: Colors[scheme].tint,
   }), [scheme]);
+
 
   async function onSubmit() {
     if (!email || !password) {

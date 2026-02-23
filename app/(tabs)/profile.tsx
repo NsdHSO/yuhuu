@@ -4,11 +4,14 @@ import { Stack } from 'expo-router';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useMyProfileQuery, useSaveMyProfileMutation } from '@/features/profile/api';
+import { useBootstrapGate } from '@/features/bootstrap/api';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 
 export default function ProfileScreen() {
-  const { data: profile, isLoading, error } = useMyProfileQuery();
+  const ready = useBootstrapGate();
+  // Do not issue GET /me/profile; rely on bootstrap seeding the cache.
+  const { data: profile, isLoading, error } = useMyProfileQuery({ enabled: false });
   const saveMutation = useSaveMyProfileMutation();
   const [firstName, setfirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');

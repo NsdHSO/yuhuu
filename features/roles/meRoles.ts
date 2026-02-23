@@ -13,10 +13,11 @@ export type MyRole = {
   updated_at: string;
 };
 
-export function useMyRolesQuery() {
+export function useMyRolesQuery(opts?: { enabled?: boolean }) {
   return useQuery<MyRole[]>({
     queryKey: ['me', 'roles'],
     queryFn: () => unwrap<MyRole[]>(appApi.get('/me/roles')),
+    enabled: opts?.enabled ?? true,
     // Avoid duplicate fetches on StrictMode remount and page focus
     staleTime: 5 * 60_000,
     refetchOnMount: false,

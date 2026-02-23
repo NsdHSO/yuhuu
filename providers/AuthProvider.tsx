@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { authApi } from '@/lib/api';
 import { clearTokens, getValidAccessToken, setTokensFromLogin } from '@/lib/tokenManager';
+import { redirectToLogin } from '@/lib/nav';
 
 export type User = { id: string; email: string; name?: string };
 
@@ -59,9 +60,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       await authApi.post('/auth/logout', {});
     } catch {}
+
+    // Best-effort: clear any non-HttpOnly cookies on web (HttpOnly must be cleared server-side above)
+    try {
+      if (typeof document !== 'undefined' && document.cookie) {
+        const cookies = document.cookie.split(';').map((c) => c.split('=')[0].trim());
+        for (const name of cookies) {
+          // Restrict to obvious auth names to avoid nuking unrelated cookies
+          if (!/access|refresh|auth|token/i.test(name)) continue;
+          document.cookie = `${name}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax`;
+        }
+      }
+    } catch {}
+
     await clearTokens();
     setUser(null);
     setStatus('signed-out');
+
+    // Navigate to login immediately
+    try { redirectToLogin(); } catch {}
   }
 
   const value = useMemo(() => ({ user, status, signIn, signOut }), [user, status]);
