@@ -27,12 +27,18 @@ export function useBootstrapGate(repo: BootstrapRepository = defaultBootstrapRep
     const qc = useQueryClient();
     const { status } = useAuth();
 
-    // Subscribe to bootstrap seeded flag; no fetch, just cache subscription
-    const { data: seeded } = useQuery({
-        queryKey: ['bootstrap', 'seeded'],
-        initialData: () => qc.getQueryData<boolean>(['bootstrap', 'seeded']) ?? Boolean(qc.getQueryData(['me'])),
-        enabled: false,
-    });
+  // Subscribe to bootstrap seeded flag using a no-network queryFn
+  const { data: seeded } = useQuery({
+    queryKey: ['bootstrap', 'seeded'],
+    // Return cached value only; no HTTP calls involved
+    queryFn: async () =>
+      (qc.getQueryData<boolean>(['bootstrap', 'seeded']) ?? Boolean(qc.getQueryData(['me']))) as boolean,
+    initialData: () => qc.getQueryData<boolean>(['bootstrap', 'seeded']) ?? Boolean(qc.getQueryData(['me'])),
+    staleTime: Infinity,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
     useEffect(() => {
         if (status !== 'signed-in') return;

@@ -9,13 +9,9 @@ import { useAuth } from '@/providers/AuthProvider';
 import { hasRole } from '@/lib/authz';
 
 export default function HomeScreen() {
+    const { signOut, user } = useAuth();
     const isMember = hasRole('Member');
     if (isMember) return <Redirect href="/profile"/>;
-
-    const {
-        signOut,
-        user
-    } = useAuth();
     return (
         <ThemedView className="flex-1">
             <View style={styles.container}>

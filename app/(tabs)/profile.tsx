@@ -18,7 +18,8 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 
 export default function ProfileScreen() {
-    const ready = useBootstrapGate();
+    // Ensure bootstrap runs; return value not needed here
+    useBootstrapGate();
     // Do not issue GET /me/profile; rely on bootstrap seeding the cache.
     const {
         data: profile,
@@ -100,7 +101,7 @@ export default function ProfileScreen() {
                     {!profile && (
                         <View style={{ marginBottom: 12 }}>
                             <ThemedText type="subtitle" className="mb-2">Create your profile</ThemedText>
-                            <ThemedText color="muted">We didn't find a profile. Fill in the fields below and save to
+                            <ThemedText color="muted">We didn&apos;t find a profile. Fill in the fields below and save to
                                 create one.</ThemedText>
                         </View>
                     )}
