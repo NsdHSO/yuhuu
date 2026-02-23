@@ -106,8 +106,8 @@ jobs:
       - name: Build iOS Release
         working-directory: ios
         run: |
-          xcodebuild -workspace Gandul.xcworkspace \
-            -scheme Gandul \
+          xcodebuild -workspace Yuhuu.xcworkspace \
+            -scheme Yuhuu \
             -configuration Release \
             -sdk iphoneos \
             -derivedDataPath build \
@@ -134,17 +134,17 @@ jobs:
           cp -r "$APP_PATH" Payload/
 
           # Create IPA
-          zip -r Gandul.ipa Payload
+          zip -r Yuhuu.ipa Payload
 
           # Move IPA to build directory
           mkdir -p build/ipa
-          mv Gandul.ipa build/ipa/
+          mv Yuhuu.ipa build/ipa/
 
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
         with:
           name: yuhuu-fat-ios-${{ github.sha }}
-          path: ios/build/ipa/Gandul.ipa
+          path: ios/build/ipa/Yuhuu.ipa
           retention-days: 30
 
   deploy:
@@ -161,7 +161,7 @@ jobs:
           name: yuhuu-fat-ios-${{ github.sha }}
 
       - name: Rename IPA
-        run: mv Gandul.ipa yuhuu-fat-ios-${{ github.sha }}.ipa
+        run: mv Yuhuu.ipa yuhuu-fat-ios-${{ github.sha }}.ipa
 
       - name: Create Release Body
         id: release-body
