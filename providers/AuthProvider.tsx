@@ -1,0 +1,70 @@
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { authApi } from '@/lib/api';
+import { clearTokens, getValidAccessToken, setTokensFromLogin } from '@/lib/tokenManager';
+
+export type User = { id: string; email: string; name?: string };
+
+type AuthStatus = 'idle' | 'loading' | 'signed-in' | 'signed-out';
+
+type AuthContextType = {
+  user: User | null;
+  status: AuthStatus;
+  signIn: (email: string, password: string) => Promise<void>;
+  signOut: () => Promise<void>;
+};
+
+const AuthContext = createContext<AuthContextType | null>(null);
+
+export function useAuth() {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error('AuthProvider missing');
+  return ctx;
+}
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [status, setStatus] = useState<AuthStatus>('idle');
+
+  useEffect(() => {
+    (async () => {
+      setStatus('loading');
+      const token = await getValidAccessToken();
+      if (token) {
+        setStatus('signed-in');
+      } else {
+        setUser(null);
+        setStatus('signed-out');
+      }
+    })();
+  }, []);
+
+  async function signIn(email: string, password: string) {
+    setStatus('loading');
+    try {
+      const { data } = await authApi.post<any>('/auth/login', { email, password });
+      const at = data?.accessToken ?? data?.access_token ?? data?.token ?? data?.message?.access_token;
+      const rt = data?.refreshToken ?? data?.refresh_token ?? data?.message?.refresh_token;
+      const usr = (data?.user ?? data?.message?.user) as User | undefined;
+      if (at) await setTokensFromLogin(at, rt);
+      if (usr) setUser(usr as User);
+      setStatus('signed-in');
+    } catch (e) {
+      setUser(null);
+      setStatus('signed-out');
+      throw e;
+    }
+  }
+
+  async function signOut() {
+    try {
+      await authApi.post('/auth/logout', {});
+    } catch {}
+    await clearTokens();
+    setUser(null);
+    setStatus('signed-out');
+  }
+
+  const value = useMemo(() => ({ user, status, signIn, signOut }), [user, status]);
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}

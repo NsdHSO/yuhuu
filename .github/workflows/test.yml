@@ -1,0 +1,54 @@
+name: Test
+
+on:
+  workflow_call:
+    outputs:
+      tests-passed:
+        description: "Whether tests passed"
+        value: ${{ jobs.test.outputs.passed }}
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    outputs:
+      passed: ${{ steps.tests.outcome == 'success' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js and pnpm
+        uses: ./.github/actions/setup-node
+
+      - name: Run linter
+        run: pnpm lint
+
+      - name: Run tests
+        id: tests
+        run: pnpm test
+
+      - name: Generate coverage report
+        run: pnpm test:coverage
+        if: always()
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-${{ github.sha }}
+          path: coverage/
+          retention-days: 30
+        if: always()
+
+      - name: Test summary
+        if: always()
+        run: |
+          echo "## Test Results 🧪" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.tests.outcome }}" == "success" ]; then
+            echo "✅ All tests passed!" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Tests failed!" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📊 Coverage report uploaded as artifact" >> $GITHUB_STEP_SUMMARY

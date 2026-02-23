@@ -1,0 +1,109 @@
+name: CI/CD - Manual Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to build'
+        required: true
+        default: 'FAT'
+        type: choice
+        options:
+          - FAT
+          - UAT
+          - PROD
+
+jobs:
+  test:
+    name: Test Application
+    uses: ./.github/workflows/test.yml
+
+  build:
+    name: Build Android APK
+    needs: test
+    if: success()
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'FAT' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js and pnpm
+        uses: ./.github/actions/setup-node
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Generate Android keystore
+        env:
+          KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASSWORD || 'yuhuu123' }}
+          KEY_PASS: ${{ secrets.KEY_PASSWORD || 'yuhuu123' }}
+        run: |
+          mkdir -p android/app
+          keytool -genkeypair -v -storetype PKCS12 \
+            -keystore android/app/release.keystore \
+            -alias yuhuu-key \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass "$KEYSTORE_PASS" \
+            -keypass "$KEY_PASS" \
+            -dname "CN=Gandul, OU=Mobile, O=Gandul, L=Bucharest, ST=Romania, C=RO"
+
+      - name: Prebuild Android
+        run: npx expo prebuild --platform android --clean
+        env:
+          EXPO_PUBLIC_GRAPHQL_URL: ${{ secrets.FAT_GRAPHQL_URL }}
+          EXPO_PUBLIC_ENV: fat
+
+      - name: Configure Android Signing
+        run: |
+          chmod +x .github/scripts/configure-android-signing.sh
+          .github/scripts/configure-android-signing.sh
+
+      - name: Build Android Release APK
+        working-directory: android
+        run: ./gradlew assembleRelease
+        env:
+          EXPO_PUBLIC_GRAPHQL_URL: ${{ secrets.FAT_GRAPHQL_URL }}
+          EXPO_PUBLIC_ENV: fat
+          MYAPP_RELEASE_STORE_FILE: app/release.keystore
+          MYAPP_RELEASE_KEY_ALIAS: yuhuu-key
+          MYAPP_RELEASE_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD || 'yuhuu123' }}
+          MYAPP_RELEASE_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD || 'yuhuu123' }}
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhuu-${{ github.event.inputs.environment || 'fat' }}-release-${{ github.sha }}
+          path: android/app/build/outputs/apk/release/app-release.apk
+          retention-days: 30
+
+      - name: Build summary
+        env:
+          BUILD_ENV: ${{ github.event.inputs.environment || 'FAT' }}
+          BRANCH_NAME: ${{ github.ref_name }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          echo "## Build Results 🚀" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Build completed successfully" >> $GITHUB_STEP_SUMMARY
+          echo "📱 Environment: $BUILD_ENV" >> $GITHUB_STEP_SUMMARY
+          echo "🌐 Branch: $BRANCH_NAME" >> $GITHUB_STEP_SUMMARY
+          echo "📦 Commit: $COMMIT_SHA" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Next steps:" >> $GITHUB_STEP_SUMMARY
+          echo "1. Download APK from Actions artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "2. Test the build on device" >> $GITHUB_STEP_SUMMARY
+          echo "3. Deploy to distribution platform" >> $GITHUB_STEP_SUMMARY

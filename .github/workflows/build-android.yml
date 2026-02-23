@@ -1,0 +1,175 @@
+name: Build Android FAT
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js and pnpm
+        uses: ./.github/actions/setup-node
+
+      - name: Run linter
+        run: pnpm lint
+
+      - name: Run tests
+        run: pnpm test
+
+      - name: Generate coverage report
+        run: pnpm test:coverage
+        if: always()
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-${{ github.sha }}
+          path: coverage/
+          retention-days: 30
+        if: always()
+
+  build-android:
+    name: Build Android APK
+    needs: test
+    runs-on: ubuntu-latest
+    environment: FAT
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js and pnpm
+        uses: ./.github/actions/setup-node
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Generate Android keystore
+        run: |
+          mkdir -p android/app
+          keytool -genkeypair -v -storetype PKCS12 \
+            -keystore android/app/release.keystore \
+            -alias yuhuu-key \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass ${{ secrets.KEYSTORE_PASSWORD || 'yuhuu123' }} \
+            -keypass ${{ secrets.KEY_PASSWORD || 'yuhuu123' }} \
+            -dname "CN=Gandul, OU=Mobile, O=Gandul, L=Bucharest, ST=Romania, C=RO"
+
+      - name: Validate environment variables
+        run: |
+          if [ -z "${EXPO_PUBLIC_GRAPHQL_URL}" ]; then
+            echo "::error::EXPO_PUBLIC_GRAPHQL_URL is not set. Define FAT_GRAPHQL_URL secret." && exit 1
+          fi
+          if printf "%s" "$EXPO_PUBLIC_GRAPHQL_URL" | grep -Eq '^http://(localhost|127\.0\.0\.1)'; then
+            echo "::error::Refusing to build release with localhost URL. Set FAT_GRAPHQL_URL to a reachable host." && exit 1
+          fi
+        env:
+          EXPO_PUBLIC_GRAPHQL_URL: ${{ secrets.FAT_GRAPHQL_URL }}
+
+      - name: Prebuild Android
+        run: npx expo prebuild --platform android --clean
+        env:
+          EXPO_PUBLIC_GRAPHQL_URL: ${{ secrets.FAT_GRAPHQL_URL }}
+          EXPO_PUBLIC_ENV: fat
+
+      - name: Configure Android Signing
+        run: |
+          chmod +x .github/scripts/configure-android-signing.sh
+          .github/scripts/configure-android-signing.sh
+
+      - name: Build Android Release APK
+        working-directory: android
+        run: ./gradlew assembleRelease
+        env:
+          EXPO_PUBLIC_GRAPHQL_URL: ${{ secrets.FAT_GRAPHQL_URL }}
+          EXPO_PUBLIC_ENV: fat
+          MYAPP_RELEASE_STORE_FILE: app/release.keystore
+          MYAPP_RELEASE_KEY_ALIAS: yuhuu-key
+          MYAPP_RELEASE_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD || 'yuhuu123' }}
+          MYAPP_RELEASE_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD || 'yuhuu123' }}
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhuu-fat-release-${{ github.sha }}
+          path: android/app/build/outputs/apk/release/app-release.apk
+          retention-days: 30
+
+  deploy:
+    name: Deploy to FAT
+    needs: build-android
+    runs-on: ubuntu-latest
+    environment: FAT
+    permissions:
+      contents: write
+    steps:
+      - name: Download APK
+        uses: actions/download-artifact@v4
+        with:
+          name: yuhuu-fat-release-${{ github.sha }}
+
+      - name: Rename APK
+        run: mv app-release.apk yuhuu-fat-${{ github.sha }}.apk
+
+      - name: Create Release Body
+        id: release-body
+        run: |
+          cat << 'EOF' > release-body.md
+          ## Latest FAT Build 🚀
+
+          **Branch:** ${{ github.ref_name }}
+          **Commit:** ${{ github.sha }}
+          **Build Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+
+          ### Download
+          Download the APK file below and install it on your Android device.
+          EOF
+
+      - name: Create/Update Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: latest-fat
+          name: Latest FAT Build
+          body_path: release-body.md
+          files: yuhuu-fat-${{ github.sha }}.apk
+          prerelease: true
+          draft: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy summary
+        run: |
+          echo "## Deployment Results 🚀" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ FAT deployment completed successfully" >> $GITHUB_STEP_SUMMARY
+          echo "📱 Environment: FAT" >> $GITHUB_STEP_SUMMARY
+          echo "🌐 Branch: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "📦 Commit: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Download:" >> $GITHUB_STEP_SUMMARY
+          echo "- [📥 Latest FAT APK](https://github.com/${{ github.repository }}/releases/tag/latest-fat)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📋 Next steps:" >> $GITHUB_STEP_SUMMARY
+          echo "1. Download APK from the release link above" >> $GITHUB_STEP_SUMMARY
+          echo "2. Test the FAT build on device" >> $GITHUB_STEP_SUMMARY
+          echo "3. Create PR to promote to UAT if tests pass" >> $GITHUB_STEP_SUMMARY

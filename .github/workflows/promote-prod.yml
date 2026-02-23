@@ -1,0 +1,110 @@
+name: Promote to PRODUCTION
+
+on:
+  pull_request:
+    types: [labeled]
+
+jobs:
+  deploy-prod:
+    if: |
+      github.event.label.name == 'deploy-prod' &&
+      github.base_ref == 'master'
+    runs-on: ubuntu-latest
+    environment:
+      name: PRODUCTION
+      url: https://expo.dev
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Setup Node.js and pnpm
+        uses: ./.github/actions/setup-node
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Increment version
+        run: |
+          echo "📦 Building production version"
+          # Version should be updated in app.json before merging
+
+      - name: Generate Android keystore
+        run: |
+          mkdir -p android/app
+          keytool -genkeypair -v -storetype PKCS12 \
+            -keystore android/app/release.keystore \
+            -alias yuhuu-key \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass ${{ secrets.KEYSTORE_PASSWORD || 'yuhuu123' }} \
+            -keypass ${{ secrets.KEY_PASSWORD || 'yuhuu123' }} \
+            -dname "CN=Gandul, OU=Mobile, O=Gandul, L=Bucharest, ST=Romania, C=RO"
+
+      - name: Prebuild Android
+        run: npx expo prebuild --platform android --clean
+        env:
+          EXPO_PUBLIC_GRAPHQL_URL: ${{ secrets.PROD_GRAPHQL_URL }}
+          EXPO_PUBLIC_ENV: production
+
+      - name: Configure Android Signing
+        run: |
+          chmod +x .github/scripts/configure-android-signing.sh
+          .github/scripts/configure-android-signing.sh
+
+      - name: Build PRODUCTION APK
+        working-directory: android
+        run: ./gradlew assembleRelease
+        env:
+          EXPO_PUBLIC_GRAPHQL_URL: ${{ secrets.PROD_GRAPHQL_URL }}
+          EXPO_PUBLIC_ENV: production
+          MYAPP_RELEASE_STORE_FILE: app/release.keystore
+          MYAPP_RELEASE_KEY_ALIAS: yuhuu-key
+          MYAPP_RELEASE_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD || 'yuhuu123' }}
+          MYAPP_RELEASE_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD || 'yuhuu123' }}
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhuu-production-release.apk
+          path: android/app/build/outputs/apk/release/app-release.apk
+
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🚀 **PRODUCTION build completed successfully**
+
+            📱 Environment: **PRODUCTION**
+            🔗 GraphQL URL: \`${{ secrets.PROD_GRAPHQL_URL }}\`
+
+            📦 **Download APK:**
+            Go to [Actions > Artifacts](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) and download \`yuhuu-production-release.apk\`
+
+            ⚠️ **Important:**
+            - Download and verify the production build
+            - Test thoroughly before releasing to users
+            - Merge this PR to deploy to production`
+            })
+
+      - name: Create release tag
+        if: github.event.pull_request.merged == true
+        run: |
+          echo "Creating release tag"
+          # TODO: Auto-tag release after PR merge
