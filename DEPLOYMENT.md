@@ -17,6 +17,7 @@ This boilerplate includes several CI/CD workflows:
 ### 1. Test Workflow (`test.yml`)
 
 Runs on every push and pull request:
+
 - Linting with ESLint
 - Unit tests with Jest
 - Coverage reporting
@@ -24,6 +25,7 @@ Runs on every push and pull request:
 ### 2. Android Build Workflow (`build-android.yml`)
 
 Builds Android APK using EAS Build:
+
 - Configured in `eas.json`
 - Production profile creates release APK
 - Can be triggered manually or on push to main branch
@@ -31,6 +33,7 @@ Builds Android APK using EAS Build:
 ### 3. iOS Build Workflow (`build-ios.yml`)
 
 Builds iOS app using EAS Build:
+
 - Requires Apple Developer account
 - Configured in `eas.json`
 
@@ -49,9 +52,11 @@ cp .env.example .env
 Configure these secrets in your GitHub repository (Settings → Secrets and variables → Actions):
 
 #### Required for builds:
+
 - `EXPO_TOKEN` - Your Expo access token (get from https://expo.dev/accounts/[account]/settings/access-tokens)
 
 #### Optional environment-specific variables:
+
 - `DEV_API_URL` - Development API endpoint
 - `STAGING_API_URL` - Staging API endpoint
 - `PROD_API_URL` - Production API endpoint
@@ -128,6 +133,7 @@ eas submit --platform ios
 ```
 
 Requirements:
+
 - Apple Developer account
 - App Store Connect app created
 - Proper signing certificates
@@ -139,6 +145,7 @@ eas submit --platform android
 ```
 
 Requirements:
+
 - Google Play Developer account
 - App created in Play Console
 - Signing key (configured in EAS)

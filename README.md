@@ -60,9 +60,11 @@ In the output, you'll find options to open the app in:
 
 ### Development
 
-You can start developing by editing files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+You can start developing by editing files inside the **app** directory. This project
+uses [file-based routing](https://docs.expo.dev/router/introduction).
 
 Key directories:
+
 - `app/` - Application screens and routes
 - `components/` - Reusable components (atomic design pattern)
 - `constants/` - Theme colors and constants
@@ -155,11 +157,14 @@ yuhuu/
 ## Environment & backends
 
 This app talks to two backends:
+
 - Auth API (port 4100): issues access_token and httpOnly refresh_token cookie
 - App API (port 2003): your business endpoints (uses Bearer access_token)
 
 ### 1) .env configuration (required)
-Copy `.env.example` to `.env` and set the two API URLs. Do not use `0.0.0.0` — always use `localhost` or a resolvable host.
+
+Copy `.env.example` to `.env` and set the two API URLs. Do not use `0.0.0.0` — always use `localhost` or a resolvable
+host.
 
 ```bash
 cp .env.example .env
@@ -179,11 +184,14 @@ pnpm expo start -c
 ```
 
 ### 2) Auth API cookie settings
+
 For browsers, the refresh_token is an httpOnly cookie. Configure it like this:
+
 - Development (HTTP): `SameSite=Lax`, `Secure=false`
 - Production (HTTPS): `SameSite=None`, `Secure=true`
 
 Actix example (dev):
+
 ```rust
 let cookie = Cookie::build("refresh_token", token)
     .path("/")
@@ -195,7 +203,9 @@ let cookie = Cookie::build("refresh_token", token)
 ```
 
 ### 3) CORS
+
 - Auth API (4100) must allow credentials from the web origin:
+
 ```rust
 App::new().wrap(
   Cors::default()
@@ -205,7 +215,9 @@ App::new().wrap(
     .supports_credentials()
 )
 ```
+
 - App API (2003) typically does NOT use cookies. Easiest dev config:
+
 ```rust
 App::new().wrap(
   Cors::default()
@@ -214,16 +226,21 @@ App::new().wrap(
     .allowed_headers(vec![http::header::CONTENT_TYPE, http::header::ACCEPT, http::header::AUTHORIZATION])
 )
 ```
+
 Ensure CORS is wrapped on the scope that serves `/v1`, and that OPTIONS is not blocked by auth.
 
 ### 4) Verify locally
+
 - Refresh (should return 200):
+
 ```bash
 curl -i -X POST http://localhost:4100/v1/auth/refresh \
   -H 'Origin: http://localhost:8081' \
   --cookie 'refresh_token=...'
 ```
+
 - Preflight to app API (should return 200/204 with ACAO):
+
 ```bash
 curl -i -X OPTIONS http://localhost:2003/v1/me \
   -H 'Origin: http://localhost:8081' \
@@ -232,15 +249,18 @@ curl -i -X OPTIONS http://localhost:2003/v1/me \
 ```
 
 ### 5) Token handling in the app
+
 - On login or refresh, the app stores `access_token` in memory and (for convenience) persists it:
-  - Native: Expo SecureStore
-  - Web: `localStorage`
+    - Native: Expo SecureStore
+    - Web: `localStorage`
 - Every request made via `appApi` automatically adds `Authorization: Bearer <access_token>`.
 
 ### Common pitfalls
+
 - Using `0.0.0.0` in `.env`. Browsers can’t reach that host. Use `http://localhost:<port>`.
 - Secure cookie on HTTP (dev). Browsers drop it. Use `Secure=false` + `SameSite=Lax` in dev.
-- CORS preflight returns 401. Make sure OPTIONS is handled before auth and `Authorization` is listed in `Access-Control-Allow-Headers`.
+- CORS preflight returns 401. Make sure OPTIONS is handled before auth and `Authorization` is listed in
+  `Access-Control-Allow-Headers`.
 
 ## Customization
 

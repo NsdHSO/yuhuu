@@ -10,5 +10,5 @@ export { seedFromBootstrap, bootstrapAndSeed } from './service';
 
 // Back-compat: keep function name used elsewhere
 export function postBootstrap(repo: BootstrapRepository = defaultBootstrapRepository): Promise<BootstrapResponse> {
-  return repo.post();
+    return repo.post();
 }

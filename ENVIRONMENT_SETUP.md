@@ -16,6 +16,7 @@ Complete guide to setting up your development environment for the Yuhuu boilerpl
 ### Platform-Specific
 
 #### iOS Development (macOS only)
+
 - **Xcode** 15.0 or higher ([Download from Mac App Store](https://apps.apple.com/us/app/xcode/id497799835))
 - **Xcode Command Line Tools**
   ```bash
@@ -31,6 +32,7 @@ Complete guide to setting up your development environment for the Yuhuu boilerpl
   ```
 
 #### Android Development
+
 - **Android Studio** ([Download](https://developer.android.com/studio))
 - **Java Development Kit (JDK)** 17 or higher
   ```bash
@@ -48,6 +50,7 @@ Complete guide to setting up your development environment for the Yuhuu boilerpl
 Download and install Node.js 18+ from [nodejs.org](https://nodejs.org/)
 
 Verify installation:
+
 ```bash
 node --version  # Should be v18.x or higher
 npm --version
@@ -82,6 +85,7 @@ cp .env.example .env
 ### 5. iOS Setup (macOS only)
 
 #### Install Xcode
+
 1. Download Xcode from the Mac App Store
 2. Open Xcode and accept the license agreement
 3. Install Command Line Tools:
@@ -90,11 +94,13 @@ cp .env.example .env
    ```
 
 #### Install CocoaPods
+
 ```bash
 sudo gem install cocoapods
 ```
 
 #### Install iOS Dependencies
+
 ```bash
 cd ios
 pod install
@@ -102,6 +108,7 @@ cd ..
 ```
 
 #### Run iOS App
+
 ```bash
 pnpm ios
 # or
@@ -111,18 +118,20 @@ npx expo run:ios
 ### 6. Android Setup
 
 #### Install Android Studio
+
 1. Download from [developer.android.com/studio](https://developer.android.com/studio)
 2. Run the installer
 3. Open Android Studio and complete the setup wizard
 
 #### Configure Android SDK
+
 1. Open Android Studio → Settings/Preferences
 2. Navigate to Appearance & Behavior → System Settings → Android SDK
 3. Install:
-   - Android SDK Platform 34 (or latest)
-   - Android SDK Build-Tools
-   - Android Emulator
-   - Android SDK Platform-Tools
+    - Android SDK Platform 34 (or latest)
+    - Android SDK Build-Tools
+    - Android Emulator
+    - Android SDK Platform-Tools
 
 #### Set Environment Variables
 
@@ -135,11 +144,13 @@ export PATH=$PATH:$ANDROID_HOME/platform-tools
 ```
 
 Apply changes:
+
 ```bash
 source ~/.zshrc  # or source ~/.bash_profile
 ```
 
 #### Create Android Emulator
+
 1. Open Android Studio
 2. Tools → Device Manager
 3. Create Device → Choose a device definition (e.g., Pixel 5)
@@ -147,6 +158,7 @@ source ~/.zshrc  # or source ~/.bash_profile
 5. Finish setup
 
 #### Run Android App
+
 ```bash
 pnpm android
 # or
@@ -172,6 +184,7 @@ pnpm start
 ```
 
 You should see:
+
 - QR code for Expo Go
 - Options to open iOS simulator
 - Options to open Android emulator
@@ -182,6 +195,7 @@ You should see:
 ### VS Code (Recommended)
 
 Install recommended extensions:
+
 - **ES7+ React/Redux/React-Native snippets**
 - **Prettier - Code formatter**
 - **ESLint**
@@ -212,18 +226,20 @@ cp .env.example .env
 ### GitHub Secrets (for CI/CD)
 
 Configure these in your GitHub repository:
+
 1. Go to Settings → Secrets and variables → Actions
 2. Add required secrets:
-   - `EXPO_TOKEN` - Your Expo access token
-   - `DEV_API_URL` - Development API endpoint (optional)
-   - `STAGING_API_URL` - Staging API endpoint (optional)
-   - `PROD_API_URL` - Production API endpoint (optional)
+    - `EXPO_TOKEN` - Your Expo access token
+    - `DEV_API_URL` - Development API endpoint (optional)
+    - `STAGING_API_URL` - Staging API endpoint (optional)
+    - `PROD_API_URL` - Production API endpoint (optional)
 
 ## Troubleshooting
 
 ### iOS Issues
 
 **Issue: "Could not find iPhone X simulator"**
+
 ```bash
 # List available simulators
 xcrun simctl list devices
@@ -233,6 +249,7 @@ xcrun simctl boot "iPhone 15"
 ```
 
 **Issue: Pod install fails**
+
 ```bash
 cd ios
 pod deintegrate
@@ -245,11 +262,13 @@ cd ..
 **Issue: "SDK location not found"**
 
 Create `android/local.properties`:
+
 ```
 sdk.dir=/Users/YOUR_USERNAME/Library/Android/sdk
 ```
 
 **Issue: "Gradle build failed"**
+
 ```bash
 cd android
 ./gradlew clean
@@ -259,12 +278,14 @@ cd ..
 ### General Issues
 
 **Issue: Metro bundler not starting**
+
 ```bash
 # Clear cache and restart
 pnpm start --clear
 ```
 
 **Issue: Dependencies not installing**
+
 ```bash
 # Clear node modules and reinstall
 rm -rf node_modules
@@ -272,19 +293,24 @@ pnpm install
 ```
 
 **Issue: Expo Go not connecting**
+
 - Ensure phone and computer are on the same WiFi network
 - Try using tunnel mode: `pnpm start --tunnel`
 
 ## Additional Tools
 
 ### Watchman (Recommended for macOS)
+
 Improves file watching performance:
+
 ```bash
 brew install watchman
 ```
 
 ### React Native Debugger
+
 Standalone debugging tool:
+
 ```bash
 brew install --cask react-native-debugger
 ```
