@@ -15,8 +15,14 @@ export default function HomeScreen() {
     return (
         <ThemedView className="flex-1">
             <View style={styles.container}>
-                <ThemedText type="title" className="mb-4">
+                <ThemedText type="title" className="mb-2">
                     Welcome{user ? `, ${user.name ?? user.email}` : ''}! <HelloWave/>
+                </ThemedText>
+                <ThemedText type="subtitle" className="mb-1">
+                    Welcome to our Pentecostal church community
+                </ThemedText>
+                <ThemedText leading="relaxed" className="mb-6">
+                    We’re glad you’re here—may you feel encouraged as we worship, pray, and grow together in Christ.
                 </ThemedText>
 
                 <Pressable
