@@ -73,7 +73,7 @@ jobs:
             -keyalg RSA -keysize 2048 -validity 10000 \
             -storepass ${{ secrets.KEYSTORE_PASSWORD || 'yuhuu123' }} \
             -keypass ${{ secrets.KEY_PASSWORD || 'yuhuu123' }} \
-            -dname "CN=Gandul, OU=Mobile, O=Gandul, L=Bucharest, ST=Romania, C=RO"
+            -dname "CN=Church, OU=Mobile, O=Church, L=Bucharest, ST=Romania, C=RO"
 
       - name: Validate environment variables
         run: |
