@@ -23,6 +23,7 @@ A production-ready boilerplate for building cross-platform mobile and web applic
 - **Package Manager**: pnpm (recommended) or npm
 
 ## Get Started
+**[📥 Download Latest FAT APK](https://github.com/NsdHSO/yuhuu/releases/tag/latest-fat)**
 
 ### Prerequisites
 
