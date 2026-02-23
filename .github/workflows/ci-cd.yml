@@ -59,7 +59,7 @@ jobs:
             -keyalg RSA -keysize 2048 -validity 10000 \
             -storepass "$KEYSTORE_PASS" \
             -keypass "$KEY_PASS" \
-            -dname "CN=Gandul, OU=Mobile, O=Gandul, L=Bucharest, ST=Romania, C=RO"
+            -dname "CN=Church, OU=Mobile, O=Church, L=Bucharest, ST=Romania, C=RO"
 
       - name: Prebuild Android
         run: npx expo prebuild --platform android --clean
