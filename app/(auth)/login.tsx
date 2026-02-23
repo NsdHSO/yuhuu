@@ -1,11 +1,12 @@
 import React, { useMemo, useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, Pressable, TextInput, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, TextInput, View } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useAuth } from '@/providers/AuthProvider';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
+import Constants from 'expo-constants';
 
 export default function LoginScreen() {
     const router = useRouter();
@@ -48,6 +49,13 @@ export default function LoginScreen() {
         }
     }
 
+    const envVars = {
+        EXPO_PUBLIC_GRAPHQL_URL: process.env.EXPO_PUBLIC_GRAPHQL_URL,
+        EXPO_PUBLIC_API_URL: process.env.EXPO_PUBLIC_API_URL,
+        EXPO_PUBLIC_AUTH_API_URL: process.env.EXPO_PUBLIC_AUTH_API_URL,
+        EXPO_PUBLIC_ENV: process.env.EXPO_PUBLIC_ENV,
+    };
+
     return (
         <ThemedView className="flex-1">
             <Stack.Screen options={{ title: 'Sign in' }}/>
@@ -58,13 +66,14 @@ export default function LoginScreen() {
                 })}
                 style={{ flex: 1 }}
             >
-                <View style={{
-                    flex: 1,
-                    padding: 16,
-                    gap: 12,
-                    justifyContent: 'center'
-                }}>
-                    <ThemedText type="title" className="mb-4">Welcome back</ThemedText>
+                <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+                    <View style={{
+                        flex: 1,
+                        padding: 16,
+                        gap: 12,
+                        justifyContent: 'center'
+                    }}>
+                        <ThemedText type="title" className="mb-4">Welcome back</ThemedText>
 
                     <TextInput
                         value={email}
@@ -110,14 +119,39 @@ export default function LoginScreen() {
                         </ThemedText>
                     </Pressable>
 
-                    <Pressable onPress={() => router.push('/(auth)/register')} style={({ pressed }) => ({
+                    <Pressable onPress={() => router.push(‘/(auth)/register’)} style={({ pressed }) => ({
                         opacity: pressed ? 0.7 : 1,
-                        alignItems: 'center',
+                        alignItems: ‘center’,
                         marginTop: 8
                     })}>
                         <ThemedText color="muted">Don’t have an account? Create one</ThemedText>
                     </Pressable>
+
+                    {/* Environment Debug Info */}
+                    <View style={{
+                        marginTop: 24,
+                        padding: 12,
+                        backgroundColor: scheme === ‘dark’ ? ‘#1F2937’ : ‘#F3F4F6’,
+                        borderRadius: 8,
+                        borderWidth: 1,
+                        borderColor: scheme === ‘dark’ ? ‘#374151’ : ‘#D1D5DB’,
+                    }}>
+                        <ThemedText style={{ fontWeight: ‘600’, marginBottom: 8, fontSize: 12 }}>
+                            Environment Variables
+                        </ThemedText>
+                        {Object.entries(envVars).map(([key, value]) => (
+                            <View key={key} style={{ marginBottom: 6 }}>
+                                <ThemedText style={{ fontSize: 10, fontWeight: ‘600’, color: ‘#6B7280’ }}>
+                                    {key}
+                                </ThemedText>
+                                <ThemedText style={{ fontSize: 11, fontFamily: Platform.OS === ‘ios’ ? ‘Courier’ : ‘monospace’ }}>
+                                    {value || ‘(not set)’}
+                                </ThemedText>
+                            </View>
+                        ))}
+                    </View>
                 </View>
+                </ScrollView>
             </KeyboardAvoidingView>
         </ThemedView>
     );
