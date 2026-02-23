@@ -56,10 +56,13 @@ async function maybeLoadPersistedAccess() {
   if (saved) setAccessInMemory(saved);
 }
 
+import { redirectToLogin } from './nav';
+
 async function refreshAccessToken(): Promise<string | null> {
   // Prefer stored RT for native apps; otherwise rely on httpOnly cookie with credentials
   const rt = await loadRefreshToken();
 
+  try {
   const { data } = await axios.post(
     API_BASE_URL + '/auth/refresh',
     rt ? { refreshToken: rt } : {},
@@ -77,12 +80,23 @@ async function refreshAccessToken(): Promise<string | null> {
   await saveAccessToken(newAT);
   if (newRT) await saveRefreshToken(newRT);
   return accessToken;
+  } catch (e: any) {
+    // If refresh call failed (e.g., 401), clear tokens and redirect to login
+    try { await clearTokens(); } catch {}
+    try { redirectToLogin(); } catch {}
+    throw e;
+  }
 }
+
+import { isAuthPath } from './nav';
 
 export async function getValidAccessToken(): Promise<string | null> {
   if (isAccessValid()) return accessToken;
   await maybeLoadPersistedAccess();
   if (isAccessValid()) return accessToken;
+
+  // Do not auto-refresh on public auth routes (login/register)
+  if (isAuthPath()) return null;
 
   if (!refreshInFlight) {
     refreshInFlight = (async () => {

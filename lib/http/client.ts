@@ -27,6 +27,8 @@ export type TokenProvider = {
   clearTokens: () => Promise<void>;
 };
 
+import { redirectToLogin } from '../nav';
+
 export function applyBearerAuth(instance: AxiosInstance, tp: TokenProvider) {
   instance.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
     const token = tp.getAccessTokenSync() || (await tp.getValidAccessToken());
@@ -51,6 +53,8 @@ export function applyBearerAuth(instance: AxiosInstance, tp: TokenProvider) {
           return instance(original);
         }
         await tp.clearTokens();
+        // If we couldn't refresh, send the user to login
+        try { redirectToLogin(); } catch {}
       }
       return Promise.reject(error);
     }

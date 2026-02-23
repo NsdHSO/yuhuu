@@ -94,6 +94,10 @@ export default function LoginScreen() {
               {submitting ? 'Signing in…' : 'Sign in'}
             </ThemedText>
           </Pressable>
+
+          <Pressable onPress={() => router.push('/(auth)/register')} style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1, alignItems: 'center', marginTop: 8 })}>
+            <ThemedText color="muted">Don’t have an account? Create one</ThemedText>
+          </Pressable>
         </View>
       </KeyboardAvoidingView>
     </ThemedView>
