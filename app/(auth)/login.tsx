@@ -59,19 +59,14 @@ export default function LoginScreen() {
     return (
         <ThemedView className="flex-1">
             <Stack.Screen options={{ title: 'Sign in' }}/>
-            <KeyboardAvoidingView
-                behavior={Platform.select({
-                    ios: 'padding',
-                    android: undefined
-                })}
+            <ScrollView
                 style={{ flex: 1 }}
-                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+                contentContainerStyle={{ flexGrow: 1 }}
+                keyboardShouldPersistTaps="handled"
             >
-                <ScrollView
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                     style={{ flex: 1 }}
-                    contentContainerStyle={{ flexGrow: 1 }}
-                    keyboardShouldPersistTaps="handled"
-                    bounces={false}
                 >
                     <View style={{
                         flex: 1,
@@ -157,8 +152,8 @@ export default function LoginScreen() {
                             ))}
                         </View>
                     </View>
-                </ScrollView>
-            </KeyboardAvoidingView>
+                </KeyboardAvoidingView>
+            </ScrollView>
         </ThemedView>
     );
 }
