@@ -65,8 +65,14 @@ export default function LoginScreen() {
                     android: undefined
                 })}
                 style={{ flex: 1 }}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
             >
-                <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+                <ScrollView
+                    style={{ flex: 1 }}
+                    contentContainerStyle={{ flexGrow: 1 }}
+                    keyboardShouldPersistTaps="handled"
+                    bounces={false}
+                >
                     <View style={{
                         flex: 1,
                         padding: 16,
@@ -75,82 +81,82 @@ export default function LoginScreen() {
                     }}>
                         <ThemedText type="title" className="mb-4">Welcome back</ThemedText>
 
-                    <TextInput
-                        value={email}
-                        onChangeText={setEmail}
-                        placeholder="Email"
-                        autoCapitalize="none"
-                        keyboardType="email-address"
-                        textContentType="username"
-                        autoCorrect={false}
-                        placeholderTextColor={inputStyles.placeholderColor}
-                        selectionColor={inputStyles.selectionColor}
-                        style={inputStyles.container as any}
-                    />
+                        <TextInput
+                            value={email}
+                            onChangeText={setEmail}
+                            placeholder="Email"
+                            autoCapitalize="none"
+                            keyboardType="email-address"
+                            textContentType="username"
+                            autoCorrect={false}
+                            placeholderTextColor={inputStyles.placeholderColor}
+                            selectionColor={inputStyles.selectionColor}
+                            style={inputStyles.container as any}
+                        />
 
-                    <TextInput
-                        value={password}
-                        onChangeText={setPassword}
-                        placeholder="Password"
-                        secureTextEntry
-                        textContentType="password"
-                        placeholderTextColor={inputStyles.placeholderColor}
-                        selectionColor={inputStyles.selectionColor}
-                        style={inputStyles.container as any}
-                    />
+                        <TextInput
+                            value={password}
+                            onChangeText={setPassword}
+                            placeholder="Password"
+                            secureTextEntry
+                            textContentType="password"
+                            placeholderTextColor={inputStyles.placeholderColor}
+                            selectionColor={inputStyles.selectionColor}
+                            style={inputStyles.container as any}
+                        />
 
-                    <Pressable
-                        onPress={onSubmit}
-                        disabled={submitting || status === 'loading'}
-                        style={({ pressed }) => ({
-                            opacity: pressed || submitting ? 0.7 : 1,
-                            backgroundColor: '#1e90ff',
-                            borderRadius: 8,
-                            paddingVertical: 12,
+                        <Pressable
+                            onPress={onSubmit}
+                            disabled={submitting || status === 'loading'}
+                            style={({ pressed }) => ({
+                                opacity: pressed || submitting ? 0.7 : 1,
+                                backgroundColor: '#1e90ff',
+                                borderRadius: 8,
+                                paddingVertical: 12,
+                                alignItems: 'center',
+                                marginTop: 8,
+                            })}
+                        >
+                            <ThemedText style={{
+                                color: 'white',
+                                fontWeight: '600'
+                            }}>
+                                {submitting ? 'Signing in…' : 'Sign in'}
+                            </ThemedText>
+                        </Pressable>
+
+                        <Pressable onPress={() => router.push('/(auth)/register')} style={({ pressed }) => ({
+                            opacity: pressed ? 0.7 : 1,
                             alignItems: 'center',
-                            marginTop: 8,
-                        })}
-                    >
-                        <ThemedText style={{
-                            color: 'white',
-                            fontWeight: '600'
+                            marginTop: 8
+                        })}>
+                            <ThemedText color="muted">Don't have an account? Create one</ThemedText>
+                        </Pressable>
+
+                        {/* Environment Debug Info */}
+                        <View style={{
+                            marginTop: 24,
+                            padding: 12,
+                            backgroundColor: scheme === 'dark' ? '#1F2937' : '#F3F4F6',
+                            borderRadius: 8,
+                            borderWidth: 1,
+                            borderColor: scheme === 'dark' ? '#374151' : '#D1D5DB',
                         }}>
-                            {submitting ? 'Signing in…' : 'Sign in'}
-                        </ThemedText>
-                    </Pressable>
-
-                    <Pressable onPress={() => router.push(‘/(auth)/register’)} style={({ pressed }) => ({
-                        opacity: pressed ? 0.7 : 1,
-                        alignItems: ‘center’,
-                        marginTop: 8
-                    })}>
-                        <ThemedText color="muted">Don’t have an account? Create one</ThemedText>
-                    </Pressable>
-
-                    {/* Environment Debug Info */}
-                    <View style={{
-                        marginTop: 24,
-                        padding: 12,
-                        backgroundColor: scheme === ‘dark’ ? ‘#1F2937’ : ‘#F3F4F6’,
-                        borderRadius: 8,
-                        borderWidth: 1,
-                        borderColor: scheme === ‘dark’ ? ‘#374151’ : ‘#D1D5DB’,
-                    }}>
-                        <ThemedText style={{ fontWeight: ‘600’, marginBottom: 8, fontSize: 12 }}>
-                            Environment Variables
-                        </ThemedText>
-                        {Object.entries(envVars).map(([key, value]) => (
-                            <View key={key} style={{ marginBottom: 6 }}>
-                                <ThemedText style={{ fontSize: 10, fontWeight: ‘600’, color: ‘#6B7280’ }}>
-                                    {key}
-                                </ThemedText>
-                                <ThemedText style={{ fontSize: 11, fontFamily: Platform.OS === ‘ios’ ? ‘Courier’ : ‘monospace’ }}>
-                                    {value || ‘(not set)’}
-                                </ThemedText>
-                            </View>
-                        ))}
+                            <ThemedText style={{ fontWeight: '600', marginBottom: 8, fontSize: 12 }}>
+                                Environment Variables
+                            </ThemedText>
+                            {Object.entries(envVars).map(([key, value]) => (
+                                <View key={key} style={{ marginBottom: 6 }}>
+                                    <ThemedText style={{ fontSize: 10, fontWeight: '600', color: '#6B7280' }}>
+                                        {key}
+                                    </ThemedText>
+                                    <ThemedText style={{ fontSize: 11, fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace' }}>
+                                        {value || '(not set)'}
+                                    </ThemedText>
+                                </View>
+                            ))}
+                        </View>
                     </View>
-                </View>
                 </ScrollView>
             </KeyboardAvoidingView>
         </ThemedView>
