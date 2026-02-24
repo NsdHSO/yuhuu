@@ -6,7 +6,6 @@ import { ThemedView } from '@/components/themed-view';
 import { useAuth } from '@/providers/AuthProvider';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
-import Constants from 'expo-constants';
 
 export default function LoginScreen() {
     const router = useRouter();
@@ -132,7 +131,7 @@ export default function LoginScreen() {
                                 paddingVertical: 8
                             })}
                         >
-                            <ThemedText color="muted">Don't have an account? Create one</ThemedText>
+                            <ThemedText color="muted">Don&apos;t have an account? Create one</ThemedText>
                         </Pressable>
 
                         {/* Environment Debug Info */}
