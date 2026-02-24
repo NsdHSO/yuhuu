@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, TextInput, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -61,20 +61,14 @@ export default function LoginScreen() {
             <Stack.Screen options={{ title: 'Sign in' }}/>
             <ScrollView
                 style={{ flex: 1 }}
-                contentContainerStyle={{ flexGrow: 1 }}
+                contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
                 keyboardShouldPersistTaps="handled"
             >
                 <KeyboardAvoidingView
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                    style={{ flex: 1 }}
                 >
-                    <View style={{
-                        flex: 1,
-                        padding: 16,
-                        gap: 12,
-                        justifyContent: 'center'
-                    }}>
-                        <ThemedText type="title" className="mb-4">Welcome back</ThemedText>
+                    <View style={{ marginTop: 60 }}>
+                        <ThemedText type="title" style={{ marginBottom: 24 }}>Welcome back</ThemedText>
 
                         <TextInput
                             value={email}
@@ -89,6 +83,8 @@ export default function LoginScreen() {
                             style={inputStyles.container as any}
                         />
 
+                        <View style={{ height: 12 }} />
+
                         <TextInput
                             value={password}
                             onChangeText={setPassword}
@@ -100,31 +96,42 @@ export default function LoginScreen() {
                             style={inputStyles.container as any}
                         />
 
-                        <Pressable
+                        <View style={{ height: 16 }} />
+
+                        <TouchableOpacity
                             onPress={onSubmit}
                             disabled={submitting || status === 'loading'}
-                            style={({ pressed }) => ({
-                                opacity: pressed || submitting ? 0.7 : 1,
+                            activeOpacity={0.7}
+                            style={{
                                 backgroundColor: '#1e90ff',
                                 borderRadius: 8,
-                                paddingVertical: 12,
+                                paddingVertical: 16,
+                                paddingHorizontal: 20,
                                 alignItems: 'center',
-                                marginTop: 8,
-                            })}
+                                justifyContent: 'center',
+                                minHeight: 50,
+                            }}
                         >
-                            <ThemedText style={{
-                                color: 'white',
-                                fontWeight: '600'
+                            <Text style={{
+                                color: '#ffffff',
+                                fontWeight: '700',
+                                fontSize: 17,
+                                textAlign: 'center'
                             }}>
                                 {submitting ? 'Signing in…' : 'Sign in'}
-                            </ThemedText>
-                        </Pressable>
+                            </Text>
+                        </TouchableOpacity>
 
-                        <Pressable onPress={() => router.push('/(auth)/register')} style={({ pressed }) => ({
-                            opacity: pressed ? 0.7 : 1,
-                            alignItems: 'center',
-                            marginTop: 8
-                        })}>
+                        <View style={{ height: 16 }} />
+
+                        <Pressable
+                            onPress={() => router.push('/(auth)/register')}
+                            style={({ pressed }) => ({
+                                opacity: pressed ? 0.7 : 1,
+                                alignItems: 'center',
+                                paddingVertical: 8
+                            })}
+                        >
                             <ThemedText color="muted">Don't have an account? Create one</ThemedText>
                         </Pressable>
 
