@@ -1,283 +1,522 @@
 # Yuhuu - React Native Boilerplate 👋
 
-A production-ready boilerplate for building cross-platform mobile and web applications with React Native and Expo.
+A production-ready, fully-tested boilerplate for building cross-platform mobile and web applications with React Native and Expo. Features complete authentication flow, comprehensive test coverage, and modern development practices.
 
-## Features
+**[📥 Download Latest FAT APK](https://github.com/NsdHSO/yuhuu/releases/tag/latest-fat)** | **[📱 Download Latest iOS IPA](https://github.com/NsdHSO/yuhuu/releases/tag/latest-fat-ios)**
 
-✨ **Cross-Platform**: iOS, Android, and Web support
-🎨 **NativeWind**: Tailwind CSS for React Native
-📱 **Expo Router**: File-based navigation
-⚡ **TypeScript**: Full type safety
-🧪 **Testing**: Jest with React Native Testing Library
-🚀 **CI/CD**: GitHub Actions workflows for automated builds
-🎯 **Modern Stack**: React 19, React Native 0.81, Expo 54
+## ✨ Features
 
-## Tech Stack
+### Core Features
+- 🎯 **Cross-Platform**: iOS, Android, and Web support with unified codebase
+- 🔐 **Complete Authentication**: Login, register, JWT token management with auto-refresh
+- 🎨 **NativeWind**: Tailwind CSS v4 for React Native styling
+- 📱 **Expo Router**: File-based navigation with type safety
+- ⚡ **TypeScript**: Full type safety across the entire codebase
+- 🧪 **Comprehensive Testing**: 300+ tests with 9 skipped (309 total)
+- 🚀 **CI/CD Ready**: GitHub Actions workflows for automated builds and deployments
+- 📊 **Modern Stack**: React 19, React Native 0.81, Expo 54
 
-- **Framework**: Expo 54 with React Native 0.81
-- **UI**: NativeWind (Tailwind CSS v4)
-- **Navigation**: Expo Router
-- **State Management**: React hooks (add your preferred solution)
-- **Testing**: Jest + React Native Testing Library
-- **Language**: TypeScript 5.9
-- **Package Manager**: pnpm (recommended) or npm
+### Authentication & Security
+- ✅ JWT access token with automatic refresh
+- ✅ Secure token storage (SecureStore for native, localStorage for web)
+- ✅ HTTP-only refresh token cookies for web
+- ✅ Protected routes with role-based access control
+- ✅ Password confirmation validation
+- ✅ Form validation with user-friendly error messages
+- ✅ Auto-redirect on token expiration
 
-## Get Started
-**[📥 Download Latest FAT APK](https://github.com/NsdHSO/yuhuu/releases/tag/latest-fat)**
+### UI/UX
+- ✅ Dark mode support
+- ✅ Safe area handling for notched devices (iPhone with Dynamic Island)
+- ✅ Consistent button styles using TouchableOpacity
+- ✅ Keyboard-aware forms with smooth scrolling
+- ✅ Loading states and error handling
+- ✅ Responsive design for all screen sizes
+
+### Developer Experience
+- ✅ Hot reload for instant feedback
+- ✅ TypeScript strict mode
+- ✅ ESLint configuration
+- ✅ Atomic design pattern for components
+- ✅ Comprehensive unit and integration tests
+- ✅ Test coverage reporting
+- ✅ Git hooks support
+
+## 🧪 Test Coverage
+
+```
+Test Suites: 16 passed, 16 total
+Tests:       300 passed, 9 skipped, 309 total
+Time:        ~4s
+```
+
+### Test Categories
+- **Unit Tests**: Login screen, Register screen, AuthProvider, TokenManager, Components
+- **Integration Tests**: Complete authentication flow (UI → API → Navigation)
+- **Coverage**: Login/Register flows, password validation, token management, error handling
+
+## 🛠 Tech Stack
+
+| Category | Technology |
+|----------|-----------|
+| **Framework** | Expo 54 with React Native 0.81 |
+| **UI Library** | NativeWind (Tailwind CSS v4) |
+| **Navigation** | Expo Router (file-based) |
+| **State Management** | React Query + Context API |
+| **Authentication** | JWT with auto-refresh |
+| **Storage** | Expo SecureStore (native) / localStorage (web) |
+| **Testing** | Jest + React Native Testing Library |
+| **Language** | TypeScript 5.9 |
+| **Package Manager** | pnpm (recommended) / npm |
+| **HTTP Client** | Axios with interceptors |
+
+## 🚀 Get Started
 
 ### Prerequisites
 
-- Node.js 18+
-- pnpm (recommended) or npm
-- iOS: Xcode and CocoaPods (for iOS development)
-- Android: Android Studio and SDK (for Android development)
+- **Node.js**: 18+ (LTS recommended)
+- **Package Manager**: pnpm (recommended) or npm
+- **iOS Development**: Xcode 15+ and CocoaPods
+- **Android Development**: Android Studio and SDK 33+
 
 ### Installation
 
-1. Clone or download this boilerplate
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/NsdHSO/yuhuu.git
+   cd yuhuu
+   ```
 
-2. Install dependencies
-
+2. **Install dependencies**
    ```bash
    pnpm install
    # or
    npm install
    ```
 
-3. Start the development server
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env
+   ```
 
+   Edit `.env` with your backend URLs:
+   ```bash
+   EXPO_PUBLIC_ENV=local
+   EXPO_PUBLIC_AUTH_API_URL=http://localhost:4100
+   EXPO_PUBLIC_API_URL=http://localhost:2003
+   EXPO_PUBLIC_GRAPHQL_URL=http://localhost:2003/strapi-proxy
+   ```
+
+4. **Start the development server**
    ```bash
    pnpm start
    # or
    npm start
    ```
 
-In the output, you'll find options to open the app in:
+### Running on Different Platforms
 
-- [Development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Web browser](https://docs.expo.dev/workflow/web/)
-
-### Development
-
-You can start developing by editing files inside the **app** directory. This project
-uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-Key directories:
-
-- `app/` - Application screens and routes
-- `components/` - Reusable components (atomic design pattern)
-- `constants/` - Theme colors and constants
-- `hooks/` - Custom React hooks
-- `assets/` - Images, fonts, and other static files
-
-## Building
-
-### iOS
-
+**iOS Simulator:**
 ```bash
 pnpm ios
-# or
-npm run ios
+# or press 'i' in the terminal after starting
 ```
 
-### Android
-
+**Android Emulator:**
 ```bash
 pnpm android
-# or
-npm run android
+# or press 'a' in the terminal after starting
 ```
 
-### Web
-
+**Web Browser:**
 ```bash
 pnpm web
-# or
-npm run web
+# or press 'w' in the terminal after starting
 ```
 
-## Testing
-
-Run tests:
-
-```bash
-pnpm test
-# or
-npm test
-```
-
-Run tests in watch mode:
-
-```bash
-pnpm test:watch
-# or
-npm run test:watch
-```
-
-Generate coverage report:
-
-```bash
-pnpm test:coverage
-# or
-npm run test:coverage
-```
-
-## Production Builds
-
-This boilerplate includes GitHub Actions workflows for automated builds:
-
-- **Android**: APK builds via EAS Build
-- **iOS**: App Store builds via EAS Build
-
-Configure your EAS project ID in `app.config.js` and set up GitHub Secrets for environment variables.
-
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.
-
-## Project Structure
+## 🧩 Project Structure
 
 ```
 yuhuu/
-├── app/                    # Application screens (Expo Router)
-│   ├── (tabs)/            # Tab navigation
-│   ├── _layout.tsx        # Root layout
-│   └── modal.tsx          # Example modal
-├── components/            # Reusable components
-│   ├── atoms/            # Basic building blocks
-│   ├── molecules/        # Composed components
-│   └── ui/               # UI components
-├── constants/            # Theme and constants
-├── hooks/                # Custom hooks
-├── assets/               # Static assets
-├── ios/                  # iOS native code
-├── .github/              # CI/CD workflows
-└── scripts/              # Utility scripts
+├── app/                          # Application screens (Expo Router)
+│   ├── (auth)/                  # Authentication screens
+│   │   ├── __tests__/          # Auth screen tests
+│   │   ├── login.tsx           # Login screen with auto-scroll
+│   │   └── register.tsx        # Register with password confirmation
+│   ├── (tabs)/                 # Tab navigation screens
+│   │   ├── index.tsx           # Home screen (SafeArea enabled)
+│   │   └── profile.tsx         # User profile screen
+│   └── _layout.tsx             # Root layout with providers
+│
+├── components/                   # Reusable components (Atomic Design)
+│   ├── atoms/                  # Basic building blocks
+│   │   └── badge.tsx
+│   ├── molecules/              # Composed components
+│   │   └── category-badge.tsx
+│   ├── ui/                     # UI components
+│   │   ├── collapsible.tsx
+│   │   └── icon-symbol.tsx
+│   ├── themed-text.tsx         # Theme-aware text component
+│   ├── themed-view.tsx         # Theme-aware view component
+│   └── __tests__/              # Component tests
+│
+├── providers/                    # React Context providers
+│   ├── AuthProvider.tsx        # Authentication state management
+│   └── __tests__/              # Provider tests
+│
+├── lib/                         # Utilities and helpers
+│   ├── api.ts                  # Axios instances with interceptors
+│   ├── tokenManager.ts         # JWT token management
+│   ├── secureStore.ts          # Secure storage abstraction
+│   ├── authz.ts                # Authorization helpers
+│   ├── nav.ts                  # Navigation utilities
+│   └── __tests__/              # Utility tests
+│
+├── features/                    # Feature modules
+│   ├── bootstrap/              # App initialization
+│   ├── profile/                # User profile feature
+│   └── roles/                  # Role management
+│
+├── constants/                   # Constants and theme
+│   └── theme.ts                # Color scheme and theme
+│
+├── hooks/                       # Custom React hooks
+│   ├── use-color-scheme.ts     # Theme detection hook
+│   └── use-theme-color.ts      # Theme color hook
+│
+├── assets/                      # Static assets
+│   ├── images/                 # Images and icons
+│   └── fonts/                  # Custom fonts
+│
+├── .github/                     # CI/CD workflows
+│   ├── workflows/              # GitHub Actions
+│   │   ├── build-android.yml   # Android FAT build
+│   │   ├── build-ios.yml       # iOS FAT build
+│   │   ├── promote-uat.yml     # UAT deployment
+│   │   └── promote-prod.yml    # Production deployment
+│   └── actions/                # Reusable actions
+│
+└── scripts/                     # Utility scripts
+    └── reset-project.js        # Project reset script
 ```
 
-## Environment & backends
+## 🧪 Testing
 
-This app talks to two backends:
-
-- Auth API (port 4100): issues access_token and httpOnly refresh_token cookie
-- App API (port 2003): your business endpoints (uses Bearer access_token)
-
-### 1) .env configuration (required)
-
-Copy `.env.example` to `.env` and set the two API URLs. Do not use `0.0.0.0` — always use `localhost` or a resolvable
-host.
+### Run Tests
 
 ```bash
-cp .env.example .env
+# Run all tests
+pnpm test
+
+# Run tests in watch mode
+pnpm test:watch
+
+# Generate coverage report
+pnpm test:coverage
 ```
 
+### Test Files Location
+
+All test files follow the convention `__tests__/*.test.{ts,tsx}`:
+- `app/(auth)/__tests__/` - Authentication screen tests
+- `components/__tests__/` - Component tests
+- `providers/__tests__/` - Provider tests
+- `lib/__tests__/` - Utility function tests
+
+### Writing Tests
+
+```typescript
+// Example: Login screen test
+import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
+
+it('should sign in successfully', async () => {
+    render(<LoginScreen />);
+
+    fireEvent.changeText(screen.getByPlaceholderText('Email'), 'test@example.com');
+    fireEvent.changeText(screen.getByPlaceholderText('Password'), 'password123');
+    fireEvent.press(screen.getByText('Sign in'));
+
+    await waitFor(() => {
+        expect(mockRouter.replace).toHaveBeenCalledWith('/(tabs)');
+    });
+});
 ```
-# .env (development)
+
+## 🔐 Authentication Flow
+
+### How Authentication Works
+
+1. **Login/Register**
+   - User enters credentials
+   - API returns `access_token` and `refresh_token`
+   - Tokens are stored securely (SecureStore/localStorage)
+
+2. **Token Management**
+   - Access token kept in memory for API calls
+   - Persisted to secure storage for app reloads
+   - Automatic refresh when token expires (30s buffer)
+   - HTTP-only refresh token cookie for web
+
+3. **Protected Routes**
+   - Token checked on app load
+   - Auto-redirect to login if invalid/expired
+   - Role-based access control via `hasRole()` helper
+
+4. **API Calls**
+   - All requests via `appApi` include `Authorization: Bearer <token>`
+   - Automatic token refresh on 401 responses
+   - Request retry after successful refresh
+
+### Backend Requirements
+
+**Auth API (Port 4100)**
+```
+POST /v1/auth/login
+POST /v1/auth/register
+POST /v1/auth/refresh
+POST /v1/auth/logout
+```
+
+**App API (Port 2003)**
+```
+Your business endpoints (uses Bearer access_token)
+```
+
+### Environment Configuration
+
+**Development (.env):**
+```bash
 EXPO_PUBLIC_ENV=local
 EXPO_PUBLIC_AUTH_API_URL=http://localhost:4100
 EXPO_PUBLIC_API_URL=http://localhost:2003
 ```
 
-After changing `.env`, fully restart Expo so env is re-read:
+**UAT/Production:**
+Set GitHub Secrets:
+- `UAT_GRAPHQL_URL` / `PROD_GRAPHQL_URL`
+- `EXPO_PUBLIC_API_URL`
+- `EXPO_PUBLIC_AUTH_API_URL`
 
+### CORS Configuration
+
+**Auth API (with credentials):**
+```rust
+Cors::default()
+    .allowed_origin("http://localhost:8081")
+    .allowed_methods(vec!["GET","POST","OPTIONS"])
+    .supports_credentials()
+```
+
+**App API (bearer tokens):**
+```rust
+Cors::default()
+    .allow_any_origin()
+    .allowed_methods(vec!["GET","POST","PUT","PATCH","DELETE","OPTIONS"])
+    .allowed_headers(vec![
+        http::header::CONTENT_TYPE,
+        http::header::AUTHORIZATION
+    ])
+```
+
+## 🏗 Building for Production
+
+### Environment Deployments
+
+This boilerplate includes three deployment environments:
+
+| Environment | Trigger | Description |
+|------------|---------|-------------|
+| **FAT** | Push to `master` | Automatic build and release |
+| **UAT** | PR with `deploy-uat` label | User acceptance testing |
+| **PROD** | PR with `deploy-prod` label | Production release |
+
+### Android Build
+
+```bash
+# Local build
+pnpm android
+
+# GitHub Actions build
+# Push to master or add label to PR
+```
+
+Outputs: APK file available in GitHub Releases
+
+### iOS Build
+
+```bash
+# Local build
+pnpm ios
+
+# GitHub Actions build
+# Push to master or add label to PR
+```
+
+Outputs: IPA file available in GitHub Releases
+
+### Build Configuration
+
+Edit `app.config.js`:
+```javascript
+{
+  name: 'YourApp',
+  slug: 'your-app',
+  version: '1.0.0',
+  ios: {
+    bundleIdentifier: 'com.yourcompany.yourapp'
+  },
+  android: {
+    package: 'com.yourcompany.yourapp'
+  }
+}
+```
+
+## 🎨 Customization
+
+### 1. App Branding
+
+**Update App Name:**
+```javascript
+// app.config.js
+module.exports = {
+  expo: {
+    name: 'Your App Name',
+    slug: 'your-app-slug',
+  }
+}
+```
+
+**Update Bundle Identifiers:**
+```javascript
+// app.config.js
+ios: {
+  bundleIdentifier: 'com.yourcompany.yourapp'
+},
+android: {
+  package: 'com.yourcompany.yourapp'
+}
+```
+
+### 2. Theme Customization
+
+**Update Colors:**
+```typescript
+// constants/theme.ts
+export const Colors = {
+  light: {
+    text: '#11181C',
+    background: '#fff',
+    tint: '#1e90ff',
+    // ... other colors
+  },
+  dark: {
+    text: '#ECEDEE',
+    background: '#151718',
+    tint: '#1e90ff',
+    // ... other colors
+  },
+};
+```
+
+**Tailwind Configuration:**
+```javascript
+// tailwind.config.js
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        // Your custom colors
+      }
+    }
+  }
+}
+```
+
+### 3. App Icon & Splash Screen
+
+- **App Icon**: Replace `assets/images/logo-G.png`
+- **Splash Screen**: Update in `app.config.js` under `splash` key
+- **Favicon**: Replace `assets/images/favicon.png`
+
+## 📊 Key Features Implementation
+
+### Safe Area Handling
+```typescript
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+<SafeAreaView edges={['top', 'left', 'right']}>
+  {/* Your content */}
+</SafeAreaView>
+```
+
+### Password Confirmation
+```typescript
+if (password !== confirm) {
+  return Alert.alert('Password mismatch', 'Passwords do not match.');
+}
+```
+
+### Auto-Scroll Input to Center
+```typescript
+const scrollToInput = (inputRef) => {
+  inputRef.current.measureLayout(
+    scrollViewRef.current,
+    (x, y, width, height) => {
+      const inputCenterY = y + height / 2;
+      const screenCenterY = SCREEN_HEIGHT / 2;
+      const scrollToY = inputCenterY - screenCenterY + 100;
+      scrollViewRef.current.scrollTo({ y: scrollToY, animated: true });
+    }
+  );
+};
+```
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**Metro bundler cache:**
 ```bash
 pnpm expo start -c
 ```
 
-### 2) Auth API cookie settings
-
-For browsers, the refresh_token is an httpOnly cookie. Configure it like this:
-
-- Development (HTTP): `SameSite=Lax`, `Secure=false`
-- Production (HTTPS): `SameSite=None`, `Secure=true`
-
-Actix example (dev):
-
-```rust
-let cookie = Cookie::build("refresh_token", token)
-    .path("/")
-    .http_only(true)
-    .same_site(SameSite::Lax)
-    .secure(false)
-    .max_age(time::Duration::days(30))
-    .finish();
-```
-
-### 3) CORS
-
-- Auth API (4100) must allow credentials from the web origin:
-
-```rust
-App::new().wrap(
-  Cors::default()
-    .allowed_origin("http://localhost:8081")
-    .allowed_methods(vec!["GET","POST","OPTIONS"])
-    .allowed_headers(vec![http::header::CONTENT_TYPE, http::header::ACCEPT])
-    .supports_credentials()
-)
-```
-
-- App API (2003) typically does NOT use cookies. Easiest dev config:
-
-```rust
-App::new().wrap(
-  Cors::default()
-    .allow_any_origin()
-    .allowed_methods(vec!["GET","POST","PUT","PATCH","DELETE","OPTIONS"])
-    .allowed_headers(vec![http::header::CONTENT_TYPE, http::header::ACCEPT, http::header::AUTHORIZATION])
-)
-```
-
-Ensure CORS is wrapped on the scope that serves `/v1`, and that OPTIONS is not blocked by auth.
-
-### 4) Verify locally
-
-- Refresh (should return 200):
-
+**iOS CocoaPods issues:**
 ```bash
-curl -i -X POST http://localhost:4100/v1/auth/refresh \
-  -H 'Origin: http://localhost:8081' \
-  --cookie 'refresh_token=...'
+cd ios && pod install && cd ..
 ```
 
-- Preflight to app API (should return 200/204 with ACAO):
-
+**Android build errors:**
 ```bash
-curl -i -X OPTIONS http://localhost:2003/v1/me \
-  -H 'Origin: http://localhost:8081' \
-  -H 'Access-Control-Request-Method: GET' \
-  -H 'Access-Control-Request-Headers: authorization,content-type'
+cd android && ./gradlew clean && cd ..
 ```
 
-### 5) Token handling in the app
+**Environment variables not updating:**
+```bash
+# Restart with cache clear
+pnpm expo start -c
+```
 
-- On login or refresh, the app stores `access_token` in memory and (for convenience) persists it:
-    - Native: Expo SecureStore
-    - Web: `localStorage`
-- Every request made via `appApi` automatically adds `Authorization: Bearer <access_token>`.
+**Keyboard not showing in iOS simulator:**
+- Toggle software keyboard: `Cmd + K`
+- Or disconnect hardware keyboard: `Cmd + Shift + K`
 
-### Common pitfalls
+## 📚 Learn More
 
-- Using `0.0.0.0` in `.env`. Browsers can’t reach that host. Use `http://localhost:<port>`.
-- Secure cookie on HTTP (dev). Browsers drop it. Use `Secure=false` + `SameSite=Lax` in dev.
-- CORS preflight returns 401. Make sure OPTIONS is handled before auth and `Authorization` is listed in
-  `Access-Control-Allow-Headers`.
+- [Expo Documentation](https://docs.expo.dev/)
+- [React Native Documentation](https://reactnative.dev/)
+- [NativeWind Documentation](https://www.nativewind.dev/)
+- [Expo Router Documentation](https://docs.expo.dev/router/introduction/)
+- [React Query Documentation](https://tanstack.com/query/latest)
+- [TypeScript Documentation](https://www.typescriptlang.org/)
 
-## Customization
+## 🤝 Contributing
 
-1. **Update App Name**: Change `name` and `slug` in `app.config.js`
-2. **Bundle Identifiers**: Update iOS and Android package names in `app.config.js`
-3. **App Icon**: Replace images in `assets/images/`
-4. **Theme**: Modify colors in `constants/theme.ts` and `tailwind.config.js`
-5. **EAS Project**: Set your EAS project ID in `app.config.js`
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-## Learn More
+## 📄 License
 
-- [Expo documentation](https://docs.expo.dev/)
-- [React Native documentation](https://reactnative.dev/)
-- [NativeWind documentation](https://www.nativewind.dev/)
-- [Expo Router documentation](https://docs.expo.dev/router/introduction/)
+This project is open source and available under the [MIT License](LICENSE).
 
-## License
+---
 
-This project is open source and available under the MIT License.
+**Built with ❤️ using Expo, React Native, and TypeScript**
