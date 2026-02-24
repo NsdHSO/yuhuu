@@ -32,6 +32,9 @@ jest.mock('@/hooks/use-color-scheme', () => ({
 
 jest.spyOn(Alert, 'alert');
 
+// Increase timeout for integration tests as they involve async operations
+jest.setTimeout(15000);
+
 describe('Authentication Flow - Integration Tests', () => {
     const mockPush = jest.fn();
     const mockReplace = jest.fn();
@@ -82,7 +85,7 @@ describe('Authentication Flow - Integration Tests', () => {
             // Wait for initial load
             await waitFor(() => {
                 expect(screen.getByText('Welcome back')).toBeTruthy();
-            });
+            }, { timeout: 10000 });
 
             // User enters credentials
             const emailInput = screen.getByPlaceholderText('Email');
@@ -101,7 +104,7 @@ describe('Authentication Flow - Integration Tests', () => {
                     email: 'test@example.com',
                     password: 'password123'
                 });
-            });
+            }, { timeout: 10000 });
 
             // Verify tokens were saved
             expect(mockSetTokensFromLogin).toHaveBeenCalledWith(

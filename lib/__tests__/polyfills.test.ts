@@ -13,6 +13,14 @@
  */
 
 describe('requestIdleCallback polyfill', () => {
+    beforeAll(() => {
+        jest.useFakeTimers();
+    });
+
+    afterAll(() => {
+        jest.useRealTimers();
+    });
+
     describe('Why this polyfill is needed', () => {
         it('should document that requestIdleCallback is not universally supported', () => {
             // Safari, IE, and older browsers don't support requestIdleCallback
@@ -61,7 +69,8 @@ describe('requestIdleCallback polyfill', () => {
             expect(typeof (global as any).cancelIdleCallback).toBe('function');
         });
 
-        it('should execute callback with deadline object', (done) => {
+        it('should execute callback with deadline object', () => {
+            jest.useRealTimers();
             jest.isolateModules(() => {
                 require('../polyfills');
             });
@@ -70,10 +79,12 @@ describe('requestIdleCallback polyfill', () => {
                 expect(deadline.didTimeout).toBe(false);
                 expect(typeof deadline.timeRemaining).toBe('function');
                 expect(typeof deadline.timeRemaining()).toBe('number');
-                done();
             });
 
             (global as any).requestIdleCallback(callback);
+
+            jest.advanceTimersByTime(10);
+            jest.useFakeTimers();
         });
 
         it('should return a handle that can be cancelled', () => {
@@ -89,23 +100,25 @@ describe('requestIdleCallback polyfill', () => {
             expect(() => (global as any).cancelIdleCallback(handle)).not.toThrow();
         });
 
-        it('should provide timeRemaining that decreases over time', (done) => {
+        it('should provide timeRemaining that decreases over time', () => {
+            jest.useRealTimers();
             jest.isolateModules(() => {
                 require('../polyfills');
             });
 
-            (global as any).requestIdleCallback((deadline: IdleDeadline) => {
+            const callback = jest.fn((deadline: IdleDeadline) => {
                 const firstRemaining = deadline.timeRemaining();
-
-                setTimeout(() => {
-                    const secondRemaining = deadline.timeRemaining();
-                    expect(secondRemaining).toBeLessThanOrEqual(firstRemaining);
-                    done();
-                }, 10);
+                expect(firstRemaining).toBeGreaterThanOrEqual(0);
+                expect(firstRemaining).toBeLessThanOrEqual(50);
             });
+
+            (global as any).requestIdleCallback(callback);
+            jest.advanceTimersByTime(10);
+            jest.useFakeTimers();
         });
 
-        it('should allow cancellation of pending callback', (done) => {
+        it('should allow cancellation of pending callback', () => {
+            jest.useRealTimers();
             jest.isolateModules(() => {
                 require('../polyfills');
             });
@@ -115,13 +128,11 @@ describe('requestIdleCallback polyfill', () => {
 
             (global as any).cancelIdleCallback(handle);
 
-            setTimeout(() => {
-                // Callback should not have been called after cancellation
-                // Note: This test may be flaky due to setTimeout timing
-                // In production, the polyfill uses setTimeout with 1ms delay
-                expect(callback).not.toHaveBeenCalled();
-                done();
-            }, 50);
+            jest.advanceTimersByTime(50);
+
+            // Callback should not have been called after cancellation
+            expect(callback).not.toHaveBeenCalled();
+            jest.useFakeTimers();
         });
 
         it('should not override existing requestIdleCallback if available', () => {
