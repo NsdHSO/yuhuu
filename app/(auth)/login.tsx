@@ -1,11 +1,13 @@
-import React, { useMemo, useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useRef, useMemo, useState } from 'react';
+import { Alert, Dimensions, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useAuth } from '@/providers/AuthProvider';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
+
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export default function LoginScreen() {
     const router = useRouter();
@@ -17,6 +19,11 @@ export default function LoginScreen() {
     const [password, setPassword] = useState('');
     const [submitting, setSubmitting] = useState(false);
     const scheme = useColorScheme() ?? 'light';
+
+    const scrollViewRef = useRef<ScrollView>(null);
+    const emailInputRef = useRef<View>(null);
+    const passwordInputRef = useRef<View>(null);
+
     const inputStyles = useMemo(() => ({
         container: {
             borderWidth: 1,
@@ -30,6 +37,24 @@ export default function LoginScreen() {
         selectionColor: Colors[scheme].tint,
     }), [scheme]);
 
+    const scrollToInput = (inputRef: React.RefObject<View>) => {
+        if (inputRef.current && scrollViewRef.current) {
+            inputRef.current.measureLayout(
+                scrollViewRef.current as any,
+                (x, y, width, height) => {
+                    const inputCenterY = y + height / 2;
+                    const screenCenterY = SCREEN_HEIGHT / 2;
+                    const scrollToY = inputCenterY - screenCenterY + 100;
+
+                    scrollViewRef.current?.scrollTo({
+                        y: Math.max(0, scrollToY),
+                        animated: true
+                    });
+                },
+                () => {}
+            );
+        }
+    };
 
     async function onSubmit() {
         if (!email || !password) {
@@ -59,6 +84,7 @@ export default function LoginScreen() {
         <ThemedView className="flex-1">
             <Stack.Screen options={{ title: 'Sign in' }}/>
             <ScrollView
+                ref={scrollViewRef}
                 style={{ flex: 1 }}
                 contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
                 keyboardShouldPersistTaps="handled"
@@ -69,31 +95,37 @@ export default function LoginScreen() {
                     <View style={{ marginTop: 60 }}>
                         <ThemedText type="title" style={{ marginBottom: 24 }}>Welcome back</ThemedText>
 
-                        <TextInput
-                            value={email}
-                            onChangeText={setEmail}
-                            placeholder="Email"
-                            autoCapitalize="none"
-                            keyboardType="email-address"
-                            textContentType="username"
-                            autoCorrect={false}
-                            placeholderTextColor={inputStyles.placeholderColor}
-                            selectionColor={inputStyles.selectionColor}
-                            style={inputStyles.container as any}
-                        />
+                        <View ref={emailInputRef}>
+                            <TextInput
+                                value={email}
+                                onChangeText={setEmail}
+                                placeholder="Email"
+                                autoCapitalize="none"
+                                keyboardType="email-address"
+                                textContentType="username"
+                                autoCorrect={false}
+                                placeholderTextColor={inputStyles.placeholderColor}
+                                selectionColor={inputStyles.selectionColor}
+                                style={inputStyles.container as any}
+                                onFocus={() => scrollToInput(emailInputRef)}
+                            />
+                        </View>
 
                         <View style={{ height: 12 }} />
 
-                        <TextInput
-                            value={password}
-                            onChangeText={setPassword}
-                            placeholder="Password"
-                            secureTextEntry
-                            textContentType="password"
-                            placeholderTextColor={inputStyles.placeholderColor}
-                            selectionColor={inputStyles.selectionColor}
-                            style={inputStyles.container as any}
-                        />
+                        <View ref={passwordInputRef}>
+                            <TextInput
+                                value={password}
+                                onChangeText={setPassword}
+                                placeholder="Password"
+                                secureTextEntry
+                                textContentType="password"
+                                placeholderTextColor={inputStyles.placeholderColor}
+                                selectionColor={inputStyles.selectionColor}
+                                style={inputStyles.container as any}
+                                onFocus={() => scrollToInput(passwordInputRef)}
+                            />
+                        </View>
 
                         <View style={{ height: 16 }} />
 
