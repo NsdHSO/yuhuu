@@ -55,13 +55,21 @@ describe('AuthProvider', () => {
     });
 
     describe('Initial State', () => {
-        it('should start with idle status and null user', () => {
+        it('should start with loading then transition to signed-out', async () => {
             mockGetValidAccessToken.mockResolvedValue(null);
 
             const { result } = renderHook(() => useAuth(), { wrapper });
 
-            expect(result.current.user).toBeNull();
-            expect(result.current.status).toBe('idle');
+            // Initial state is 'idle', quickly transitions to 'loading'
+            await waitFor(() => {
+                expect(result.current.status).not.toBe('idle');
+            });
+
+            // Then transitions to 'signed-out'
+            await waitFor(() => {
+                expect(result.current.status).toBe('signed-out');
+                expect(result.current.user).toBeNull();
+            });
         });
 
         it('should set status to signed-in when valid token exists', async () => {
@@ -194,14 +202,21 @@ describe('AuthProvider', () => {
 
             const { result } = renderHook(() => useAuth(), { wrapper });
 
+            // Wait for initial loading to complete
+            await waitFor(() => {
+                expect(result.current.status).toBe('signed-out');
+            });
+
             await expect(async () => {
                 await act(async () => {
                     await result.current.signIn('test@example.com', 'wrongpassword');
                 });
             }).rejects.toThrow('Invalid credentials');
 
-            expect(result.current.user).toBeNull();
-            expect(result.current.status).toBe('signed-out');
+            await waitFor(() => {
+                expect(result.current.user).toBeNull();
+                expect(result.current.status).toBe('signed-out');
+            });
         });
 
         it('should set loading status during sign in', async () => {
