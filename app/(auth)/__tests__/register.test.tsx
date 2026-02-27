@@ -407,7 +407,7 @@ describe('RegisterScreen', () => {
             );
 
             expect(Alert.alert).toHaveBeenCalledWith('Success', 'Account created.');
-            expect(mockReplace).toHaveBeenCalledWith('/(tabs)');
+            expect(mockReplace).toHaveBeenCalledWith('/(auth)/login');
         });
 
         it('should trim email before sending to API', async () => {
