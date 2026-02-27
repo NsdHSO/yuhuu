@@ -62,6 +62,18 @@ jest.mock('expo-haptics', () => ({
     }
 }));
 
+// Mock expo-local-authentication
+jest.mock('expo-local-authentication', () => ({
+    hasHardwareAsync: jest.fn(),
+    isEnrolledAsync: jest.fn(),
+    supportedAuthenticationTypesAsync: jest.fn(),
+    authenticateAsync: jest.fn(),
+    AuthenticationType: {
+        FINGERPRINT: 1,
+        FACIAL_RECOGNITION: 2,
+    },
+}));
+
 // Mock react-native-reanimated
 jest.mock('react-native-reanimated', () => {
     const Reanimated = require('react-native-reanimated/mock');
@@ -89,3 +101,17 @@ jest.mock('@react-navigation/elements', () => {
 });
 
 // Mock Linking module will be done per-test as needed
+
+// Mock lib/http/url for tokenManager tests
+jest.mock('@/lib/http/url', () => ({
+    AUTH_BASE: 'http://localhost:4100/v1',
+    APP_BASE: 'http://localhost:2003/v1',
+    normalizeBase: jest.fn((url) => url)
+}));
+
+// Mock lib/http/envelope for tokenManager tests
+jest.mock('@/lib/http/envelope', () => ({
+    applyEnvelopeUnwrapper: jest.fn(),
+    isEnvelope: jest.fn(),
+    unwrap: jest.fn(async (p) => (await p).data)
+}));
