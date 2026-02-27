@@ -3,10 +3,13 @@ import { useState } from 'react';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 import { useDinnerStatsQuery, useUserAttendanceQuery } from '@/features/admin/hooks';
+import { useParticipantsByDinnerQuery } from '@/features/dinners/hooks';
 import { DinnerGraph } from '@/components/admin/dinner-graph';
 import { UserSearch } from '@/components/admin/user-search';
 import { DinnerAttendance } from '@/components/admin/dinner-attendance';
 import { Accordion } from '@/components/admin/accordion';
+import { DinnerIdSearch } from '@/components/admin/dinner-id-search';
+import { ParticipantsList } from '@/components/admin/participants-list';
 
 /**
  * Admin screen - Only accessible to users with Admin role
@@ -19,6 +22,7 @@ import { Accordion } from '@/components/admin/accordion';
 export default function AdminScreen() {
 	const scheme = useColorScheme();
 	const [searchedUsername, setSearchedUsername] = useState<string>('');
+	const [selectedDinnerId, setSelectedDinnerId] = useState<number | null>(null);
 
 	// Fetch dinner stats for the graph
 	const {
@@ -34,8 +38,19 @@ export default function AdminScreen() {
 		error: attendanceError,
 	} = useUserAttendanceQuery(searchedUsername);
 
+	// Fetch participants for selected dinner
+	const {
+		data: participants,
+		isLoading: isLoadingParticipants,
+		error: participantsError,
+	} = useParticipantsByDinnerQuery(selectedDinnerId);
+
 	const handleSearch = (username: string) => {
 		setSearchedUsername(username);
+	};
+
+	const handleDinnerIdChange = (dinnerId: number | null) => {
+		setSelectedDinnerId(dinnerId);
 	};
 
 	return (
@@ -87,6 +102,30 @@ export default function AdminScreen() {
 					)}
 				</Accordion>
 			</View>
+
+			{/* Dinner Participants Section - Expandable */}
+			<View testID="dinner-participants-section" style={styles.section}>
+				<Accordion title="View Dinner Participants" initialExpanded={false} testID="dinner-participants-accordion">
+					<DinnerIdSearch testID="dinner-id-search" onDinnerIdChange={handleDinnerIdChange} />
+
+					{/* Participants Results */}
+					{selectedDinnerId && (
+						<View style={styles.participantsContainer}>
+							{isLoadingParticipants ? (
+								<View testID="participants-loading" style={styles.loadingContainer}>
+									<ActivityIndicator size="large" color={Colors[scheme ?? 'light'].tint} />
+								</View>
+							) : participantsError ? (
+								<Text style={[styles.errorText, { color: '#EF4444' }]}>
+									Failed to load participants for this dinner
+								</Text>
+							) : participants ? (
+								<ParticipantsList testID="participants-list" participants={participants} />
+							) : null}
+						</View>
+					)}
+				</Accordion>
+			</View>
 		</ScrollView>
 	);
 }
@@ -113,6 +152,9 @@ const styles = StyleSheet.create({
 		fontStyle: 'italic',
 	},
 	attendanceContainer: {
+		marginTop: 16,
+	},
+	participantsContainer: {
 		marginTop: 16,
 	},
 });
