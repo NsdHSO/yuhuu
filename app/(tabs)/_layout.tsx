@@ -43,7 +43,7 @@ export default function TabLayout() {
                     options={{
                         title: 'Admin',
                         tabBarIcon: ({ color }) => <IconSymbol size={28} name="shield.fill" color={color}/>,
-                        tabBarButton: HapticTab,
+                        // Cannot use tabBarButton with href - removing HapticTab for role-based visibility
                         // Hide the tab when user is not Admin
                         href: isAdmin ? undefined : null,
                     }}
