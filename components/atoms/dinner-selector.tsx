@@ -44,11 +44,7 @@ export function DinnerSelector({
 		}
 	}, [dinners, selectedDinnerId, onSelectDinner]);
 
-	// If no dinners or only one dinner, no need to show dropdown
-	if (dinners.length <= 1) {
-		return null;
-	}
-
+	// IMPORTANT: useMemo must be called before early return to follow hooks rules
 	const pickerStyle = useMemo(
 		() => ({
 			backgroundColor: scheme === 'dark' ? '#1F2937' : '#fff',
@@ -56,6 +52,11 @@ export function DinnerSelector({
 		}),
 		[scheme]
 	);
+
+	// If no dinners or only one dinner, no need to show dropdown
+	if (dinners.length <= 1) {
+		return null;
+	}
 
 	return (
 		<Picker
