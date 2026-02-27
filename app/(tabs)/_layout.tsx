@@ -36,6 +36,15 @@ export default function TabLayout() {
                 />
 
                 <Tabs.Screen
+                    name="supper"
+                    options={{
+                        title: 'Supper',
+                        tabBarIcon: ({ color }) => <IconSymbol size={28} name="fork.knife" color={color}/>,
+                        tabBarButton: HapticTab,
+                    }}
+                />
+
+                <Tabs.Screen
                     name="profile"
                     options={{
                         title: 'Profile',
