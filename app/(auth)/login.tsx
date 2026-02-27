@@ -96,6 +96,8 @@ export default function LoginScreen() {
                                 autoCapitalize="none"
                                 keyboardType="email-address"
                                 textContentType="username"
+                                autoComplete="username"
+                                importantForAutofill="yes"
                                 autoCorrect={false}
                                 placeholderTextColor={inputStyles.placeholderColor}
                                 selectionColor={inputStyles.selectionColor}
@@ -113,6 +115,8 @@ export default function LoginScreen() {
                                 placeholder="Password"
                                 secureTextEntry
                                 textContentType="password"
+                                autoComplete="password"
+                                importantForAutofill="yes"
                                 placeholderTextColor={inputStyles.placeholderColor}
                                 selectionColor={inputStyles.selectionColor}
                                 style={inputStyles.container as any}
