@@ -25,6 +25,7 @@ import { toDinner, toParticipant, toParticipantDtoInput } from './mapper';
  */
 export interface DinnersQueryRepository {
 	getByDate(dinnerDate: string): Promise<Dinner[]>;
+	getParticipantsByDinner(dinnerId: number): Promise<Participant[]>;
 }
 
 /**
@@ -59,6 +60,20 @@ export class HttpDinnersRepository implements DinnersRepository {
 			appApi.get(`/dinners?dinner_date=${dinnerDate}`)
 		);
 		return response.data.map(toDinner);
+	}
+
+	/**
+	 * Fetches all participants for a specific dinner
+	 * Single Responsibility: Only handles API communication and data transformation
+	 *
+	 * @param dinnerId - ID of the dinner
+	 * @returns Array of Participant domain models
+	 */
+	async getParticipantsByDinner(dinnerId: number): Promise<Participant[]> {
+		const response = await unwrap<ParticipantDto[]>(
+			appApi.get(`/dinners/${dinnerId}/participants`)
+		);
+		return response.map(toParticipant);
 	}
 
 	/**
