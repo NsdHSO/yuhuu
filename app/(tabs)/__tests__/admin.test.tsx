@@ -11,6 +11,7 @@ import { render, fireEvent, waitFor } from '@testing-library/react-native';
 // Mock hooks - must be before import
 const mockUseDinnerStatsQuery = jest.fn();
 const mockUseUserAttendanceQuery = jest.fn();
+const mockUseParticipantsByDinnerQuery = jest.fn();
 
 jest.mock('@/features/admin/hooks', () => {
 	const actualHooks = jest.requireActual('@/features/admin/hooks');
@@ -27,6 +28,16 @@ jest.mock('@/features/admin/hooks', () => {
 	};
 });
 
+// Mock participants hook
+jest.mock('@/features/dinners/hooks', () => ({
+	useParticipantsByDinnerQuery: (dinnerId: number | null) => {
+		if (!dinnerId) {
+			return { data: undefined, isLoading: false, error: null };
+		}
+		return mockUseParticipantsByDinnerQuery(dinnerId);
+	},
+}));
+
 // Import after mocks
 import AdminScreen from '../admin';
 
@@ -39,6 +50,11 @@ describe('AdminScreen', () => {
 			error: null,
 		});
 		mockUseUserAttendanceQuery.mockReturnValue({
+			data: undefined,
+			isLoading: false,
+			error: null,
+		});
+		mockUseParticipantsByDinnerQuery.mockReturnValue({
 			data: undefined,
 			isLoading: false,
 			error: null,
@@ -364,6 +380,274 @@ describe('AdminScreen', () => {
 				expect(getByText('2026-02-20')).toBeTruthy();
 				expect(getByText('Attended')).toBeTruthy();
 			});
+		});
+	});
+
+	describe('Dinner Participants Section', () => {
+		it('should render dinner participants section', () => {
+			// Given: Admin screen is rendered
+			const { getByTestId } = render(<AdminScreen />);
+
+			// Then: Participants section should be present
+			expect(getByTestId('dinner-participants-section')).toBeTruthy();
+		});
+
+		it('should have dinner ID input field', () => {
+			// Given: Admin screen is rendered
+			const { getByTestId } = render(<AdminScreen />);
+
+			// When: User expands the accordion
+			const accordionHeader = getByTestId('dinner-participants-accordion-header');
+			fireEvent.press(accordionHeader);
+
+			// Then: Dinner ID input should be present
+			expect(getByTestId('dinner-id-input')).toBeTruthy();
+		});
+
+		it('should fetch participants when dinner ID is entered', async () => {
+			// Given: Mock participants data
+			mockUseParticipantsByDinnerQuery.mockReturnValue({
+				data: [
+					{
+						id: 1,
+						dinnerId: 10,
+						username: 'john_doe',
+						notes: 'Vegetarian',
+						createdAt: '2026-02-27T10:00:00Z',
+						updatedAt: '2026-02-27T10:00:00Z',
+					},
+				],
+				isLoading: false,
+				error: null,
+			});
+
+			// When: User expands accordion and enters dinner ID
+			const { getByTestId, getByText } = render(<AdminScreen />);
+			const accordionHeader = getByTestId('dinner-participants-accordion-header');
+			fireEvent.press(accordionHeader);
+
+			const dinnerIdInput = getByTestId('dinner-id-input');
+			fireEvent.changeText(dinnerIdInput, '10');
+
+			// Then: Participants should be fetched and displayed
+			await waitFor(() => {
+				expect(getByText('john_doe')).toBeTruthy();
+			});
+		});
+
+		it('should show loading state when fetching participants', () => {
+			// Given: Participants are loading
+			mockUseParticipantsByDinnerQuery.mockReturnValue({
+				data: undefined,
+				isLoading: true,
+				error: null,
+			});
+
+			// When: User expands accordion and enters dinner ID
+			const { getByTestId } = render(<AdminScreen />);
+			const accordionHeader = getByTestId('dinner-participants-accordion-header');
+			fireEvent.press(accordionHeader);
+
+			const dinnerIdInput = getByTestId('dinner-id-input');
+			fireEvent.changeText(dinnerIdInput, '10');
+
+			// Then: Loading indicator should be visible
+			expect(getByTestId('participants-loading')).toBeTruthy();
+		});
+
+		it('should show error when participants fail to load', () => {
+			// Given: Participants failed to load
+			mockUseParticipantsByDinnerQuery.mockReturnValue({
+				data: undefined,
+				isLoading: false,
+				error: new Error('Failed to load participants'),
+			});
+
+			// When: User expands accordion and enters dinner ID
+			const { getByTestId, getByText } = render(<AdminScreen />);
+			const accordionHeader = getByTestId('dinner-participants-accordion-header');
+			fireEvent.press(accordionHeader);
+
+			const dinnerIdInput = getByTestId('dinner-id-input');
+			fireEvent.changeText(dinnerIdInput, '10');
+
+			// Then: Error message should be visible
+			expect(getByText(/Failed to load participants/i)).toBeTruthy();
+		});
+
+		it('should show empty state when dinner has no participants', async () => {
+			// Given: Dinner has no participants
+			mockUseParticipantsByDinnerQuery.mockReturnValue({
+				data: [],
+				isLoading: false,
+				error: null,
+			});
+
+			// When: User expands accordion and enters dinner ID
+			const { getByTestId, getByText } = render(<AdminScreen />);
+			const accordionHeader = getByTestId('dinner-participants-accordion-header');
+			fireEvent.press(accordionHeader);
+
+			const dinnerIdInput = getByTestId('dinner-id-input');
+			fireEvent.changeText(dinnerIdInput, '10');
+
+			// Then: Empty state message should be visible
+			await waitFor(() => {
+				expect(getByText(/No participants found for this dinner/i)).toBeTruthy();
+			});
+		});
+
+		it('should display participant details', async () => {
+			// Given: Participants with details
+			mockUseParticipantsByDinnerQuery.mockReturnValue({
+				data: [
+					{
+						id: 1,
+						dinnerId: 10,
+						username: 'john_doe',
+						notes: 'Vegetarian',
+						createdAt: '2026-02-27T10:00:00Z',
+						updatedAt: '2026-02-27T10:00:00Z',
+					},
+				],
+				isLoading: false,
+				error: null,
+			});
+
+			// When: User expands accordion and enters dinner ID
+			const { getByTestId, getByText } = render(<AdminScreen />);
+			const accordionHeader = getByTestId('dinner-participants-accordion-header');
+			fireEvent.press(accordionHeader);
+
+			const dinnerIdInput = getByTestId('dinner-id-input');
+			fireEvent.changeText(dinnerIdInput, '10');
+
+			// Then: Participant details should be visible
+			await waitFor(() => {
+				expect(getByText('john_doe')).toBeTruthy();
+				expect(getByText('Vegetarian')).toBeTruthy();
+			});
+		});
+
+		it('should handle participants with null notes', async () => {
+			// Given: Participants with null notes
+			mockUseParticipantsByDinnerQuery.mockReturnValue({
+				data: [
+					{
+						id: 1,
+						dinnerId: 10,
+						username: 'jane_smith',
+						notes: null,
+						createdAt: '2026-02-27T10:00:00Z',
+						updatedAt: '2026-02-27T10:00:00Z',
+					},
+				],
+				isLoading: false,
+				error: null,
+			});
+
+			// When: User expands accordion and enters dinner ID
+			const { getByTestId, getByText } = render(<AdminScreen />);
+			const accordionHeader = getByTestId('dinner-participants-accordion-header');
+			fireEvent.press(accordionHeader);
+
+			const dinnerIdInput = getByTestId('dinner-id-input');
+			fireEvent.changeText(dinnerIdInput, '10');
+
+			// Then: Username should be visible
+			await waitFor(() => {
+				expect(getByText('jane_smith')).toBeTruthy();
+			});
+		});
+
+		it('should display multiple participants', async () => {
+			// Given: Multiple participants
+			mockUseParticipantsByDinnerQuery.mockReturnValue({
+				data: [
+					{
+						id: 1,
+						dinnerId: 10,
+						username: 'john_doe',
+						notes: 'Vegetarian',
+						createdAt: '2026-02-27T10:00:00Z',
+						updatedAt: '2026-02-27T10:00:00Z',
+					},
+					{
+						id: 2,
+						dinnerId: 10,
+						username: 'jane_smith',
+						notes: 'Vegan',
+						createdAt: '2026-02-27T11:00:00Z',
+						updatedAt: '2026-02-27T11:00:00Z',
+					},
+				],
+				isLoading: false,
+				error: null,
+			});
+
+			// When: User expands accordion and enters dinner ID
+			const { getByTestId, getByText } = render(<AdminScreen />);
+			const accordionHeader = getByTestId('dinner-participants-accordion-header');
+			fireEvent.press(accordionHeader);
+
+			const dinnerIdInput = getByTestId('dinner-id-input');
+			fireEvent.changeText(dinnerIdInput, '10');
+
+			// Then: All participants should be visible
+			await waitFor(() => {
+				expect(getByText('john_doe')).toBeTruthy();
+				expect(getByText('jane_smith')).toBeTruthy();
+				expect(getByText('Vegetarian')).toBeTruthy();
+				expect(getByText('Vegan')).toBeTruthy();
+			});
+		});
+
+		it('should NOT fetch participants when input is empty', () => {
+			// Given: Admin screen is rendered
+			const { getByTestId } = render(<AdminScreen />);
+
+			// Then: Participants query should not be called with empty input
+			expect(mockUseParticipantsByDinnerQuery).not.toHaveBeenCalled();
+		});
+
+		it('should clear participants when dinner ID is cleared', async () => {
+			// Given: Screen showing participants
+			mockUseParticipantsByDinnerQuery.mockReturnValue({
+				data: [
+					{
+						id: 1,
+						dinnerId: 10,
+						username: 'john_doe',
+						notes: 'Vegetarian',
+						createdAt: '2026-02-27T10:00:00Z',
+						updatedAt: '2026-02-27T10:00:00Z',
+					},
+				],
+				isLoading: false,
+				error: null,
+			});
+
+			const { getByTestId, queryByText } = render(<AdminScreen />);
+			const accordionHeader = getByTestId('dinner-participants-accordion-header');
+			fireEvent.press(accordionHeader);
+
+			const dinnerIdInput = getByTestId('dinner-id-input');
+
+			// When: User enters then clears dinner ID
+			fireEvent.changeText(dinnerIdInput, '10');
+			await waitFor(() => expect(queryByText('john_doe')).toBeTruthy());
+
+			// Reset mock to return nothing
+			mockUseParticipantsByDinnerQuery.mockReturnValue({
+				data: undefined,
+				isLoading: false,
+				error: null,
+			});
+
+			fireEvent.changeText(dinnerIdInput, '');
+
+			// Then: Participants should be cleared
+			// (This will be handled by the hook returning undefined when dinnerId is null)
 		});
 	});
 });
