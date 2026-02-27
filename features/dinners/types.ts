@@ -41,6 +41,15 @@ export type PaginatedResponse<T> = {
 	};
 };
 
+/**
+ * Participants by dinner response
+ * This endpoint returns dinner details + participants array
+ */
+export type ParticipantsByDinnerResponse = {
+	dinner: DinnerDto;
+	participants: ParticipantDto[];
+};
+
 // Domain Types (App layer)
 export type Dinner = {
 	id: number;
