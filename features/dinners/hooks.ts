@@ -24,6 +24,26 @@ export function useDinnersByDateQuery(
 }
 
 /**
+ * React Query hook for fetching participants by dinner ID
+ * Dependency Inversion Principle: Depends on DinnersRepository interface, not concrete implementation
+ * Single Responsibility Principle: Only handles React Query integration for participant fetching
+ *
+ * @param dinnerId - ID of the dinner, or null/undefined to disable query
+ * @param repo - Repository instance (injectable for testing)
+ * @returns React Query result with array of participant data
+ */
+export function useParticipantsByDinnerQuery(
+	dinnerId: number | null | undefined,
+	repo: DinnersRepository = defaultDinnersRepository
+) {
+	return useQuery<Participant[]>({
+		queryKey: ['participants', 'by-dinner', dinnerId],
+		queryFn: () => repo.getParticipantsByDinner(dinnerId!),
+		enabled: Boolean(dinnerId),
+	});
+}
+
+/**
  * React Query mutation hook for adding a participant to a dinner
  * Dependency Inversion Principle: Depends on DinnersRepository interface, not concrete implementation
  * Single Responsibility Principle: Only handles React Query integration for participant creation
