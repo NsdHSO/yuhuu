@@ -25,3 +25,6 @@ const client = new QueryClient({
 export function QueryProvider({ children }: { children: React.ReactNode }) {
     return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
 }
+
+// Export the singleton client for use in other modules (e.g., clearing cache on logout)
+export { client as queryClient };

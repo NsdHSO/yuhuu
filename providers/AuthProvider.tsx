@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from '
 import { authApi } from '@/lib/api';
 import { clearTokens, getValidAccessToken, setTokensFromLogin } from '@/lib/tokenManager';
 import { redirectToLogin } from '@/lib/nav';
+import { queryClient } from '@/providers/QueryProvider';
 
 export type User = { id: string; email: string; name?: string };
 
@@ -79,6 +80,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         await clearTokens();
+
+        // CRITICAL: Clear React Query cache to prevent cached data from previous user
+        // This ensures roles, permissions, and other user-specific data are cleared
+        queryClient.clear();
+
         setUser(null);
         setStatus('signed-out');
 
