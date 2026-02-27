@@ -14,6 +14,8 @@ export default function TabLayout() {
     const { data: myRoles } = useMyRolesQuery({ enabled: ready });
     // Hide Home tab when user has only the Member role
     const isMemberOnly = myRoles ? myRoles.every((r) => r.role_name === 'Member') : true; // default hide to avoid flicker
+    // Show Admin tab only for Admin role
+    const isAdmin = myRoles ? myRoles.some((r) => r.role_name === 'Admin') : false;
 
     return (
         <>
@@ -32,6 +34,18 @@ export default function TabLayout() {
                         tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color}/>,
                         // Hide the tab completely when Member-only
                         href: isMemberOnly ? null : undefined,
+                    }}
+                />
+
+                {/* Admin tab - only visible for Admin role */}
+                <Tabs.Screen
+                    name="admin"
+                    options={{
+                        title: 'Admin',
+                        tabBarIcon: ({ color }) => <IconSymbol size={28} name="shield.fill" color={color}/>,
+                        tabBarButton: HapticTab,
+                        // Hide the tab when user is not Admin
+                        href: isAdmin ? undefined : null,
                     }}
                 />
 
