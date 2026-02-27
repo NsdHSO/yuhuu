@@ -6,6 +6,7 @@ import { useDinnerStatsQuery, useUserAttendanceQuery } from '@/features/admin/ho
 import { DinnerGraph } from '@/components/admin/dinner-graph';
 import { UserSearch } from '@/components/admin/user-search';
 import { DinnerAttendance } from '@/components/admin/dinner-attendance';
+import { Accordion } from '@/components/admin/accordion';
 
 /**
  * Admin screen - Only accessible to users with Admin role
@@ -42,53 +43,49 @@ export default function AdminScreen() {
 			testID="admin-container"
 			style={[styles.container, { backgroundColor: Colors[scheme ?? 'light'].background }]}
 		>
-			{/* Dinner Graph Section */}
+			{/* Dinner Graph Section - Expandable */}
 			<View testID="dinner-graph-section" style={styles.section}>
-				<Text style={[styles.sectionTitle, { color: Colors[scheme ?? 'light'].text }]}>
-					Dinner Participation Graph
-				</Text>
-
-				{isLoadingStats ? (
-					<View testID="dinner-graph-loading" style={styles.loadingContainer}>
-						<ActivityIndicator size="large" color={Colors[scheme ?? 'light'].tint} />
-					</View>
-				) : statsError ? (
-					<Text style={[styles.errorText, { color: '#EF4444' }]}>
-						Failed to load dinner statistics
-					</Text>
-				) : (
-					<DinnerGraph testID="dinner-graph" data={dinnerStats} />
-				)}
+				<Accordion title="Dinner Participation Graph" initialExpanded={true} testID="dinner-graph-accordion">
+					{isLoadingStats ? (
+						<View testID="dinner-graph-loading" style={styles.loadingContainer}>
+							<ActivityIndicator size="large" color={Colors[scheme ?? 'light'].tint} />
+						</View>
+					) : statsError ? (
+						<Text style={[styles.errorText, { color: '#EF4444' }]}>
+							Failed to load dinner statistics
+						</Text>
+					) : (
+						<DinnerGraph testID="dinner-graph" data={dinnerStats} />
+					)}
+				</Accordion>
 			</View>
 
-			{/* User Search Section */}
+			{/* User Search Section - Expandable */}
 			<View testID="user-search-section" style={styles.section}>
-				<Text style={[styles.sectionTitle, { color: Colors[scheme ?? 'light'].text }]}>
-					Search User Attendance
-				</Text>
+				<Accordion title="Search User Attendance" initialExpanded={true} testID="user-search-accordion">
+					<UserSearch testID="user-search" onSearch={handleSearch} />
 
-				<UserSearch testID="user-search" onSearch={handleSearch} />
-
-				{/* Attendance Results */}
-				{searchedUsername && (
-					<View style={styles.attendanceContainer}>
-						{isLoadingAttendance ? (
-							<View testID="attendance-loading" style={styles.loadingContainer}>
-								<ActivityIndicator size="large" color={Colors[scheme ?? 'light'].tint} />
-							</View>
-						) : attendanceError ? (
-							<Text style={[styles.errorText, { color: '#EF4444' }]}>
-								User not found or failed to load attendance
-							</Text>
-						) : userAttendance && userAttendance.length === 0 ? (
-							<Text style={[styles.emptyText, { color: Colors[scheme ?? 'light'].icon }]}>
-								No attendance records found for this user
-							</Text>
-						) : (
-							<DinnerAttendance testID="dinner-attendance" username={searchedUsername} data={userAttendance} />
-						)}
-					</View>
-				)}
+					{/* Attendance Results */}
+					{searchedUsername && (
+						<View style={styles.attendanceContainer}>
+							{isLoadingAttendance ? (
+								<View testID="attendance-loading" style={styles.loadingContainer}>
+									<ActivityIndicator size="large" color={Colors[scheme ?? 'light'].tint} />
+								</View>
+							) : attendanceError ? (
+								<Text style={[styles.errorText, { color: '#EF4444' }]}>
+									User not found or failed to load attendance
+								</Text>
+							) : userAttendance && userAttendance.length === 0 ? (
+								<Text style={[styles.emptyText, { color: Colors[scheme ?? 'light'].icon }]}>
+									No attendance records found for this user
+								</Text>
+							) : (
+								<DinnerAttendance testID="dinner-attendance" username={searchedUsername} data={userAttendance} />
+							)}
+						</View>
+					)}
+				</Accordion>
 			</View>
 		</ScrollView>
 	);
@@ -100,11 +97,6 @@ const styles = StyleSheet.create({
 		padding: 16,
 	},
 	section: {
-		marginBottom: 32,
-	},
-	sectionTitle: {
-		fontSize: 20,
-		fontWeight: 'bold',
 		marginBottom: 16,
 	},
 	loadingContainer: {
