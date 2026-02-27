@@ -1,42 +1,126 @@
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, ActivityIndicator } from 'react-native';
+import { useState } from 'react';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
+import { useDinnerStatsQuery, useUserAttendanceQuery } from '@/features/admin/hooks';
+import { DinnerGraph } from '@/components/admin/dinner-graph';
+import { UserSearch } from '@/components/admin/user-search';
+import { DinnerAttendance } from '@/components/admin/dinner-attendance';
 
 /**
  * Admin screen - Only accessible to users with Admin role
  *
  * SOLID Principles:
- * - Single Responsibility: This screen displays admin-specific content
- * - Open/Closed: Can be extended with admin features without modifying core logic
+ * - Single Responsibility: This screen orchestrates admin features
+ * - Open/Closed: Can be extended with new admin sections without modifying existing logic
+ * - Dependency Inversion: Depends on hooks abstraction, not implementation
  */
 export default function AdminScreen() {
 	const scheme = useColorScheme();
+	const [searchedUsername, setSearchedUsername] = useState<string>('');
+
+	// Fetch dinner stats for the graph
+	const {
+		data: dinnerStats,
+		isLoading: isLoadingStats,
+		error: statsError,
+	} = useDinnerStatsQuery();
+
+	// Fetch user attendance based on search
+	const {
+		data: userAttendance,
+		isLoading: isLoadingAttendance,
+		error: attendanceError,
+	} = useUserAttendanceQuery(searchedUsername);
+
+	const handleSearch = (username: string) => {
+		setSearchedUsername(username);
+	};
 
 	return (
-		<View style={[styles.container, { backgroundColor: Colors[scheme ?? 'light'].background }]}>
-			<Text style={[styles.title, { color: Colors[scheme ?? 'light'].text }]}>
-				Admin Panel
-			</Text>
-			<Text style={[styles.subtitle, { color: Colors[scheme ?? 'light'].icon }]}>
-				Administrative features coming soon...
-			</Text>
-		</View>
+		<ScrollView
+			testID="admin-container"
+			style={[styles.container, { backgroundColor: Colors[scheme ?? 'light'].background }]}
+		>
+			{/* Dinner Graph Section */}
+			<View testID="dinner-graph-section" style={styles.section}>
+				<Text style={[styles.sectionTitle, { color: Colors[scheme ?? 'light'].text }]}>
+					Dinner Participation Graph
+				</Text>
+
+				{isLoadingStats ? (
+					<View testID="dinner-graph-loading" style={styles.loadingContainer}>
+						<ActivityIndicator size="large" color={Colors[scheme ?? 'light'].tint} />
+					</View>
+				) : statsError ? (
+					<Text style={[styles.errorText, { color: '#EF4444' }]}>
+						Failed to load dinner statistics
+					</Text>
+				) : (
+					<DinnerGraph testID="dinner-graph" data={dinnerStats} />
+				)}
+			</View>
+
+			{/* User Search Section */}
+			<View testID="user-search-section" style={styles.section}>
+				<Text style={[styles.sectionTitle, { color: Colors[scheme ?? 'light'].text }]}>
+					Search User Attendance
+				</Text>
+
+				<UserSearch testID="user-search" onSearch={handleSearch} />
+
+				{/* Attendance Results */}
+				{searchedUsername && (
+					<View style={styles.attendanceContainer}>
+						{isLoadingAttendance ? (
+							<View testID="attendance-loading" style={styles.loadingContainer}>
+								<ActivityIndicator size="large" color={Colors[scheme ?? 'light'].tint} />
+							</View>
+						) : attendanceError ? (
+							<Text style={[styles.errorText, { color: '#EF4444' }]}>
+								User not found or failed to load attendance
+							</Text>
+						) : userAttendance && userAttendance.length === 0 ? (
+							<Text style={[styles.emptyText, { color: Colors[scheme ?? 'light'].icon }]}>
+								No attendance records found for this user
+							</Text>
+						) : (
+							<DinnerAttendance testID="dinner-attendance" username={searchedUsername} data={userAttendance} />
+						)}
+					</View>
+				)}
+			</View>
+		</ScrollView>
 	);
 }
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'center',
-		padding: 20,
+		padding: 16,
 	},
-	title: {
-		fontSize: 24,
+	section: {
+		marginBottom: 32,
+	},
+	sectionTitle: {
+		fontSize: 20,
 		fontWeight: 'bold',
-		marginBottom: 8,
+		marginBottom: 16,
 	},
-	subtitle: {
-		fontSize: 16,
+	loadingContainer: {
+		padding: 20,
+		alignItems: 'center',
+	},
+	errorText: {
+		fontSize: 14,
+		marginVertical: 8,
+	},
+	emptyText: {
+		fontSize: 14,
+		marginVertical: 8,
+		fontStyle: 'italic',
+	},
+	attendanceContainer: {
+		marginTop: 16,
 	},
 });
