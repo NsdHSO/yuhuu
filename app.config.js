@@ -10,7 +10,10 @@ module.exports = {
         newArchEnabled: true,
         ios: {
             supportsTablet: true,
-            bundleIdentifier: 'com.anonymous.yuhuu'
+            bundleIdentifier: 'com.anonymous.yuhuu',
+            infoPlist: {
+                NSFaceIDUsageDescription: 'Allow Yuhuu to use Face ID for quick and secure sign-in.'
+            }
         },
         android: {
             adaptiveIcon: {
@@ -35,6 +38,12 @@ module.exports = {
         plugins: [
             'expo-router',
             'expo-secure-store',
+            [
+                'expo-local-authentication',
+                {
+                    faceIDPermission: 'Allow Yuhuu to use Face ID for quick and secure sign-in.'
+                }
+            ],
             [
                 'expo-splash-screen',
                 {
