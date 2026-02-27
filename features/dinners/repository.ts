@@ -7,6 +7,7 @@ import type {
 	ParticipantDto,
 	ParticipantInput,
 	PaginatedResponse,
+	ParticipantsByDinnerResponse,
 } from './types';
 import { toDinner, toParticipant, toParticipantDtoInput } from './mapper';
 
@@ -70,10 +71,10 @@ export class HttpDinnersRepository implements DinnersRepository {
 	 * @returns Array of Participant domain models
 	 */
 	async getParticipantsByDinner(dinnerId: number): Promise<Participant[]> {
-		const response = await unwrap<PaginatedResponse<ParticipantDto>>(
+		const response = await unwrap<ParticipantsByDinnerResponse>(
 			appApi.get(`/dinners/${dinnerId}/participants`)
 		);
-		return response.data.map(toParticipant);
+		return response.participants.map(toParticipant);
 	}
 
 	/**
