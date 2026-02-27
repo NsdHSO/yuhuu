@@ -86,6 +86,8 @@ export default function RegisterScreen() {
                             autoCapitalize="none"
                             keyboardType="email-address"
                             textContentType="username"
+                            autoComplete="username-new"
+                            importantForAutofill="yes"
                             autoCorrect={false}
                             placeholderTextColor={inputStyles.placeholderColor}
                             selectionColor={inputStyles.selectionColor}
@@ -100,6 +102,8 @@ export default function RegisterScreen() {
                             placeholder="Password"
                             secureTextEntry
                             textContentType="newPassword"
+                            autoComplete="password-new"
+                            importantForAutofill="yes"
                             placeholderTextColor={inputStyles.placeholderColor}
                             selectionColor={inputStyles.selectionColor}
                             style={inputStyles.container as any}
@@ -113,6 +117,8 @@ export default function RegisterScreen() {
                             placeholder="Confirm password"
                             secureTextEntry
                             textContentType="newPassword"
+                            autoComplete="password-new"
+                            importantForAutofill="yes"
                             placeholderTextColor={inputStyles.placeholderColor}
                             selectionColor={inputStyles.selectionColor}
                             style={inputStyles.container as any}
