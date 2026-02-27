@@ -10,8 +10,13 @@ jest.mock('@/hooks/use-color-scheme', () => ({
 }));
 
 // Mock Picker
-jest.mock('@react-native-picker/picker', () => ({
-	Picker: ({ children, onValueChange, selectedValue }: any) => {
+jest.mock('@react-native-picker/picker', () => {
+	const MockPickerItem = ({ label, value }: any) => {
+		const { Text } = jest.requireActual('react-native');
+		return <Text testID={`picker-item-${value}`}>{label}</Text>;
+	};
+
+	const MockPicker = ({ children, onValueChange, selectedValue }: any) => {
 		const { View, Text, Pressable } = jest.requireActual('react-native');
 		return (
 			<View testID="picker">
@@ -31,12 +36,15 @@ jest.mock('@react-native-picker/picker', () => ({
 				{children}
 			</View>
 		);
-	},
-	Item: ({ label, value }: any) => {
-		const { Text } = jest.requireActual('react-native');
-		return <Text testID={`picker-item-${value}`}>{label}</Text>;
-	},
-}));
+	};
+
+	// Attach Item as a property of Picker
+	MockPicker.Item = MockPickerItem;
+
+	return {
+		Picker: MockPicker,
+	};
+});
 
 describe('DinnerSelector', () => {
 	const mockOnSelectDinner = jest.fn();

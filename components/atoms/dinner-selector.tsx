@@ -44,8 +44,8 @@ export function DinnerSelector({
 		}
 	}, [dinners, selectedDinnerId, onSelectDinner]);
 
-	// If only one dinner, no need to show dropdown
-	if (dinners.length === 1) {
+	// If no dinners or only one dinner, no need to show dropdown
+	if (dinners.length <= 1) {
 		return null;
 	}
 
