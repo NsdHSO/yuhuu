@@ -3,6 +3,7 @@ module.exports = {
     setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
     testEnvironment: 'node',
     transformIgnorePatterns: [],
+    maxWorkers: 1, // Run tests serially to prevent PC lag
     testMatch: [
         '<rootDir>/components/**/__tests__/**/*.{js,jsx,ts,tsx}',
         '<rootDir>/lib/**/__tests__/**/*.{js,jsx,ts,tsx}',
