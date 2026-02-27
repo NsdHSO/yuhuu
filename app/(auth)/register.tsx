@@ -54,7 +54,7 @@ export default function RegisterScreen() {
 
             if (at) await setTokensFromLogin(at, rt);
             Alert.alert('Success', 'Account created.');
-            router.replace('/(tabs)');
+            router.replace('/(auth)/login');
         } catch (e: any) {
             const msg = e?.response?.data?.message || 'Registration failed. Please try again.';
             Alert.alert('Error', typeof msg === 'string' ? msg : 'Registration failed.');
