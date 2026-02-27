@@ -70,10 +70,10 @@ export class HttpDinnersRepository implements DinnersRepository {
 	 * @returns Array of Participant domain models
 	 */
 	async getParticipantsByDinner(dinnerId: number): Promise<Participant[]> {
-		const response = await unwrap<ParticipantDto[]>(
+		const response = await unwrap<PaginatedResponse<ParticipantDto>>(
 			appApi.get(`/dinners/${dinnerId}/participants`)
 		);
-		return response.map(toParticipant);
+		return response.data.map(toParticipant);
 	}
 
 	/**
