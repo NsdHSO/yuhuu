@@ -1,26 +1,16 @@
 name: Build iOS FAT
 
 on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+  workflow_call:
 
 concurrency:
   group: ios-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  test:
-    name: Test Application
-    uses: ./.github/workflows/test.yml
-
   build:
     name: Build IPA
-    needs: test
-    runs-on: macos-latest
+    runs-on: macos-14
     timeout-minutes: 45
     environment: FAT
     steps:
@@ -33,12 +23,12 @@ jobs:
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: latest-stable
+          xcode-version: '15.4'
 
       - name: Setup Expo
         uses: expo/expo-github-action@v8
         with:
-          expo-version: latest
+          expo-version: '54.0.33'
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Install CocoaPods
@@ -65,8 +55,18 @@ jobs:
           EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}
           EXPO_PUBLIC_AUTH_API_URL: ${{ secrets.EXPO_PUBLIC_AUTH_API_URL }}
 
+      - name: Cache iOS prebuild
+        id: prebuild-cache
+        uses: actions/cache@v4
+        with:
+          path: ios/
+          key: ${{ runner.os }}-ios-prebuild-${{ hashFiles('app.config.js', 'app.json', 'package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-ios-prebuild-
+
       - name: Prebuild iOS
-        run: npx expo prebuild --platform ios --clean
+        if: steps.prebuild-cache.outputs.cache-hit != 'true'
+        run: npx expo prebuild --platform ios
         env:
           EXPO_PUBLIC_GRAPHQL_URL: ${{ secrets.FAT_GRAPHQL_URL }}
           EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}
