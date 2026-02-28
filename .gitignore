@@ -47,3 +47,4 @@ app-example
 # IDE
 .idea/*
 /docs*
+.claude/*

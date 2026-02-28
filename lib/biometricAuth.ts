@@ -149,36 +149,58 @@ class NativeBiometricAuthenticator implements IBiometricAuthenticator {
     }
 
     private loadLocalAuth(): any | null {
-        if (Platform.OS === 'web') return null;
+        if (Platform.OS === 'web') {
+            console.log('[Biometric] Platform is web - LocalAuth not available');
+            return null;
+        }
         try {
-            return require('expo-local-authentication');
-        } catch {
+            const module = require('expo-local-authentication');
+            console.log('[Biometric] LocalAuth module loaded successfully');
+            return module;
+        } catch (error) {
+            console.error('[Biometric] CRITICAL: Failed to load expo-local-authentication native module');
+            console.error('[Biometric] Error:', error instanceof Error ? error.message : String(error));
+            console.error('[Biometric] This means the native module is not properly linked in the APK');
+            console.error('[Biometric] FIX: Run: npx expo prebuild --clean --platform android');
             return null;
         }
     }
 
     async isAvailable(): Promise<boolean> {
-        if (!this.localAuth) return false;
+        if (!this.localAuth) {
+            console.log('[Biometric] LocalAuth module not available');
+            return false;
+        }
         try {
             const hasHardware = await this.localAuth.hasHardwareAsync();
+            console.log('[Biometric] Hardware available:', hasHardware);
             if (!hasHardware) return false;
+
             const isEnrolled = await this.localAuth.isEnrolledAsync();
+            console.log('[Biometric] Biometrics enrolled:', isEnrolled);
             return !!isEnrolled; // Coerce to boolean
-        } catch {
+        } catch (error) {
+            console.error('[Biometric] Error checking availability:', error);
             return false;
         }
     }
 
     async authenticate(prompt: string): Promise<boolean> {
-        if (!this.localAuth) return false;
+        if (!this.localAuth) {
+            console.log('[Biometric] LocalAuth module not available for authentication');
+            return false;
+        }
         try {
+            console.log('[Biometric] Starting authentication with prompt:', prompt);
             const result = await this.localAuth.authenticateAsync({
                 promptMessage: prompt,
                 cancelLabel: 'Cancel',
                 disableDeviceFallback: false,
             });
+            console.log('[Biometric] Authentication result:', result);
             return result?.success === true;
-        } catch {
+        } catch (error) {
+            console.error('[Biometric] Authentication error:', error);
             return false;
         }
     }
