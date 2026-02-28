@@ -8,39 +8,20 @@ on:
     branches:
       - master
 
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
-    name: Run Tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js and pnpm
-        uses: ./.github/actions/setup-node
-
-      - name: Run linter
-        run: pnpm lint
-
-      - name: Run tests
-        run: pnpm test
-
-      - name: Generate coverage report
-        run: pnpm test:coverage
-        if: always()
-
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report-ios-${{ github.sha }}
-          path: coverage/
-          retention-days: 30
-        if: always()
+    name: Test Application
+    uses: ./.github/workflows/test.yml
 
   build:
     name: Build IPA
     needs: test
     runs-on: macos-latest
+    timeout-minutes: 45
     environment: FAT
     steps:
       - name: Checkout code
@@ -62,6 +43,14 @@ jobs:
 
       - name: Install CocoaPods
         run: sudo gem install cocoapods
+
+      - name: Cache CocoaPods
+        uses: actions/cache@v4
+        with:
+          path: ios/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
 
       - name: Validate environment variables
         run: |
