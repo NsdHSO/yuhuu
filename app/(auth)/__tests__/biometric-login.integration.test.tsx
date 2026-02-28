@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
-import { Alert, Text, TouchableOpacity, Platform } from 'react-native';
+import { Alert, Text, TouchableOpacity } from 'react-native';
 import LoginScreen from '../login';
 import { AuthProvider, useAuth } from '@/providers/AuthProvider';
 import { useRouter } from 'expo-router';
