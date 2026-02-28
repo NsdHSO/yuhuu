@@ -1,25 +1,15 @@
 name: Build Android FAT
 
 on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+  workflow_call:
 
 concurrency:
   group: android-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  test:
-    name: Test Application
-    uses: ./.github/workflows/test.yml
-
   build-android:
     name: Build Android APK
-    needs: test
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment: FAT
@@ -42,7 +32,7 @@ jobs:
       - name: Setup Expo
         uses: expo/expo-github-action@v8
         with:
-          expo-version: latest
+          expo-version: '54.0.33'
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Generate Android keystore
@@ -69,37 +59,44 @@ jobs:
           EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}
           EXPO_PUBLIC_AUTH_API_URL: ${{ secrets.EXPO_PUBLIC_AUTH_API_URL }}
 
+      - name: Cache Android prebuild
+        id: android-prebuild-cache
+        uses: actions/cache@v4
+        with:
+          path: android/
+          key: ${{ runner.os }}-android-prebuild-${{ hashFiles('app.config.js', 'package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-android-prebuild-
+
       - name: Prebuild Android
-        run: npx expo prebuild --platform android --clean
+        if: steps.android-prebuild-cache.outputs.cache-hit != 'true'
+        run: npx expo prebuild --platform android
         env:
           EXPO_PUBLIC_GRAPHQL_URL: ${{ secrets.FAT_GRAPHQL_URL }}
           EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}
           EXPO_PUBLIC_AUTH_API_URL: ${{ secrets.EXPO_PUBLIC_AUTH_API_URL }}
           EXPO_PUBLIC_ENV: fat
+          REACT_NATIVE_ABIS: arm64-v8a
 
       - name: Configure Android Signing
         run: |
           chmod +x .github/scripts/configure-android-signing.sh
           .github/scripts/configure-android-signing.sh
 
-      - name: Cache Gradle dependencies
-        uses: actions/cache@v4
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
         with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('android/**/*.gradle*', 'android/**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+          cache-read-only: ${{ github.ref != 'refs/heads/master' }}
 
       - name: Build Android Release APK
         working-directory: android
-        run: ./gradlew assembleRelease
+        run: ./gradlew assembleRelease --configuration-cache -PreactNativeArchitectures=${{ env.REACT_NATIVE_ABIS }}
         env:
           EXPO_PUBLIC_GRAPHQL_URL: ${{ secrets.FAT_GRAPHQL_URL }}
           EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}
           EXPO_PUBLIC_AUTH_API_URL: ${{ secrets.EXPO_PUBLIC_AUTH_API_URL }}
           EXPO_PUBLIC_ENV: fat
+          REACT_NATIVE_ABIS: arm64-v8a
           MYAPP_RELEASE_STORE_FILE: app/release.keystore
           MYAPP_RELEASE_KEY_ALIAS: yuhuu-key
           MYAPP_RELEASE_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD || 'yuhuu123' }}
