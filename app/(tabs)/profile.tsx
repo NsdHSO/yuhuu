@@ -6,6 +6,7 @@ import {
   Platform,
   Pressable,
   ScrollView,
+  Switch,
   TextInput,
   View
 } from 'react-native';
@@ -16,6 +17,15 @@ import { useMyProfileQuery, useSaveMyProfileMutation } from '@/features/profile/
 import { useBootstrapGate } from '@/features/bootstrap/api';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
+import {
+    isBiometricAvailable,
+    getBiometricPreference,
+    saveBiometricPreference,
+    saveBiometricEmail,
+    clearBiometricData,
+    authenticateWithBiometrics,
+} from '@/lib/biometricAuth';
+import { useAuth } from '@/providers/AuthProvider';
 
 export default function ProfileScreen() {
     // Ensure bootstrap runs; return value not needed here
@@ -30,6 +40,9 @@ export default function ProfileScreen() {
     const [firstName, setfirstName] = useState<string>('');
     const [lastName, setLastName] = useState<string>('');
     const [phone, setPhone] = useState<string>('');
+    const [biometricAvailable, setBiometricAvailable] = useState(false);
+    const [biometricEnabled, setBiometricEnabled] = useState(false);
+    const { user } = useAuth();
     const scheme = useColorScheme() ?? 'light';
 
     React.useEffect(() => {
@@ -39,6 +52,21 @@ export default function ProfileScreen() {
             setPhone(profile.phone ?? '');
         }
     }, [profile]);
+
+    React.useEffect(() => {
+        (async () => {
+            try {
+                const available = await isBiometricAvailable();
+                setBiometricAvailable(available);
+                if (available) {
+                    const enabled = await getBiometricPreference();
+                    setBiometricEnabled(enabled);
+                }
+            } catch {
+                setBiometricAvailable(false);
+            }
+        })();
+    }, []);
 
     const inputStyles = useMemo(() => ({
         container: {
@@ -72,6 +100,48 @@ export default function ProfileScreen() {
                 },
             }
         );
+    }
+
+    async function handleBiometricToggle(value: boolean) {
+        if (value) {
+            try {
+                const authenticated = await authenticateWithBiometrics('Verify your identity to enable biometric sign-in');
+                if (!authenticated) {
+                    Alert.alert('Authentication Failed', 'Could not verify your identity. Please try again.');
+                    return;
+                }
+                await saveBiometricPreference(true);
+                if (user?.email) {
+                    await saveBiometricEmail(user.email);
+                }
+                setBiometricEnabled(true);
+                Alert.alert('Success', 'Biometric sign-in enabled.');
+            } catch (error) {
+                Alert.alert('Error', 'Failed to enable biometric sign-in. Please try again.');
+                setBiometricEnabled(false);
+            }
+        } else {
+            Alert.alert(
+                'Disable biometric sign-in?',
+                'You will need to enter your email and password to sign in.',
+                [
+                    { text: 'Cancel', style: 'cancel' },
+                    {
+                        text: 'Disable',
+                        style: 'destructive',
+                        onPress: async () => {
+                            try {
+                                await saveBiometricPreference(false);
+                                await clearBiometricData();
+                                setBiometricEnabled(false);
+                            } catch (error) {
+                                Alert.alert('Error', 'Failed to disable biometric sign-in.');
+                            }
+                        },
+                    },
+                ]
+            );
+        }
     }
 
     if (isLoading) {
@@ -132,6 +202,54 @@ export default function ProfileScreen() {
                             selectionColor={inputStyles.selectionColor}
                             style={inputStyles.container as any}
                         />
+
+                        {biometricAvailable && (
+                            <View
+                                testID="biometric-section"
+                                style={{
+                                    borderTopWidth: 1,
+                                    borderTopColor: scheme === 'dark' ? '#2A2A2A' : '#E5E7EB',
+                                    paddingTop: 16,
+                                    marginTop: 4,
+                                }}
+                            >
+                                <ThemedText type="subtitle" style={{ fontSize: 18, marginBottom: 8 }}>Security</ThemedText>
+                                <View style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    paddingVertical: 8,
+                                }}>
+                                    <View style={{ flex: 1, marginRight: 12 }}>
+                                        <ThemedText testID="biometric-label">
+                                            {Platform.OS === 'ios' ? 'Face ID / Touch ID' : 'Biometric Login'}
+                                        </ThemedText>
+                                        <ThemedText
+                                            testID="biometric-description"
+                                            color="muted"
+                                            style={{ fontSize: 13, marginTop: 2 }}
+                                        >
+                                            {Platform.OS === 'ios'
+                                                ? 'Use Face ID or Touch ID to sign in quickly'
+                                                : 'Use biometrics to sign in quickly'}
+                                        </ThemedText>
+                                    </View>
+                                    <Switch
+                                        testID="biometric-toggle"
+                                        value={biometricEnabled}
+                                        onValueChange={handleBiometricToggle}
+                                        trackColor={{ false: '#767577', true: '#1e90ff' }}
+                                        thumbColor={biometricEnabled ? '#fff' : '#f4f3f4'}
+                                        accessibilityLabel={
+                                            Platform.OS === 'ios'
+                                                ? 'Enable Face ID or Touch ID sign-in'
+                                                : 'Enable biometric sign-in'
+                                        }
+                                        accessibilityHint="Toggle to enable or disable biometric authentication for signing in"
+                                    />
+                                </View>
+                            </View>
+                        )}
 
                         <Pressable
                             onPress={onSave}
