@@ -1,11 +1,13 @@
-import React, { useRef, useMemo, useState } from 'react';
+import React, { useRef, useMemo, useState, useEffect } from 'react';
 import { Alert, Dimensions, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useAuth } from '@/providers/AuthProvider';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
+import { isBiometricAvailable, getBiometricPreference } from '@/lib/biometricAuth';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -13,11 +15,27 @@ export default function LoginScreen() {
     const router = useRouter();
     const {
         signIn,
+        signInWithBiometrics,
         status
     } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [submitting, setSubmitting] = useState(false);
+    const [biometricAvailable, setBiometricAvailable] = useState(false);
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const [available, enabled] = await Promise.all([
+                    isBiometricAvailable(),
+                    getBiometricPreference(),
+                ]);
+                setBiometricAvailable(available && enabled);
+            } catch {
+                setBiometricAvailable(false);
+            }
+        })();
+    }, []);
     const scheme = useColorScheme() ?? 'light';
 
     const scrollViewRef = useRef<ScrollView>(null);
@@ -55,6 +73,19 @@ export default function LoginScreen() {
             );
         }
     };
+
+    async function handleBiometricLogin() {
+        setSubmitting(true);
+        try {
+            await signInWithBiometrics();
+            router.replace('/(tabs)');
+        } catch (e: any) {
+            const msg = e?.message || 'Biometric login failed. Please try again.';
+            Alert.alert('Error', msg);
+        } finally {
+            setSubmitting(false);
+        }
+    }
 
     async function onSubmit() {
         if (!email || !password) {
@@ -149,6 +180,61 @@ export default function LoginScreen() {
                                 {submitting ? 'Signing in…' : 'Sign in'}
                             </Text>
                         </TouchableOpacity>
+
+                        {biometricAvailable && (
+                            <>
+                                <View
+                                    testID="biometric-divider"
+                                    style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        marginTop: 16,
+                                    }}
+                                >
+                                    <View style={{ flex: 1, height: 1, backgroundColor: scheme === 'dark' ? '#2A2A2A' : '#E5E7EB' }} />
+                                    <ThemedText
+                                        color="muted"
+                                        style={{ marginHorizontal: 12, fontSize: 13 }}
+                                    >
+                                        or
+                                    </ThemedText>
+                                    <View style={{ flex: 1, height: 1, backgroundColor: scheme === 'dark' ? '#2A2A2A' : '#E5E7EB' }} />
+                                </View>
+                                <TouchableOpacity
+                                    testID="biometric-login-button"
+                                    onPress={handleBiometricLogin}
+                                    disabled={submitting || status === 'loading'}
+                                    activeOpacity={0.7}
+                                    accessibilityLabel={
+                                        Platform.OS === 'ios'
+                                            ? 'Sign in with Face ID or Touch ID'
+                                            : 'Sign in with biometrics'
+                                    }
+                                    accessibilityHint="Authenticate using your device biometrics to sign in"
+                                    style={{
+                                        marginTop: 12,
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        paddingVertical: 12,
+                                    }}
+                                >
+                                    <Ionicons
+                                        name="finger-print"
+                                        size={36}
+                                        color={scheme === 'dark' ? '#60A5FA' : '#1e90ff'}
+                                    />
+                                    <Text style={{
+                                        color: scheme === 'dark' ? '#60A5FA' : '#1e90ff',
+                                        fontSize: 14,
+                                        marginTop: 4,
+                                    }}>
+                                        {Platform.OS === 'ios'
+                                            ? 'Sign in with Face ID'
+                                            : 'Sign in with biometrics'}
+                                    </Text>
+                                </TouchableOpacity>
+                            </>
+                        )}
 
                         <View style={{ height: 16 }} />
 
