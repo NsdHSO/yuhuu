@@ -8,39 +8,20 @@ on:
     branches:
       - master
 
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
-    name: Run Tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js and pnpm
-        uses: ./.github/actions/setup-node
-
-      - name: Run linter
-        run: pnpm lint
-
-      - name: Run tests
-        run: pnpm test
-
-      - name: Generate coverage report
-        run: pnpm test:coverage
-        if: always()
-
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report-${{ github.sha }}
-          path: coverage/
-          retention-days: 30
-        if: always()
+    name: Test Application
+    uses: ./.github/workflows/test.yml
 
   build-android:
     name: Build Android APK
     needs: test
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     environment: FAT
     steps:
       - name: Checkout code
@@ -100,6 +81,16 @@ jobs:
         run: |
           chmod +x .github/scripts/configure-android-signing.sh
           .github/scripts/configure-android-signing.sh
+
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('android/**/*.gradle*', 'android/**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
       - name: Build Android Release APK
         working-directory: android
