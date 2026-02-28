@@ -1,8 +1,13 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { authApi } from '@/lib/api';
-import { clearTokens, getValidAccessToken, setTokensFromLogin } from '@/lib/tokenManager';
+import { clearTokens, getValidAccessToken, setTokensFromLogin, refreshAccessToken } from '@/lib/tokenManager';
 import { redirectToLogin } from '@/lib/nav';
 import { queryClient } from '@/providers/QueryProvider';
+import {
+    authenticateWithBiometrics,
+    getBiometricEmail,
+    clearBiometricData,
+} from '@/lib/biometricAuth';
 
 export type User = { id: string; email: string; name?: string };
 
@@ -12,6 +17,7 @@ type AuthContextType = {
     user: User | null;
     status: AuthStatus;
     signIn: (email: string, password: string) => Promise<void>;
+    signInWithBiometrics: () => Promise<void>;
     signOut: () => Promise<void>;
 };
 
@@ -30,10 +36,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         (async () => {
             setStatus('loading');
-            const token = await getValidAccessToken();
-            if (token) {
-                setStatus('signed-in');
-            } else {
+            try {
+                const token = await getValidAccessToken();
+                if (token) {
+                    // Fetch user data to populate user object on relaunch
+                    try {
+                        const { data } = await authApi.get<any>('/auth/me');
+                        const usr = data?.user ?? data;
+                        if (usr) setUser(usr as User);
+                    } catch {
+                        // If /auth/me fails, continue without user data
+                        // User will be fetched on next login/refresh
+                    }
+                    setStatus('signed-in');
+                } else {
+                    setUser(null);
+                    setStatus('signed-out');
+                }
+            } catch (error) {
+                // Token refresh failed (401, network error, etc.)
+                // Clear state and show login
                 setUser(null);
                 setStatus('signed-out');
             }
@@ -52,6 +74,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const usr = (data?.user ?? data?.message?.user) as User | undefined;
             if (at) await setTokensFromLogin(at, rt);
             if (usr) setUser(usr as User);
+            setStatus('signed-in');
+        } catch (e) {
+            setUser(null);
+            setStatus('signed-out');
+            throw e;
+        }
+    }
+
+    async function signInWithBiometrics() {
+        setStatus('loading');
+        try {
+            const email = await getBiometricEmail();
+            if (!email) throw new Error('No saved biometric credentials found');
+
+            const authenticated = await authenticateWithBiometrics('Authenticate to sign in');
+            if (!authenticated) {
+                throw new Error('Biometric authentication failed');
+            }
+
+            // Use tokenManager's refreshAccessToken to avoid race conditions
+            // This uses the same deduplication as the 401 interceptor
+            const at = await refreshAccessToken();
+            if (!at) {
+                throw new Error('Session expired. Please sign in with your password.');
+            }
+
+            // Fetch user data after successful token refresh
+            try {
+                const { data } = await authApi.get<any>('/auth/me');
+                const usr = data?.user ?? data;
+                if (usr) setUser(usr as User);
+            } catch {
+                // Continue without user data if /auth/me fails
+            }
+
             setStatus('signed-in');
         } catch (e) {
             setUser(null);
@@ -79,6 +136,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } catch {
         }
 
+        await clearBiometricData();
         await clearTokens();
 
         // CRITICAL: Clear React Query cache to prevent cached data from previous user
@@ -99,6 +157,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user,
         status,
         signIn,
+        signInWithBiometrics,
         signOut
     }), [user, status]);
 
