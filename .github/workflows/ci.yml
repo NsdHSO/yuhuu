@@ -22,6 +22,8 @@ jobs:
   build-android:
     name: Build Android
     needs: test
+    permissions:
+      contents: write
     uses: ./.github/workflows/build-android.yml
     secrets: inherit
 
@@ -29,5 +31,7 @@ jobs:
   build-ios:
     name: Build iOS
     needs: test
+    permissions:
+      contents: write
     uses: ./.github/workflows/build-ios.yml
     secrets: inherit
