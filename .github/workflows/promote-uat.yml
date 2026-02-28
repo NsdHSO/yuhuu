@@ -10,6 +10,7 @@ jobs:
       github.event.label.name == 'deploy-uat' &&
       github.base_ref == 'master'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     environment:
       name: UAT
       url: https://expo.dev
