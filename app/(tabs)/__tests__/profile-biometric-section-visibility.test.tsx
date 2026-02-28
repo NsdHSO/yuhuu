@@ -8,7 +8,7 @@
  */
 
 import React from 'react';
-import { render, waitFor, act } from '@testing-library/react-native';
+import { render, waitFor } from '@testing-library/react-native';
 import { Alert, Platform } from 'react-native';
 
 jest.spyOn(Alert, 'alert');
@@ -46,6 +46,7 @@ jest.mock('@/providers/AuthProvider', () => ({
     useAuth: () => mockUseAuth(),
 }));
 
+// eslint-disable-next-line import/first
 import ProfileScreen from '../profile';
 
 describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
