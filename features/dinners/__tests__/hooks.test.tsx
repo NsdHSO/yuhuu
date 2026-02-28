@@ -46,18 +46,22 @@ describe('dinners/hooks', () => {
 				{
 					id: 1,
 					dinnerDate: '2026-02-28',
+					mealType: 'Dinner',
 					location: 'Church Hall',
 					description: 'Fellowship dinner',
 					maxParticipants: 50,
+					uuid: 'uuid-1',
 					createdAt: '2026-02-25T10:00:00Z',
 					updatedAt: '2026-02-25T10:00:00Z',
 				},
 				{
 					id: 2,
 					dinnerDate: '2026-02-28',
+					mealType: 'Dinner',
 					location: 'Community Center',
 					description: 'Youth dinner',
 					maxParticipants: 30,
+					uuid: 'uuid-2',
 					createdAt: '2026-02-25T11:00:00Z',
 					updatedAt: '2026-02-25T11:00:00Z',
 				},
@@ -66,6 +70,7 @@ describe('dinners/hooks', () => {
 			const mockRepo: DinnersRepository = {
 				getByDate: jest.fn().mockResolvedValue(mockDinners),
 				addParticipant: jest.fn(),
+				getParticipantsByDinner: jest.fn(),
 			};
 
 			const { result } = renderHook(() => useDinnersByDateQuery('2026-02-28', mockRepo), {
@@ -88,9 +93,11 @@ describe('dinners/hooks', () => {
 				{
 					id: 1,
 					dinnerDate: '2026-02-28',
+					mealType: 'Dinner',
 					location: 'Church Hall',
 					description: 'Fellowship dinner',
 					maxParticipants: 50,
+					uuid: 'uuid-1',
 					createdAt: '2026-02-25T10:00:00Z',
 					updatedAt: '2026-02-25T10:00:00Z',
 				},
@@ -99,6 +106,7 @@ describe('dinners/hooks', () => {
 			const mockRepo: DinnersRepository = {
 				getByDate: jest.fn().mockResolvedValue(mockDinners),
 				addParticipant: jest.fn(),
+				getParticipantsByDinner: jest.fn(),
 			};
 
 			const { result } = renderHook(() => useDinnersByDateQuery('2026-02-28', mockRepo), {
@@ -117,6 +125,7 @@ describe('dinners/hooks', () => {
 			const mockRepo: DinnersRepository = {
 				getByDate: jest.fn().mockResolvedValue(mockDinners),
 				addParticipant: jest.fn(),
+				getParticipantsByDinner: jest.fn(),
 			};
 
 			const { result } = renderHook(() => useDinnersByDateQuery('2026-03-15', mockRepo), {
@@ -133,6 +142,7 @@ describe('dinners/hooks', () => {
 			const mockRepo: DinnersRepository = {
 				getByDate: jest.fn(),
 				addParticipant: jest.fn(),
+				getParticipantsByDinner: jest.fn(),
 			};
 
 			const { result } = renderHook(() => useDinnersByDateQuery(null, mockRepo), {
@@ -150,6 +160,7 @@ describe('dinners/hooks', () => {
 			const mockRepo: DinnersRepository = {
 				getByDate: jest.fn(),
 				addParticipant: jest.fn(),
+				getParticipantsByDinner: jest.fn(),
 			};
 
 			const { result } = renderHook(() => useDinnersByDateQuery('', mockRepo), {
@@ -167,6 +178,7 @@ describe('dinners/hooks', () => {
 			const mockRepo: DinnersRepository = {
 				getByDate: jest.fn().mockRejectedValue(error),
 				addParticipant: jest.fn(),
+				getParticipantsByDinner: jest.fn(),
 			};
 
 			const { result } = renderHook(() => useDinnersByDateQuery('2026-03-01', mockRepo), {
@@ -184,9 +196,11 @@ describe('dinners/hooks', () => {
 				{
 					id: 1,
 					dinnerDate: '2026-02-28',
+					mealType: 'Lunch',
 					location: 'Hall A',
 					description: null,
 					maxParticipants: null,
+					uuid: 'uuid-1',
 					createdAt: '2026-02-25T10:00:00Z',
 					updatedAt: '2026-02-25T10:00:00Z',
 				},
@@ -196,9 +210,11 @@ describe('dinners/hooks', () => {
 				{
 					id: 2,
 					dinnerDate: '2026-03-05',
+					mealType: 'Dinner',
 					location: 'Hall B',
 					description: null,
 					maxParticipants: null,
+					uuid: 'uuid-2',
 					createdAt: '2026-02-25T10:00:00Z',
 					updatedAt: '2026-02-25T10:00:00Z',
 				},
@@ -211,6 +227,7 @@ describe('dinners/hooks', () => {
 						date === '2026-02-28' ? mockDinners1 : mockDinners2
 					),
 				addParticipant: jest.fn(),
+				getParticipantsByDinner: jest.fn(),
 			};
 
 			const wrapper = createWrapper();
@@ -249,6 +266,7 @@ describe('dinners/hooks', () => {
 			const mockRepo: DinnersRepository = {
 				getByDate: jest.fn(),
 				addParticipant: jest.fn().mockResolvedValue(mockParticipant),
+				getParticipantsByDinner: jest.fn(),
 			};
 
 			const { result } = renderHook(() => useAddParticipantMutation(5, mockRepo), {
@@ -273,6 +291,7 @@ describe('dinners/hooks', () => {
 			const mockRepo: DinnersRepository = {
 				getByDate: jest.fn(),
 				addParticipant: jest.fn().mockRejectedValue(error),
+				getParticipantsByDinner: jest.fn(),
 			};
 
 			const { result } = renderHook(() => useAddParticipantMutation(5, mockRepo), {
@@ -306,6 +325,7 @@ describe('dinners/hooks', () => {
 			const mockRepo: DinnersRepository = {
 				getByDate: jest.fn(),
 				addParticipant: jest.fn().mockResolvedValue(mockParticipant),
+				getParticipantsByDinner: jest.fn(),
 			};
 
 			const qc = new QueryClient({
@@ -372,6 +392,7 @@ describe('dinners/hooks', () => {
 			const mockRepo: DinnersRepository = {
 				getByDate: getByDateSpy,
 				addParticipant: addParticipantSpy,
+				getParticipantsByDinner: jest.fn(),
 			};
 
 			const qc = new QueryClient({
@@ -436,6 +457,7 @@ describe('dinners/hooks', () => {
 			const mockRepo: DinnersRepository = {
 				getByDate: jest.fn(),
 				addParticipant: jest.fn().mockReturnValue(promise),
+				getParticipantsByDinner: jest.fn(),
 			};
 
 			const { result } = renderHook(() => useAddParticipantMutation(10, mockRepo), {
@@ -474,6 +496,7 @@ describe('dinners/hooks', () => {
 			const mockRepo: DinnersRepository = {
 				getByDate: jest.fn(),
 				addParticipant: jest.fn().mockResolvedValue(mockParticipant),
+				getParticipantsByDinner: jest.fn(),
 			};
 
 			const { result } = renderHook(() => useAddParticipantMutation(42, mockRepo), {
