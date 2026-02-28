@@ -48,3 +48,6 @@ app-example
 .idea/*
 /docs*
 .claude/*
+
+# Team collaboration outputs (never commit)
+docs/plans/teammates/
