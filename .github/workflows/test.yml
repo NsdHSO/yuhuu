@@ -60,3 +60,14 @@ jobs:
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Coverage report uploaded as artifact" >> $GITHUB_STEP_SUMMARY
+
+  test-complete:
+    name: Tests Complete
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs:
+      - lint
+      - test
+    steps:
+      - name: All checks passed
+        run: echo "Lint and test jobs completed successfully"
