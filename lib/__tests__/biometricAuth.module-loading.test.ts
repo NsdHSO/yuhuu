@@ -57,7 +57,8 @@ describe('CRITICAL: Module Loading Diagnostics', () => {
         it('should have getEnrolledLevelAsync function if available', () => {
             // getEnrolledLevelAsync may not be present in all mock configurations
             // The critical functions are hasHardwareAsync, isEnrolledAsync, authenticateAsync
-            const hasFunction = typeof LocalAuth.getEnrolledLevelAsync === 'function';
+            // This test just verifies the check doesn't crash
+            const hasFunction = typeof (LocalAuth as any).getEnrolledLevelAsync === 'function';
             expect(typeof hasFunction).toBe('boolean');
         });
 

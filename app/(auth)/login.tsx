@@ -55,7 +55,7 @@ export default function LoginScreen() {
         selectionColor: Colors[scheme].tint,
     }), [scheme]);
 
-    const scrollToInput = (inputRef: React.RefObject<View>) => {
+    const scrollToInput = (inputRef: React.RefObject<View | null>) => {
         if (inputRef.current && scrollViewRef.current) {
             inputRef.current.measureLayout(
                 scrollViewRef.current as any,
@@ -193,7 +193,8 @@ export default function LoginScreen() {
                                 >
                                     <View style={{ flex: 1, height: 1, backgroundColor: scheme === 'dark' ? '#2A2A2A' : '#E5E7EB' }} />
                                     <ThemedText
-                                        color="muted"
+                                        lightColor="#6B7280"
+                                        darkColor="#9CA3AF"
                                         style={{ marginHorizontal: 12, fontSize: 13 }}
                                     >
                                         or
@@ -246,7 +247,7 @@ export default function LoginScreen() {
                                 paddingVertical: 8
                             })}
                         >
-                            <ThemedText color="muted">Don&apos;t have an account? Create one</ThemedText>
+                            <ThemedText lightColor="#6B7280" darkColor="#9CA3AF">Don&apos;t have an account? Create one</ThemedText>
                         </Pressable>
                     </View>
                 </KeyboardAvoidingView>

@@ -257,7 +257,7 @@ describe('dinners/participants', () => {
 					id: 1,
 					dinnerId: 10,
 					username: 'test_user',
-					notes: null,
+					notes: '',
 					createdAt: '2026-02-27T10:00:00Z',
 					updatedAt: '2026-02-27T10:00:00Z',
 				},
@@ -301,14 +301,14 @@ describe('dinners/participants', () => {
 			expect(mockRepo.getParticipantsByDinner).toHaveBeenCalledWith(42);
 		});
 
-		it('should handle participants with null notes', async () => {
-			// Given: Participants with optional null notes
+		it('should handle participants with empty notes', async () => {
+			// Given: Participants with empty notes
 			const mockParticipants: Participant[] = [
 				{
 					id: 1,
 					dinnerId: 10,
 					username: 'user1',
-					notes: null,
+					notes: '',
 					createdAt: '2026-02-27T10:00:00Z',
 					updatedAt: '2026-02-27T10:00:00Z',
 				},
@@ -333,10 +333,10 @@ describe('dinners/participants', () => {
 				wrapper: createWrapper(),
 			});
 
-			// Then: Should handle both null and non-null notes
+			// Then: Should handle both empty and non-empty notes
 			await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-			expect(result.current.data?.[0].notes).toBeNull();
+			expect(result.current.data?.[0].notes).toBe('');
 			expect(result.current.data?.[1].notes).toBe('Has preferences');
 		});
 
@@ -347,7 +347,7 @@ describe('dinners/participants', () => {
 					id: 1,
 					dinnerId: 10,
 					username: 'dinner10_user',
-					notes: null,
+					notes: '',
 					createdAt: '2026-02-27T10:00:00Z',
 					updatedAt: '2026-02-27T10:00:00Z',
 				},
@@ -358,7 +358,7 @@ describe('dinners/participants', () => {
 					id: 2,
 					dinnerId: 20,
 					username: 'dinner20_user',
-					notes: null,
+					notes: '',
 					createdAt: '2026-02-27T11:00:00Z',
 					updatedAt: '2026-02-27T11:00:00Z',
 				},
@@ -376,10 +376,10 @@ describe('dinners/participants', () => {
 
 			// When: Hook fetches for dinner 10
 			const { result, rerender } = renderHook(
-				({ dinnerId }) => useParticipantsByDinnerQuery(dinnerId, mockRepo),
+				({ dinnerId }: { dinnerId: number }) => useParticipantsByDinnerQuery(dinnerId, mockRepo),
 				{
 					wrapper: createWrapper(),
-					initialProps: { dinnerId: 10 },
+					initialProps: { dinnerId: 10 as number },
 				}
 			);
 

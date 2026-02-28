@@ -193,7 +193,7 @@ export default function RegisterScreen() {
                                 paddingVertical: 8
                             })}
                         >
-                            <ThemedText color="muted">Already have an account? Sign in</ThemedText>
+                            <ThemedText lightColor="#6B7280" darkColor="#9CA3AF">Already have an account? Sign in</ThemedText>
                         </Pressable>
                     </View>
                 </KeyboardAvoidingView>

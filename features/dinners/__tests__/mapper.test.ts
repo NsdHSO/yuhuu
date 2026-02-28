@@ -7,9 +7,11 @@ describe('dinners/mapper', () => {
 			const dto: DinnerDto = {
 				id: 1,
 				dinner_date: '2026-02-28',
+				meal_type: 'Dinner',
 				location: 'Church Hall',
 				description: 'Fellowship dinner',
 				max_participants: 50,
+				uuid: 'uuid-1',
 				created_at: '2026-02-25T10:00:00Z',
 				updated_at: '2026-02-25T10:00:00Z',
 			};
@@ -19,9 +21,11 @@ describe('dinners/mapper', () => {
 			expect(result).toEqual({
 				id: 1,
 				dinnerDate: '2026-02-28',
+				mealType: 'Dinner',
 				location: 'Church Hall',
 				description: 'Fellowship dinner',
 				maxParticipants: 50,
+				uuid: 'uuid-1',
 				createdAt: '2026-02-25T10:00:00Z',
 				updatedAt: '2026-02-25T10:00:00Z',
 			});
@@ -31,9 +35,11 @@ describe('dinners/mapper', () => {
 			const dto: DinnerDto = {
 				id: 2,
 				dinner_date: '2026-03-01',
+				meal_type: 'Lunch',
 				location: null,
 				description: null,
 				max_participants: null,
+				uuid: 'uuid-2',
 				created_at: '2026-02-25T10:00:00Z',
 				updated_at: '2026-02-25T10:00:00Z',
 			};
@@ -43,9 +49,11 @@ describe('dinners/mapper', () => {
 			expect(result).toEqual({
 				id: 2,
 				dinnerDate: '2026-03-01',
+				mealType: 'Lunch',
 				location: null,
 				description: null,
 				maxParticipants: null,
+				uuid: 'uuid-2',
 				createdAt: '2026-02-25T10:00:00Z',
 				updatedAt: '2026-02-25T10:00:00Z',
 			});
@@ -55,9 +63,11 @@ describe('dinners/mapper', () => {
 			const dto: DinnerDto = {
 				id: 3,
 				dinner_date: '2026-03-05',
+				meal_type: 'Breakfast',
 				location: undefined,
 				description: undefined,
 				max_participants: undefined,
+				uuid: 'uuid-3',
 				created_at: '2026-02-25T10:00:00Z',
 				updated_at: '2026-02-25T10:00:00Z',
 			};
@@ -67,9 +77,11 @@ describe('dinners/mapper', () => {
 			expect(result).toEqual({
 				id: 3,
 				dinnerDate: '2026-03-05',
+				mealType: 'Breakfast',
 				location: undefined,
 				description: undefined,
 				maxParticipants: undefined,
+				uuid: 'uuid-3',
 				createdAt: '2026-02-25T10:00:00Z',
 				updatedAt: '2026-02-25T10:00:00Z',
 			});
@@ -79,9 +91,11 @@ describe('dinners/mapper', () => {
 			const dto: DinnerDto = {
 				id: 4,
 				dinner_date: '2026-03-10',
+				meal_type: 'Dinner',
 				location: 'Main Hall',
 				description: 'Easter dinner',
 				max_participants: 100,
+				uuid: 'uuid-4',
 				created_at: '2026-02-25T12:00:00Z',
 				updated_at: '2026-02-26T08:00:00Z',
 			};

@@ -372,7 +372,7 @@ export default function BiometricTestScreen() {
                 <ThemedText type="title" style={{ marginBottom: 8 }}>
                     Biometric Diagnostics
                 </ThemedText>
-                <ThemedText color="muted" style={{ marginBottom: 20, fontSize: 13 }}>
+                <ThemedText lightColor="#6B7280" darkColor="#9CA3AF" style={{ marginBottom: 20, fontSize: 13 }}>
                     Tests all expo-local-authentication APIs. Check console for detailed logs.
                 </ThemedText>
 

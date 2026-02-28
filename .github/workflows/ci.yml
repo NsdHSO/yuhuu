@@ -1,0 +1,33 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Run tests ONCE for both platforms
+  test:
+    name: Test Application
+    uses: ./.github/workflows/test.yml
+
+  # Build Android in parallel after tests pass
+  build-android:
+    name: Build Android
+    needs: test
+    uses: ./.github/workflows/build-android.yml
+    secrets: inherit
+
+  # Build iOS in parallel after tests pass
+  build-ios:
+    name: Build iOS
+    needs: test
+    uses: ./.github/workflows/build-ios.yml
+    secrets: inherit

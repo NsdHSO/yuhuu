@@ -343,7 +343,7 @@ describe('AuthProvider', () => {
 
             const userBeforeRerender = result.current.user;
 
-            rerender();
+            rerender({});
 
             expect(result.current.user).toEqual(userBeforeRerender);
         });

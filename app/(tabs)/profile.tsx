@@ -171,7 +171,7 @@ export default function ProfileScreen() {
                     {!profile && (
                         <View style={{ marginBottom: 12 }}>
                             <ThemedText type="subtitle" className="mb-2">Create your profile</ThemedText>
-                            <ThemedText color="muted">We didn&apos;t find a profile. Fill in the fields below and save to
+                            <ThemedText lightColor="#6B7280" darkColor="#9CA3AF">We didn&apos;t find a profile. Fill in the fields below and save to
                                 create one.</ThemedText>
                         </View>
                     )}
@@ -226,7 +226,8 @@ export default function ProfileScreen() {
                                         </ThemedText>
                                         <ThemedText
                                             testID="biometric-description"
-                                            color="muted"
+                                            lightColor="#6B7280"
+                                            darkColor="#9CA3AF"
                                             style={{ fontSize: 13, marginTop: 2 }}
                                         >
                                             {Platform.OS === 'ios'

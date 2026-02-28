@@ -17,8 +17,8 @@ export function useDinnerStatsQuery() {
 export function useUserAttendanceQuery(username: string) {
 	// TODO: Implement user attendance query
 	return {
-		data: undefined,
+		data: undefined as { dinnerDate: string; attended: boolean; location: string; mealType?: string }[] | undefined,
 		isLoading: false,
-		error: null,
+		error: null as Error | null,
 	};
 }
