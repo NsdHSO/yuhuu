@@ -38,7 +38,7 @@ jest.mock('@/features/dinners/hooks', () => ({
 	},
 }));
 
-// Import after mocks
+// eslint-disable-next-line import/first
 import AdminScreen from '../admin';
 
 describe('AdminScreen', () => {
@@ -604,7 +604,7 @@ describe('AdminScreen', () => {
 
 		it('should NOT fetch participants when input is empty', () => {
 			// Given: Admin screen is rendered
-			const { getByTestId } = render(<AdminScreen />);
+			render(<AdminScreen />);
 
 			// Then: Participants query should not be called with empty input
 			expect(mockUseParticipantsByDinnerQuery).not.toHaveBeenCalled();
