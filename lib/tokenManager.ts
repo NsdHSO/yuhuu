@@ -1,122 +1,532 @@
-import axios from 'axios';
+/**
+ * Token Manager - SOLID Architecture
+ *
+ * Responsibilities:
+ * - Manage JWT access/refresh tokens
+ * - Handle token validation and expiration
+ * - Coordinate token refresh with deduplication
+ * - Persist tokens securely
+ *
+ * SOLID Principles Applied:
+ * - Single Responsibility: Each class has one clear purpose
+ * - Open/Closed: Extensible via interfaces
+ * - Liskov Substitution: Implementations are interchangeable
+ * - Interface Segregation: Minimal, focused interfaces
+ * - Dependency Inversion: Depends on abstractions
+ */
+import axios, { AxiosInstance } from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import {
-  clearStoredAccessToken,
-  clearStoredRefreshToken,
-  loadAccessToken,
-  loadRefreshToken,
-  saveAccessToken,
-  saveRefreshToken,
+    clearStoredAccessToken,
+    clearStoredRefreshToken,
+    loadAccessToken,
+    loadRefreshToken,
+    saveAccessToken,
+    saveRefreshToken,
 } from './secureStore';
-
 import { isAuthPath, redirectToLogin } from './nav';
+import { AUTH_BASE } from './http/url';
+import { applyEnvelopeUnwrapper } from './http/envelope';
 
-
-// Access token kept in-memory, but we also persist to secure storage for reloads.
-let accessToken: string | null = null;
-let accessExpMs: number | null = null;
-let refreshInFlight: Promise<string | null> | null = null;
-
-const API_BASE_URL = (process.env.EXPO_PUBLIC_AUTH_API_URL || 'http://localhost:4100') + '/v1';
+// ============================================================================
+// TYPES
+// ============================================================================
 
 type Jwt = { exp?: number; [k: string]: unknown };
 
-function setAccessInMemory(at: string) {
-    accessToken = at;
-    try {
-        const { exp } = jwtDecode<Jwt>(at);
-        accessExpMs = exp ? exp * 1000 : null;
-    } catch {
-        accessExpMs = null;
+interface TokenPair {
+    accessToken: string;
+    refreshToken?: string;
+}
+
+interface RefreshResponse {
+    accessToken?: string;
+    access_token?: string;
+    token?: string;
+    refreshToken?: string;
+    refresh_token?: string;
+    message?: {
+        access_token?: string;
+        refresh_token?: string;
+    };
+}
+
+// ============================================================================
+// INTERFACES (Dependency Inversion Principle)
+// ============================================================================
+
+/**
+ * Interface for JWT token validation operations.
+ * Allows different JWT libraries or validation strategies.
+ */
+interface IJwtValidator {
+    getExpirationTime(token: string): number | null;
+    isValid(token: string, bufferMs: number): boolean;
+}
+
+/**
+ * Interface for token storage operations.
+ * Allows different storage backends (SecureStore, AsyncStorage, etc.)
+ */
+interface ITokenStorage {
+    saveAccessToken(token: string): Promise<void>;
+    loadAccessToken(): Promise<string | null>;
+    clearAccessToken(): Promise<void>;
+    saveRefreshToken(token: string): Promise<void>;
+    loadRefreshToken(): Promise<string | null>;
+    clearRefreshToken(): Promise<void>;
+}
+
+/**
+ * Interface for token refresh HTTP operations.
+ * Allows different HTTP clients or API endpoints.
+ */
+interface ITokenRefreshClient {
+    refresh(refreshToken: string | null): Promise<TokenPair | null>;
+}
+
+/**
+ * Interface for navigation operations.
+ * Allows different navigation implementations.
+ */
+interface INavigator {
+    isAuthPath(): boolean;
+    redirectToLogin(): void;
+}
+
+// ============================================================================
+// JWT VALIDATOR (Single Responsibility)
+// ============================================================================
+
+/**
+ * Validates JWT tokens and checks expiration.
+ * Single Responsibility: JWT operations only.
+ */
+class JwtTokenValidator implements IJwtValidator {
+    getExpirationTime(token: string): number | null {
+        try {
+            const { exp } = jwtDecode<Jwt>(token);
+            return exp ? exp * 1000 : null;
+        } catch {
+            return null;
+        }
+    }
+
+    isValid(token: string, bufferMs: number = 30_000): boolean {
+        if (!token) return false;
+        const expMs = this.getExpirationTime(token);
+        if (!expMs) return true; // No expiration = always valid
+        return Date.now() + bufferMs < expMs;
     }
 }
 
-export async function setTokensFromLogin(at: string, rt?: string) {
-    setAccessInMemory(at);
-    await saveAccessToken(at);
-    if (rt) await saveRefreshToken(rt);
+// ============================================================================
+// STORAGE ADAPTER (Single Responsibility)
+// ============================================================================
+
+/**
+ * Adapter for secure token storage.
+ * Single Responsibility: Storage operations only.
+ */
+class SecureTokenStorage implements ITokenStorage {
+    async saveAccessToken(token: string): Promise<void> {
+        await saveAccessToken(token);
+    }
+
+    async loadAccessToken(): Promise<string | null> {
+        return loadAccessToken();
+    }
+
+    async clearAccessToken(): Promise<void> {
+        await clearStoredAccessToken();
+    }
+
+    async saveRefreshToken(token: string): Promise<void> {
+        await saveRefreshToken(token);
+    }
+
+    async loadRefreshToken(): Promise<string | null> {
+        return loadRefreshToken();
+    }
+
+    async clearRefreshToken(): Promise<void> {
+        await clearStoredRefreshToken();
+    }
 }
 
-export async function clearTokens() {
-    accessToken = null;
-    accessExpMs = null;
-    await Promise.all([clearStoredRefreshToken(), clearStoredAccessToken()]);
-}
+// ============================================================================
+// HTTP CLIENT (Single Responsibility)
+// ============================================================================
 
-function isAccessValid(bufferMs = 30_000) {
-    if (!accessToken) return false;
-    if (!accessExpMs) return true;
-    return Date.now() + bufferMs < accessExpMs;
-}
+/**
+ * HTTP client for token refresh operations.
+ * Single Responsibility: API communication only.
+ */
+class TokenRefreshClient implements ITokenRefreshClient {
+    private readonly httpClient: AxiosInstance;
 
-export function getAccessTokenSync() {
-    return accessToken;
-}
-
-async function maybeLoadPersistedAccess() {
-    if (accessToken) return;
-    const saved = await loadAccessToken();
-    if (saved) setAccessInMemory(saved);
-}
-
-async function refreshAccessToken(): Promise<string | null> {
-    // Prefer stored RT for native apps; otherwise rely on httpOnly cookie with credentials
-    const rt = await loadRefreshToken();
-
-    try {
-        const { data } = await axios.post(
-            API_BASE_URL + '/auth/refresh',
-            rt ? { refreshToken: rt } : {},
-            {
+    constructor(httpClient?: AxiosInstance) {
+        if (httpClient) {
+            this.httpClient = httpClient;
+        } else {
+            // Create a properly configured axios instance matching authApi
+            this.httpClient = axios.create({
+                baseURL: AUTH_BASE,
                 timeout: 15_000,
-                withCredentials: true
+                withCredentials: true,
+            });
+            // Apply envelope unwrapping to match authApi behavior
+            try {
+                applyEnvelopeUnwrapper(this.httpClient);
+            } catch {
+                // In test environment, interceptors might not be available
             }
-        );
-
-        const newAT: string =
-            (data as any).accessToken ?? (data as any).access_token ?? (data as any).token ?? (data as any)?.message?.access_token;
-        const newRT: string | undefined =
-            (data as any).refreshToken ?? (data as any).refresh_token ?? (data as any)?.message?.refresh_token;
-
-        if (!newAT) return null;
-
-        setAccessInMemory(newAT);
-        await saveAccessToken(newAT);
-        if (newRT) await saveRefreshToken(newRT);
-        return accessToken;
-    } catch (e: any) {
-        // If refresh call failed (e.g., 401), clear tokens and redirect to login
-        try {
-            await clearTokens();
-        } catch {
         }
+    }
+
+    async refresh(refreshToken: string | null): Promise<TokenPair | null> {
+        try {
+            const { data } = await this.httpClient.post<RefreshResponse>(
+                '/auth/refresh',
+                refreshToken ? { refreshToken } : {}
+            );
+
+            const accessToken = this.extractAccessToken(data);
+            const newRefreshToken = this.extractRefreshToken(data);
+
+            if (!accessToken) return null;
+
+            return {
+                accessToken,
+                refreshToken: newRefreshToken,
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    private extractAccessToken(data: RefreshResponse): string | undefined {
+        return data.accessToken ??
+               data.access_token ??
+               data.token ??
+               data.message?.access_token;
+    }
+
+    private extractRefreshToken(data: RefreshResponse): string | undefined {
+        return data.refreshToken ??
+               data.refresh_token ??
+               data.message?.refresh_token;
+    }
+}
+
+// ============================================================================
+// NAVIGATOR (Single Responsibility)
+// ============================================================================
+
+/**
+ * Navigator for authentication-related routing.
+ * Single Responsibility: Navigation operations only.
+ */
+class AuthNavigator implements INavigator {
+    isAuthPath(): boolean {
+        return isAuthPath();
+    }
+
+    redirectToLogin(): void {
         try {
             redirectToLogin();
         } catch {
+            // Graceful degradation
         }
-        throw e;
     }
 }
 
-export async function getValidAccessToken(): Promise<string | null> {
-    if (isAccessValid()) return accessToken;
-    await maybeLoadPersistedAccess();
-    if (isAccessValid()) return accessToken;
+// ============================================================================
+// REFRESH COORDINATOR (Single Responsibility)
+// ============================================================================
 
-    // Do not auto-refresh on public auth routes (login/register)
-    if (isAuthPath()) return null;
+/**
+ * Coordinates token refresh requests with deduplication.
+ * Single Responsibility: Request deduplication only.
+ */
+class TokenRefreshCoordinator {
+    private inflightRefresh: Promise<string | null> | null = null;
 
-    if (!refreshInFlight) {
-        refreshInFlight = (async () => {
-            try {
-                return await refreshAccessToken();
-            } catch {
-                await clearTokens();
+    /**
+     * Executes refresh with deduplication.
+     * Multiple concurrent calls return the same promise.
+     */
+    async execute(refreshFn: () => Promise<string | null>): Promise<string | null> {
+        if (!this.inflightRefresh) {
+            this.inflightRefresh = (async () => {
+                try {
+                    return await refreshFn();
+                } finally {
+                    this.inflightRefresh = null;
+                }
+            })();
+        }
+        return this.inflightRefresh;
+    }
+
+    /**
+     * Checks if a refresh is currently in progress.
+     */
+    isRefreshing(): boolean {
+        return this.inflightRefresh !== null;
+    }
+}
+
+// ============================================================================
+// TOKEN MANAGER (Facade + Coordinator)
+// ============================================================================
+
+/**
+ * Main token manager that coordinates all token operations.
+ * Facade Pattern: Provides simple interface to complex subsystem.
+ * Single Responsibility: Orchestrate token lifecycle.
+ */
+class TokenManager {
+    private accessToken: string | null = null;
+    private accessExpMs: number | null = null;
+    private readonly coordinator = new TokenRefreshCoordinator();
+
+    constructor(
+        private readonly validator: IJwtValidator,
+        private readonly storage: ITokenStorage,
+        private readonly refreshClient: ITokenRefreshClient,
+        private readonly navigator: INavigator
+    ) {}
+
+    /**
+     * Sets tokens after successful login.
+     */
+    async setTokensFromLogin(accessToken: string, refreshToken?: string): Promise<void> {
+        this.setAccessTokenInMemory(accessToken);
+        await this.storage.saveAccessToken(accessToken);
+        if (refreshToken) {
+            await this.storage.saveRefreshToken(refreshToken);
+        }
+    }
+
+    /**
+     * Clears all tokens from memory and storage.
+     */
+    async clearTokens(): Promise<void> {
+        this.accessToken = null;
+        this.accessExpMs = null;
+        await Promise.all([
+            this.storage.clearRefreshToken(),
+            this.storage.clearAccessToken(),
+        ]);
+    }
+
+    /**
+     * Gets the current access token synchronously (from memory).
+     */
+    getAccessTokenSync(): string | null {
+        return this.accessToken;
+    }
+
+    /**
+     * Gets a valid access token, refreshing if necessary.
+     */
+    async getValidAccessToken(): Promise<string | null> {
+        // Fast path: token in memory and valid
+        if (this.isAccessTokenValid()) {
+            return this.accessToken;
+        }
+
+        // Try loading from storage
+        await this.maybeLoadPersistedAccessToken();
+        if (this.isAccessTokenValid()) {
+            return this.accessToken;
+        }
+
+        // Don't auto-refresh on auth routes
+        if (this.navigator.isAuthPath()) {
+            return null;
+        }
+
+        // Refresh with deduplication
+        return this.coordinator.execute(() => this.performRefresh());
+    }
+
+    /**
+     * Refreshes the access token using the refresh token.
+     */
+    async refreshAccessToken(): Promise<string | null> {
+        return this.coordinator.execute(() => this.performRefresh());
+    }
+
+    private async performRefresh(): Promise<string | null> {
+        const refreshToken = await this.storage.loadRefreshToken();
+
+        try {
+            const tokens = await this.refreshClient.refresh(refreshToken);
+
+            if (!tokens?.accessToken) {
+                await this.handleRefreshFailure();
                 return null;
-            } finally {
-                refreshInFlight = null;
             }
-        })();
+
+            this.setAccessTokenInMemory(tokens.accessToken);
+            await this.storage.saveAccessToken(tokens.accessToken);
+
+            if (tokens.refreshToken) {
+                await this.storage.saveRefreshToken(tokens.refreshToken);
+            }
+
+            return this.accessToken;
+        } catch (error) {
+            // Handle refresh failure (401, network error, etc.)
+            // Return null instead of throwing to match function signature
+            await this.handleRefreshFailure();
+            return null;
+        }
     }
-    return refreshInFlight;
+
+    private async handleRefreshFailure(): Promise<void> {
+        try {
+            await this.clearTokens();
+        } catch {
+            // Ignore cleanup errors
+        }
+        this.navigator.redirectToLogin();
+    }
+
+    private setAccessTokenInMemory(token: string): void {
+        this.accessToken = token;
+        this.accessExpMs = this.validator.getExpirationTime(token);
+    }
+
+    private isAccessTokenValid(): boolean {
+        if (!this.accessToken) return false;
+        // Use cached expiration time to avoid re-decoding JWT
+        if (!this.accessExpMs) return true; // No expiration = always valid
+        return Date.now() + 30_000 < this.accessExpMs;
+    }
+
+    private async maybeLoadPersistedAccessToken(): Promise<void> {
+        if (this.accessToken) return;
+        const saved = await this.storage.loadAccessToken();
+        if (saved) {
+            this.setAccessTokenInMemory(saved);
+        }
+    }
 }
+
+// ============================================================================
+// FACTORY (Dependency Injection)
+// ============================================================================
+
+/**
+ * Factory for creating TokenManager with dependencies.
+ * Dependency Injection: Wires up all dependencies.
+ */
+class TokenManagerFactory {
+    static create(
+        validator?: IJwtValidator,
+        storage?: ITokenStorage,
+        refreshClient?: ITokenRefreshClient,
+        navigator?: INavigator
+    ): TokenManager {
+        return new TokenManager(
+            validator || new JwtTokenValidator(),
+            storage || new SecureTokenStorage(),
+            refreshClient || new TokenRefreshClient(),
+            navigator || new AuthNavigator()
+        );
+    }
+}
+
+// ============================================================================
+// SINGLETON INSTANCE (Backward Compatibility)
+// ============================================================================
+
+let managerInstance: TokenManager | null = null;
+
+function getManager(): TokenManager {
+    if (!managerInstance) {
+        managerInstance = TokenManagerFactory.create();
+    }
+    return managerInstance;
+}
+
+// ============================================================================
+// PUBLIC API (Backward Compatible)
+// ============================================================================
+
+/**
+ * Sets tokens after successful login.
+ */
+export async function setTokensFromLogin(at: string, rt?: string): Promise<void> {
+    return getManager().setTokensFromLogin(at, rt);
+}
+
+/**
+ * Clears all tokens from memory and storage.
+ */
+export async function clearTokens(): Promise<void> {
+    return getManager().clearTokens();
+}
+
+/**
+ * Gets the current access token synchronously.
+ */
+export function getAccessTokenSync(): string | null {
+    return getManager().getAccessTokenSync();
+}
+
+/**
+ * Gets a valid access token, refreshing if necessary.
+ */
+export async function getValidAccessToken(): Promise<string | null> {
+    return getManager().getValidAccessToken();
+}
+
+/**
+ * Refreshes the access token using the refresh token.
+ */
+export async function refreshAccessToken(): Promise<string | null> {
+    return getManager().refreshAccessToken();
+}
+
+// ============================================================================
+// TESTING EXPORTS
+// ============================================================================
+
+/**
+ * For testing: allows injection of custom TokenManager.
+ */
+export function __setManagerForTesting(manager: TokenManager | null): void {
+    managerInstance = manager;
+}
+
+/**
+ * For testing: resets the singleton instance.
+ */
+export function __resetManagerForTesting(): void {
+    managerInstance = null;
+}
+
+/**
+ * Export classes and interfaces for testing and extension.
+ */
+export const __testing = {
+    TokenManager,
+    JwtTokenValidator,
+    SecureTokenStorage,
+    TokenRefreshClient,
+    AuthNavigator,
+    TokenRefreshCoordinator,
+    TokenManagerFactory,
+};
+
+export type {
+    IJwtValidator,
+    ITokenStorage,
+    ITokenRefreshClient,
+    INavigator,
+    TokenPair,
+};
