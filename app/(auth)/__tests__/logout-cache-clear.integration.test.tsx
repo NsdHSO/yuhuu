@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, waitFor, fireEvent } from '@testing-library/react-native';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render, waitFor } from '@testing-library/react-native';
+import { QueryClient } from '@tanstack/react-query';
 import { AuthProvider } from '@/providers/AuthProvider';
 
 /**
@@ -46,10 +46,6 @@ jest.mock('@/lib/nav', () => ({
 	redirectToLogin: jest.fn(),
 }));
 
-// Import after mocks
-import { queryClient } from '@/providers/QueryProvider';
-import TabLayout from '@/app/(tabs)/_layout';
-
 describe('Logout Cache Clear Integration Test', () => {
 	let testQueryClient: QueryClient;
 
@@ -67,6 +63,7 @@ describe('Logout Cache Clear Integration Test', () => {
 		});
 
 		// Mock getValidAccessToken to return null (not logged in)
+		// eslint-disable-next-line @typescript-eslint/no-require-imports
 		const { getValidAccessToken } = require('@/lib/tokenManager');
 		getValidAccessToken.mockResolvedValue(null);
 	});
@@ -231,7 +228,7 @@ describe('Logout Cache Clear Integration Test', () => {
 
 	it('should integrate with AuthProvider signOut function', async () => {
 		// Given: Render AuthProvider with mocked dependencies
-		const { setTokensFromLogin } = require('@/lib/tokenManager');
+		// eslint-disable-next-line @typescript-eslint/no-require-imports
 		const { getValidAccessToken } = require('@/lib/tokenManager');
 
 		// Start with no token (logged out state)
@@ -247,19 +244,20 @@ describe('Logout Cache Clear Integration Test', () => {
 		});
 
 		let signOutFn: (() => Promise<void>) | null = null;
-		let signInFn: ((email: string, password: string) => Promise<void>) | null = null;
 
 		// Create a component that captures the signOut function
 		function TestComponent() {
-			const { signOut, signIn, status } = require('@/providers/AuthProvider').useAuth();
+			// eslint-disable-next-line @typescript-eslint/no-require-imports
+			const { signOut, status } = require('@/providers/AuthProvider').useAuth();
 			signOutFn = signOut;
-			signInFn = signIn;
 
+			// eslint-disable-next-line @typescript-eslint/no-require-imports
 			const { Text } = require('react-native');
 			return <Text>Status: {status}</Text>;
 		}
 
 		// Render with real AuthProvider
+		// eslint-disable-next-line @typescript-eslint/no-require-imports
 		const { queryClient: realQueryClient } = require('@/providers/QueryProvider');
 
 		// Set some cached data
