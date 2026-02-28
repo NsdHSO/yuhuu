@@ -1,14 +1,41 @@
-import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import * as tokenManager from '../tokenManager';
 import * as secureStore from '../secureStore';
 import * as nav from '../nav';
 
-// Mock dependencies
-jest.mock('axios');
+// Create the mock post function before anything else
+const mockAxiosPost = jest.fn();
+const mockAxiosInstance = {
+    post: mockAxiosPost,
+    get: jest.fn(),
+    interceptors: {
+        request: { use: jest.fn() },
+        response: { use: jest.fn() },
+    },
+};
+
+// Mock axios so that axios.create() returns our controlled instance
+jest.mock('axios', () => {
+    const mockAxios: any = jest.fn();
+    mockAxios.create = jest.fn(() => mockAxiosInstance);
+    mockAxios.post = jest.fn();
+    mockAxios.get = jest.fn();
+    mockAxios.interceptors = {
+        request: { use: jest.fn() },
+        response: { use: jest.fn() },
+    };
+    return { __esModule: true, default: mockAxios };
+});
+
 jest.mock('jwt-decode');
 jest.mock('../secureStore');
 jest.mock('../nav');
+jest.mock('../http/url', () => ({
+    AUTH_BASE: 'http://localhost:4100/v1',
+}));
+jest.mock('../http/envelope', () => ({
+    applyEnvelopeUnwrapper: jest.fn(),
+}));
 
 describe('tokenManager', () => {
     const mockSaveAccessToken = jest.fn();
@@ -19,7 +46,6 @@ describe('tokenManager', () => {
     const mockClearStoredRefreshToken = jest.fn();
     const mockIsAuthPath = jest.fn();
     const mockRedirectToLogin = jest.fn();
-    const mockAxiosPost = jest.fn();
 
     const validToken = 'valid.jwt.token';
     const expiredToken = 'expired.jwt.token';
@@ -28,15 +54,7 @@ describe('tokenManager', () => {
     beforeEach(() => {
         jest.clearAllMocks();
 
-        jest.resetModules();
-
-        // Import fresh module with mocks applied
-        jest.mock('axios');
-        jest.mock('jwt-decode');
-        jest.mock('../secureStore');
-        jest.mock('../nav');
-        
-        // Re-assign mocks after module reset
+        // Re-assign mocks on the module namespace objects
         (secureStore.saveAccessToken as jest.Mock) = mockSaveAccessToken;
         (secureStore.saveRefreshToken as jest.Mock) = mockSaveRefreshToken;
         (secureStore.loadAccessToken as jest.Mock) = mockLoadAccessToken;
@@ -45,15 +63,17 @@ describe('tokenManager', () => {
         (secureStore.clearStoredRefreshToken as jest.Mock) = mockClearStoredRefreshToken;
         (nav.isAuthPath as jest.Mock) = mockIsAuthPath;
         (nav.redirectToLogin as jest.Mock) = mockRedirectToLogin;
-        (axios.post as jest.Mock) = mockAxiosPost;
+
+        // Restore the mock instance's post since clearAllMocks cleared it
+        mockAxiosInstance.post = mockAxiosPost;
 
         // Default mocks
         mockLoadAccessToken.mockResolvedValue(null);
         mockLoadRefreshToken.mockResolvedValue(null);
         mockIsAuthPath.mockReturnValue(false);
 
-        // Reset module state
-        jest.resetModules();
+        // Reset the singleton so each test gets a fresh TokenManager
+        tokenManager.__resetManagerForTesting();
     });
 
     describe('setTokensFromLogin', () => {
@@ -160,9 +180,15 @@ describe('tokenManager', () => {
             const expiredTime = Math.floor(Date.now() / 1000) - 3600; // 1 hour ago
             const futureTime = Math.floor(Date.now() / 1000) + 3600; // 1 hour from now
 
+            // 1st call: setTokensFromLogin -> getExpirationTime
+            // 2nd call: isAccessTokenValid -> isValid -> getExpirationTime (expired)
+            // 3rd call: isAccessTokenValid (2nd check) -> isValid -> getExpirationTime (expired)
+            // 4th call: after refresh, setAccessTokenInMemory -> getExpirationTime (future)
             (jwtDecode as jest.Mock)
                 .mockReturnValueOnce({ exp: expiredTime })
-                .mockReturnValueOnce({ exp: futureTime });
+                .mockReturnValueOnce({ exp: expiredTime })
+                .mockReturnValueOnce({ exp: expiredTime })
+                .mockReturnValue({ exp: futureTime });
 
             await tokenManager.setTokensFromLogin(expiredToken);
 
@@ -177,11 +203,8 @@ describe('tokenManager', () => {
             const token = await tokenManager.getValidAccessToken();
 
             expect(mockAxiosPost).toHaveBeenCalledWith(
-                expect.stringContaining('/auth/refresh'),
-                { refreshToken },
-                expect.objectContaining({
-                    withCredentials: true
-                })
+                '/auth/refresh',
+                { refreshToken }
             );
 
             expect(token).toBe(validToken);
