@@ -4,7 +4,8 @@ import { Stack } from 'expo-router';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { NativeModulesProxy } from 'expo-modules-core';
+import { NativeModulesProxy, requireNativeModule } from 'expo-modules-core';
+import * as LocalAuth from 'expo-local-authentication';
 
 type TestStatus = 'idle' | 'running' | 'pass' | 'fail' | 'warn';
 
@@ -122,7 +123,6 @@ export default function BiometricTestScreen() {
                 // Also try requireNativeModule directly
                 let directLoad = 'Not attempted';
                 try {
-                    const { requireNativeModule } = require('expo-modules-core');
                     const nativeModule = requireNativeModule('ExpoLocalAuthentication');
                     const directMethods = Object.keys(nativeModule).sort().join(', ');
                     directLoad = `Direct load OK. Methods: ${directMethods}`;
@@ -150,25 +150,13 @@ export default function BiometricTestScreen() {
 
         // Test 2: JS Module Import
         update(2, { status: 'running', value: 'Importing expo-local-authentication...' });
-        let localAuth: any = null;
-        try {
-            localAuth = require('expo-local-authentication');
-            const moduleKeys = Object.keys(localAuth).sort().join(', ');
-            console.log('[BiometricTest] JS module loaded. Exports:', moduleKeys);
-            update(2, { status: 'pass', value: `Loaded. Keys: ${moduleKeys}` });
-        } catch (err: any) {
-            const msg = err?.message || String(err);
-            console.error('[BiometricTest] JS module import FAILED:', msg);
-            update(2, { status: 'fail', value: 'Import failed', error: msg });
-            for (let i = 3; i < initial.length; i++) {
-                update(i, { status: 'fail', value: 'Skipped (module unavailable)', error: 'JS module import failed' });
-            }
-            setRunning(false);
-            return;
-        }
+        const moduleKeys = Object.keys(LocalAuth).sort().join(', ');
+        console.log('[BiometricTest] JS module loaded. Exports:', moduleKeys);
+        update(2, { status: 'pass', value: `Loaded. Keys: ${moduleKeys}` });
 
         // Test 3: Native method availability check (detect broken bridge)
         update(3, { status: 'running', value: 'Checking native method bindings...' });
+        const localAuthModule = LocalAuth as Record<string, unknown>;
         const methodChecks = [
             'hasHardwareAsync',
             'isEnrolledAsync',
@@ -181,13 +169,13 @@ export default function BiometricTestScreen() {
         let allMethodsPresent = true;
         let anyMethodMissing = false;
         for (const method of methodChecks) {
-            const exists = typeof localAuth[method] === 'function';
+            const exists = typeof localAuthModule[method] === 'function';
             const status = exists ? 'OK' : 'MISSING';
             if (!exists) {
                 allMethodsPresent = false;
                 anyMethodMissing = true;
             }
-            methodResults.push(`${method}: ${status} (${typeof localAuth[method]})`);
+            methodResults.push(`${method}: ${status} (${typeof localAuthModule[method]})`);
         }
         const methodInfo = methodResults.join('\n');
         console.log('[BiometricTest] Method availability:\n', methodInfo);
@@ -208,7 +196,7 @@ export default function BiometricTestScreen() {
         // Test 4: hasHardwareAsync
         update(4, { status: 'running', value: 'Checking...' });
         try {
-            const hasHardware = await localAuth.hasHardwareAsync();
+            const hasHardware = await LocalAuth.hasHardwareAsync();
             console.log('[BiometricTest] hasHardwareAsync():', hasHardware, typeof hasHardware);
             const isUndefined = hasHardware === undefined;
             const isNull = hasHardware === null;
@@ -242,7 +230,7 @@ export default function BiometricTestScreen() {
         // Test 5: isEnrolledAsync
         update(5, { status: 'running', value: 'Checking...' });
         try {
-            const isEnrolled = await localAuth.isEnrolledAsync();
+            const isEnrolled = await LocalAuth.isEnrolledAsync();
             console.log('[BiometricTest] isEnrolledAsync():', isEnrolled, typeof isEnrolled);
             const isUndefined = isEnrolled === undefined;
             let status: TestStatus = isEnrolled === true ? 'pass' : 'warn';
@@ -265,7 +253,7 @@ export default function BiometricTestScreen() {
         // Test 6: supportedAuthenticationTypesAsync
         update(6, { status: 'running', value: 'Checking...' });
         try {
-            const types = await localAuth.supportedAuthenticationTypesAsync();
+            const types = await LocalAuth.supportedAuthenticationTypesAsync();
             console.log('[BiometricTest] supportedAuthenticationTypesAsync() raw:', JSON.stringify(types), typeof types);
             if (!Array.isArray(types)) {
                 update(6, {
@@ -296,7 +284,7 @@ export default function BiometricTestScreen() {
         // Test 7: getEnrolledLevelAsync
         update(7, { status: 'running', value: 'Checking...' });
         try {
-            const level = await localAuth.getEnrolledLevelAsync();
+            const level = await LocalAuth.getEnrolledLevelAsync();
             console.log('[BiometricTest] getEnrolledLevelAsync():', level, typeof level);
             const levelNames: Record<number, string> = {
                 0: 'NONE',
@@ -341,18 +329,8 @@ export default function BiometricTestScreen() {
         setResults(prev => [...prev, newResult]);
         const idx = results.length;
 
-        let localAuth: any;
         try {
-            localAuth = require('expo-local-authentication');
-        } catch (err: any) {
-            const msg = err?.message || String(err);
-            setResults(prev => prev.map((r, i) => (i === idx ? { ...r, status: 'fail', value: 'Module unavailable', error: msg } : r)));
-            setAuthTestRunning(false);
-            return;
-        }
-
-        try {
-            const options: any = {
+            const options: LocalAuth.LocalAuthenticationOptions = {
                 promptMessage: 'Biometric Test - Verify your identity',
                 cancelLabel: 'Cancel',
                 disableDeviceFallback: !withFallback,
@@ -361,7 +339,7 @@ export default function BiometricTestScreen() {
                 options.fallbackLabel = '';
             }
             console.log('[BiometricTest] authenticateAsync options:', JSON.stringify(options));
-            const result = await localAuth.authenticateAsync(options);
+            const result = await LocalAuth.authenticateAsync(options);
             console.log('[BiometricTest] authenticateAsync result:', JSON.stringify(result));
 
             const resultStr = JSON.stringify(result, null, 2);
@@ -369,7 +347,7 @@ export default function BiometricTestScreen() {
                 ...r,
                 status: result?.success ? 'pass' : 'fail',
                 value: resultStr,
-                error: result?.error ? `Error code: ${result.error}` : undefined,
+                error: !result.success ? `Error code: ${result.error}` : undefined,
             } : r)));
         } catch (err: any) {
             const msg = err?.message || String(err);
@@ -501,9 +479,9 @@ export default function BiometricTestScreen() {
                             How to use
                         </Text>
                         <Text style={{ color: scheme === 'dark' ? '#D1D5DB' : '#374151', fontSize: 13, lineHeight: 20 }}>
-                            1. Tap "Run Diagnostics" to check hardware and enrollment status{'\n'}
-                            2. Use "Auth + Fallback" to test authentication with PIN/pattern fallback{'\n'}
-                            3. Use "Auth Biometric Only" to test biometric-only authentication{'\n'}
+                            1. Tap &quot;Run Diagnostics&quot; to check hardware and enrollment status{'\n'}
+                            2. Use &quot;Auth + Fallback&quot; to test authentication with PIN/pattern fallback{'\n'}
+                            3. Use &quot;Auth Biometric Only&quot; to test biometric-only authentication{'\n'}
                             4. Check Metro/Logcat console for detailed logs prefixed with [BiometricTest]
                         </Text>
                     </View>
