@@ -19,10 +19,12 @@ import { useAuth } from '@/providers/AuthProvider';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 import { getBiometricPreference, isBiometricAvailable } from '@/lib/biometricAuth';
+import { useTranslation } from 'react-i18next';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export default function LoginScreen() {
+    const { t } = useTranslation();
     const router = useRouter();
     const {
         signIn,
@@ -92,8 +94,8 @@ export default function LoginScreen() {
             await signInWithBiometrics();
             router.replace('/(tabs)');
         } catch (e: any) {
-            const msg = e?.message || 'Biometric login failed. Please try again.';
-            Alert.alert('Error', msg);
+            const msg = e?.message || t('auth.login.biometricError');
+            Alert.alert(t('common.error'), msg);
         } finally {
             setSubmitting(false);
         }
@@ -101,7 +103,7 @@ export default function LoginScreen() {
 
     async function onSubmit() {
         if (!email || !password) {
-            Alert.alert('Missing fields', 'Please enter email and password.');
+            Alert.alert(t('common.missingFields'), t('auth.login.missingFields'));
             return;
         }
         setSubmitting(true);
@@ -109,8 +111,8 @@ export default function LoginScreen() {
             await signIn(email.trim(), password);
             router.replace('/(tabs)');
         } catch (e: any) {
-            const msg = e?.response?.data?.message || 'Login failed. Please try again.';
-            Alert.alert('Error', msg);
+            const msg = e?.response?.data?.message || t('auth.login.error');
+            Alert.alert(t('common.error'), msg);
         } finally {
             setSubmitting(false);
         }
@@ -118,7 +120,7 @@ export default function LoginScreen() {
 
     return (
         <ThemedView className="flex-1">
-            <Stack.Screen options={{ title: 'Sign in' }}/>
+            <Stack.Screen options={{ title: t('auth.login.title') }}/>
             <ScrollView
                 ref={scrollViewRef}
                 style={{ flex: 1 }}
@@ -132,13 +134,13 @@ export default function LoginScreen() {
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 >
                     <View style={{ marginTop: 60 }}>
-                        <ThemedText type="title" style={{ marginBottom: 24 }}>Welcome back</ThemedText>
+                        <ThemedText type="title" style={{ marginBottom: 24 }}>{t('auth.login.welcome')}</ThemedText>
 
                         <View ref={emailInputRef}>
                             <TextInput
                                 value={email}
                                 onChangeText={setEmail}
-                                placeholder="Email"
+                                placeholder={t('auth.login.emailPlaceholder')}
                                 autoCapitalize="none"
                                 keyboardType="email-address"
                                 textContentType="username"
@@ -158,7 +160,7 @@ export default function LoginScreen() {
                             <TextInput
                                 value={password}
                                 onChangeText={setPassword}
-                                placeholder="Password"
+                                placeholder={t('auth.login.passwordPlaceholder')}
                                 secureTextEntry
                                 textContentType="password"
                                 autoComplete="password"
@@ -192,7 +194,7 @@ export default function LoginScreen() {
                                 fontSize: 17,
                                 textAlign: 'center'
                             }}>
-                                {submitting ? 'Signing in…' : 'Sign in'}
+                                {submitting ? t('auth.login.submitting') : t('auth.login.submit')}
                             </Text>
                         </TouchableOpacity>
 
@@ -219,7 +221,7 @@ export default function LoginScreen() {
                                             fontSize: 13
                                         }}
                                     >
-                                        or
+                                        {t('auth.login.biometricDivider')}
                                     </ThemedText>
                                     <View style={{
                                         flex: 1,
@@ -234,10 +236,10 @@ export default function LoginScreen() {
                                     activeOpacity={0.7}
                                     accessibilityLabel={
                                         Platform.OS === 'ios'
-                                            ? 'Sign in with Face ID or Touch ID'
-                                            : 'Sign in with biometrics'
+                                            ? t('auth.login.biometricAccessibilityLabel')
+                                            : t('auth.login.biometricAccessibilityLabelAndroid')
                                     }
-                                    accessibilityHint="Authenticate using your device biometrics to sign in"
+                                    accessibilityHint={t('auth.login.biometricAccessibilityHint')}
                                     style={{
                                         marginTop: 12,
                                         alignItems: 'center',
@@ -256,8 +258,8 @@ export default function LoginScreen() {
                                         marginTop: 4,
                                     }}>
                                         {Platform.OS === 'ios'
-                                            ? 'Sign in with Face ID'
-                                            : 'Sign in with biometrics'}
+                                            ? t('auth.login.biometricButton')
+                                            : t('auth.login.biometricButtonAndroid')}
                                     </Text>
                                 </TouchableOpacity>
                             </>
@@ -273,8 +275,7 @@ export default function LoginScreen() {
                                 paddingVertical: 8
                             })}
                         >
-                            <ThemedText lightColor="#6B7280" darkColor="#9CA3AF">Don&apos;t have an account? Create
-                                one</ThemedText>
+                            <ThemedText lightColor="#6B7280" darkColor="#9CA3AF">{t('auth.login.noAccount')}</ThemedText>
                         </Pressable>
                     </View>
                 </KeyboardAvoidingView>
