@@ -12,6 +12,7 @@ import {
     View
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -20,6 +21,7 @@ import { authApi } from '@/lib/api';
 import { setTokensFromLogin } from '@/lib/tokenManager';
 
 export default function RegisterScreen() {
+    const { t } = useTranslation();
     const router = useRouter();
     const scheme = useColorScheme() ?? 'light';
 
@@ -45,9 +47,9 @@ export default function RegisterScreen() {
     }), [scheme]);
 
     async function onSubmit() {
-        if (!email || !password) return Alert.alert('Missing fields', 'Email and password are required.');
-        if (password !== confirm) return Alert.alert('Password mismatch', 'Passwords do not match.');
-        if (!accept) return Alert.alert('Terms', 'You must accept the terms.');
+        if (!email || !password) return Alert.alert(t('common.missingFields'), t('auth.register.missingFields'));
+        if (password !== confirm) return Alert.alert(t('auth.register.passwordMismatchTitle'), t('auth.register.passwordMismatch'));
+        if (!accept) return Alert.alert(t('auth.register.termsTitle'), t('auth.register.termsRequired'));
 
         setSubmitting(true);
         try {
@@ -64,11 +66,11 @@ export default function RegisterScreen() {
             const rt = data?.refreshToken ?? data?.refresh_token ?? data?.message?.refresh_token;
 
             if (at) await setTokensFromLogin(at, rt);
-            Alert.alert('Success', 'Account created.');
+            Alert.alert(t('common.success'), t('auth.register.success'));
             router.replace('/(auth)/login');
         } catch (e: any) {
-            const msg = e?.response?.data?.message || 'Registration failed. Please try again.';
-            Alert.alert('Error', typeof msg === 'string' ? msg : 'Registration failed.');
+            const msg = e?.response?.data?.message || t('auth.register.error');
+            Alert.alert(t('common.error'), typeof msg === 'string' ? msg : t('auth.register.errorGeneric'));
         } finally {
             setSubmitting(false);
         }
@@ -76,7 +78,7 @@ export default function RegisterScreen() {
 
     return (
         <ThemedView className="flex-1">
-            <Stack.Screen options={{ title: 'Create account' }}/>
+            <Stack.Screen options={{ title: t('auth.register.title') }}/>
 
 
             <ScrollView
@@ -91,12 +93,12 @@ export default function RegisterScreen() {
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 >
                     <View style={{ marginTop: 20 }}>
-                        <ThemedText type="title" style={{ marginBottom: 24 }}>Create your account</ThemedText>
+                        <ThemedText type="title" style={{ marginBottom: 24 }}>{t('auth.register.createAccount')}</ThemedText>
 
                         <TextInput
                             value={email}
                             onChangeText={setEmail}
-                            placeholder="Email"
+                            placeholder={t('auth.register.emailPlaceholder')}
                             autoCapitalize="none"
                             keyboardType="email-address"
                             textContentType="username"
@@ -113,7 +115,7 @@ export default function RegisterScreen() {
                         <TextInput
                             value={password}
                             onChangeText={setPassword}
-                            placeholder="Password"
+                            placeholder={t('auth.register.passwordPlaceholder')}
                             secureTextEntry
                             textContentType="newPassword"
                             autoComplete="password-new"
@@ -128,7 +130,7 @@ export default function RegisterScreen() {
                         <TextInput
                             value={confirm}
                             onChangeText={setConfirm}
-                            placeholder="Confirm password"
+                            placeholder={t('auth.register.confirmPassword')}
                             secureTextEntry
                             textContentType="newPassword"
                             autoComplete="password-new"
@@ -143,7 +145,7 @@ export default function RegisterScreen() {
                         <TextInput
                             value={firstName}
                             onChangeText={setFirstName}
-                            placeholder="First name (optional)"
+                            placeholder={t('auth.register.firstNamePlaceholder')}
                             placeholderTextColor={inputStyles.placeholderColor}
                             selectionColor={inputStyles.selectionColor}
                             style={inputStyles.container as any}
@@ -154,7 +156,7 @@ export default function RegisterScreen() {
                         <TextInput
                             value={lastName}
                             onChangeText={setLastName}
-                            placeholder="Last name (optional)"
+                            placeholder={t('auth.register.lastNamePlaceholder')}
                             placeholderTextColor={inputStyles.placeholderColor}
                             selectionColor={inputStyles.selectionColor}
                             style={inputStyles.container as any}
@@ -168,7 +170,7 @@ export default function RegisterScreen() {
                             gap: 8,
                         }}>
                             <Switch value={accept} onValueChange={setAccept}/>
-                            <ThemedText>I accept the terms</ThemedText>
+                            <ThemedText>{t('auth.register.acceptTerms')}</ThemedText>
                         </View>
 
                         <View style={{ height: 16 }}/>
@@ -193,7 +195,7 @@ export default function RegisterScreen() {
                                 fontSize: 17,
                                 textAlign: 'center'
                             }}>
-                                {submitting ? 'Creating…' : 'Create account'}
+                                {submitting ? t('auth.register.submitting') : t('auth.register.submit')}
                             </Text>
                         </TouchableOpacity>
 
@@ -207,8 +209,7 @@ export default function RegisterScreen() {
                                 paddingVertical: 8
                             })}
                         >
-                            <ThemedText lightColor="#6B7280" darkColor="#9CA3AF">Already have an account? Sign
-                                in</ThemedText>
+                            <ThemedText lightColor="#6B7280" darkColor="#9CA3AF">{t('auth.register.hasAccount')}</ThemedText>
                         </Pressable>
                     </View>
                 </KeyboardAvoidingView>
