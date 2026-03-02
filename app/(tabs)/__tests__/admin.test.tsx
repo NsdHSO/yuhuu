@@ -10,6 +10,57 @@ import AdminScreen from '../admin';
  * - Open/Closed: Tests ensure features can be extended without modifying existing logic
  */
 
+// Mock react-i18next - return English values from translation keys
+const translations: Record<string, string> = {
+    'admin.dinnerParticipation': 'Dinner Participation Graph',
+    'admin.searchUser': 'Search User Attendance',
+    'admin.viewParticipants': 'View Dinner Participants',
+    'admin.loadError': 'Failed to load dinner statistics',
+    'admin.userNotFound': 'User not found or failed to load attendance',
+    'admin.noAttendanceRecords': 'No attendance records found for this user',
+    'admin.participantsLoadError': 'Failed to load participants for this dinner',
+    'admin.searchPlaceholder': 'Search by username',
+    'admin.dinnerIdPlaceholder': 'Enter dinner ID',
+    'admin.attendanceFor': 'Attendance for: {{username}}',
+    'admin.dateLabel': 'Date:',
+    'admin.statusLabel': 'Status:',
+    'admin.attended': 'Attended',
+    'admin.notAttended': 'Not Attended',
+    'admin.locationLabel': 'Location:',
+    'admin.mealTypeLabel': 'Meal Type:',
+    'admin.noStats': 'No dinner statistics available',
+    'admin.noStatsAvailable': 'No dinner statistics available',
+    'admin.totalDinners': 'Total Dinners',
+    'admin.totalParticipants': 'Total Participants',
+    'admin.averageAttendance': 'Average Attendance',
+    'admin.noParticipants': 'No participants found for this dinner',
+    'admin.noParticipantsFound': 'No participants found for this dinner',
+    'admin.usernameLabel': 'Username:',
+    'admin.notesLabel': 'Notes:',
+    'admin.addedLabel': 'Added:',
+    'admin.participantCount': 'Total: {{count}} participants',
+    'admin.participantCount_one': 'Total: {{count}} participant',
+    'admin.participantCount_other': 'Total: {{count}} participants',
+    'admin.totalCount': 'Total: {{count}} participants',
+    'common.loading': 'Loading...',
+    'common.search': 'Search',
+};
+
+jest.mock('react-i18next', () => ({
+    useTranslation: () => ({
+        t: (key: string, opts?: Record<string, any>) => {
+            let text = translations[key] ?? key;
+            if (opts) {
+                Object.entries(opts).forEach(([k, v]) => {
+                    text = text.replace(`{{${k}}}`, String(v));
+                });
+            }
+            return text;
+        },
+        i18n: { language: 'en', changeLanguage: jest.fn() },
+    }),
+}));
+
 // Mock hooks - must be before import
 const mockUseDinnerStatsQuery = jest.fn();
 const mockUseUserAttendanceQuery = jest.fn();
