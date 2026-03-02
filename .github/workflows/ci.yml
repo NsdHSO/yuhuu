@@ -33,6 +33,7 @@ jobs:
               - 'src/**'
               - 'app.config.js'
               - 'package.json'
+              - '.github/workflows/build-android.yml'
             ios:
               - 'ios/**'
               - 'app/**'
@@ -40,6 +41,7 @@ jobs:
               - 'src/**'
               - 'app.config.js'
               - 'package.json'
+              - '.github/workflows/build-ios.yml'
 
   # Run tests ONCE for both platforms
   test:
