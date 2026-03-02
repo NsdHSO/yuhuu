@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import { useTranslation } from 'react-i18next';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 import type { Dinner } from '@/features/dinners/types';
@@ -35,6 +36,7 @@ export function DinnerSelector({
                                    selectedDinnerId,
                                    onSelectDinner,
                                }: DinnerSelectorProps) {
+    const { t } = useTranslation();
     const scheme = useColorScheme() ?? 'light';
 
     // Auto-select if only one dinner and nothing selected yet
@@ -70,11 +72,11 @@ export function DinnerSelector({
             }}
             style={[styles.picker, pickerStyle]}
         >
-            <Picker.Item label="Select a dinner..." value={null}/>
+            <Picker.Item label={t('supper.selectDinnerPlaceholder')} value={null}/>
             {dinners.map((dinner) => (
                 <Picker.Item
                     key={dinner.id}
-                    label={`${dinner.mealType} - ${dinner.location || dinner.description || 'Dinner'}`}
+                    label={`${dinner.mealType} - ${dinner.location || dinner.description || t('supper.dinnerFallback')}`}
                     value={dinner.id}
                 />
             ))}
