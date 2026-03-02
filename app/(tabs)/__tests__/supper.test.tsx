@@ -8,6 +8,14 @@ import type { Dinner } from '@/features/dinners/types';
 // Mock Alert
 jest.spyOn(Alert, 'alert');
 
+// Mock react-i18next so t() returns the key as-is
+jest.mock('react-i18next', () => ({
+    useTranslation: () => ({
+        t: (key: string) => key,
+        i18n: { language: 'en', changeLanguage: jest.fn() },
+    }),
+}));
+
 // Mock hooks
 const mockUseDinnersByDateQuery = jest.fn();
 const mockUseAddParticipantMutation = jest.fn();
@@ -518,7 +526,7 @@ describe('SupperScreen', () => {
             fireEvent.press(getByTestId('date-picker'));
             fireEvent.press(getByTestId('submit-button'));
 
-            expect(Alert.alert).toHaveBeenCalledWith('Success', expect.any(String));
+            expect(Alert.alert).toHaveBeenCalledWith('common.success', 'supper.participantAdded');
         });
 
         it('should show error alert on failed submission', () => {
@@ -543,7 +551,7 @@ describe('SupperScreen', () => {
             fireEvent.press(getByTestId('date-picker'));
             fireEvent.press(getByTestId('submit-button'));
 
-            expect(Alert.alert).toHaveBeenCalledWith('Error', 'Failed to add');
+            expect(Alert.alert).toHaveBeenCalledWith('common.error', 'Failed to add');
         });
     });
 });
