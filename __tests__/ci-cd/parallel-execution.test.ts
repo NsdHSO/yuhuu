@@ -191,25 +191,40 @@ describe('CI Workflow - Parallel Execution', () => {
 		});
 
 		it('build jobs should depend on test job completion', () => {
-			const buildAndroid = ciWorkflow.jobs['build-android'];
-			const buildIos = ciWorkflow.jobs['build-ios'];
+			// Build matrix replaces separate build-android/build-ios jobs
+			const buildMatrix = ciWorkflow.jobs['build-matrix'];
 
-			expect(buildAndroid).toBeDefined();
-			expect(buildIos).toBeDefined();
+			/** Flatten needs which may be a string, array, or YAML inline array like "[test, changes]" */
+			const flattenNeeds = (needs: string | string[] | undefined): string[] => {
+				if (!needs) return [];
+				const arr = Array.isArray(needs) ? needs : [needs];
+				return arr.flatMap((n) => {
+					const s = String(n);
+					if (s.startsWith('[') && s.endsWith(']')) {
+						return s.slice(1, -1).split(',').map((v) => v.trim());
+					}
+					return [s];
+				});
+			};
 
-			// Both builds should need the test job
-			expect(buildAndroid.needs).toBeDefined();
-			expect(buildIos.needs).toBeDefined();
+			if (buildMatrix) {
+				// New matrix-based structure
+				expect(buildMatrix.needs).toBeDefined();
+				expect(flattenNeeds(buildMatrix.needs)).toContain('test');
+			} else {
+				// Separate job structure
+				const buildAndroid = ciWorkflow.jobs['build-android'];
+				const buildIos = ciWorkflow.jobs['build-ios'];
 
-			const androidNeeds = Array.isArray(buildAndroid.needs)
-				? buildAndroid.needs
-				: [buildAndroid.needs];
-			const iosNeeds = Array.isArray(buildIos.needs)
-				? buildIos.needs
-				: [buildIos.needs];
+				expect(buildAndroid).toBeDefined();
+				expect(buildIos).toBeDefined();
 
-			expect(androidNeeds).toContain('test');
-			expect(iosNeeds).toContain('test');
+				expect(buildAndroid.needs).toBeDefined();
+				expect(buildIos.needs).toBeDefined();
+
+				expect(flattenNeeds(buildAndroid.needs)).toContain('test');
+				expect(flattenNeeds(buildIos.needs)).toContain('test');
+			}
 		});
 	});
 

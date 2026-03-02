@@ -13,27 +13,49 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Detect which paths changed to conditionally skip builds
+  changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      android: ${{ steps.filter.outputs.android }}
+      ios: ${{ steps.filter.outputs.ios }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            android:
+              - 'android/**'
+              - 'app/**'
+              - 'lib/**'
+              - 'src/**'
+              - 'app.config.js'
+              - 'package.json'
+            ios:
+              - 'ios/**'
+              - 'app/**'
+              - 'lib/**'
+              - 'src/**'
+              - 'app.config.js'
+              - 'package.json'
+
   # Run tests ONCE for both platforms
   test:
     name: Test Application
     uses: ./.github/workflows/test.yml
 
-  # Build Android in parallel (tests run but don't block builds)
-  build-android:
-    name: Build Android
+  # Build both platforms in parallel using matrix strategy
+  build-matrix:
+    name: Build ${{ matrix.platform }}
     needs: test
     if: always()  # Run even if tests fail
+    strategy:
+      matrix:
+        platform: [android, ios]
+      fail-fast: false
     permissions:
       contents: write
-    uses: ./.github/workflows/build-android.yml
-    secrets: inherit
-
-  # Build iOS in parallel (tests run but don't block builds)
-  build-ios:
-    name: Build iOS
-    needs: test
-    if: always()  # Run even if tests fail
-    permissions:
-      contents: write
-    uses: ./.github/workflows/build-ios.yml
+    uses: ./.github/workflows/build-${{ matrix.platform }}.yml
     secrets: inherit

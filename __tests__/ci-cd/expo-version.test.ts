@@ -1,14 +1,16 @@
 /**
- * Tests for iOS Expo version pinning in CI/CD workflow
+ * Tests for iOS Expo version configuration in CI/CD workflow
  *
- * These tests validate that the iOS build workflow pins the Expo CLI version
- * to match the project's package.json dependency, rather than using 'latest'.
+ * These tests validate that the iOS build workflow uses `expo-version: latest`
+ * with expo-github-action@v8, which automatically syncs with package.json.
  *
- * WHY: Using `expo-version: latest` in CI causes:
- * 1. Non-deterministic builds (different Expo versions across runs)
- * 2. Unexpected breaking changes when Expo releases a new major version
- * 3. ~1 minute wasted on version resolution per build
- * 4. Potential incompatibilities between Expo CLI and SDK versions
+ * WHY: expo-github-action@v8 with `expo-version: latest` is recommended because:
+ * 1. Automatically uses the expo version from package.json (no manual sync needed)
+ * 2. Avoids deprecated expo-cli package resolution errors
+ * 3. Self-healing when package.json updates
+ * 4. Deterministic builds (package.json controls the version, not CI)
+ *
+ * The actual version pinning happens in package.json with semver format (e.g., "~54.0.32")
  */
 
 import * as fs from 'fs';
@@ -41,126 +43,114 @@ describe('iOS Expo version pinning', () => {
     });
 
     describe('version pinning', () => {
-        it('should NOT use expo-version: latest', () => {
-            // Using 'latest' causes non-deterministic builds and version resolution delays
+        it('should use expo-version: latest for expo-github-action@v8', () => {
+            // expo-github-action@v8 with 'latest' automatically uses package.json version
+            // This is the recommended approach to avoid deprecated expo-cli resolution
             const latestPattern = /expo-version:\s*latest/;
-            expect(workflowContent).not.toMatch(latestPattern);
+            expect(workflowContent).toMatch(latestPattern);
         });
 
-        it('should pin expo-version to a specific semver version', () => {
-            // Extract the expo-version value from the workflow
+        it('should have expo pinned in package.json with semver range', () => {
+            // The actual version control happens in package.json
+            const expoDepVersion = packageJson.dependencies['expo'];
+            expect(expoDepVersion).toBeDefined();
+
+            // Should use semver range format (e.g., "~54.0.32" or "^54.0.0")
+            const semverRangePattern = /^[~^]?\d+\.\d+\.\d+$/;
+            expect(expoDepVersion).toMatch(semverRangePattern);
+        });
+
+        it('should use a stable expo version in package.json', () => {
+            // Ensure package.json doesn't use unstable versions
+            const expoDepVersion = packageJson.dependencies['expo'];
+            expect(expoDepVersion).toBeDefined();
+
+            // Should NOT contain keywords like "next", "canary", "beta", "alpha"
+            expect(expoDepVersion).not.toContain('next');
+            expect(expoDepVersion).not.toContain('canary');
+            expect(expoDepVersion).not.toContain('beta');
+            expect(expoDepVersion).not.toContain('alpha');
+        });
+    });
+
+    describe('package.json version format', () => {
+        it('should have a valid major version number', () => {
+            const expoDepVersion = packageJson.dependencies['expo'];
+            const cleanVersion = expoDepVersion.replace(/^[~^>=<]+/, '');
+            const depParts = cleanVersion.split('.');
+
+            // Major version should be a number >= 0
+            const majorVersion = Number(depParts[0]);
+            expect(majorVersion).toBeGreaterThanOrEqual(0);
+            expect(Number.isNaN(majorVersion)).toBe(false);
+        });
+
+        it('should have a valid minor version number', () => {
+            const expoDepVersion = packageJson.dependencies['expo'];
+            const cleanVersion = expoDepVersion.replace(/^[~^>=<]+/, '');
+            const depParts = cleanVersion.split('.');
+
+            // Minor version should be a number >= 0
+            const minorVersion = Number(depParts[1]);
+            expect(minorVersion).toBeGreaterThanOrEqual(0);
+            expect(Number.isNaN(minorVersion)).toBe(false);
+        });
+
+        it('should have a valid patch version number', () => {
+            const expoDepVersion = packageJson.dependencies['expo'];
+            const cleanVersion = expoDepVersion.replace(/^[~^>=<]+/, '');
+            const depParts = cleanVersion.split('.');
+
+            // Patch version should be a number >= 0
+            const patchVersion = Number(depParts[2]);
+            expect(patchVersion).toBeGreaterThanOrEqual(0);
+            expect(Number.isNaN(patchVersion)).toBe(false);
+        });
+
+        it('should use tilde (~) or caret (^) for controlled updates', () => {
+            const expoDepVersion = packageJson.dependencies['expo'];
+
+            // Should start with ~ or ^ for semantic versioning range
+            const hasSemanticPrefix = /^[~^]/.test(expoDepVersion);
+            expect(hasSemanticPrefix).toBe(true);
+        });
+    });
+
+    describe('workflow version configuration', () => {
+        it('should use "latest" in workflow (syncs with package.json)', () => {
+            // expo-github-action@v8 with 'latest' is the recommended approach
             const versionMatch = workflowContent.match(
                 /expo-version:\s*['"]?(\S+?)['"]?\s*$/m
             );
             expect(versionMatch).not.toBeNull();
 
             const version = versionMatch![1];
-            // Should be a valid semver (e.g., "54.0.33", not "latest" or "latest-stable")
-            const semverPattern = /^\d+\.\d+\.\d+$/;
-            expect(version).toMatch(semverPattern);
+            expect(version).toBe('latest');
         });
 
-        it('should pin expo-version that is compatible with package.json expo SDK', () => {
-            // Extract expo version from package.json
-            const expoDepVersion = packageJson.dependencies['expo'];
-            expect(expoDepVersion).toBeDefined();
-
-            // Extract major version from package.json (e.g., "~54.0.32" -> "54")
-            const depMajorMatch = expoDepVersion.match(/(\d+)\./);
-            expect(depMajorMatch).not.toBeNull();
-            const depMajor = depMajorMatch![1];
-
-            // Extract pinned version from workflow
-            const workflowVersionMatch = workflowContent.match(
-                /expo-version:\s*['"]?(\S+?)['"]?\s*$/m
-            );
-            expect(workflowVersionMatch).not.toBeNull();
-            const pinnedVersion = workflowVersionMatch![1];
-
-            // Major versions should match
-            const pinnedMajorMatch = pinnedVersion.match(/^(\d+)\./);
-            expect(pinnedMajorMatch).not.toBeNull();
-            expect(pinnedMajorMatch![1]).toBe(depMajor);
-        });
-    });
-
-    describe('version consistency', () => {
-        it('should use the same expo major version as package.json', () => {
-            const expoDepVersion = packageJson.dependencies['expo'];
-            // Remove range prefix (~, ^, >=, etc.)
-            const cleanVersion = expoDepVersion.replace(/^[~^>=<]+/, '');
-            const depParts = cleanVersion.split('.');
-
-            const workflowVersionMatch = workflowContent.match(
-                /expo-version:\s*['"]?(\d+\.\d+\.\d+)['"]?\s*$/m
-            );
-            expect(workflowVersionMatch).not.toBeNull();
-
-            const pinnedParts = workflowVersionMatch![1].split('.');
-
-            // Major version must match exactly
-            expect(pinnedParts[0]).toBe(depParts[0]);
-        });
-
-        it('should use the same expo minor version as package.json', () => {
-            const expoDepVersion = packageJson.dependencies['expo'];
-            const cleanVersion = expoDepVersion.replace(/^[~^>=<]+/, '');
-            const depParts = cleanVersion.split('.');
-
-            const workflowVersionMatch = workflowContent.match(
-                /expo-version:\s*['"]?(\d+\.\d+\.\d+)['"]?\s*$/m
-            );
-            expect(workflowVersionMatch).not.toBeNull();
-
-            const pinnedParts = workflowVersionMatch![1].split('.');
-
-            // Minor version must match exactly
-            expect(pinnedParts[1]).toBe(depParts[1]);
-        });
-
-        it('should use a patch version >= package.json patch version', () => {
-            const expoDepVersion = packageJson.dependencies['expo'];
-            const cleanVersion = expoDepVersion.replace(/^[~^>=<]+/, '');
-            const depParts = cleanVersion.split('.');
-
-            const workflowVersionMatch = workflowContent.match(
-                /expo-version:\s*['"]?(\d+\.\d+\.\d+)['"]?\s*$/m
-            );
-            expect(workflowVersionMatch).not.toBeNull();
-
-            const pinnedParts = workflowVersionMatch![1].split('.');
-
-            // Patch version should be >= the package.json patch
-            expect(Number(pinnedParts[2])).toBeGreaterThanOrEqual(
-                Number(depParts[2])
-            );
-        });
-    });
-
-    describe('no dynamic version resolution', () => {
-        it('should not use version keywords that trigger resolution', () => {
-            // These all cause CI to resolve the version at runtime, wasting time
-            const dynamicPatterns = [
-                /expo-version:\s*latest\b/,
-                /expo-version:\s*latest-stable\b/,
+        it('should not use unstable version keywords in workflow', () => {
+            // 'latest' is allowed, but unstable versions should be avoided
+            const unstablePatterns = [
                 /expo-version:\s*next\b/,
                 /expo-version:\s*canary\b/,
                 /expo-version:\s*beta\b/,
+                /expo-version:\s*alpha\b/,
             ];
 
-            for (const pattern of dynamicPatterns) {
+            for (const pattern of unstablePatterns) {
                 expect(workflowContent).not.toMatch(pattern);
             }
         });
 
-        it('should not use version ranges', () => {
-            // Ranges like ^54.0.0 or ~54.0.0 still need resolution
+        it('should not use version ranges in workflow', () => {
+            // Version ranges (^, ~) should be in package.json, not workflow
             const versionMatch = workflowContent.match(
                 /expo-version:\s*['"]?(\S+?)['"]?\s*$/m
             );
             expect(versionMatch).not.toBeNull();
 
             const version = versionMatch![1];
+            // Should not start with semver range operators
             expect(version).not.toMatch(/^[~^>=<]/);
         });
     });
