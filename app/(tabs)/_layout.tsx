@@ -1,5 +1,6 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
@@ -9,6 +10,7 @@ import { useMyRolesQuery } from '@/features/roles/meRoles';
 import { useBootstrapGate } from '@/features/bootstrap/api';
 
 export default function TabLayout() {
+    const { t } = useTranslation();
     const colorScheme = useColorScheme();
     const ready = useBootstrapGate();
     const { data: myRoles } = useMyRolesQuery({ enabled: ready });
@@ -30,7 +32,7 @@ export default function TabLayout() {
                 <Tabs.Screen
                     name="index"
                     options={{
-                        title: 'Home',
+                        title: t('tabs.home'),
                         tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color}/>,
                         // Hide the tab completely when Member-only
                         href: isMemberOnly ? null : undefined,
@@ -41,7 +43,7 @@ export default function TabLayout() {
                 <Tabs.Screen
                     name="admin"
                     options={{
-                        title: 'Admin',
+                        title: t('tabs.admin'),
                         tabBarIcon: ({ color }) => <IconSymbol size={28} name="shield.fill" color={color}/>,
                         // Cannot use tabBarButton with href - removing HapticTab for role-based visibility
                         // Hide the tab when user is not Admin
@@ -52,7 +54,7 @@ export default function TabLayout() {
                 <Tabs.Screen
                     name="supper"
                     options={{
-                        title: 'Supper',
+                        title: t('tabs.supper'),
                         tabBarIcon: ({ color }) => <IconSymbol size={28} name="fork.knife" color={color}/>,
                         tabBarButton: HapticTab,
                     }}
@@ -61,7 +63,7 @@ export default function TabLayout() {
                 <Tabs.Screen
                     name="profile"
                     options={{
-                        title: 'Profile',
+                        title: t('tabs.profile'),
                         tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.crop.circle" color={color}/>,
                         tabBarButton: HapticTab,
                     }}
