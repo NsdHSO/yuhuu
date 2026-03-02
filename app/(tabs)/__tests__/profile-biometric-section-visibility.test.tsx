@@ -10,6 +10,53 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react-native';
 import { Alert, Platform } from 'react-native';
+
+// Mock react-i18next to return English strings for existing tests
+const translations: Record<string, string> = {
+    'profile.title': 'Profile',
+    'profile.createProfile': 'Create your profile',
+    'profile.noProfile': "We didn't find a profile. Fill in the fields below and save to create one.",
+    'profile.firstNamePlaceholder': 'First name',
+    'profile.lastNamePlaceholder': 'Last name',
+    'profile.phonePlaceholder': 'Phone',
+    'profile.security': 'Security',
+    'profile.biometricLabel': 'Face ID / Touch ID',
+    'profile.biometricLabelAndroid': 'Biometric Login',
+    'profile.biometricDescription': 'Use Face ID or Touch ID to sign in quickly',
+    'profile.biometricDescriptionAndroid': 'Use biometrics to sign in quickly',
+    'profile.biometricAccessibilityLabel': 'Enable Face ID or Touch ID sign-in',
+    'profile.biometricAccessibilityLabelAndroid': 'Enable biometric sign-in',
+    'profile.biometricAccessibilityHint': 'Toggle to enable or disable biometric authentication for signing in',
+    'profile.biometricEnableTitle': 'Verify your identity to enable biometric sign-in',
+    'profile.biometricAuthFailed': 'Could not verify your identity. Please try again.',
+    'profile.biometricEnableSuccess': 'Biometric sign-in enabled.',
+    'profile.biometricEnableError': 'Failed to enable biometric sign-in. Please try again.',
+    'profile.biometricDisableTitle': 'Disable biometric sign-in?',
+    'profile.biometricDisableMessage': 'You will need to enter your email and password to sign in.',
+    'profile.biometricDisableError': 'Failed to disable biometric sign-in.',
+    'profile.saving': 'Saving\u2026',
+    'profile.save': 'Save',
+    'profile.saveSuccess': 'Profile saved.',
+    'profile.saveError': 'Failed to save profile.',
+    'profile.loadError': 'Failed to load profile.',
+    'common.success': 'Success',
+    'common.error': 'Error',
+    'common.cancel': 'Cancel',
+    'common.disable': 'Disable',
+};
+
+jest.mock('react-i18next', () => ({
+    useTranslation: () => ({
+        t: (key: string) => translations[key] ?? key,
+        i18n: { language: 'en', changeLanguage: jest.fn() },
+    }),
+}));
+
+jest.mock('@/components/molecules/language-picker', () => {
+    const R = require('react');
+    return { __esModule: true, default: () => R.createElement('View', { testID: 'language-picker' }) };
+});
+
 // eslint-disable-next-line import/first
 import ProfileScreen from '../profile';
 
