@@ -38,6 +38,40 @@ jest.mock('@/hooks/use-color-scheme', () => ({
     useColorScheme: () => 'light',
 }));
 
+// Mock react-i18next to return English translations
+jest.mock('react-i18next', () => ({
+    useTranslation: () => ({
+        t: (key: string) => {
+            const translations: Record<string, string> = {
+                'auth.register.title': 'Create account',
+                'auth.register.createAccount': 'Create your account',
+                'auth.register.emailPlaceholder': 'Email',
+                'auth.register.passwordPlaceholder': 'Password',
+                'auth.register.confirmPassword': 'Confirm password',
+                'auth.register.firstNamePlaceholder': 'First name (optional)',
+                'auth.register.lastNamePlaceholder': 'Last name (optional)',
+                'auth.register.acceptTerms': 'I accept the terms',
+                'auth.register.submit': 'Create account',
+                'auth.register.submitting': 'Creating\u2026',
+                'auth.register.hasAccount': 'Already have an account? Sign in',
+                'auth.register.missingFields': 'Email and password are required.',
+                'auth.register.passwordMismatchTitle': 'Password mismatch',
+                'auth.register.passwordMismatch': 'Passwords do not match.',
+                'auth.register.termsTitle': 'Terms',
+                'auth.register.termsRequired': 'You must accept the terms.',
+                'auth.register.success': 'Account created.',
+                'auth.register.error': 'Registration failed. Please try again.',
+                'auth.register.errorGeneric': 'Registration failed.',
+                'common.missingFields': 'Missing fields',
+                'common.error': 'Error',
+                'common.success': 'Success',
+            };
+            return translations[key] ?? key;
+        },
+        i18n: { language: 'en', changeLanguage: jest.fn() },
+    }),
+}));
+
 // Mock Alert
 jest.spyOn(Alert, 'alert');
 
