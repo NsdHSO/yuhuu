@@ -9,6 +9,22 @@ import TabLayout from '../_layout';
  * - Open/Closed: Tests ensure tabs can be extended without modifying existing logic
  */
 
+// Mock react-i18next to return English values
+jest.mock('react-i18next', () => ({
+    useTranslation: () => ({
+        t: (key: string) => {
+            const translations: Record<string, string> = {
+                'tabs.home': 'Home',
+                'tabs.admin': 'Admin',
+                'tabs.supper': 'Supper',
+                'tabs.profile': 'Profile',
+            };
+            return translations[key] ?? key;
+        },
+        i18n: { language: 'en', changeLanguage: jest.fn() },
+    }),
+}));
+
 // Mock hooks
 const mockUseMyRolesQuery = jest.fn();
 const mockUseBootstrapGate = jest.fn();
