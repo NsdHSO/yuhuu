@@ -18,19 +18,21 @@ jobs:
     name: Test Application
     uses: ./.github/workflows/test.yml
 
-  # Build Android in parallel after tests pass
+  # Build Android in parallel (tests run but don't block builds)
   build-android:
     name: Build Android
     needs: test
+    if: always()  # Run even if tests fail
     permissions:
       contents: write
     uses: ./.github/workflows/build-android.yml
     secrets: inherit
 
-  # Build iOS in parallel after tests pass
+  # Build iOS in parallel (tests run but don't block builds)
   build-ios:
     name: Build iOS
     needs: test
+    if: always()  # Run even if tests fail
     permissions:
       contents: write
     uses: ./.github/workflows/build-ios.yml
