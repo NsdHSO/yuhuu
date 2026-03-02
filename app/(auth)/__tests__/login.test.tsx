@@ -21,6 +21,36 @@ jest.mock('@/hooks/use-color-scheme', () => ({
     useColorScheme: () => 'light'
 }));
 
+// Mock react-i18next to return the translation key as-is
+jest.mock('react-i18next', () => ({
+    useTranslation: () => ({
+        t: (key: string) => {
+            const translations: Record<string, string> = {
+                'auth.login.title': 'Sign in',
+                'auth.login.welcome': 'Welcome back',
+                'auth.login.emailPlaceholder': 'Email',
+                'auth.login.passwordPlaceholder': 'Password',
+                'auth.login.submit': 'Sign in',
+                'auth.login.submitting': 'Signing in\u2026',
+                'auth.login.noAccount': "Don't have an account? Create one",
+                'auth.login.biometricButton': 'Sign in with Face ID',
+                'auth.login.biometricButtonAndroid': 'Sign in with biometrics',
+                'auth.login.biometricDivider': 'or',
+                'auth.login.biometricAccessibilityLabel': 'Sign in with Face ID or Touch ID',
+                'auth.login.biometricAccessibilityLabelAndroid': 'Sign in with biometrics',
+                'auth.login.biometricAccessibilityHint': 'Authenticate using your device biometrics to sign in',
+                'auth.login.missingFields': 'Please enter email and password.',
+                'auth.login.error': 'Login failed. Please try again.',
+                'auth.login.biometricError': 'Biometric login failed. Please try again.',
+                'common.missingFields': 'Missing fields',
+                'common.error': 'Error',
+            };
+            return translations[key] ?? key;
+        },
+        i18n: { language: 'en', changeLanguage: jest.fn() },
+    }),
+}));
+
 // Mock Alert
 jest.spyOn(Alert, 'alert');
 
