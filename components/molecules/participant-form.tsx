@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Props for the ParticipantForm component
@@ -27,6 +28,7 @@ export function ParticipantForm({
                                     onSubmit,
                                     isSubmitting
                                 }: ParticipantFormProps) {
+    const { t } = useTranslation();
     const [username, setUsername] = useState('');
     const [notes, setNotes] = useState('');
     const scheme = useColorScheme() ?? 'light';
@@ -49,7 +51,7 @@ export function ParticipantForm({
     const handleSubmit = () => {
         // Validate inputs - only username is required
         if (!username.trim()) {
-            Alert.alert('Required', 'Please enter a username.');
+            Alert.alert(t('common.required'), t('common.usernameRequired'));
             return;
         }
 
@@ -64,7 +66,7 @@ export function ParticipantForm({
             <TextInput
                 value={username}
                 onChangeText={setUsername}
-                placeholder="Username"
+                placeholder={t('common.usernamePlaceholder')}
                 style={inputStyles.container}
                 placeholderTextColor={inputStyles.placeholderColor}
                 editable={!isSubmitting}
@@ -75,7 +77,7 @@ export function ParticipantForm({
             <TextInput
                 value={notes}
                 onChangeText={setNotes}
-                placeholder="Notes (optional)"
+                placeholder={t('common.notesPlaceholder')}
                 multiline
                 numberOfLines={4}
                 style={[inputStyles.container, styles.multilineInput]}
@@ -100,7 +102,7 @@ export function ParticipantForm({
                     pressed && styles.buttonPressed,
                 ]}
             >
-                <Text style={styles.buttonText}>{isSubmitting ? 'Adding…' : 'Add Participant'}</Text>
+                <Text style={styles.buttonText}>{isSubmitting ? t('common.adding') : t('common.addParticipant')}</Text>
             </Pressable>
         </View>
     );
