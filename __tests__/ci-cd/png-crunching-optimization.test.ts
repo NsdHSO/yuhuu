@@ -138,6 +138,10 @@ describe('PNG Crunching Optimization', () => {
         });
 
         it('should not hardcode crunchPngs to true', () => {
+            if (!androidDirExists) {
+                console.log('⚠️  Skipping: android/ directory not generated yet (run expo prebuild)');
+                return;
+            }
             // crunchPngs should be configurable, not hardcoded
             // Bad: crunchPngs true
             // Good: crunchPngs enablePngCrunchInRelease.toBoolean()
