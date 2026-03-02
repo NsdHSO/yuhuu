@@ -1,5 +1,6 @@
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 import { useDinnerStatsQuery, useUserAttendanceQuery } from '@/features/admin/hooks';
@@ -20,6 +21,7 @@ import { ParticipantsList } from '@/components/admin/participants-list';
  * - Dependency Inversion: Depends on hooks abstraction, not implementation
  */
 export default function AdminScreen() {
+    const { t } = useTranslation();
     const scheme = useColorScheme();
     const [searchedUsername, setSearchedUsername] = useState<string>('');
     const [selectedDinnerId, setSelectedDinnerId] = useState<number | null>(null);
@@ -60,14 +62,14 @@ export default function AdminScreen() {
         >
             {/* Dinner Graph Section - Expandable */}
             <View testID="dinner-graph-section" style={styles.section}>
-                <Accordion title="Dinner Participation Graph" initialExpanded={true} testID="dinner-graph-accordion">
+                <Accordion title={t('admin.dinnerParticipation')} initialExpanded={true} testID="dinner-graph-accordion">
                     {isLoadingStats ? (
                         <View testID="dinner-graph-loading" style={styles.loadingContainer}>
                             <ActivityIndicator size="large" color={Colors[scheme ?? 'light'].tint}/>
                         </View>
                     ) : statsError ? (
                         <Text style={[styles.errorText, { color: '#EF4444' }]}>
-                            Failed to load dinner statistics
+                            {t('admin.loadError')}
                         </Text>
                     ) : (
                         <DinnerGraph testID="dinner-graph" data={dinnerStats}/>
@@ -77,7 +79,7 @@ export default function AdminScreen() {
 
             {/* User Search Section - Expandable */}
             <View testID="user-search-section" style={styles.section}>
-                <Accordion title="Search User Attendance" initialExpanded={true} testID="user-search-accordion">
+                <Accordion title={t('admin.searchUser')} initialExpanded={true} testID="user-search-accordion">
                     <UserSearch testID="user-search" onSearch={handleSearch}/>
 
                     {/* Attendance Results */}
@@ -89,11 +91,11 @@ export default function AdminScreen() {
                                 </View>
                             ) : attendanceError ? (
                                 <Text style={[styles.errorText, { color: '#EF4444' }]}>
-                                    User not found or failed to load attendance
+                                    {t('admin.userNotFound')}
                                 </Text>
                             ) : userAttendance && userAttendance.length === 0 ? (
                                 <Text style={[styles.emptyText, { color: Colors[scheme ?? 'light'].icon }]}>
-                                    No attendance records found for this user
+                                    {t('admin.noAttendanceRecords')}
                                 </Text>
                             ) : (
                                 <DinnerAttendance testID="dinner-attendance" username={searchedUsername}
@@ -106,7 +108,7 @@ export default function AdminScreen() {
 
             {/* Dinner Participants Section - Expandable */}
             <View testID="dinner-participants-section" style={styles.section}>
-                <Accordion title="View Dinner Participants" initialExpanded={false}
+                <Accordion title={t('admin.viewParticipants')} initialExpanded={false}
                            testID="dinner-participants-accordion">
                     <DinnerIdSearch testID="dinner-id-search" onDinnerIdChange={handleDinnerIdChange}/>
 
@@ -119,7 +121,7 @@ export default function AdminScreen() {
                                 </View>
                             ) : participantsError ? (
                                 <Text style={[styles.errorText, { color: '#EF4444' }]}>
-                                    Failed to load participants for this dinner
+                                    {t('admin.participantsLoadError')}
                                 </Text>
                             ) : participants ? (
                                 <ParticipantsList testID="participants-list" participants={participants}/>
