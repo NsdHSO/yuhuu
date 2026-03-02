@@ -1,5 +1,6 @@
 import React from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { ThemedText } from '@/components/themed-text';
 
 /**
@@ -7,10 +8,11 @@ import { ThemedText } from '@/components/themed-text';
  * Single Responsibility: Only displays loading UI
  */
 export function LoadingState() {
+    const { t } = useTranslation();
     return (
         <View style={styles.container}>
             <ActivityIndicator size="large"/>
-            <ThemedText style={styles.text}>Loading dinner details...</ThemedText>
+            <ThemedText style={styles.text}>{t('common.loading')}</ThemedText>
         </View>
     );
 }
