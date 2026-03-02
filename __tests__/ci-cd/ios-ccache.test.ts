@@ -264,37 +264,41 @@ describe('iOS ccache Integration', () => {
         });
     });
 
-    describe('ccache environment variables for xcodebuild', () => {
-        it('should set CC environment variable to use ccache', () => {
-            // xcodebuild needs CC pointed to ccache-wrapped clang
-            // Expected: CC=ccache clang or CC=$(which ccache) clang
+    describe('ccache configuration for xcodebuild', () => {
+        it('should configure PATH to use ccache symlinks', () => {
+            // xcodebuild uses ccache via symlinks in /opt/homebrew/opt/ccache/libexec
+            // This is the recommended approach (vs setting CC/CXX env vars)
+            // ccache provides clang/clang++ symlinks that xcodebuild can find automatically
             const buildStep = buildSteps.find((step) =>
                 step.run?.includes('xcodebuild')
             );
 
             expect(buildStep).toBeDefined();
-            const hasCC =
-                buildStep!.env?.CC?.includes('ccache') ||
-                buildStep!.run?.includes('CC=') ||
-                workflowRaw.includes('CC:');
+            // Check for PATH export that includes ccache libexec directory
+            const hasPathExport =
+                buildStep!.run?.includes('PATH=') &&
+                buildStep!.run?.includes('ccache/libexec');
 
-            expect(hasCC).toBe(true);
+            expect(hasPathExport).toBe(true);
         });
 
-        it('should set CXX environment variable to use ccache', () => {
-            // C++ compilation also needs ccache wrapping
-            // Expected: CXX=ccache clang++ or similar
+        it('should prepend ccache to PATH before running xcodebuild', () => {
+            // Verify the PATH export comes before xcodebuild command
+            // This ensures xcodebuild finds ccache's clang/clang++ symlinks first
             const buildStep = buildSteps.find((step) =>
                 step.run?.includes('xcodebuild')
             );
 
             expect(buildStep).toBeDefined();
-            const hasCXX =
-                buildStep!.env?.CXX?.includes('ccache') ||
-                buildStep!.run?.includes('CXX=') ||
-                workflowRaw.includes('CXX:');
+            const runScript = buildStep!.run || '';
 
-            expect(hasCXX).toBe(true);
+            // Find positions of PATH export and xcodebuild command
+            const pathExportPos = runScript.indexOf('PATH=');
+            const xcodebuildPos = runScript.indexOf('xcodebuild');
+
+            expect(pathExportPos).toBeGreaterThanOrEqual(0);
+            expect(xcodebuildPos).toBeGreaterThanOrEqual(0);
+            expect(pathExportPos).toBeLessThan(xcodebuildPos);
         });
     });
 });
