@@ -85,7 +85,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ios/
-          key: ${{ runner.os }}-ios-prebuild-${{ hashFiles('app.config.js', 'app.json', 'package.json') }}
+          key: ${{ runner.os }}-ios-prebuild-${{ hashFiles('app.config.js', 'app.json', 'package.json', 'pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-ios-prebuild-
 

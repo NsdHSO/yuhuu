@@ -190,6 +190,15 @@ describe('Android Prebuild Cache - YAML Structure', () => {
             expect(key).toContain('package.json');
         });
 
+        it('should hash pnpm-lock.yaml in the cache key', () => {
+            // pnpm-lock.yaml changes when dependencies update
+            // Including it ensures cache invalidates on dependency changes
+            const cacheStep = findCacheStep(buildSteps, 'android/');
+            expect(cacheStep).toBeDefined();
+            const key = String(cacheStep!.with?.key || '');
+            expect(key).toContain('pnpm-lock.yaml');
+        });
+
         it('should use hashFiles function in the cache key', () => {
             const cacheStep = findCacheStep(buildSteps, 'android/');
             expect(cacheStep).toBeDefined();
