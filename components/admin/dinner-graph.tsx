@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 
@@ -25,13 +26,14 @@ export function DinnerGraph({
                                 data,
                                 testID
                             }: DinnerGraphProps) {
+    const { t } = useTranslation();
     const scheme = useColorScheme();
 
     if (!data) {
         return (
             <View testID={testID} style={styles.container}>
                 <Text style={[styles.emptyText, { color: Colors[scheme ?? 'light'].icon }]}>
-                    No dinner statistics available
+                    {t('admin.noStatsAvailable')}
                 </Text>
             </View>
         );
@@ -42,7 +44,7 @@ export function DinnerGraph({
             <View style={[styles.card, { backgroundColor: scheme === 'dark' ? '#1F2937' : '#F3F4F6' }]}>
                 <View style={styles.statRow}>
                     <Text style={[styles.statLabel, { color: Colors[scheme ?? 'light'].icon }]}>
-                        Total Dinners
+                        {t('admin.totalDinners')}
                     </Text>
                     <Text style={[styles.statValue, { color: Colors[scheme ?? 'light'].text }]}>
                         {data.totalDinners}
@@ -51,7 +53,7 @@ export function DinnerGraph({
 
                 <View style={styles.statRow}>
                     <Text style={[styles.statLabel, { color: Colors[scheme ?? 'light'].icon }]}>
-                        Total Participants
+                        {t('admin.totalParticipants')}
                     </Text>
                     <Text style={[styles.statValue, { color: Colors[scheme ?? 'light'].text }]}>
                         {data.totalParticipants}
@@ -60,7 +62,7 @@ export function DinnerGraph({
 
                 <View style={styles.statRow}>
                     <Text style={[styles.statLabel, { color: Colors[scheme ?? 'light'].icon }]}>
-                        Average Attendance
+                        {t('admin.averageAttendance')}
                     </Text>
                     <Text style={[styles.statValue, { color: Colors[scheme ?? 'light'].text }]}>
                         {data.averageAttendance}
