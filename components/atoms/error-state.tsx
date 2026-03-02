@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Props for ErrorState component
@@ -15,9 +16,10 @@ export type ErrorStateProps = {
  * Single Responsibility: Only displays error UI
  */
 export function ErrorState({ selectedDate }: ErrorStateProps) {
+    const { t } = useTranslation();
     return (
         <View style={styles.container}>
-            <ThemedText style={styles.text}>No dinner found for {selectedDate}</ThemedText>
+            <ThemedText style={styles.text}>{t('supper.noDinnerFound', { date: selectedDate })}</ThemedText>
         </View>
     );
 }
