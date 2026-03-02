@@ -8,6 +8,8 @@ module.exports = {
         '<rootDir>/components/**/__tests__/**/*.{js,jsx,ts,tsx}',
         '<rootDir>/lib/**/__tests__/**/*.{js,jsx,ts,tsx}',
         '<rootDir>/app/**/__tests__/**/*.{js,jsx,ts,tsx}',
+        '<rootDir>/hooks/**/__tests__/**/*.{js,jsx,ts,tsx}',
+        '<rootDir>/locales/**/__tests__/**/*.{js,jsx,ts,tsx}',
         '<rootDir>/**/*.{spec,test}.{js,jsx,ts,tsx}'
     ],
     testPathIgnorePatterns: [
