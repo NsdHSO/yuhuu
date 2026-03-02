@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import { DatePicker } from '@/components/atoms/date-picker';
@@ -25,6 +26,7 @@ import { useAddParticipantMutation, useDinnersByDateQuery } from '@/features/din
  * 4. Add participants to the selected dinner with username and notes
  */
 export default function SupperScreen() {
+    const { t } = useTranslation();
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [selectedDinnerId, setSelectedDinnerId] = useState<number | null>(null);
 
@@ -65,7 +67,7 @@ export default function SupperScreen() {
      */
     const handleSubmit = (username: string, notes: string) => {
         if (!selectedDinner) {
-            Alert.alert('Error', 'No dinner selected.');
+            Alert.alert(t('common.error'), t('supper.noDinnerSelected'));
             return;
         }
 
@@ -76,11 +78,11 @@ export default function SupperScreen() {
             },
             {
                 onSuccess: () => {
-                    Alert.alert('Success', 'Participant added successfully!');
+                    Alert.alert(t('common.success'), t('supper.participantAdded'));
                 },
                 onError: (e: any) => {
-                    const msg = e?.response?.data?.message || 'Failed to add participant.';
-                    Alert.alert('Error', msg);
+                    const msg = e?.response?.data?.message || t('supper.addError');
+                    Alert.alert(t('common.error'), msg);
                 },
             }
         );
@@ -92,7 +94,7 @@ export default function SupperScreen() {
                 {/* Calendar for date selection */}
                 <View style={styles.section}>
                     <ThemedText type="subtitle" style={styles.sectionTitle}>
-                        Select Dinner Date
+                        {t('supper.selectDate')}
                     </ThemedText>
                     <DatePicker selectedDate={selectedDate} onDateSelect={setSelectedDate}/>
                 </View>
@@ -107,7 +109,7 @@ export default function SupperScreen() {
                 {dinners && dinners.length > 1 && (
                     <View style={styles.section}>
                         <ThemedText type="subtitle" style={styles.sectionTitle}>
-                            Select Dinner
+                            {t('supper.selectDinner')}
                         </ThemedText>
                         <DinnerSelector
                             dinners={dinners}
@@ -121,12 +123,12 @@ export default function SupperScreen() {
                 {selectedDinner && (
                     <View style={styles.section}>
                         <ThemedText type="subtitle" style={styles.sectionTitle}>
-                            Dinner Details
+                            {t('supper.dinnerDetails')}
                         </ThemedText>
                         <DinnerDetailsCard dinner={selectedDinner}/>
 
                         <ThemedText type="subtitle" style={styles.sectionTitle}>
-                            Add Participant
+                            {t('supper.addParticipant')}
                         </ThemedText>
                         <ParticipantForm
                             onSubmit={handleSubmit}
