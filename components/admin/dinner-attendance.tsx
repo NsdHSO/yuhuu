@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 
@@ -28,13 +29,14 @@ export function DinnerAttendance({
                                      data,
                                      testID
                                  }: DinnerAttendanceProps) {
+    const { t } = useTranslation();
     const scheme = useColorScheme();
 
     if (!data || data.length === 0) {
         return (
             <View testID={testID}>
                 <Text style={[styles.emptyText, { color: Colors[scheme ?? 'light'].icon }]}>
-                    No attendance records found for this user
+                    {t('admin.noAttendanceRecords')}
                 </Text>
             </View>
         );
@@ -43,7 +45,7 @@ export function DinnerAttendance({
     return (
         <View testID={testID} style={styles.container}>
             <Text testID="attendance-username" style={[styles.username, { color: Colors[scheme ?? 'light'].text }]}>
-                Attendance for: {username}
+                {t('admin.attendanceFor', { username })}
             </Text>
 
             {data.map((record, index) => (
@@ -59,7 +61,7 @@ export function DinnerAttendance({
                     ]}
                 >
                     <View style={styles.cardRow}>
-                        <Text style={[styles.label, { color: Colors[scheme ?? 'light'].icon }]}>Date:</Text>
+                        <Text style={[styles.label, { color: Colors[scheme ?? 'light'].icon }]}>{t('admin.dateLabel')}</Text>
                         <Text testID={`attendance-date-${index}`}
                               style={[styles.value, { color: Colors[scheme ?? 'light'].text }]}>
                             {record.dinnerDate}
@@ -67,7 +69,7 @@ export function DinnerAttendance({
                     </View>
 
                     <View style={styles.cardRow}>
-                        <Text style={[styles.label, { color: Colors[scheme ?? 'light'].icon }]}>Status:</Text>
+                        <Text style={[styles.label, { color: Colors[scheme ?? 'light'].icon }]}>{t('admin.statusLabel')}</Text>
                         <Text
                             testID={`attendance-status-${index}`}
                             style={[
@@ -78,12 +80,12 @@ export function DinnerAttendance({
                                 },
                             ]}
                         >
-                            {record.attended ? 'Attended' : 'Not Attended'}
+                            {record.attended ? t('admin.attended') : t('admin.notAttended')}
                         </Text>
                     </View>
 
                     <View style={styles.cardRow}>
-                        <Text style={[styles.label, { color: Colors[scheme ?? 'light'].icon }]}>Location:</Text>
+                        <Text style={[styles.label, { color: Colors[scheme ?? 'light'].icon }]}>{t('admin.locationLabel')}</Text>
                         <Text testID={`attendance-location-${index}`}
                               style={[styles.value, { color: Colors[scheme ?? 'light'].text }]}>
                             {record.location}
@@ -92,7 +94,7 @@ export function DinnerAttendance({
 
                     {record.mealType && (
                         <View style={styles.cardRow}>
-                            <Text style={[styles.label, { color: Colors[scheme ?? 'light'].icon }]}>Meal Type:</Text>
+                            <Text style={[styles.label, { color: Colors[scheme ?? 'light'].icon }]}>{t('admin.mealTypeLabel')}</Text>
                             <Text style={[styles.value, { color: Colors[scheme ?? 'light'].text }]}>
                                 {record.mealType}
                             </Text>
