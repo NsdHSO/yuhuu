@@ -6,6 +6,7 @@ import { AuthProvider } from '@/providers/AuthProvider';
 import { useRouter } from 'expo-router';
 import { authApi } from '@/lib/api';
 import * as tokenManager from '@/lib/tokenManager';
+import { initI18n } from '@/lib/i18n';
 
 /**
  * Integration Tests for Authentication Flow
@@ -25,6 +26,8 @@ jest.mock('expo-router', () => ({
 jest.mock('@/lib/api');
 jest.mock('@/lib/tokenManager');
 jest.mock('@/lib/nav');
+jest.mock('expo-localization');
+jest.mock('expo-secure-store');
 
 jest.mock('@/hooks/use-color-scheme', () => ({
     useColorScheme: () => 'light'
@@ -34,6 +37,14 @@ jest.spyOn(Alert, 'alert');
 
 // Increase timeout for integration tests as they involve async operations
 jest.setTimeout(15000);
+
+beforeAll(async () => {
+    const Localization = require('expo-localization');
+    const SecureStore = require('expo-secure-store');
+    Localization.getLocales.mockReturnValue([{ languageCode: 'en' }]);
+    SecureStore.getItemAsync.mockResolvedValue(null);
+    await initI18n();
+});
 
 describe('Authentication Flow - Integration Tests', () => {
     const mockPush = jest.fn();
