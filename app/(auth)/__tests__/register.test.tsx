@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 import RegisterScreen from '../register';
 import { useRouter } from 'expo-router';
@@ -42,7 +42,7 @@ describe('RegisterScreen', () => {
 
     describe('Rendering', () => {
         it('should render registration form with all fields', () => {
-            render(<RegisterScreen />);
+            render(<RegisterScreen/>);
 
             expect(screen.getByText('Create your account')).toBeTruthy();
             expect(screen.getByPlaceholderText('Email')).toBeTruthy();
@@ -56,7 +56,7 @@ describe('RegisterScreen', () => {
         });
 
         it('should show creating state during submission', () => {
-            render(<RegisterScreen />);
+            render(<RegisterScreen/>);
 
             // Button should show "Create account" by default
             expect(screen.getByText('Create account')).toBeTruthy();
@@ -65,7 +65,7 @@ describe('RegisterScreen', () => {
 
     describe('User Interactions', () => {
         it('should update email input when user types', () => {
-            render(<RegisterScreen />);
+            render(<RegisterScreen/>);
 
             const emailInput = screen.getByPlaceholderText('Email');
             fireEvent.changeText(emailInput, 'test@example.com');
@@ -74,7 +74,7 @@ describe('RegisterScreen', () => {
         });
 
         it('should update password input when user types', () => {
-            render(<RegisterScreen />);
+            render(<RegisterScreen/>);
 
             const passwordInput = screen.getByPlaceholderText('Password');
             fireEvent.changeText(passwordInput, 'password123');
@@ -83,7 +83,7 @@ describe('RegisterScreen', () => {
         });
 
         it('should update confirm password input when user types', () => {
-            render(<RegisterScreen />);
+            render(<RegisterScreen/>);
 
             const confirmInput = screen.getByPlaceholderText('Confirm password');
             fireEvent.changeText(confirmInput, 'password123');
@@ -92,7 +92,7 @@ describe('RegisterScreen', () => {
         });
 
         it('should update first name input when user types', () => {
-            render(<RegisterScreen />);
+            render(<RegisterScreen/>);
 
             const firstNameInput = screen.getByPlaceholderText('First name (optional)');
             fireEvent.changeText(firstNameInput, 'John');
@@ -101,7 +101,7 @@ describe('RegisterScreen', () => {
         });
 
         it('should update last name input when user types', () => {
-            render(<RegisterScreen />);
+            render(<RegisterScreen/>);
 
             const lastNameInput = screen.getByPlaceholderText('Last name (optional)');
             fireEvent.changeText(lastNameInput, 'Doe');
@@ -110,7 +110,7 @@ describe('RegisterScreen', () => {
         });
 
         it('should navigate to login screen when clicking sign in link', () => {
-            render(<RegisterScreen />);
+            render(<RegisterScreen/>);
 
             const signInLink = screen.getByText('Already have an account? Sign in');
             fireEvent.press(signInLink);
@@ -121,7 +121,7 @@ describe('RegisterScreen', () => {
 
     describe('Form Validation', () => {
         it('should show alert when email is empty', async () => {
-            render(<RegisterScreen />);
+            render(<RegisterScreen/>);
 
             const passwordInput = screen.getByPlaceholderText('Password');
             const confirmInput = screen.getByPlaceholderText('Confirm password');
@@ -143,7 +143,7 @@ describe('RegisterScreen', () => {
         });
 
         it('should show alert when password is empty', async () => {
-            render(<RegisterScreen />);
+            render(<RegisterScreen/>);
 
             const emailInput = screen.getByPlaceholderText('Email');
             fireEvent.changeText(emailInput, 'test@example.com');
@@ -162,7 +162,7 @@ describe('RegisterScreen', () => {
         });
 
         it('should show alert when both email and password are empty', async () => {
-            render(<RegisterScreen />);
+            render(<RegisterScreen/>);
 
             const createButton = screen.getByText('Create account');
             fireEvent.press(createButton);
@@ -180,7 +180,7 @@ describe('RegisterScreen', () => {
 
     describe('Password Confirmation Validation', () => {
         it('should show alert when passwords do not match', async () => {
-            render(<RegisterScreen />);
+            render(<RegisterScreen/>);
 
             const emailInput = screen.getByPlaceholderText('Email');
             const passwordInput = screen.getByPlaceholderText('Password');
@@ -210,7 +210,7 @@ describe('RegisterScreen', () => {
                 }
             });
 
-            render(<RegisterScreen />);
+            render(<RegisterScreen/>);
 
             const emailInput = screen.getByPlaceholderText('Email');
             const passwordInput = screen.getByPlaceholderText('Password');
@@ -234,7 +234,7 @@ describe('RegisterScreen', () => {
         });
 
         it('should detect password mismatch with different case', async () => {
-            render(<RegisterScreen />);
+            render(<RegisterScreen/>);
 
             const emailInput = screen.getByPlaceholderText('Email');
             const passwordInput = screen.getByPlaceholderText('Password');
@@ -256,7 +256,7 @@ describe('RegisterScreen', () => {
         });
 
         it('should detect password mismatch with trailing spaces', async () => {
-            render(<RegisterScreen />);
+            render(<RegisterScreen/>);
 
             const emailInput = screen.getByPlaceholderText('Email');
             const passwordInput = screen.getByPlaceholderText('Password');
@@ -284,7 +284,7 @@ describe('RegisterScreen', () => {
                 }
             });
 
-            render(<RegisterScreen />);
+            render(<RegisterScreen/>);
 
             const emailInput = screen.getByPlaceholderText('Email');
             const passwordInput = screen.getByPlaceholderText('Password');
@@ -311,7 +311,7 @@ describe('RegisterScreen', () => {
 
     describe('Terms Acceptance Validation', () => {
         it('should show alert when terms are not accepted', async () => {
-            render(<RegisterScreen />);
+            render(<RegisterScreen/>);
 
             const emailInput = screen.getByPlaceholderText('Email');
             const passwordInput = screen.getByPlaceholderText('Password');
@@ -345,7 +345,7 @@ describe('RegisterScreen', () => {
                 }
             });
 
-            render(<RegisterScreen />);
+            render(<RegisterScreen/>);
 
             const emailInput = screen.getByPlaceholderText('Email');
             const passwordInput = screen.getByPlaceholderText('Password');
@@ -373,7 +373,7 @@ describe('RegisterScreen', () => {
                 }
             });
 
-            render(<RegisterScreen />);
+            render(<RegisterScreen/>);
 
             const emailInput = screen.getByPlaceholderText('Email');
             const passwordInput = screen.getByPlaceholderText('Password');
@@ -417,7 +417,7 @@ describe('RegisterScreen', () => {
                 }
             });
 
-            render(<RegisterScreen />);
+            render(<RegisterScreen/>);
 
             const emailInput = screen.getByPlaceholderText('Email');
             const passwordInput = screen.getByPlaceholderText('Password');
@@ -448,7 +448,7 @@ describe('RegisterScreen', () => {
                 }
             });
 
-            render(<RegisterScreen />);
+            render(<RegisterScreen/>);
 
             const emailInput = screen.getByPlaceholderText('Email');
             const passwordInput = screen.getByPlaceholderText('Password');
@@ -471,7 +471,7 @@ describe('RegisterScreen', () => {
         it('should show default error message when no error message in response', async () => {
             mockPost.mockRejectedValue(new Error('Network error'));
 
-            render(<RegisterScreen />);
+            render(<RegisterScreen/>);
 
             const emailInput = screen.getByPlaceholderText('Email');
             const passwordInput = screen.getByPlaceholderText('Password');
@@ -496,7 +496,7 @@ describe('RegisterScreen', () => {
                 }
             });
 
-            render(<RegisterScreen />);
+            render(<RegisterScreen/>);
 
             const emailInput = screen.getByPlaceholderText('Email');
             const passwordInput = screen.getByPlaceholderText('Password');
@@ -528,7 +528,7 @@ describe('RegisterScreen', () => {
                 }
             });
 
-            render(<RegisterScreen />);
+            render(<RegisterScreen/>);
 
             const emailInput = screen.getByPlaceholderText('Email');
             const passwordInput = screen.getByPlaceholderText('Password');
@@ -556,7 +556,7 @@ describe('RegisterScreen', () => {
                 }
             });
 
-            render(<RegisterScreen />);
+            render(<RegisterScreen/>);
 
             const emailInput = screen.getByPlaceholderText('Email');
             const passwordInput = screen.getByPlaceholderText('Password');

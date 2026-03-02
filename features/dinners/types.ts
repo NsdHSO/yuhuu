@@ -6,25 +6,25 @@
 
 // DTO Types (API layer)
 export type DinnerDto = {
-	id: number;
-	dinner_date: string; // YYYY-MM-DD
-	meal_type: string; // e.g., "Lunch", "Dinner", "Breakfast"
-	description?: string | null;
-	location?: string | null;
-	max_participants?: number | null;
-	recorded_by?: string | null;
-	uuid: string;
-	created_at: string;
-	updated_at: string;
+    id: number;
+    dinner_date: string; // YYYY-MM-DD
+    meal_type: string; // e.g., "Lunch", "Dinner", "Breakfast"
+    description?: string | null;
+    location?: string | null;
+    max_participants?: number | null;
+    recorded_by?: string | null;
+    uuid: string;
+    created_at: string;
+    updated_at: string;
 };
 
 export type ParticipantDto = {
-	id: number;
-	dinner_id: number;
-	username: string;
-	notes: string;
-	created_at: string;
-	updated_at: string;
+    id: number;
+    dinner_id: number;
+    username: string;
+    notes: string;
+    created_at: string;
+    updated_at: string;
 };
 
 /**
@@ -32,13 +32,13 @@ export type ParticipantDto = {
  * Single Responsibility: Represents pagination metadata
  */
 export type PaginatedResponse<T> = {
-	data: T[];
-	pagination: {
-		limit: number;
-		page: number;
-		total: number;
-		total_pages: number;
-	};
+    data: T[];
+    pagination: {
+        limit: number;
+        page: number;
+        total: number;
+        total_pages: number;
+    };
 };
 
 /**
@@ -46,31 +46,31 @@ export type PaginatedResponse<T> = {
  * This endpoint returns dinner details + participants array
  */
 export type ParticipantsByDinnerResponse = {
-	dinner: DinnerDto;
-	participants: ParticipantDto[];
+    dinner: DinnerDto;
+    participants: ParticipantDto[];
 };
 
 // Domain Types (App layer)
 export type Dinner = {
-	id: number;
-	dinnerDate: string;
-	mealType: string;
-	description?: string | null;
-	location?: string | null;
-	maxParticipants?: number | null;
-	recordedBy?: string | null;
-	uuid: string;
-	createdAt: string;
-	updatedAt: string;
+    id: number;
+    dinnerDate: string;
+    mealType: string;
+    description?: string | null;
+    location?: string | null;
+    maxParticipants?: number | null;
+    recordedBy?: string | null;
+    uuid: string;
+    createdAt: string;
+    updatedAt: string;
 };
 
 export type Participant = {
-	id: number;
-	dinnerId: number;
-	username: string;
-	notes: string;
-	createdAt: string;
-	updatedAt: string;
+    id: number;
+    dinnerId: number;
+    username: string;
+    notes: string;
+    createdAt: string;
+    updatedAt: string;
 };
 
 /**
@@ -78,6 +78,6 @@ export type Participant = {
  * Interface Segregation: Separates input from full model
  */
 export type ParticipantInput = {
-	username: string;
-	notes: string;
+    username: string;
+    notes: string;
 };

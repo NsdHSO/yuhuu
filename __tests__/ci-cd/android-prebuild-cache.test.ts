@@ -119,7 +119,7 @@ describe('Android Prebuild Caching', () => {
 
             const hasConditionalPrebuild =
                 workflowContent.includes('cache-hit') &&
-                workflowContent.includes("!= 'true'");
+                workflowContent.includes('!= \'true\'');
 
             expect(hasConditionalPrebuild).toBe(true);
         });

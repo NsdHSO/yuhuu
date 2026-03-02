@@ -21,6 +21,7 @@ import { NativeModulesProxy } from 'expo-modules-core';
  */
 interface IBiometricAuthenticator {
     isAvailable(): Promise<boolean>;
+
     authenticate(prompt: string): Promise<boolean>;
 }
 
@@ -30,7 +31,9 @@ interface IBiometricAuthenticator {
  */
 interface ISecureStorage {
     setItem(key: string, value: string): Promise<void>;
+
     getItem(key: string): Promise<string | null>;
+
     deleteItem(key: string): Promise<void>;
 }
 
@@ -128,9 +131,15 @@ class WebStorageAdapter implements ISecureStorage {
  * Single Responsibility: Provide safe no-op storage.
  */
 class NullStorageAdapter implements ISecureStorage {
-    async setItem(_key: string, _value: string): Promise<void> {}
-    async getItem(_key: string): Promise<string | null> { return null; }
-    async deleteItem(_key: string): Promise<void> {}
+    async setItem(_key: string, _value: string): Promise<void> {
+    }
+
+    async getItem(_key: string): Promise<string | null> {
+        return null;
+    }
+
+    async deleteItem(_key: string): Promise<void> {
+    }
 }
 
 // ============================================================================
@@ -211,8 +220,13 @@ class NativeBiometricAuthenticator implements IBiometricAuthenticator {
  * Single Responsibility: Provide safe no-op biometric operations.
  */
 class NullBiometricAuthenticator implements IBiometricAuthenticator {
-    async isAvailable(): Promise<boolean> { return false; }
-    async authenticate(_prompt: string): Promise<boolean> { return false; }
+    async isAvailable(): Promise<boolean> {
+        return false;
+    }
+
+    async authenticate(_prompt: string): Promise<boolean> {
+        return false;
+    }
 }
 
 // ============================================================================
@@ -231,7 +245,8 @@ class BiometricService {
     constructor(
         private authenticator: IBiometricAuthenticator,
         private storage: ISecureStorage
-    ) {}
+    ) {
+    }
 
     /**
      * Checks if biometric authentication is available on this device.

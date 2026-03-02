@@ -9,7 +9,7 @@ import { ErrorState } from '@/components/atoms/error-state';
 import { EmptyState } from '@/components/atoms/empty-state';
 import { ParticipantForm } from '@/components/molecules/participant-form';
 import { DinnerDetailsCard } from '@/components/molecules/dinner-details-card';
-import { useDinnersByDateQuery, useAddParticipantMutation } from '@/features/dinners/hooks';
+import { useAddParticipantMutation, useDinnersByDateQuery } from '@/features/dinners/hooks';
 
 /**
  * Main Supper screen for managing church dinner participants
@@ -25,128 +25,135 @@ import { useDinnersByDateQuery, useAddParticipantMutation } from '@/features/din
  * 4. Add participants to the selected dinner with username and notes
  */
 export default function SupperScreen() {
-	const [selectedDate, setSelectedDate] = useState<string | null>(null);
-	const [selectedDinnerId, setSelectedDinnerId] = useState<number | null>(null);
+    const [selectedDate, setSelectedDate] = useState<string | null>(null);
+    const [selectedDinnerId, setSelectedDinnerId] = useState<number | null>(null);
 
-	// Query dinners by date (returns array)
-	const { data: dinners, isLoading, error } = useDinnersByDateQuery(selectedDate);
+    // Query dinners by date (returns array)
+    const {
+        data: dinners,
+        isLoading,
+        error
+    } = useDinnersByDateQuery(selectedDate);
 
-	// Find the selected dinner from the array
-	const selectedDinner = dinners?.find((d) => d.id === selectedDinnerId);
+    // Find the selected dinner from the array
+    const selectedDinner = dinners?.find((d) => d.id === selectedDinnerId);
 
-	// Mutation for adding participants
-	const addParticipantMutation = useAddParticipantMutation(selectedDinnerId ?? 0);
+    // Mutation for adding participants
+    const addParticipantMutation = useAddParticipantMutation(selectedDinnerId ?? 0);
 
-	/**
-	 * Reset dinner selection when date changes
-	 * Single Responsibility: Only handles date change side effect
-	 */
-	React.useEffect(() => {
-		setSelectedDinnerId(null);
-	}, [selectedDate]);
+    /**
+     * Reset dinner selection when date changes
+     * Single Responsibility: Only handles date change side effect
+     */
+    React.useEffect(() => {
+        setSelectedDinnerId(null);
+    }, [selectedDate]);
 
-	/**
-	 * Auto-select dinner if only one exists for the date
-	 * Single Responsibility: Only handles auto-selection logic
-	 */
-	React.useEffect(() => {
-		if (dinners && dinners.length === 1 && selectedDinnerId === null) {
-			setSelectedDinnerId(dinners[0].id);
-		}
-	}, [dinners, selectedDinnerId]);
+    /**
+     * Auto-select dinner if only one exists for the date
+     * Single Responsibility: Only handles auto-selection logic
+     */
+    React.useEffect(() => {
+        if (dinners && dinners.length === 1 && selectedDinnerId === null) {
+            setSelectedDinnerId(dinners[0].id);
+        }
+    }, [dinners, selectedDinnerId]);
 
-	/**
-	 * Handles form submission for adding a participant
-	 * Single Responsibility: Only handles participant submission
-	 */
-	const handleSubmit = (username: string, notes: string) => {
-		if (!selectedDinner) {
-			Alert.alert('Error', 'No dinner selected.');
-			return;
-		}
+    /**
+     * Handles form submission for adding a participant
+     * Single Responsibility: Only handles participant submission
+     */
+    const handleSubmit = (username: string, notes: string) => {
+        if (!selectedDinner) {
+            Alert.alert('Error', 'No dinner selected.');
+            return;
+        }
 
-		addParticipantMutation.mutate(
-			{ username, notes },
-			{
-				onSuccess: () => {
-					Alert.alert('Success', 'Participant added successfully!');
-				},
-				onError: (e: any) => {
-					const msg = e?.response?.data?.message || 'Failed to add participant.';
-					Alert.alert('Error', msg);
-				},
-			}
-		);
-	};
+        addParticipantMutation.mutate(
+            {
+                username,
+                notes
+            },
+            {
+                onSuccess: () => {
+                    Alert.alert('Success', 'Participant added successfully!');
+                },
+                onError: (e: any) => {
+                    const msg = e?.response?.data?.message || 'Failed to add participant.';
+                    Alert.alert('Error', msg);
+                },
+            }
+        );
+    };
 
-	return (
-		<ThemedView style={styles.container}>
-			<ScrollView contentContainerStyle={styles.scrollContent}>
-				{/* Calendar for date selection */}
-				<View style={styles.section}>
-					<ThemedText type="subtitle" style={styles.sectionTitle}>
-						Select Dinner Date
-					</ThemedText>
-					<DatePicker selectedDate={selectedDate} onDateSelect={setSelectedDate} />
-				</View>
+    return (
+        <ThemedView style={styles.container}>
+            <ScrollView contentContainerStyle={styles.scrollContent}>
+                {/* Calendar for date selection */}
+                <View style={styles.section}>
+                    <ThemedText type="subtitle" style={styles.sectionTitle}>
+                        Select Dinner Date
+                    </ThemedText>
+                    <DatePicker selectedDate={selectedDate} onDateSelect={setSelectedDate}/>
+                </View>
 
-				{/* Loading state */}
-				{isLoading && <LoadingState />}
+                {/* Loading state */}
+                {isLoading && <LoadingState/>}
 
-				{/* Error state - no dinners found or API error */}
-				{error && selectedDate && <ErrorState selectedDate={selectedDate} />}
+                {/* Error state - no dinners found or API error */}
+                {error && selectedDate && <ErrorState selectedDate={selectedDate}/>}
 
-				{/* Dinner selector - only show if multiple dinners exist */}
-				{dinners && dinners.length > 1 && (
-					<View style={styles.section}>
-						<ThemedText type="subtitle" style={styles.sectionTitle}>
-							Select Dinner
-						</ThemedText>
-						<DinnerSelector
-							dinners={dinners}
-							selectedDinnerId={selectedDinnerId}
-							onSelectDinner={setSelectedDinnerId}
-						/>
-					</View>
-				)}
+                {/* Dinner selector - only show if multiple dinners exist */}
+                {dinners && dinners.length > 1 && (
+                    <View style={styles.section}>
+                        <ThemedText type="subtitle" style={styles.sectionTitle}>
+                            Select Dinner
+                        </ThemedText>
+                        <DinnerSelector
+                            dinners={dinners}
+                            selectedDinnerId={selectedDinnerId}
+                            onSelectDinner={setSelectedDinnerId}
+                        />
+                    </View>
+                )}
 
-				{/* Dinner details and participant form - show when dinner is selected */}
-				{selectedDinner && (
-					<View style={styles.section}>
-						<ThemedText type="subtitle" style={styles.sectionTitle}>
-							Dinner Details
-						</ThemedText>
-						<DinnerDetailsCard dinner={selectedDinner} />
+                {/* Dinner details and participant form - show when dinner is selected */}
+                {selectedDinner && (
+                    <View style={styles.section}>
+                        <ThemedText type="subtitle" style={styles.sectionTitle}>
+                            Dinner Details
+                        </ThemedText>
+                        <DinnerDetailsCard dinner={selectedDinner}/>
 
-						<ThemedText type="subtitle" style={styles.sectionTitle}>
-							Add Participant
-						</ThemedText>
-						<ParticipantForm
-							onSubmit={handleSubmit}
-							isSubmitting={addParticipantMutation.isPending}
-						/>
-					</View>
-				)}
+                        <ThemedText type="subtitle" style={styles.sectionTitle}>
+                            Add Participant
+                        </ThemedText>
+                        <ParticipantForm
+                            onSubmit={handleSubmit}
+                            isSubmitting={addParticipantMutation.isPending}
+                        />
+                    </View>
+                )}
 
-				{/* Prompt to select a date */}
-				{!selectedDate && !isLoading && <EmptyState />}
-			</ScrollView>
-		</ThemedView>
-	);
+                {/* Prompt to select a date */}
+                {!selectedDate && !isLoading && <EmptyState/>}
+            </ScrollView>
+        </ThemedView>
+    );
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-	},
-	scrollContent: {
-		padding: 16,
-		paddingBottom: 40,
-	},
-	section: {
-		marginTop: 24,
-	},
-	sectionTitle: {
-		marginBottom: 16,
-	},
+    container: {
+        flex: 1,
+    },
+    scrollContent: {
+        padding: 16,
+        paddingBottom: 40,
+    },
+    section: {
+        marginTop: 24,
+    },
+    sectionTitle: {
+        marginBottom: 16,
+    },
 });

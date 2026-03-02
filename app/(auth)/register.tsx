@@ -1,5 +1,16 @@
 import React, { useMemo, useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    Pressable,
+    ScrollView,
+    Switch,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
+} from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -70,7 +81,10 @@ export default function RegisterScreen() {
 
             <ScrollView
                 style={{ flex: 1 }}
-                contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
+                contentContainerStyle={{
+                    padding: 16,
+                    paddingBottom: 40
+                }}
                 keyboardShouldPersistTaps="handled"
             >
                 <KeyboardAvoidingView
@@ -94,7 +108,7 @@ export default function RegisterScreen() {
                             style={inputStyles.container as any}
                         />
 
-                        <View style={{ height: 12 }} />
+                        <View style={{ height: 12 }}/>
 
                         <TextInput
                             value={password}
@@ -109,7 +123,7 @@ export default function RegisterScreen() {
                             style={inputStyles.container as any}
                         />
 
-                        <View style={{ height: 12 }} />
+                        <View style={{ height: 12 }}/>
 
                         <TextInput
                             value={confirm}
@@ -124,7 +138,7 @@ export default function RegisterScreen() {
                             style={inputStyles.container as any}
                         />
 
-                        <View style={{ height: 12 }} />
+                        <View style={{ height: 12 }}/>
 
                         <TextInput
                             value={firstName}
@@ -135,7 +149,7 @@ export default function RegisterScreen() {
                             style={inputStyles.container as any}
                         />
 
-                        <View style={{ height: 12 }} />
+                        <View style={{ height: 12 }}/>
 
                         <TextInput
                             value={lastName}
@@ -146,7 +160,7 @@ export default function RegisterScreen() {
                             style={inputStyles.container as any}
                         />
 
-                        <View style={{ height: 16 }} />
+                        <View style={{ height: 16 }}/>
 
                         <View style={{
                             flexDirection: 'row',
@@ -157,7 +171,7 @@ export default function RegisterScreen() {
                             <ThemedText>I accept the terms</ThemedText>
                         </View>
 
-                        <View style={{ height: 16 }} />
+                        <View style={{ height: 16 }}/>
 
                         <TouchableOpacity
                             onPress={onSubmit}
@@ -183,7 +197,7 @@ export default function RegisterScreen() {
                             </Text>
                         </TouchableOpacity>
 
-                        <View style={{ height: 16 }} />
+                        <View style={{ height: 16 }}/>
 
                         <Pressable
                             onPress={() => router.replace('/(auth)/login')}
@@ -193,7 +207,8 @@ export default function RegisterScreen() {
                                 paddingVertical: 8
                             })}
                         >
-                            <ThemedText lightColor="#6B7280" darkColor="#9CA3AF">Already have an account? Sign in</ThemedText>
+                            <ThemedText lightColor="#6B7280" darkColor="#9CA3AF">Already have an account? Sign
+                                in</ThemedText>
                         </Pressable>
                     </View>
                 </KeyboardAvoidingView>

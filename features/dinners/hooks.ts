@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import type { Dinner, Participant, ParticipantInput } from './types';
 import type { DinnersRepository } from './repository';
 import { defaultDinnersRepository } from './repository';
@@ -13,14 +13,14 @@ import { defaultDinnersRepository } from './repository';
  * @returns React Query result with array of dinner data
  */
 export function useDinnersByDateQuery(
-	dinnerDate: string | null,
-	repo: DinnersRepository = defaultDinnersRepository
+    dinnerDate: string | null,
+    repo: DinnersRepository = defaultDinnersRepository
 ) {
-	return useQuery<Dinner[]>({
-		queryKey: ['dinners', 'by-date', dinnerDate],
-		queryFn: () => repo.getByDate(dinnerDate!),
-		enabled: Boolean(dinnerDate),
-	});
+    return useQuery<Dinner[]>({
+        queryKey: ['dinners', 'by-date', dinnerDate],
+        queryFn: () => repo.getByDate(dinnerDate!),
+        enabled: Boolean(dinnerDate),
+    });
 }
 
 /**
@@ -33,14 +33,14 @@ export function useDinnersByDateQuery(
  * @returns React Query result with array of participant data
  */
 export function useParticipantsByDinnerQuery(
-	dinnerId: number | null | undefined,
-	repo: DinnersRepository = defaultDinnersRepository
+    dinnerId: number | null | undefined,
+    repo: DinnersRepository = defaultDinnersRepository
 ) {
-	return useQuery<Participant[]>({
-		queryKey: ['participants', 'by-dinner', dinnerId],
-		queryFn: () => repo.getParticipantsByDinner(dinnerId!),
-		enabled: Boolean(dinnerId),
-	});
+    return useQuery<Participant[]>({
+        queryKey: ['participants', 'by-dinner', dinnerId],
+        queryFn: () => repo.getParticipantsByDinner(dinnerId!),
+        enabled: Boolean(dinnerId),
+    });
 }
 
 /**
@@ -59,11 +59,11 @@ export function useParticipantsByDinnerQuery(
  * @returns React Query mutation result
  */
 export function useAddParticipantMutation(
-	dinnerId: number,
-	repo: DinnersRepository = defaultDinnersRepository
+    dinnerId: number,
+    repo: DinnersRepository = defaultDinnersRepository
 ) {
-	return useMutation<Participant, Error, ParticipantInput>({
-		mutationFn: (input) => repo.addParticipant(dinnerId, input),
-		// No onSuccess handler needed - no queries to invalidate!
-	});
+    return useMutation<Participant, Error, ParticipantInput>({
+        mutationFn: (input) => repo.addParticipant(dinnerId, input),
+        // No onSuccess handler needed - no queries to invalidate!
+    });
 }

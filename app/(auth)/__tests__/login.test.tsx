@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 import LoginScreen from '../login';
 import { useAuth } from '@/providers/AuthProvider';
@@ -43,7 +43,7 @@ describe('LoginScreen', () => {
 
     describe('Rendering', () => {
         it('should render login form with all elements', () => {
-            render(<LoginScreen />);
+            render(<LoginScreen/>);
 
             expect(screen.getByText('Welcome back')).toBeTruthy();
             expect(screen.getByPlaceholderText('Email')).toBeTruthy();
@@ -63,7 +63,7 @@ describe('LoginScreen', () => {
 
     describe('User Interactions', () => {
         it('should update email input when user types', () => {
-            render(<LoginScreen />);
+            render(<LoginScreen/>);
 
             const emailInput = screen.getByPlaceholderText('Email');
             fireEvent.changeText(emailInput, 'test@example.com');
@@ -72,7 +72,7 @@ describe('LoginScreen', () => {
         });
 
         it('should update password input when user types', () => {
-            render(<LoginScreen />);
+            render(<LoginScreen/>);
 
             const passwordInput = screen.getByPlaceholderText('Password');
             fireEvent.changeText(passwordInput, 'password123');
@@ -81,7 +81,7 @@ describe('LoginScreen', () => {
         });
 
         it('should navigate to register screen when clicking create account link', () => {
-            render(<LoginScreen />);
+            render(<LoginScreen/>);
 
             const createAccountLink = screen.getByText(/Don't have an account/);
             fireEvent.press(createAccountLink);
@@ -92,7 +92,7 @@ describe('LoginScreen', () => {
 
     describe('Form Validation', () => {
         it('should show alert when email is empty', async () => {
-            render(<LoginScreen />);
+            render(<LoginScreen/>);
 
             const passwordInput = screen.getByPlaceholderText('Password');
             fireEvent.changeText(passwordInput, 'password123');
@@ -111,7 +111,7 @@ describe('LoginScreen', () => {
         });
 
         it('should show alert when password is empty', async () => {
-            render(<LoginScreen />);
+            render(<LoginScreen/>);
 
             const emailInput = screen.getByPlaceholderText('Email');
             fireEvent.changeText(emailInput, 'test@example.com');
@@ -130,7 +130,7 @@ describe('LoginScreen', () => {
         });
 
         it('should show alert when both fields are empty', async () => {
-            render(<LoginScreen />);
+            render(<LoginScreen/>);
 
             const signInButton = screen.getByText('Sign in');
             fireEvent.press(signInButton);
@@ -150,7 +150,7 @@ describe('LoginScreen', () => {
         it('should call signIn with trimmed email and password', async () => {
             mockSignIn.mockResolvedValue(undefined);
 
-            render(<LoginScreen />);
+            render(<LoginScreen/>);
 
             const emailInput = screen.getByPlaceholderText('Email');
             const passwordInput = screen.getByPlaceholderText('Password');
@@ -169,7 +169,7 @@ describe('LoginScreen', () => {
         it('should navigate to tabs on successful sign in', async () => {
             mockSignIn.mockResolvedValue(undefined);
 
-            render(<LoginScreen />);
+            render(<LoginScreen/>);
 
             const emailInput = screen.getByPlaceholderText('Email');
             const passwordInput = screen.getByPlaceholderText('Password');
@@ -195,7 +195,7 @@ describe('LoginScreen', () => {
                 }
             });
 
-            render(<LoginScreen />);
+            render(<LoginScreen/>);
 
             const emailInput = screen.getByPlaceholderText('Email');
             const passwordInput = screen.getByPlaceholderText('Password');
@@ -216,7 +216,7 @@ describe('LoginScreen', () => {
         it('should show default error message when no error message in response', async () => {
             mockSignIn.mockRejectedValue(new Error('Network error'));
 
-            render(<LoginScreen />);
+            render(<LoginScreen/>);
 
             const emailInput = screen.getByPlaceholderText('Email');
             const passwordInput = screen.getByPlaceholderText('Password');
@@ -241,7 +241,7 @@ describe('LoginScreen', () => {
         it('should handle email with special characters', async () => {
             mockSignIn.mockResolvedValue(undefined);
 
-            render(<LoginScreen />);
+            render(<LoginScreen/>);
 
             const emailInput = screen.getByPlaceholderText('Email');
             const passwordInput = screen.getByPlaceholderText('Password');
@@ -260,7 +260,7 @@ describe('LoginScreen', () => {
         it('should handle password with special characters', async () => {
             mockSignIn.mockResolvedValue(undefined);
 
-            render(<LoginScreen />);
+            render(<LoginScreen/>);
 
             const emailInput = screen.getByPlaceholderText('Email');
             const passwordInput = screen.getByPlaceholderText('Password');
@@ -279,7 +279,7 @@ describe('LoginScreen', () => {
         it('should handle very long inputs', async () => {
             mockSignIn.mockResolvedValue(undefined);
 
-            render(<LoginScreen />);
+            render(<LoginScreen/>);
 
             const emailInput = screen.getByPlaceholderText('Email');
             const passwordInput = screen.getByPlaceholderText('Password');

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 import LoginScreen from '../login';
 import { AuthProvider } from '@/providers/AuthProvider';
@@ -61,7 +61,7 @@ describe('Authentication Flow - Integration Tests', () => {
     const renderLoginWithAuth = () => {
         return render(
             <AuthProvider>
-                <LoginScreen />
+                <LoginScreen/>
             </AuthProvider>
         );
     };

@@ -61,6 +61,7 @@ interface RefreshResponse {
  */
 interface IJwtValidator {
     getExpirationTime(token: string): number | null;
+
     isValid(token: string, bufferMs: number): boolean;
 }
 
@@ -70,10 +71,15 @@ interface IJwtValidator {
  */
 interface ITokenStorage {
     saveAccessToken(token: string): Promise<void>;
+
     loadAccessToken(): Promise<string | null>;
+
     clearAccessToken(): Promise<void>;
+
     saveRefreshToken(token: string): Promise<void>;
+
     loadRefreshToken(): Promise<string | null>;
+
     clearRefreshToken(): Promise<void>;
 }
 
@@ -91,6 +97,7 @@ interface ITokenRefreshClient {
  */
 interface INavigator {
     isAuthPath(): boolean;
+
     redirectToLogin(): void;
 }
 
@@ -207,15 +214,15 @@ class TokenRefreshClient implements ITokenRefreshClient {
 
     private extractAccessToken(data: RefreshResponse): string | undefined {
         return data.accessToken ??
-               data.access_token ??
-               data.token ??
-               data.message?.access_token;
+            data.access_token ??
+            data.token ??
+            data.message?.access_token;
     }
 
     private extractRefreshToken(data: RefreshResponse): string | undefined {
         return data.refreshToken ??
-               data.refresh_token ??
-               data.message?.refresh_token;
+            data.refresh_token ??
+            data.message?.refresh_token;
     }
 }
 
@@ -296,7 +303,8 @@ class TokenManager {
         private readonly storage: ITokenStorage,
         private readonly refreshClient: ITokenRefreshClient,
         private readonly navigator: INavigator
-    ) {}
+    ) {
+    }
 
     /**
      * Sets tokens after successful login.

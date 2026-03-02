@@ -1,13 +1,9 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { authApi } from '@/lib/api';
-import { clearTokens, getValidAccessToken, setTokensFromLogin, refreshAccessToken } from '@/lib/tokenManager';
+import { clearTokens, getValidAccessToken, refreshAccessToken, setTokensFromLogin } from '@/lib/tokenManager';
 import { redirectToLogin } from '@/lib/nav';
 import { queryClient } from '@/providers/QueryProvider';
-import {
-    authenticateWithBiometrics,
-    getBiometricEmail,
-    clearBiometricData,
-} from '@/lib/biometricAuth';
+import { authenticateWithBiometrics, clearBiometricData, getBiometricEmail, } from '@/lib/biometricAuth';
 
 export type User = { id: string; email: string; name?: string };
 

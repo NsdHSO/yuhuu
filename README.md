@@ -1,12 +1,15 @@
 # Yuhuu - React Native Boilerplate 👋
 
-A production-ready, fully-tested boilerplate for building cross-platform mobile and web applications with React Native and Expo. Features complete authentication flow, comprehensive test coverage, and modern development practices.
+A production-ready, fully-tested boilerplate for building cross-platform mobile and web applications with React Native
+and Expo. Features complete authentication flow, comprehensive test coverage, and modern development practices.
 
-**[📥 Download Latest FAT APK](https://github.com/NsdHSO/yuhuu/releases/tag/latest-fat)** | **[📱 Download Latest iOS IPA](https://github.com/NsdHSO/yuhuu/releases/tag/latest-fat-ios)**
+**[📥 Download Latest FAT APK](https://github.com/NsdHSO/yuhuu/releases/tag/latest-fat)** | *
+*[📱 Download Latest iOS IPA](https://github.com/NsdHSO/yuhuu/releases/tag/latest-fat-ios)**
 
 ## ✨ Features
 
 ### Core Features
+
 - 🎯 **Cross-Platform**: iOS, Android, and Web support with unified codebase
 - 🔐 **Complete Authentication**: Login, register, JWT token management with auto-refresh
 - 🎨 **NativeWind**: Tailwind CSS v4 for React Native styling
@@ -17,6 +20,7 @@ A production-ready, fully-tested boilerplate for building cross-platform mobile 
 - 📊 **Modern Stack**: React 19, React Native 0.81, Expo 54
 
 ### Authentication & Security
+
 - ✅ JWT access token with automatic refresh
 - ✅ Secure token storage (SecureStore for native, localStorage for web)
 - ✅ HTTP-only refresh token cookies for web
@@ -26,6 +30,7 @@ A production-ready, fully-tested boilerplate for building cross-platform mobile 
 - ✅ Auto-redirect on token expiration
 
 ### UI/UX
+
 - ✅ Dark mode support
 - ✅ Safe area handling for notched devices (iPhone with Dynamic Island)
 - ✅ Consistent button styles using TouchableOpacity
@@ -34,6 +39,7 @@ A production-ready, fully-tested boilerplate for building cross-platform mobile 
 - ✅ Responsive design for all screen sizes
 
 ### Developer Experience
+
 - ✅ Hot reload for instant feedback
 - ✅ TypeScript strict mode
 - ✅ ESLint configuration
@@ -51,24 +57,25 @@ Time:        ~4s
 ```
 
 ### Test Categories
+
 - **Unit Tests**: Login screen, Register screen, AuthProvider, TokenManager, Components
 - **Integration Tests**: Complete authentication flow (UI → API → Navigation)
 - **Coverage**: Login/Register flows, password validation, token management, error handling
 
 ## 🛠 Tech Stack
 
-| Category | Technology |
-|----------|-----------|
-| **Framework** | Expo 54 with React Native 0.81 |
-| **UI Library** | NativeWind (Tailwind CSS v4) |
-| **Navigation** | Expo Router (file-based) |
-| **State Management** | React Query + Context API |
-| **Authentication** | JWT with auto-refresh |
-| **Storage** | Expo SecureStore (native) / localStorage (web) |
-| **Testing** | Jest + React Native Testing Library |
-| **Language** | TypeScript 5.9 |
-| **Package Manager** | pnpm (recommended) / npm |
-| **HTTP Client** | Axios with interceptors |
+| Category             | Technology                                     |
+|----------------------|------------------------------------------------|
+| **Framework**        | Expo 54 with React Native 0.81                 |
+| **UI Library**       | NativeWind (Tailwind CSS v4)                   |
+| **Navigation**       | Expo Router (file-based)                       |
+| **State Management** | React Query + Context API                      |
+| **Authentication**   | JWT with auto-refresh                          |
+| **Storage**          | Expo SecureStore (native) / localStorage (web) |
+| **Testing**          | Jest + React Native Testing Library            |
+| **Language**         | TypeScript 5.9                                 |
+| **Package Manager**  | pnpm (recommended) / npm                       |
+| **HTTP Client**      | Axios with interceptors                        |
 
 ## 🚀 Get Started
 
@@ -117,18 +124,21 @@ Time:        ~4s
 ### Running on Different Platforms
 
 **iOS Simulator:**
+
 ```bash
 pnpm ios
 # or press 'i' in the terminal after starting
 ```
 
 **Android Emulator:**
+
 ```bash
 pnpm android
 # or press 'a' in the terminal after starting
 ```
 
 **Web Browser:**
+
 ```bash
 pnpm web
 # or press 'w' in the terminal after starting
@@ -218,6 +228,7 @@ pnpm test:coverage
 ### Test Files Location
 
 All test files follow the convention `__tests__/*.test.{ts,tsx}`:
+
 - `app/(auth)/__tests__/` - Authentication screen tests
 - `components/__tests__/` - Component tests
 - `providers/__tests__/` - Provider tests
@@ -247,29 +258,30 @@ it('should sign in successfully', async () => {
 ### How Authentication Works
 
 1. **Login/Register**
-   - User enters credentials
-   - API returns `access_token` and `refresh_token`
-   - Tokens are stored securely (SecureStore/localStorage)
+    - User enters credentials
+    - API returns `access_token` and `refresh_token`
+    - Tokens are stored securely (SecureStore/localStorage)
 
 2. **Token Management**
-   - Access token kept in memory for API calls
-   - Persisted to secure storage for app reloads
-   - Automatic refresh when token expires (30s buffer)
-   - HTTP-only refresh token cookie for web
+    - Access token kept in memory for API calls
+    - Persisted to secure storage for app reloads
+    - Automatic refresh when token expires (30s buffer)
+    - HTTP-only refresh token cookie for web
 
 3. **Protected Routes**
-   - Token checked on app load
-   - Auto-redirect to login if invalid/expired
-   - Role-based access control via `hasRole()` helper
+    - Token checked on app load
+    - Auto-redirect to login if invalid/expired
+    - Role-based access control via `hasRole()` helper
 
 4. **API Calls**
-   - All requests via `appApi` include `Authorization: Bearer <token>`
-   - Automatic token refresh on 401 responses
-   - Request retry after successful refresh
+    - All requests via `appApi` include `Authorization: Bearer <token>`
+    - Automatic token refresh on 401 responses
+    - Request retry after successful refresh
 
 ### Backend Requirements
 
 **Auth API (Port 4100)**
+
 ```
 POST /v1/auth/login
 POST /v1/auth/register
@@ -278,6 +290,7 @@ POST /v1/auth/logout
 ```
 
 **App API (Port 2003)**
+
 ```
 Your business endpoints (uses Bearer access_token)
 ```
@@ -285,6 +298,7 @@ Your business endpoints (uses Bearer access_token)
 ### Environment Configuration
 
 **Development (.env):**
+
 ```bash
 EXPO_PUBLIC_ENV=local
 EXPO_PUBLIC_AUTH_API_URL=http://localhost:4100
@@ -293,6 +307,7 @@ EXPO_PUBLIC_API_URL=http://localhost:2003
 
 **UAT/Production:**
 Set GitHub Secrets:
+
 - `UAT_GRAPHQL_URL` / `PROD_GRAPHQL_URL`
 - `EXPO_PUBLIC_API_URL`
 - `EXPO_PUBLIC_AUTH_API_URL`
@@ -300,6 +315,7 @@ Set GitHub Secrets:
 ### CORS Configuration
 
 **Auth API (with credentials):**
+
 ```rust
 Cors::default()
     .allowed_origin("http://localhost:8081")
@@ -308,6 +324,7 @@ Cors::default()
 ```
 
 **App API (bearer tokens):**
+
 ```rust
 Cors::default()
     .allow_any_origin()
@@ -324,11 +341,11 @@ Cors::default()
 
 This boilerplate includes three deployment environments:
 
-| Environment | Trigger | Description |
-|------------|---------|-------------|
-| **FAT** | Push to `master` | Automatic build and release |
-| **UAT** | PR with `deploy-uat` label | User acceptance testing |
-| **PROD** | PR with `deploy-prod` label | Production release |
+| Environment | Trigger                     | Description                 |
+|-------------|-----------------------------|-----------------------------|
+| **FAT**     | Push to `master`            | Automatic build and release |
+| **UAT**     | PR with `deploy-uat` label  | User acceptance testing     |
+| **PROD**    | PR with `deploy-prod` label | Production release          |
 
 ### Android Build
 
@@ -357,6 +374,7 @@ Outputs: IPA file available in GitHub Releases
 ### Build Configuration
 
 Edit `app.config.js`:
+
 ```javascript
 {
   name: 'YourApp',
@@ -376,6 +394,7 @@ Edit `app.config.js`:
 ### 1. App Branding
 
 **Update App Name:**
+
 ```javascript
 // app.config.js
 module.exports = {
@@ -387,6 +406,7 @@ module.exports = {
 ```
 
 **Update Bundle Identifiers:**
+
 ```javascript
 // app.config.js
 ios: {
@@ -400,6 +420,7 @@ android: {
 ### 2. Theme Customization
 
 **Update Colors:**
+
 ```typescript
 // constants/theme.ts
 export const Colors = {
@@ -419,6 +440,7 @@ export const Colors = {
 ```
 
 **Tailwind Configuration:**
+
 ```javascript
 // tailwind.config.js
 module.exports = {
@@ -441,6 +463,7 @@ module.exports = {
 ## 📊 Key Features Implementation
 
 ### Safe Area Handling
+
 ```typescript
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -450,6 +473,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 ```
 
 ### Password Confirmation
+
 ```typescript
 if (password !== confirm) {
   return Alert.alert('Password mismatch', 'Passwords do not match.');
@@ -457,6 +481,7 @@ if (password !== confirm) {
 ```
 
 ### Auto-Scroll Input to Center
+
 ```typescript
 const scrollToInput = (inputRef) => {
   inputRef.current.measureLayout(
@@ -476,27 +501,32 @@ const scrollToInput = (inputRef) => {
 ### Common Issues
 
 **Metro bundler cache:**
+
 ```bash
 pnpm expo start -c
 ```
 
 **iOS CocoaPods issues:**
+
 ```bash
 cd ios && pod install && cd ..
 ```
 
 **Android build errors:**
+
 ```bash
 cd android && ./gradlew clean && cd ..
 ```
 
 **Environment variables not updating:**
+
 ```bash
 # Restart with cache clear
 pnpm expo start -c
 ```
 
 **Keyboard not showing in iOS simulator:**
+
 - Toggle software keyboard: `Cmd + K`
 - Or disconnect hardware keyboard: `Cmd + Shift + K`
 

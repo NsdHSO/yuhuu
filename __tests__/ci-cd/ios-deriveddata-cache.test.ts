@@ -12,7 +12,7 @@
  * Expected savings: 6-10 minutes on cache hit (incremental vs full compile).
  */
 
-import { readFileSync, existsSync } from 'fs';
+import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import * as yaml from 'js-yaml';
 
@@ -27,16 +27,19 @@ interface WorkflowStep {
     with?: Record<string, unknown>;
     run?: string;
     env?: Record<string, string>;
+
     [key: string]: unknown;
 }
 
 interface WorkflowJob {
     steps: WorkflowStep[];
+
     [key: string]: unknown;
 }
 
 interface Workflow {
     jobs: Record<string, WorkflowJob>;
+
     [key: string]: unknown;
 }
 

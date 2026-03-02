@@ -32,6 +32,7 @@ interface WorkflowStep {
     id?: string;
     if?: string;
     'continue-on-error'?: boolean;
+
     [key: string]: unknown;
 }
 
@@ -42,6 +43,7 @@ interface WorkflowJob {
     'timeout-minutes'?: number;
     outputs?: Record<string, string>;
     steps?: WorkflowStep[];
+
     [key: string]: unknown;
 }
 

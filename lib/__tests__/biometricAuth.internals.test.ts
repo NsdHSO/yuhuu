@@ -23,11 +23,7 @@ jest.mock('expo-secure-store', () => ({
 }));
 
 import { Platform } from 'react-native';
-import {
-    __testing,
-    __resetServiceForTesting,
-    __setServiceForTesting,
-} from '../biometricAuth';
+import { __resetServiceForTesting, __setServiceForTesting, __testing, } from '../biometricAuth';
 
 const {
     BiometricService,
@@ -63,7 +59,11 @@ describe('WebStorageAdapter', () => {
         it('should call localStorage.setItem when window is defined', async () => {
             const mockSetItem = jest.fn();
             (globalThis as any).window = {
-                localStorage: { setItem: mockSetItem, getItem: jest.fn(), removeItem: jest.fn() },
+                localStorage: {
+                    setItem: mockSetItem,
+                    getItem: jest.fn(),
+                    removeItem: jest.fn()
+                },
             };
 
             await adapter.setItem('key1', 'value1');
@@ -80,7 +80,9 @@ describe('WebStorageAdapter', () => {
         it('should not throw when localStorage.setItem throws', async () => {
             (globalThis as any).window = {
                 localStorage: {
-                    setItem: jest.fn(() => { throw new Error('QuotaExceeded'); }),
+                    setItem: jest.fn(() => {
+                        throw new Error('QuotaExceeded');
+                    }),
                     getItem: jest.fn(),
                     removeItem: jest.fn(),
                 },
@@ -117,7 +119,9 @@ describe('WebStorageAdapter', () => {
             (globalThis as any).window = {
                 localStorage: {
                     setItem: jest.fn(),
-                    getItem: jest.fn(() => { throw new Error('SecurityError'); }),
+                    getItem: jest.fn(() => {
+                        throw new Error('SecurityError');
+                    }),
                     removeItem: jest.fn(),
                 },
             };
@@ -132,7 +136,11 @@ describe('WebStorageAdapter', () => {
         it('should call localStorage.removeItem when window is defined', async () => {
             const mockRemoveItem = jest.fn();
             (globalThis as any).window = {
-                localStorage: { setItem: jest.fn(), getItem: jest.fn(), removeItem: mockRemoveItem },
+                localStorage: {
+                    setItem: jest.fn(),
+                    getItem: jest.fn(),
+                    removeItem: mockRemoveItem
+                },
             };
 
             await adapter.deleteItem('key1');
@@ -151,7 +159,9 @@ describe('WebStorageAdapter', () => {
                 localStorage: {
                     setItem: jest.fn(),
                     getItem: jest.fn(),
-                    removeItem: jest.fn(() => { throw new Error('SecurityError'); }),
+                    removeItem: jest.fn(() => {
+                        throw new Error('SecurityError');
+                    }),
                 },
             };
 
@@ -213,7 +223,10 @@ describe('NullBiometricAuthenticator', () => {
 
 describe('BiometricService with injected dependencies', () => {
     it('should use injected authenticator for isAvailable', async () => {
-        const mockAuth = { isAvailable: jest.fn().mockResolvedValue(true), authenticate: jest.fn() };
+        const mockAuth = {
+            isAvailable: jest.fn().mockResolvedValue(true),
+            authenticate: jest.fn()
+        };
         const mockStorage = new NullStorageAdapter();
         const service = new BiometricService(mockAuth, mockStorage);
 
@@ -224,7 +237,10 @@ describe('BiometricService with injected dependencies', () => {
     });
 
     it('should use injected authenticator for authenticate', async () => {
-        const mockAuth = { isAvailable: jest.fn(), authenticate: jest.fn().mockResolvedValue(true) };
+        const mockAuth = {
+            isAvailable: jest.fn(),
+            authenticate: jest.fn().mockResolvedValue(true)
+        };
         const mockStorage = new NullStorageAdapter();
         const service = new BiometricService(mockAuth, mockStorage);
 
@@ -235,7 +251,10 @@ describe('BiometricService with injected dependencies', () => {
     });
 
     it('should use default prompt when none provided', async () => {
-        const mockAuth = { isAvailable: jest.fn(), authenticate: jest.fn().mockResolvedValue(true) };
+        const mockAuth = {
+            isAvailable: jest.fn(),
+            authenticate: jest.fn().mockResolvedValue(true)
+        };
         const mockStorage = new NullStorageAdapter();
         const service = new BiometricService(mockAuth, mockStorage);
 
@@ -247,9 +266,13 @@ describe('BiometricService with injected dependencies', () => {
     it('should save and retrieve preference using injected storage', async () => {
         const store: Record<string, string> = {};
         const mockStorage = {
-            setItem: jest.fn(async (k: string, v: string) => { store[k] = v; }),
+            setItem: jest.fn(async (k: string, v: string) => {
+                store[k] = v;
+            }),
             getItem: jest.fn(async (k: string) => store[k] ?? null),
-            deleteItem: jest.fn(async (k: string) => { delete store[k]; }),
+            deleteItem: jest.fn(async (k: string) => {
+                delete store[k];
+            }),
         };
         const service = new BiometricService(new NullBiometricAuthenticator(), mockStorage);
 
@@ -263,9 +286,13 @@ describe('BiometricService with injected dependencies', () => {
     it('should save and retrieve email using injected storage', async () => {
         const store: Record<string, string> = {};
         const mockStorage = {
-            setItem: jest.fn(async (k: string, v: string) => { store[k] = v; }),
+            setItem: jest.fn(async (k: string, v: string) => {
+                store[k] = v;
+            }),
             getItem: jest.fn(async (k: string) => store[k] ?? null),
-            deleteItem: jest.fn(async (k: string) => { delete store[k]; }),
+            deleteItem: jest.fn(async (k: string) => {
+                delete store[k];
+            }),
         };
         const service = new BiometricService(new NullBiometricAuthenticator(), mockStorage);
 
@@ -305,7 +332,10 @@ describe('Testing utility functions', () => {
     });
 
     it('__setServiceForTesting should inject a custom service', async () => {
-        const mockAuth = { isAvailable: jest.fn().mockResolvedValue(true), authenticate: jest.fn() };
+        const mockAuth = {
+            isAvailable: jest.fn().mockResolvedValue(true),
+            authenticate: jest.fn()
+        };
         const customService = new BiometricService(mockAuth, new NullStorageAdapter());
 
         __setServiceForTesting(customService);
@@ -327,7 +357,10 @@ describe('Testing utility functions', () => {
     });
 
     it('__resetServiceForTesting should clear the singleton', async () => {
-        const mockAuth = { isAvailable: jest.fn().mockResolvedValue(true), authenticate: jest.fn() };
+        const mockAuth = {
+            isAvailable: jest.fn().mockResolvedValue(true),
+            authenticate: jest.fn()
+        };
         const customService = new BiometricService(mockAuth, new NullStorageAdapter());
 
         __setServiceForTesting(customService);

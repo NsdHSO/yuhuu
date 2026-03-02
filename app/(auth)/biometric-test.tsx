@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { Stack } from 'expo-router';
 import { ThemedText } from '@/components/themed-text';
@@ -18,21 +18,53 @@ interface TestResult {
 
 function StatusBadge({ status }: { status: TestStatus }) {
     const colors: Record<TestStatus, { bg: string; text: string; label: string }> = {
-        idle: { bg: '#6B7280', text: '#fff', label: 'IDLE' },
-        running: { bg: '#F59E0B', text: '#000', label: 'RUNNING' },
-        pass: { bg: '#10B981', text: '#fff', label: 'PASS' },
-        fail: { bg: '#EF4444', text: '#fff', label: 'FAIL' },
-        warn: { bg: '#F97316', text: '#fff', label: 'WARN' },
+        idle: {
+            bg: '#6B7280',
+            text: '#fff',
+            label: 'IDLE'
+        },
+        running: {
+            bg: '#F59E0B',
+            text: '#000',
+            label: 'RUNNING'
+        },
+        pass: {
+            bg: '#10B981',
+            text: '#fff',
+            label: 'PASS'
+        },
+        fail: {
+            bg: '#EF4444',
+            text: '#fff',
+            label: 'FAIL'
+        },
+        warn: {
+            bg: '#F97316',
+            text: '#fff',
+            label: 'WARN'
+        },
     };
     const c = colors[status];
     return (
-        <View style={{ backgroundColor: c.bg, borderRadius: 4, paddingHorizontal: 8, paddingVertical: 2 }}>
-            <Text style={{ color: c.text, fontSize: 11, fontWeight: '700' }}>{c.label}</Text>
+        <View style={{
+            backgroundColor: c.bg,
+            borderRadius: 4,
+            paddingHorizontal: 8,
+            paddingVertical: 2
+        }}>
+            <Text style={{
+                color: c.text,
+                fontSize: 11,
+                fontWeight: '700'
+            }}>{c.label}</Text>
         </View>
     );
 }
 
-function ResultRow({ result, scheme }: { result: TestResult; scheme: 'light' | 'dark' }) {
+function ResultRow({
+                       result,
+                       scheme
+                   }: { result: TestResult; scheme: 'light' | 'dark' }) {
     return (
         <View
             style={{
@@ -44,17 +76,35 @@ function ResultRow({ result, scheme }: { result: TestResult; scheme: 'light' | '
                 borderColor: scheme === 'dark' ? '#374151' : '#E5E7EB',
             }}
         >
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                <Text style={{ color: scheme === 'dark' ? '#D1D5DB' : '#374151', fontWeight: '600', fontSize: 13, flex: 1 }}>
+            <View style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: 4
+            }}>
+                <Text style={{
+                    color: scheme === 'dark' ? '#D1D5DB' : '#374151',
+                    fontWeight: '600',
+                    fontSize: 13,
+                    flex: 1
+                }}>
                     {result.label}
                 </Text>
-                <StatusBadge status={result.status} />
+                <StatusBadge status={result.status}/>
             </View>
-            <Text style={{ color: scheme === 'dark' ? '#9CA3AF' : '#6B7280', fontSize: 12, fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace' }}>
+            <Text style={{
+                color: scheme === 'dark' ? '#9CA3AF' : '#6B7280',
+                fontSize: 12,
+                fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace'
+            }}>
                 {result.value}
             </Text>
             {result.error ? (
-                <Text style={{ color: '#EF4444', fontSize: 11, marginTop: 4 }}>
+                <Text style={{
+                    color: '#EF4444',
+                    fontSize: 11,
+                    marginTop: 4
+                }}>
                     {result.error}
                 </Text>
             ) : null}
@@ -76,14 +126,46 @@ export default function BiometricTestScreen() {
         console.log('========================================');
 
         const initial: TestResult[] = [
-            { label: 'Platform Info', status: 'running', value: 'Checking...' },
-            { label: 'Native Module Bridge', status: 'idle', value: 'Waiting...' },
-            { label: 'JS Module Import', status: 'idle', value: 'Waiting...' },
-            { label: 'Native Method Availability', status: 'idle', value: 'Waiting...' },
-            { label: 'hasHardwareAsync()', status: 'idle', value: 'Waiting...' },
-            { label: 'isEnrolledAsync()', status: 'idle', value: 'Waiting...' },
-            { label: 'supportedAuthenticationTypesAsync()', status: 'idle', value: 'Waiting...' },
-            { label: 'getEnrolledLevelAsync()', status: 'idle', value: 'Waiting...' },
+            {
+                label: 'Platform Info',
+                status: 'running',
+                value: 'Checking...'
+            },
+            {
+                label: 'Native Module Bridge',
+                status: 'idle',
+                value: 'Waiting...'
+            },
+            {
+                label: 'JS Module Import',
+                status: 'idle',
+                value: 'Waiting...'
+            },
+            {
+                label: 'Native Method Availability',
+                status: 'idle',
+                value: 'Waiting...'
+            },
+            {
+                label: 'hasHardwareAsync()',
+                status: 'idle',
+                value: 'Waiting...'
+            },
+            {
+                label: 'isEnrolledAsync()',
+                status: 'idle',
+                value: 'Waiting...'
+            },
+            {
+                label: 'supportedAuthenticationTypesAsync()',
+                status: 'idle',
+                value: 'Waiting...'
+            },
+            {
+                label: 'getEnrolledLevelAsync()',
+                status: 'idle',
+                value: 'Waiting...'
+            },
         ];
         setResults(initial);
 
@@ -94,10 +176,16 @@ export default function BiometricTestScreen() {
         // Test 0: Platform info
         const platformInfo = `OS: ${Platform.OS}, Version: ${Platform.Version}`;
         console.log('[BiometricTest] Platform info:', platformInfo);
-        update(0, { status: 'pass', value: platformInfo });
+        update(0, {
+            status: 'pass',
+            value: platformInfo
+        });
 
         // Test 1: Native module bridge check via NativeModulesProxy
-        update(1, { status: 'running', value: 'Checking NativeModulesProxy...' });
+        update(1, {
+            status: 'running',
+            value: 'Checking NativeModulesProxy...'
+        });
         try {
             const proxy = NativeModulesProxy as any;
             const proxyKeys = proxy ? Object.keys(proxy).filter((k: string) => k.includes('Local') || k.includes('Auth') || k.includes('Biometric')).sort() : [];
@@ -145,17 +233,30 @@ export default function BiometricTestScreen() {
         } catch (err: any) {
             const msg = err?.message || String(err);
             console.error('[BiometricTest] Native module bridge check ERROR:', msg);
-            update(1, { status: 'fail', value: 'Bridge check failed', error: msg });
+            update(1, {
+                status: 'fail',
+                value: 'Bridge check failed',
+                error: msg
+            });
         }
 
         // Test 2: JS Module Import
-        update(2, { status: 'running', value: 'Importing expo-local-authentication...' });
+        update(2, {
+            status: 'running',
+            value: 'Importing expo-local-authentication...'
+        });
         const moduleKeys = Object.keys(LocalAuth).sort().join(', ');
         console.log('[BiometricTest] JS module loaded. Exports:', moduleKeys);
-        update(2, { status: 'pass', value: `Loaded. Keys: ${moduleKeys}` });
+        update(2, {
+            status: 'pass',
+            value: `Loaded. Keys: ${moduleKeys}`
+        });
 
         // Test 3: Native method availability check (detect broken bridge)
-        update(3, { status: 'running', value: 'Checking native method bindings...' });
+        update(3, {
+            status: 'running',
+            value: 'Checking native method bindings...'
+        });
         const localAuthModule = LocalAuth as Record<string, unknown>;
         const methodChecks = [
             'hasHardwareAsync',
@@ -187,14 +288,21 @@ export default function BiometricTestScreen() {
 
         if (anyMethodMissing) {
             for (let i = 4; i < initial.length; i++) {
-                update(i, { status: 'fail', value: 'Skipped (native methods missing)', error: 'Native module not properly linked' });
+                update(i, {
+                    status: 'fail',
+                    value: 'Skipped (native methods missing)',
+                    error: 'Native module not properly linked'
+                });
             }
             setRunning(false);
             return;
         }
 
         // Test 4: hasHardwareAsync
-        update(4, { status: 'running', value: 'Checking...' });
+        update(4, {
+            status: 'running',
+            value: 'Checking...'
+        });
         try {
             const hasHardware = await LocalAuth.hasHardwareAsync();
             console.log('[BiometricTest] hasHardwareAsync():', hasHardware, typeof hasHardware);
@@ -228,7 +336,10 @@ export default function BiometricTestScreen() {
         }
 
         // Test 5: isEnrolledAsync
-        update(5, { status: 'running', value: 'Checking...' });
+        update(5, {
+            status: 'running',
+            value: 'Checking...'
+        });
         try {
             const isEnrolled = await LocalAuth.isEnrolledAsync();
             console.log('[BiometricTest] isEnrolledAsync():', isEnrolled, typeof isEnrolled);
@@ -247,11 +358,18 @@ export default function BiometricTestScreen() {
         } catch (err: any) {
             const msg = err?.message || String(err);
             console.error('[BiometricTest] isEnrolledAsync() ERROR:', msg);
-            update(5, { status: 'fail', value: 'Error', error: msg });
+            update(5, {
+                status: 'fail',
+                value: 'Error',
+                error: msg
+            });
         }
 
         // Test 6: supportedAuthenticationTypesAsync
-        update(6, { status: 'running', value: 'Checking...' });
+        update(6, {
+            status: 'running',
+            value: 'Checking...'
+        });
         try {
             const types = await LocalAuth.supportedAuthenticationTypesAsync();
             console.log('[BiometricTest] supportedAuthenticationTypesAsync() raw:', JSON.stringify(types), typeof types);
@@ -264,10 +382,14 @@ export default function BiometricTestScreen() {
             } else {
                 const typeNames = types.map((t: number) => {
                     switch (t) {
-                        case 1: return 'FINGERPRINT';
-                        case 2: return 'FACIAL_RECOGNITION';
-                        case 3: return 'IRIS';
-                        default: return `UNKNOWN(${t})`;
+                        case 1:
+                            return 'FINGERPRINT';
+                        case 2:
+                            return 'FACIAL_RECOGNITION';
+                        case 3:
+                            return 'IRIS';
+                        default:
+                            return `UNKNOWN(${t})`;
                     }
                 });
                 update(6, {
@@ -278,11 +400,18 @@ export default function BiometricTestScreen() {
         } catch (err: any) {
             const msg = err?.message || String(err);
             console.error('[BiometricTest] supportedAuthenticationTypesAsync() ERROR:', msg);
-            update(6, { status: 'fail', value: 'Error', error: msg });
+            update(6, {
+                status: 'fail',
+                value: 'Error',
+                error: msg
+            });
         }
 
         // Test 7: getEnrolledLevelAsync
-        update(7, { status: 'running', value: 'Checking...' });
+        update(7, {
+            status: 'running',
+            value: 'Checking...'
+        });
         try {
             const level = await LocalAuth.getEnrolledLevelAsync();
             console.log('[BiometricTest] getEnrolledLevelAsync():', level, typeof level);
@@ -307,7 +436,11 @@ export default function BiometricTestScreen() {
         } catch (err: any) {
             const msg = err?.message || String(err);
             console.error('[BiometricTest] getEnrolledLevelAsync() ERROR:', msg);
-            update(7, { status: 'fail', value: 'Error', error: msg });
+            update(7, {
+                status: 'fail',
+                value: 'Error',
+                error: msg
+            });
         }
 
         console.log('========================================');
@@ -352,7 +485,12 @@ export default function BiometricTestScreen() {
         } catch (err: any) {
             const msg = err?.message || String(err);
             console.error(`[BiometricTest] ${label} ERROR:`, msg);
-            setResults(prev => prev.map((r, i) => (i === idx ? { ...r, status: 'fail', value: 'Exception thrown', error: msg } : r)));
+            setResults(prev => prev.map((r, i) => (i === idx ? {
+                ...r,
+                status: 'fail',
+                value: 'Exception thrown',
+                error: msg
+            } : r)));
         }
 
         setAuthTestRunning(false);
@@ -364,20 +502,29 @@ export default function BiometricTestScreen() {
 
     return (
         <ThemedView className="flex-1">
-            <Stack.Screen options={{ title: 'Biometric Diagnostics' }} />
+            <Stack.Screen options={{ title: 'Biometric Diagnostics' }}/>
             <ScrollView
                 style={{ flex: 1 }}
-                contentContainerStyle={{ padding: 16, paddingBottom: 60 }}
+                contentContainerStyle={{
+                    padding: 16,
+                    paddingBottom: 60
+                }}
             >
                 <ThemedText type="title" style={{ marginBottom: 8 }}>
                     Biometric Diagnostics
                 </ThemedText>
-                <ThemedText lightColor="#6B7280" darkColor="#9CA3AF" style={{ marginBottom: 20, fontSize: 13 }}>
+                <ThemedText lightColor="#6B7280" darkColor="#9CA3AF" style={{
+                    marginBottom: 20,
+                    fontSize: 13
+                }}>
                     Tests all expo-local-authentication APIs. Check console for detailed logs.
                 </ThemedText>
 
                 {/* Action Buttons */}
-                <View style={{ gap: 8, marginBottom: 20 }}>
+                <View style={{
+                    gap: 8,
+                    marginBottom: 20
+                }}>
                     <TouchableOpacity
                         testID="run-diagnostics-button"
                         onPress={runDiagnostics}
@@ -390,12 +537,19 @@ export default function BiometricTestScreen() {
                             alignItems: 'center',
                         }}
                     >
-                        <Text style={{ color: '#fff', fontWeight: '700', fontSize: 16 }}>
+                        <Text style={{
+                            color: '#fff',
+                            fontWeight: '700',
+                            fontSize: 16
+                        }}>
                             {running ? 'Running Diagnostics...' : 'Run Diagnostics'}
                         </Text>
                     </TouchableOpacity>
 
-                    <View style={{ flexDirection: 'row', gap: 8 }}>
+                    <View style={{
+                        flexDirection: 'row',
+                        gap: 8
+                    }}>
                         <TouchableOpacity
                             testID="auth-with-fallback-button"
                             onPress={() => runAuthTest(true)}
@@ -409,7 +563,11 @@ export default function BiometricTestScreen() {
                                 alignItems: 'center',
                             }}
                         >
-                            <Text style={{ color: '#fff', fontWeight: '600', fontSize: 13 }}>
+                            <Text style={{
+                                color: '#fff',
+                                fontWeight: '600',
+                                fontSize: 13
+                            }}>
                                 Auth + Fallback
                             </Text>
                         </TouchableOpacity>
@@ -427,7 +585,11 @@ export default function BiometricTestScreen() {
                                 alignItems: 'center',
                             }}
                         >
-                            <Text style={{ color: '#fff', fontWeight: '600', fontSize: 13 }}>
+                            <Text style={{
+                                color: '#fff',
+                                fontWeight: '600',
+                                fontSize: 13
+                            }}>
                                 Auth Biometric Only
                             </Text>
                         </TouchableOpacity>
@@ -445,7 +607,11 @@ export default function BiometricTestScreen() {
                                 alignItems: 'center',
                             }}
                         >
-                            <Text style={{ color: scheme === 'dark' ? '#D1D5DB' : '#374151', fontWeight: '600', fontSize: 13 }}>
+                            <Text style={{
+                                color: scheme === 'dark' ? '#D1D5DB' : '#374151',
+                                fontWeight: '600',
+                                fontSize: 13
+                            }}>
                                 Clear Results
                             </Text>
                         </TouchableOpacity>
@@ -459,7 +625,7 @@ export default function BiometricTestScreen() {
                             Results
                         </ThemedText>
                         {results.map((result, index) => (
-                            <ResultRow key={`${result.label}-${index}`} result={result} scheme={scheme} />
+                            <ResultRow key={`${result.label}-${index}`} result={result} scheme={scheme}/>
                         ))}
                     </View>
                 )}
@@ -475,10 +641,18 @@ export default function BiometricTestScreen() {
                             borderColor: scheme === 'dark' ? '#374151' : '#BAE6FD',
                         }}
                     >
-                        <Text style={{ color: scheme === 'dark' ? '#93C5FD' : '#1E40AF', fontWeight: '600', marginBottom: 8 }}>
+                        <Text style={{
+                            color: scheme === 'dark' ? '#93C5FD' : '#1E40AF',
+                            fontWeight: '600',
+                            marginBottom: 8
+                        }}>
                             How to use
                         </Text>
-                        <Text style={{ color: scheme === 'dark' ? '#D1D5DB' : '#374151', fontSize: 13, lineHeight: 20 }}>
+                        <Text style={{
+                            color: scheme === 'dark' ? '#D1D5DB' : '#374151',
+                            fontSize: 13,
+                            lineHeight: 20
+                        }}>
                             1. Tap &quot;Run Diagnostics&quot; to check hardware and enrollment status{'\n'}
                             2. Use &quot;Auth + Fallback&quot; to test authentication with PIN/pattern fallback{'\n'}
                             3. Use &quot;Auth Biometric Only&quot; to test biometric-only authentication{'\n'}

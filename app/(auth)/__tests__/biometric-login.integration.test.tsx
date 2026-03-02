@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { Alert, Text, TouchableOpacity } from 'react-native';
 import LoginScreen from '../login';
 import { AuthProvider, useAuth } from '@/providers/AuthProvider';
@@ -105,7 +105,7 @@ describe('Biometric Login Flow - Integration Tests', () => {
     const renderLoginWithAuth = () => {
         return render(
             <AuthProvider>
-                <LoginScreen />
+                <LoginScreen/>
             </AuthProvider>
         );
     };
@@ -188,7 +188,13 @@ describe('Biometric Login Flow - Integration Tests', () => {
             (biometricAuth.authenticateWithBiometrics as jest.Mock).mockResolvedValue(true);
             mockRefreshAccessToken.mockResolvedValue('new-access-token');
             mockGet.mockResolvedValue({
-                data: { user: { id: '456', email: 'bio@example.com', name: 'Bio User' } },
+                data: {
+                    user: {
+                        id: '456',
+                        email: 'bio@example.com',
+                        name: 'Bio User'
+                    }
+                },
             });
 
             renderLoginWithAuth();
@@ -221,7 +227,12 @@ describe('Biometric Login Flow - Integration Tests', () => {
             (biometricAuth.authenticateWithBiometrics as jest.Mock).mockResolvedValue(true);
             mockRefreshAccessToken.mockResolvedValue('fresh-at');
             mockGet.mockResolvedValue({
-                data: { user: { id: '789', email: 'user@test.com' } },
+                data: {
+                    user: {
+                        id: '789',
+                        email: 'user@test.com'
+                    }
+                },
             });
 
             renderLoginWithAuth();
@@ -248,7 +259,9 @@ describe('Biometric Login Flow - Integration Tests', () => {
 
             let resolveAuth: (value: boolean) => void;
             (biometricAuth.authenticateWithBiometrics as jest.Mock).mockReturnValue(
-                new Promise<boolean>((resolve) => { resolveAuth = resolve; })
+                new Promise<boolean>((resolve) => {
+                    resolveAuth = resolve;
+                })
             );
             mockRefreshAccessToken.mockResolvedValue('at');
 
@@ -406,7 +419,10 @@ describe('Biometric Login Flow - Integration Tests', () => {
             mockPost.mockResolvedValue({
                 data: {
                     accessToken: 'password-token',
-                    user: { id: '1', email: 'user@test.com' },
+                    user: {
+                        id: '1',
+                        email: 'user@test.com'
+                    },
                 },
             });
 
@@ -479,7 +495,13 @@ describe('Biometric Login Flow - Integration Tests', () => {
             (biometricAuth.getBiometricPreference as jest.Mock).mockResolvedValue(true);
 
             mockPost.mockResolvedValue({
-                data: { accessToken: 'pw-token', user: { id: '1', email: 'test@example.com' } },
+                data: {
+                    accessToken: 'pw-token',
+                    user: {
+                        id: '1',
+                        email: 'test@example.com'
+                    }
+                },
             });
 
             renderLoginWithAuth();
@@ -528,7 +550,9 @@ describe('Biometric Login Flow - Integration Tests', () => {
 
             let resolveAuth: (value: boolean) => void;
             (biometricAuth.authenticateWithBiometrics as jest.Mock).mockReturnValue(
-                new Promise<boolean>((resolve) => { resolveAuth = resolve; })
+                new Promise<boolean>((resolve) => {
+                    resolveAuth = resolve;
+                })
             );
 
             renderLoginWithAuth();
@@ -627,7 +651,10 @@ describe('Biometric Login Flow - Integration Tests', () => {
 
     describe('AuthProvider signInWithBiometrics', () => {
         function BiometricTestHarness() {
-            const { signInWithBiometrics, status } = useAuth();
+            const {
+                signInWithBiometrics,
+                status
+            } = useAuth();
 
             return (
                 <>
@@ -653,12 +680,18 @@ describe('Biometric Login Flow - Integration Tests', () => {
             (biometricAuth.authenticateWithBiometrics as jest.Mock).mockResolvedValue(true);
             mockRefreshAccessToken.mockResolvedValue('fresh-access-token');
             mockGet.mockResolvedValue({
-                data: { user: { id: '100', email: 'bio@example.com', name: 'Bio User' } },
+                data: {
+                    user: {
+                        id: '100',
+                        email: 'bio@example.com',
+                        name: 'Bio User'
+                    }
+                },
             });
 
             render(
                 <AuthProvider>
-                    <BiometricTestHarness />
+                    <BiometricTestHarness/>
                 </AuthProvider>
             );
 
@@ -696,7 +729,7 @@ describe('Biometric Login Flow - Integration Tests', () => {
 
             render(
                 <AuthProvider>
-                    <BiometricTestHarness />
+                    <BiometricTestHarness/>
                 </AuthProvider>
             );
 
@@ -722,7 +755,7 @@ describe('Biometric Login Flow - Integration Tests', () => {
 
             render(
                 <AuthProvider>
-                    <BiometricTestHarness />
+                    <BiometricTestHarness/>
                 </AuthProvider>
             );
 
@@ -749,7 +782,7 @@ describe('Biometric Login Flow - Integration Tests', () => {
 
             render(
                 <AuthProvider>
-                    <BiometricTestHarness />
+                    <BiometricTestHarness/>
                 </AuthProvider>
             );
 
@@ -773,7 +806,7 @@ describe('Biometric Login Flow - Integration Tests', () => {
 
             render(
                 <AuthProvider>
-                    <BiometricTestHarness />
+                    <BiometricTestHarness/>
                 </AuthProvider>
             );
 
@@ -795,7 +828,7 @@ describe('Biometric Login Flow - Integration Tests', () => {
 
             render(
                 <AuthProvider>
-                    <BiometricTestHarness />
+                    <BiometricTestHarness/>
                 </AuthProvider>
             );
 
@@ -817,7 +850,7 @@ describe('Biometric Login Flow - Integration Tests', () => {
 
             render(
                 <AuthProvider>
-                    <BiometricTestHarness />
+                    <BiometricTestHarness/>
                 </AuthProvider>
             );
 
@@ -864,7 +897,10 @@ describe('Biometric Login Flow - Integration Tests', () => {
 
         it('should handle server error during login', async () => {
             mockPost.mockRejectedValue({
-                response: { status: 503, data: { message: 'Service temporarily unavailable' } },
+                response: {
+                    status: 503,
+                    data: { message: 'Service temporarily unavailable' }
+                },
             });
 
             renderLoginWithAuth();
@@ -888,7 +924,9 @@ describe('Biometric Login Flow - Integration Tests', () => {
         it('should show and clear loading state', async () => {
             let resolvePost: (value: any) => void;
             mockPost.mockReturnValue(
-                new Promise((resolve) => { resolvePost = resolve; })
+                new Promise((resolve) => {
+                    resolvePost = resolve;
+                })
             );
 
             renderLoginWithAuth();
@@ -915,7 +953,9 @@ describe('Biometric Login Flow - Integration Tests', () => {
         it('should restore button text on failed login', async () => {
             let rejectPost: (reason: any) => void;
             mockPost.mockReturnValue(
-                new Promise((_, reject) => { rejectPost = reject; })
+                new Promise((_, reject) => {
+                    rejectPost = reject;
+                })
             );
 
             renderLoginWithAuth();

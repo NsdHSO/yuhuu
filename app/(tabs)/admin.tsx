@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, ScrollView, ActivityIndicator } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useState } from 'react';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
@@ -20,142 +20,144 @@ import { ParticipantsList } from '@/components/admin/participants-list';
  * - Dependency Inversion: Depends on hooks abstraction, not implementation
  */
 export default function AdminScreen() {
-	const scheme = useColorScheme();
-	const [searchedUsername, setSearchedUsername] = useState<string>('');
-	const [selectedDinnerId, setSelectedDinnerId] = useState<number | null>(null);
+    const scheme = useColorScheme();
+    const [searchedUsername, setSearchedUsername] = useState<string>('');
+    const [selectedDinnerId, setSelectedDinnerId] = useState<number | null>(null);
 
-	// Fetch dinner stats for the graph
-	const {
-		data: dinnerStats,
-		isLoading: isLoadingStats,
-		error: statsError,
-	} = useDinnerStatsQuery();
+    // Fetch dinner stats for the graph
+    const {
+        data: dinnerStats,
+        isLoading: isLoadingStats,
+        error: statsError,
+    } = useDinnerStatsQuery();
 
-	// Fetch user attendance based on search
-	const {
-		data: userAttendance,
-		isLoading: isLoadingAttendance,
-		error: attendanceError,
-	} = useUserAttendanceQuery(searchedUsername);
+    // Fetch user attendance based on search
+    const {
+        data: userAttendance,
+        isLoading: isLoadingAttendance,
+        error: attendanceError,
+    } = useUserAttendanceQuery(searchedUsername);
 
-	// Fetch participants for selected dinner
-	const {
-		data: participants,
-		isLoading: isLoadingParticipants,
-		error: participantsError,
-	} = useParticipantsByDinnerQuery(selectedDinnerId);
+    // Fetch participants for selected dinner
+    const {
+        data: participants,
+        isLoading: isLoadingParticipants,
+        error: participantsError,
+    } = useParticipantsByDinnerQuery(selectedDinnerId);
 
-	const handleSearch = (username: string) => {
-		setSearchedUsername(username);
-	};
+    const handleSearch = (username: string) => {
+        setSearchedUsername(username);
+    };
 
-	const handleDinnerIdChange = (dinnerId: number | null) => {
-		setSelectedDinnerId(dinnerId);
-	};
+    const handleDinnerIdChange = (dinnerId: number | null) => {
+        setSelectedDinnerId(dinnerId);
+    };
 
-	return (
-		<ScrollView
-			testID="admin-container"
-			style={[styles.container, { backgroundColor: Colors[scheme ?? 'light'].background }]}
-		>
-			{/* Dinner Graph Section - Expandable */}
-			<View testID="dinner-graph-section" style={styles.section}>
-				<Accordion title="Dinner Participation Graph" initialExpanded={true} testID="dinner-graph-accordion">
-					{isLoadingStats ? (
-						<View testID="dinner-graph-loading" style={styles.loadingContainer}>
-							<ActivityIndicator size="large" color={Colors[scheme ?? 'light'].tint} />
-						</View>
-					) : statsError ? (
-						<Text style={[styles.errorText, { color: '#EF4444' }]}>
-							Failed to load dinner statistics
-						</Text>
-					) : (
-						<DinnerGraph testID="dinner-graph" data={dinnerStats} />
-					)}
-				</Accordion>
-			</View>
+    return (
+        <ScrollView
+            testID="admin-container"
+            style={[styles.container, { backgroundColor: Colors[scheme ?? 'light'].background }]}
+        >
+            {/* Dinner Graph Section - Expandable */}
+            <View testID="dinner-graph-section" style={styles.section}>
+                <Accordion title="Dinner Participation Graph" initialExpanded={true} testID="dinner-graph-accordion">
+                    {isLoadingStats ? (
+                        <View testID="dinner-graph-loading" style={styles.loadingContainer}>
+                            <ActivityIndicator size="large" color={Colors[scheme ?? 'light'].tint}/>
+                        </View>
+                    ) : statsError ? (
+                        <Text style={[styles.errorText, { color: '#EF4444' }]}>
+                            Failed to load dinner statistics
+                        </Text>
+                    ) : (
+                        <DinnerGraph testID="dinner-graph" data={dinnerStats}/>
+                    )}
+                </Accordion>
+            </View>
 
-			{/* User Search Section - Expandable */}
-			<View testID="user-search-section" style={styles.section}>
-				<Accordion title="Search User Attendance" initialExpanded={true} testID="user-search-accordion">
-					<UserSearch testID="user-search" onSearch={handleSearch} />
+            {/* User Search Section - Expandable */}
+            <View testID="user-search-section" style={styles.section}>
+                <Accordion title="Search User Attendance" initialExpanded={true} testID="user-search-accordion">
+                    <UserSearch testID="user-search" onSearch={handleSearch}/>
 
-					{/* Attendance Results */}
-					{searchedUsername && (
-						<View style={styles.attendanceContainer}>
-							{isLoadingAttendance ? (
-								<View testID="attendance-loading" style={styles.loadingContainer}>
-									<ActivityIndicator size="large" color={Colors[scheme ?? 'light'].tint} />
-								</View>
-							) : attendanceError ? (
-								<Text style={[styles.errorText, { color: '#EF4444' }]}>
-									User not found or failed to load attendance
-								</Text>
-							) : userAttendance && userAttendance.length === 0 ? (
-								<Text style={[styles.emptyText, { color: Colors[scheme ?? 'light'].icon }]}>
-									No attendance records found for this user
-								</Text>
-							) : (
-								<DinnerAttendance testID="dinner-attendance" username={searchedUsername} data={userAttendance} />
-							)}
-						</View>
-					)}
-				</Accordion>
-			</View>
+                    {/* Attendance Results */}
+                    {searchedUsername && (
+                        <View style={styles.attendanceContainer}>
+                            {isLoadingAttendance ? (
+                                <View testID="attendance-loading" style={styles.loadingContainer}>
+                                    <ActivityIndicator size="large" color={Colors[scheme ?? 'light'].tint}/>
+                                </View>
+                            ) : attendanceError ? (
+                                <Text style={[styles.errorText, { color: '#EF4444' }]}>
+                                    User not found or failed to load attendance
+                                </Text>
+                            ) : userAttendance && userAttendance.length === 0 ? (
+                                <Text style={[styles.emptyText, { color: Colors[scheme ?? 'light'].icon }]}>
+                                    No attendance records found for this user
+                                </Text>
+                            ) : (
+                                <DinnerAttendance testID="dinner-attendance" username={searchedUsername}
+                                                  data={userAttendance}/>
+                            )}
+                        </View>
+                    )}
+                </Accordion>
+            </View>
 
-			{/* Dinner Participants Section - Expandable */}
-			<View testID="dinner-participants-section" style={styles.section}>
-				<Accordion title="View Dinner Participants" initialExpanded={false} testID="dinner-participants-accordion">
-					<DinnerIdSearch testID="dinner-id-search" onDinnerIdChange={handleDinnerIdChange} />
+            {/* Dinner Participants Section - Expandable */}
+            <View testID="dinner-participants-section" style={styles.section}>
+                <Accordion title="View Dinner Participants" initialExpanded={false}
+                           testID="dinner-participants-accordion">
+                    <DinnerIdSearch testID="dinner-id-search" onDinnerIdChange={handleDinnerIdChange}/>
 
-					{/* Participants Results */}
-					{selectedDinnerId && (
-						<View style={styles.participantsContainer}>
-							{isLoadingParticipants ? (
-								<View testID="participants-loading" style={styles.loadingContainer}>
-									<ActivityIndicator size="large" color={Colors[scheme ?? 'light'].tint} />
-								</View>
-							) : participantsError ? (
-								<Text style={[styles.errorText, { color: '#EF4444' }]}>
-									Failed to load participants for this dinner
-								</Text>
-							) : participants ? (
-								<ParticipantsList testID="participants-list" participants={participants} />
-							) : null}
-						</View>
-					)}
-				</Accordion>
-			</View>
-		</ScrollView>
-	);
+                    {/* Participants Results */}
+                    {selectedDinnerId && (
+                        <View style={styles.participantsContainer}>
+                            {isLoadingParticipants ? (
+                                <View testID="participants-loading" style={styles.loadingContainer}>
+                                    <ActivityIndicator size="large" color={Colors[scheme ?? 'light'].tint}/>
+                                </View>
+                            ) : participantsError ? (
+                                <Text style={[styles.errorText, { color: '#EF4444' }]}>
+                                    Failed to load participants for this dinner
+                                </Text>
+                            ) : participants ? (
+                                <ParticipantsList testID="participants-list" participants={participants}/>
+                            ) : null}
+                        </View>
+                    )}
+                </Accordion>
+            </View>
+        </ScrollView>
+    );
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		padding: 16,
-		marginTop: 16,
-	},
-	section: {
-		marginBottom: 16,
-	},
-	loadingContainer: {
-		padding: 20,
-		alignItems: 'center',
-	},
-	errorText: {
-		fontSize: 14,
-		marginVertical: 8,
-	},
-	emptyText: {
-		fontSize: 14,
-		marginVertical: 8,
-		fontStyle: 'italic',
-	},
-	attendanceContainer: {
-		marginTop: 16,
-	},
-	participantsContainer: {
-		marginTop: 16,
-	},
+    container: {
+        flex: 1,
+        padding: 16,
+        marginTop: 16,
+    },
+    section: {
+        marginBottom: 16,
+    },
+    loadingContainer: {
+        padding: 20,
+        alignItems: 'center',
+    },
+    errorText: {
+        fontSize: 14,
+        marginVertical: 8,
+    },
+    emptyText: {
+        fontSize: 14,
+        marginVertical: 8,
+        fontStyle: 'italic',
+    },
+    attendanceContainer: {
+        marginTop: 16,
+    },
+    participantsContainer: {
+        marginTop: 16,
+    },
 });

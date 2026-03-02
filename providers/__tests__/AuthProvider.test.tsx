@@ -1,5 +1,5 @@
 import React from 'react';
-import { renderHook, act, waitFor } from '@testing-library/react-native';
+import { act, renderHook, waitFor } from '@testing-library/react-native';
 import { AuthProvider, useAuth } from '../AuthProvider';
 import { authApi } from '@/lib/api';
 import * as tokenManager from '@/lib/tokenManager';
@@ -33,7 +33,8 @@ describe('AuthProvider', () => {
     describe('useAuth Hook', () => {
         it('should throw error when used outside AuthProvider', () => {
             // Suppress console.error for this test
-            const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+            const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {
+            });
 
             expect(() => {
                 renderHook(() => useAuth());
@@ -335,7 +336,10 @@ describe('AuthProvider', () => {
                 }
             });
 
-            const { result, rerender } = renderHook(() => useAuth(), { wrapper });
+            const {
+                result,
+                rerender
+            } = renderHook(() => useAuth(), { wrapper });
 
             await act(async () => {
                 await result.current.signIn('test@example.com', 'password123');

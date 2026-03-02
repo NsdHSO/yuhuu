@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react-native';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 import LoginScreen from '../login';
 import { AuthProvider } from '@/providers/AuthProvider';
@@ -92,7 +92,14 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
         mockRefreshAccessToken.mockResolvedValue(null);
 
         // Default: /auth/me returns user data
-        mockGet.mockResolvedValue({ data: { user: { id: '1', email: 'test@test.com' } } });
+        mockGet.mockResolvedValue({
+            data: {
+                user: {
+                    id: '1',
+                    email: 'test@test.com'
+                }
+            }
+        });
 
         // Default: biometrics not available
         (biometricAuth.isBiometricAvailable as jest.Mock).mockResolvedValue(false);
@@ -108,7 +115,7 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
     const renderLoginWithAuth = () => {
         return render(
             <AuthProvider>
-                <LoginScreen />
+                <LoginScreen/>
             </AuthProvider>
         );
     };
@@ -434,7 +441,10 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
             mockPost.mockResolvedValue({
                 data: {
                     accessToken: 'password-token',
-                    user: { id: '1', email: 'user@test.com' },
+                    user: {
+                        id: '1',
+                        email: 'user@test.com'
+                    },
                 },
             });
 
@@ -616,7 +626,12 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
             (biometricAuth.authenticateWithBiometrics as jest.Mock).mockResolvedValueOnce(true);
             mockRefreshAccessToken.mockResolvedValue('new-token');
             mockGet.mockResolvedValue({
-                data: { user: { id: '1', email: 'user@test.com' } },
+                data: {
+                    user: {
+                        id: '1',
+                        email: 'user@test.com'
+                    }
+                },
             });
 
             // Wait for submitting state to reset
@@ -640,7 +655,12 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
             (biometricAuth.authenticateWithBiometrics as jest.Mock).mockResolvedValue(true);
             mockRefreshAccessToken.mockResolvedValue('refreshed-token');
             mockGet.mockResolvedValue({
-                data: { user: { id: '1', email: 'user@test.com' } },
+                data: {
+                    user: {
+                        id: '1',
+                        email: 'user@test.com'
+                    }
+                },
             });
 
             renderLoginWithAuth();
@@ -717,7 +737,10 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
                 data: {
                     accessToken: 'pw-access',
                     refreshToken: 'pw-refresh',
-                    user: { id: '99', email: 'password@test.com' },
+                    user: {
+                        id: '99',
+                        email: 'password@test.com'
+                    },
                 },
             });
 

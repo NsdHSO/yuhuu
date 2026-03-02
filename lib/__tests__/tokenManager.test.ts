@@ -24,7 +24,10 @@ jest.mock('axios', () => {
         request: { use: jest.fn() },
         response: { use: jest.fn() },
     };
-    return { __esModule: true, default: mockAxios };
+    return {
+        __esModule: true,
+        default: mockAxios
+    };
 });
 
 jest.mock('jwt-decode');

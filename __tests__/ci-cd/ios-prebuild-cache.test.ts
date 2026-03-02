@@ -10,16 +10,19 @@ interface WorkflowStep {
     with?: Record<string, unknown>;
     run?: string;
     env?: Record<string, string>;
+
     [key: string]: unknown;
 }
 
 interface WorkflowJob {
     steps: WorkflowStep[];
+
     [key: string]: unknown;
 }
 
 interface Workflow {
     jobs: Record<string, WorkflowJob>;
+
     [key: string]: unknown;
 }
 

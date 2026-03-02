@@ -10,6 +10,8 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react-native';
 import { Alert, Platform } from 'react-native';
+// eslint-disable-next-line import/first
+import ProfileScreen from '../profile';
 
 jest.spyOn(Alert, 'alert');
 
@@ -38,16 +40,14 @@ jest.mock('@/features/profile/api', () => ({
 }));
 
 jest.mock('@/features/bootstrap/api', () => ({
-    useBootstrapGate: () => {},
+    useBootstrapGate: () => {
+    },
 }));
 
 const mockUseAuth = jest.fn();
 jest.mock('@/providers/AuthProvider', () => ({
     useAuth: () => mockUseAuth(),
 }));
-
-// eslint-disable-next-line import/first
-import ProfileScreen from '../profile';
 
 describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
     const originalPlatform = Platform.OS;
@@ -57,7 +57,10 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
         (Platform as any).OS = 'android';
 
         mockUseAuth.mockReturnValue({
-            user: { id: '1', email: 'test@example.com' },
+            user: {
+                id: '1',
+                email: 'test@example.com'
+            },
             status: 'signed-in',
             signIn: jest.fn(),
             signInWithBiometrics: jest.fn(),
@@ -95,7 +98,7 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
         it('should NOT show Security section when isBiometricAvailable returns false', async () => {
             mockIsBiometricAvailable.mockResolvedValue(false);
 
-            const { queryByTestId } = render(<ProfileScreen />);
+            const { queryByTestId } = render(<ProfileScreen/>);
 
             await waitFor(() => {
                 expect(queryByTestId('biometric-section')).toBeNull();
@@ -105,7 +108,7 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
         it('should NOT show biometric toggle when unavailable', async () => {
             mockIsBiometricAvailable.mockResolvedValue(false);
 
-            const { queryByTestId } = render(<ProfileScreen />);
+            const { queryByTestId } = render(<ProfileScreen/>);
 
             await waitFor(() => {
                 expect(queryByTestId('biometric-toggle')).toBeNull();
@@ -115,7 +118,7 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
         it('should NOT show biometric label when unavailable', async () => {
             mockIsBiometricAvailable.mockResolvedValue(false);
 
-            const { queryByTestId } = render(<ProfileScreen />);
+            const { queryByTestId } = render(<ProfileScreen/>);
 
             await waitFor(() => {
                 expect(queryByTestId('biometric-label')).toBeNull();
@@ -125,7 +128,7 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
         it('should NOT show biometric description when unavailable', async () => {
             mockIsBiometricAvailable.mockResolvedValue(false);
 
-            const { queryByTestId } = render(<ProfileScreen />);
+            const { queryByTestId } = render(<ProfileScreen/>);
 
             await waitFor(() => {
                 expect(queryByTestId('biometric-description')).toBeNull();
@@ -141,7 +144,7 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
         it('should SHOW Security section when isBiometricAvailable returns true', async () => {
             mockIsBiometricAvailable.mockResolvedValue(true);
 
-            const { findByTestId } = render(<ProfileScreen />);
+            const { findByTestId } = render(<ProfileScreen/>);
 
             const section = await findByTestId('biometric-section');
             expect(section).toBeTruthy();
@@ -150,7 +153,7 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
         it('should SHOW biometric toggle when available', async () => {
             mockIsBiometricAvailable.mockResolvedValue(true);
 
-            const { findByTestId } = render(<ProfileScreen />);
+            const { findByTestId } = render(<ProfileScreen/>);
 
             const toggle = await findByTestId('biometric-toggle');
             expect(toggle).toBeTruthy();
@@ -159,7 +162,7 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
         it('should SHOW biometric label when available', async () => {
             mockIsBiometricAvailable.mockResolvedValue(true);
 
-            const { findByTestId } = render(<ProfileScreen />);
+            const { findByTestId } = render(<ProfileScreen/>);
 
             const label = await findByTestId('biometric-label');
             expect(label).toBeTruthy();
@@ -168,7 +171,7 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
         it('should SHOW biometric description when available', async () => {
             mockIsBiometricAvailable.mockResolvedValue(true);
 
-            const { findByTestId } = render(<ProfileScreen />);
+            const { findByTestId } = render(<ProfileScreen/>);
 
             const desc = await findByTestId('biometric-description');
             expect(desc).toBeTruthy();
@@ -183,7 +186,7 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
         it('should hide Security section when biometric hardware absent', async () => {
             mockIsBiometricAvailable.mockResolvedValue(false);
 
-            const { queryByTestId } = render(<ProfileScreen />);
+            const { queryByTestId } = render(<ProfileScreen/>);
 
             await waitFor(() => {
                 expect(queryByTestId('biometric-section')).toBeNull();
@@ -193,7 +196,7 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
         it('should hide Security section when nothing enrolled', async () => {
             mockIsBiometricAvailable.mockResolvedValue(false);
 
-            const { queryByTestId } = render(<ProfileScreen />);
+            const { queryByTestId } = render(<ProfileScreen/>);
 
             await waitFor(() => {
                 expect(queryByTestId('biometric-section')).toBeNull();
@@ -203,7 +206,7 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
         it('should hide Security section during biometric initialization delay', async () => {
             mockIsBiometricAvailable.mockResolvedValue(false);
 
-            const { queryByTestId } = render(<ProfileScreen />);
+            const { queryByTestId } = render(<ProfileScreen/>);
 
             await waitFor(() => {
                 expect(queryByTestId('biometric-section')).toBeNull();
@@ -213,7 +216,7 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
         it('should hide Security section when availability check throws', async () => {
             mockIsBiometricAvailable.mockRejectedValue(new Error('Availability check failed'));
 
-            const { queryByTestId } = render(<ProfileScreen />);
+            const { queryByTestId } = render(<ProfileScreen/>);
 
             await waitFor(() => {
                 expect(queryByTestId('biometric-section')).toBeNull();
@@ -230,7 +233,7 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
             Object.defineProperty(Platform, 'OS', { value: 'ios' });
             mockIsBiometricAvailable.mockResolvedValue(true);
 
-            const { findByText } = render(<ProfileScreen />);
+            const { findByText } = render(<ProfileScreen/>);
 
             const label = await findByText('Face ID / Touch ID');
             expect(label).toBeTruthy();
@@ -240,7 +243,7 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
             Object.defineProperty(Platform, 'OS', { value: 'android' });
             mockIsBiometricAvailable.mockResolvedValue(true);
 
-            const { findByText } = render(<ProfileScreen />);
+            const { findByText } = render(<ProfileScreen/>);
 
             const label = await findByText('Biometric Login');
             expect(label).toBeTruthy();
@@ -250,7 +253,7 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
             Object.defineProperty(Platform, 'OS', { value: 'ios' });
             mockIsBiometricAvailable.mockResolvedValue(true);
 
-            const { findByText } = render(<ProfileScreen />);
+            const { findByText } = render(<ProfileScreen/>);
 
             const desc = await findByText('Use Face ID or Touch ID to sign in quickly');
             expect(desc).toBeTruthy();
@@ -260,7 +263,7 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
             Object.defineProperty(Platform, 'OS', { value: 'android' });
             mockIsBiometricAvailable.mockResolvedValue(true);
 
-            const { findByText } = render(<ProfileScreen />);
+            const { findByText } = render(<ProfileScreen/>);
 
             const desc = await findByText('Use biometrics to sign in quickly');
             expect(desc).toBeTruthy();
@@ -275,7 +278,10 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
         it('should show profile fields but NOT Security when biometrics unavailable', async () => {
             mockIsBiometricAvailable.mockResolvedValue(false);
 
-            const { queryByTestId, getByText } = render(<ProfileScreen />);
+            const {
+                queryByTestId,
+                getByText
+            } = render(<ProfileScreen/>);
 
             const saveButton = getByText('Save');
             expect(saveButton).toBeTruthy();
@@ -288,7 +294,10 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
         it('should show both profile fields AND Security when biometrics available', async () => {
             mockIsBiometricAvailable.mockResolvedValue(true);
 
-            const { findByTestId, getByText } = render(<ProfileScreen />);
+            const {
+                findByTestId,
+                getByText
+            } = render(<ProfileScreen/>);
 
             const saveButton = getByText('Save');
             expect(saveButton).toBeTruthy();
@@ -301,7 +310,7 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
             mockIsBiometricAvailable.mockResolvedValue(true);
             mockGetBiometricPreference.mockResolvedValue(true);
 
-            render(<ProfileScreen />);
+            render(<ProfileScreen/>);
 
             await waitFor(() => {
                 expect(mockIsBiometricAvailable).toHaveBeenCalled();
@@ -312,7 +321,7 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
         it('should skip preference check when unavailable', async () => {
             mockIsBiometricAvailable.mockResolvedValue(false);
 
-            render(<ProfileScreen />);
+            render(<ProfileScreen/>);
 
             await waitFor(() => {
                 expect(mockIsBiometricAvailable).toHaveBeenCalled();
@@ -333,7 +342,7 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
                 error: null,
             });
 
-            const { queryByTestId } = render(<ProfileScreen />);
+            const { queryByTestId } = render(<ProfileScreen/>);
 
             expect(queryByTestId('biometric-section')).toBeNull();
         });
@@ -345,7 +354,7 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
                 error: { response: { status: 500 } },
             });
 
-            const { queryByTestId } = render(<ProfileScreen />);
+            const { queryByTestId } = render(<ProfileScreen/>);
 
             expect(queryByTestId('biometric-section')).toBeNull();
         });

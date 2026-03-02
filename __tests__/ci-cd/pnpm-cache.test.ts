@@ -12,6 +12,7 @@ interface ActionStep {
     shell?: string;
     if?: string;
     id?: string;
+
     [key: string]: unknown;
 }
 

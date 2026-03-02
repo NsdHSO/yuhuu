@@ -1,5 +1,16 @@
-import React, { useRef, useMemo, useState, useEffect } from 'react';
-import { Alert, Dimensions, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import {
+    Alert,
+    Dimensions,
+    KeyboardAvoidingView,
+    Platform,
+    Pressable,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
+} from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { ThemedText } from '@/components/themed-text';
@@ -7,7 +18,7 @@ import { ThemedView } from '@/components/themed-view';
 import { useAuth } from '@/providers/AuthProvider';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
-import { isBiometricAvailable, getBiometricPreference } from '@/lib/biometricAuth';
+import { getBiometricPreference, isBiometricAvailable } from '@/lib/biometricAuth';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -69,7 +80,8 @@ export default function LoginScreen() {
                         animated: true
                     });
                 },
-                () => {}
+                () => {
+                }
             );
         }
     };
@@ -110,7 +122,10 @@ export default function LoginScreen() {
             <ScrollView
                 ref={scrollViewRef}
                 style={{ flex: 1 }}
-                contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
+                contentContainerStyle={{
+                    padding: 16,
+                    paddingBottom: 40
+                }}
                 keyboardShouldPersistTaps="handled"
             >
                 <KeyboardAvoidingView
@@ -137,7 +152,7 @@ export default function LoginScreen() {
                             />
                         </View>
 
-                        <View style={{ height: 12 }} />
+                        <View style={{ height: 12 }}/>
 
                         <View ref={passwordInputRef}>
                             <TextInput
@@ -155,7 +170,7 @@ export default function LoginScreen() {
                             />
                         </View>
 
-                        <View style={{ height: 16 }} />
+                        <View style={{ height: 16 }}/>
 
                         <TouchableOpacity
                             onPress={onSubmit}
@@ -191,15 +206,26 @@ export default function LoginScreen() {
                                         marginTop: 16,
                                     }}
                                 >
-                                    <View style={{ flex: 1, height: 1, backgroundColor: scheme === 'dark' ? '#2A2A2A' : '#E5E7EB' }} />
+                                    <View style={{
+                                        flex: 1,
+                                        height: 1,
+                                        backgroundColor: scheme === 'dark' ? '#2A2A2A' : '#E5E7EB'
+                                    }}/>
                                     <ThemedText
                                         lightColor="#6B7280"
                                         darkColor="#9CA3AF"
-                                        style={{ marginHorizontal: 12, fontSize: 13 }}
+                                        style={{
+                                            marginHorizontal: 12,
+                                            fontSize: 13
+                                        }}
                                     >
                                         or
                                     </ThemedText>
-                                    <View style={{ flex: 1, height: 1, backgroundColor: scheme === 'dark' ? '#2A2A2A' : '#E5E7EB' }} />
+                                    <View style={{
+                                        flex: 1,
+                                        height: 1,
+                                        backgroundColor: scheme === 'dark' ? '#2A2A2A' : '#E5E7EB'
+                                    }}/>
                                 </View>
                                 <TouchableOpacity
                                     testID="biometric-login-button"
@@ -237,7 +263,7 @@ export default function LoginScreen() {
                             </>
                         )}
 
-                        <View style={{ height: 16 }} />
+                        <View style={{ height: 16 }}/>
 
                         <Pressable
                             onPress={() => router.push('/(auth)/register')}
@@ -247,7 +273,8 @@ export default function LoginScreen() {
                                 paddingVertical: 8
                             })}
                         >
-                            <ThemedText lightColor="#6B7280" darkColor="#9CA3AF">Don&apos;t have an account? Create one</ThemedText>
+                            <ThemedText lightColor="#6B7280" darkColor="#9CA3AF">Don&apos;t have an account? Create
+                                one</ThemedText>
                         </Pressable>
                     </View>
                 </KeyboardAvoidingView>

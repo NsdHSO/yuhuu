@@ -10,7 +10,10 @@ import { useAuth } from '@/providers/AuthProvider';
 import { hasRole } from '@/lib/authz';
 
 export default function HomeScreen() {
-    const { signOut, user } = useAuth();
+    const {
+        signOut,
+        user
+    } = useAuth();
     const isMember = hasRole('Member');
     if (isMember) return <Redirect href="/profile"/>;
     return (
@@ -24,7 +27,8 @@ export default function HomeScreen() {
                         Welcome to our Pentecostal church community
                     </ThemedText>
                     <ThemedText leading="relaxed" className="mb-6">
-                        We&apos;re glad you&apos;re here—may you feel encouraged as we worship, pray, and grow together in Christ.
+                        We&apos;re glad you&apos;re here—may you feel encouraged as we worship, pray, and grow together
+                        in Christ.
                     </ThemedText>
 
                     <Pressable

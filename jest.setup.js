@@ -70,8 +70,8 @@ jest.mock('expo-local-authentication', () => ({
     authenticateAsync: jest.fn(),
     AuthenticationType: {
         FINGERPRINT: 1,
-        FACIAL_RECOGNITION: 2,
-    },
+        FACIAL_RECOGNITION: 2
+    }
 }));
 
 // Mock react-native-reanimated

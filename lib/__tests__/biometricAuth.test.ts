@@ -730,7 +730,10 @@ describe('biometricAuth', () => {
         it('should abort flow when authentication fails', async () => {
             mockHasHardwareAsync.mockResolvedValue(true);
             mockIsEnrolledAsync.mockResolvedValue(true);
-            mockAuthenticateAsync.mockResolvedValue({ success: false, error: 'user_cancel' });
+            mockAuthenticateAsync.mockResolvedValue({
+                success: false,
+                error: 'user_cancel'
+            });
 
             const available = await biometricAuth.isBiometricAvailable();
             expect(available).toBe(true);

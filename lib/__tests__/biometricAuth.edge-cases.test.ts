@@ -367,7 +367,9 @@ describe('biometricAuth - Edge Cases', () => {
     describe('saveBiometricEmail - Error handling edge cases', () => {
         it('should handle save email when setItemAsync is slow', async () => {
             let resolveSetItem: any;
-            mockSetItemAsync.mockReturnValue(new Promise(r => { resolveSetItem = r; }));
+            mockSetItemAsync.mockReturnValue(new Promise(r => {
+                resolveSetItem = r;
+            }));
 
             const savePromise = biometricAuth.saveBiometricEmail('test@example.com');
 
@@ -397,8 +399,12 @@ describe('biometricAuth - Edge Cases', () => {
             let resolveSecond: any;
 
             mockDeleteItemAsync
-                .mockReturnValueOnce(new Promise(r => { resolveFirst = r; }))
-                .mockReturnValueOnce(new Promise(r => { resolveSecond = r; }));
+                .mockReturnValueOnce(new Promise(r => {
+                    resolveFirst = r;
+                }))
+                .mockReturnValueOnce(new Promise(r => {
+                    resolveSecond = r;
+                }));
 
             const clearPromise = biometricAuth.clearBiometricData();
 

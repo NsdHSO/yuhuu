@@ -7,8 +7,8 @@ import type { Dinner } from '@/features/dinners/types';
  * Props for DinnerDetailsCard component
  */
 export type DinnerDetailsCardProps = {
-	/** Dinner data to display */
-	dinner: Dinner;
+    /** Dinner data to display */
+    dinner: Dinner;
 };
 
 /**
@@ -18,48 +18,48 @@ export type DinnerDetailsCardProps = {
  * - Open/Closed: Open for styling extensions, closed for data modification
  */
 export function DinnerDetailsCard({ dinner }: DinnerDetailsCardProps) {
-	return (
-		<View style={styles.card}>
-			<ThemedText style={styles.label}>Date:</ThemedText>
-			<ThemedText style={styles.value}>{dinner.dinnerDate}</ThemedText>
+    return (
+        <View style={styles.card}>
+            <ThemedText style={styles.label}>Date:</ThemedText>
+            <ThemedText style={styles.value}>{dinner.dinnerDate}</ThemedText>
 
-			<ThemedText style={styles.label}>Meal Type:</ThemedText>
-			<ThemedText style={styles.value}>{dinner.mealType}</ThemedText>
+            <ThemedText style={styles.label}>Meal Type:</ThemedText>
+            <ThemedText style={styles.value}>{dinner.mealType}</ThemedText>
 
-			{dinner.location && (
-				<>
-					<ThemedText style={styles.label}>Location:</ThemedText>
-					<ThemedText style={styles.value}>{dinner.location}</ThemedText>
-				</>
-			)}
+            {dinner.location && (
+                <>
+                    <ThemedText style={styles.label}>Location:</ThemedText>
+                    <ThemedText style={styles.value}>{dinner.location}</ThemedText>
+                </>
+            )}
 
-			{dinner.description && (
-				<>
-					<ThemedText style={styles.label}>Description:</ThemedText>
-					<ThemedText style={styles.value}>{dinner.description}</ThemedText>
-				</>
-			)}
+            {dinner.description && (
+                <>
+                    <ThemedText style={styles.label}>Description:</ThemedText>
+                    <ThemedText style={styles.value}>{dinner.description}</ThemedText>
+                </>
+            )}
 
-			{dinner.maxParticipants && (
-				<>
-					<ThemedText style={styles.label}>Max Participants:</ThemedText>
-					<ThemedText style={styles.value}>{dinner.maxParticipants}</ThemedText>
-				</>
-			)}
-		</View>
-	);
+            {dinner.maxParticipants && (
+                <>
+                    <ThemedText style={styles.label}>Max Participants:</ThemedText>
+                    <ThemedText style={styles.value}>{dinner.maxParticipants}</ThemedText>
+                </>
+            )}
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
-	card: {
-		gap: 8,
-		marginBottom: 24,
-	},
-	label: {
-		fontWeight: '600',
-		marginTop: 8,
-	},
-	value: {
-		opacity: 0.8,
-	},
+    card: {
+        gap: 8,
+        marginBottom: 24,
+    },
+    label: {
+        fontWeight: '600',
+        marginTop: 8,
+    },
+    value: {
+        opacity: 0.8,
+    },
 });

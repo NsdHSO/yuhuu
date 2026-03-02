@@ -44,16 +44,19 @@ interface WorkflowStep {
     env?: Record<string, string>;
     id?: string;
     if?: string;
+
     [key: string]: unknown;
 }
 
 interface WorkflowJob {
     steps: WorkflowStep[];
+
     [key: string]: unknown;
 }
 
 interface Workflow {
     jobs: Record<string, WorkflowJob>;
+
     [key: string]: unknown;
 }
 

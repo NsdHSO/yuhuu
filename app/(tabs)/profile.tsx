@@ -1,14 +1,14 @@
 import React, { useMemo, useState } from 'react';
 import {
-  ActivityIndicator,
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  Switch,
-  TextInput,
-  View
+    ActivityIndicator,
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    Pressable,
+    ScrollView,
+    Switch,
+    TextInput,
+    View
 } from 'react-native';
 import { Stack } from 'expo-router';
 import { ThemedText } from '@/components/themed-text';
@@ -18,12 +18,12 @@ import { useBootstrapGate } from '@/features/bootstrap/api';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 import {
-    isBiometricAvailable,
-    getBiometricPreference,
-    saveBiometricPreference,
-    saveBiometricEmail,
-    clearBiometricData,
     authenticateWithBiometrics,
+    clearBiometricData,
+    getBiometricPreference,
+    isBiometricAvailable,
+    saveBiometricEmail,
+    saveBiometricPreference,
 } from '@/lib/biometricAuth';
 import { useAuth } from '@/providers/AuthProvider';
 
@@ -125,7 +125,10 @@ export default function ProfileScreen() {
                 'Disable biometric sign-in?',
                 'You will need to enter your email and password to sign in.',
                 [
-                    { text: 'Cancel', style: 'cancel' },
+                    {
+                        text: 'Cancel',
+                        style: 'cancel'
+                    },
                     {
                         text: 'Disable',
                         style: 'destructive',
@@ -171,7 +174,8 @@ export default function ProfileScreen() {
                     {!profile && (
                         <View style={{ marginBottom: 12 }}>
                             <ThemedText type="subtitle" className="mb-2">Create your profile</ThemedText>
-                            <ThemedText lightColor="#6B7280" darkColor="#9CA3AF">We didn&apos;t find a profile. Fill in the fields below and save to
+                            <ThemedText lightColor="#6B7280" darkColor="#9CA3AF">We didn&apos;t find a profile. Fill in
+                                the fields below and save to
                                 create one.</ThemedText>
                         </View>
                     )}
@@ -213,14 +217,20 @@ export default function ProfileScreen() {
                                     marginTop: 4,
                                 }}
                             >
-                                <ThemedText type="subtitle" style={{ fontSize: 18, marginBottom: 8 }}>Security</ThemedText>
+                                <ThemedText type="subtitle" style={{
+                                    fontSize: 18,
+                                    marginBottom: 8
+                                }}>Security</ThemedText>
                                 <View style={{
                                     flexDirection: 'row',
                                     alignItems: 'center',
                                     justifyContent: 'space-between',
                                     paddingVertical: 8,
                                 }}>
-                                    <View style={{ flex: 1, marginRight: 12 }}>
+                                    <View style={{
+                                        flex: 1,
+                                        marginRight: 12
+                                    }}>
                                         <ThemedText testID="biometric-label">
                                             {Platform.OS === 'ios' ? 'Face ID / Touch ID' : 'Biometric Login'}
                                         </ThemedText>
@@ -228,7 +238,10 @@ export default function ProfileScreen() {
                                             testID="biometric-description"
                                             lightColor="#6B7280"
                                             darkColor="#9CA3AF"
-                                            style={{ fontSize: 13, marginTop: 2 }}
+                                            style={{
+                                                fontSize: 13,
+                                                marginTop: 2
+                                            }}
                                         >
                                             {Platform.OS === 'ios'
                                                 ? 'Use Face ID or Touch ID to sign in quickly'
@@ -239,7 +252,10 @@ export default function ProfileScreen() {
                                         testID="biometric-toggle"
                                         value={biometricEnabled}
                                         onValueChange={handleBiometricToggle}
-                                        trackColor={{ false: '#767577', true: '#1e90ff' }}
+                                        trackColor={{
+                                            false: '#767577',
+                                            true: '#1e90ff'
+                                        }}
                                         thumbColor={biometricEnabled ? '#fff' : '#f4f3f4'}
                                         accessibilityLabel={
                                             Platform.OS === 'ios'

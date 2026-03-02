@@ -49,7 +49,7 @@ jobs:
   # Build Android only when relevant files changed
   build-android:
     name: Build Android
-    needs: [test, changes]
+    needs: [ test, changes ]
     if: always() && needs.changes.outputs.android == 'true'
     permissions:
       contents: write
@@ -59,7 +59,7 @@ jobs:
   # Build iOS only when relevant files changed
   build-ios:
     name: Build iOS
-    needs: [test, changes]
+    needs: [ test, changes ]
     if: always() && needs.changes.outputs.ios == 'true'
     permissions:
       contents: write
