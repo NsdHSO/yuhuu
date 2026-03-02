@@ -74,4 +74,4 @@ module.exports = {
         owner: 'nsdhso'
     }
 };
-// Cache optimization trigger - 20260302052605
+// Test cache optimizations: pnpm-lock.yaml in cache keys - 20260302060430
