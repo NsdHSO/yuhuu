@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 import type { Participant } from '@/features/dinners/types';
@@ -20,13 +21,14 @@ export function ParticipantsList({
                                      participants,
                                      testID
                                  }: ParticipantsListProps) {
+    const { t } = useTranslation();
     const scheme = useColorScheme();
 
     if (participants.length === 0) {
         return (
             <View testID={testID}>
                 <Text style={[styles.emptyText, { color: Colors[scheme ?? 'light'].icon }]}>
-                    No participants found for this dinner
+                    {t('admin.noParticipantsFound')}
                 </Text>
             </View>
         );
@@ -47,7 +49,7 @@ export function ParticipantsList({
                 >
                     <View style={styles.cardRow}>
                         <Text style={[styles.label, { color: Colors[scheme ?? 'light'].icon }]}>
-                            Username:
+                            {t('admin.usernameLabel')}
                         </Text>
                         <Text style={[styles.value, { color: Colors[scheme ?? 'light'].text }]}>
                             {participant.username}
@@ -57,7 +59,7 @@ export function ParticipantsList({
                     {participant.notes && (
                         <View style={styles.cardRow}>
                             <Text style={[styles.label, { color: Colors[scheme ?? 'light'].icon }]}>
-                                Notes:
+                                {t('admin.notesLabel')}
                             </Text>
                             <Text style={[styles.value, { color: Colors[scheme ?? 'light'].text }]}>
                                 {participant.notes}
@@ -67,7 +69,7 @@ export function ParticipantsList({
 
                     <View style={styles.cardRow}>
                         <Text style={[styles.label, { color: Colors[scheme ?? 'light'].icon }]}>
-                            Added:
+                            {t('admin.addedLabel')}
                         </Text>
                         <Text style={[styles.value, styles.dateText, { color: Colors[scheme ?? 'light'].icon }]}>
                             {new Date(participant.createdAt).toLocaleDateString()}
@@ -77,7 +79,7 @@ export function ParticipantsList({
             ))}
 
             <Text style={[styles.countText, { color: Colors[scheme ?? 'light'].icon }]}>
-                Total: {participants.length} participant{participants.length !== 1 ? 's' : ''}
+                {t('admin.participantCount', { count: participants.length })}
             </Text>
         </View>
     );
