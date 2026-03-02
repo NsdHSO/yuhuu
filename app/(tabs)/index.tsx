@@ -2,6 +2,7 @@ import React from 'react';
 import { Redirect } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -14,6 +15,7 @@ export default function HomeScreen() {
         signOut,
         user
     } = useAuth();
+    const { t } = useTranslation();
     const isMember = hasRole('Member');
     if (isMember) return <Redirect href="/profile"/>;
     return (
@@ -21,14 +23,13 @@ export default function HomeScreen() {
             <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
                 <View style={styles.container}>
                     <ThemedText type="title" className="mb-2">
-                        Welcome{user ? `, ${user.name ?? user.email}` : ''}! <HelloWave/>
+                        {t('home.welcome', { name: user?.name ?? user?.email ?? '' })} <HelloWave/>
                     </ThemedText>
                     <ThemedText type="subtitle" className="mb-1">
-                        Welcome to our Pentecostal church community
+                        {t('home.welcomeMessage')}
                     </ThemedText>
                     <ThemedText leading="relaxed" className="mb-6">
-                        We&apos;re glad you&apos;re here—may you feel encouraged as we worship, pray, and grow together
-                        in Christ.
+                        {t('home.encouragement')}
                     </ThemedText>
 
                     <Pressable
@@ -45,7 +46,7 @@ export default function HomeScreen() {
                         <ThemedText style={{
                             color: 'white',
                             fontWeight: '600'
-                        }}>Sign out</ThemedText>
+                        }}>{t('home.signOut')}</ThemedText>
                     </Pressable>
                 </View>
             </SafeAreaView>
