@@ -128,13 +128,12 @@ jobs:
       - name: Build iOS Release
         working-directory: ios
         env:
-          CC: ccache clang
-          CXX: ccache clang++
           EXPO_PUBLIC_GRAPHQL_URL: ${{ secrets.FAT_GRAPHQL_URL }}
           EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}
           EXPO_PUBLIC_AUTH_API_URL: ${{ secrets.EXPO_PUBLIC_AUTH_API_URL }}
           EXPO_PUBLIC_ENV: fat
         run: |
+          export PATH="/opt/homebrew/opt/ccache/libexec:$PATH"
           xcodebuild -workspace Yuhuu.xcworkspace \
             -scheme Yuhuu \
             -configuration Release \
