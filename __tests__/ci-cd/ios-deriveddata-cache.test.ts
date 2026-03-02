@@ -138,32 +138,23 @@ describe('iOS Build Workflow - DerivedData Cache', () => {
             expect(cacheKey.toLowerCase()).toContain('deriveddata');
         });
 
-        it('should hash Swift source files (*.swift) in cache key', () => {
-            const derivedDataCache = findStepByName(buildSteps, 'deriveddata');
-            expect(derivedDataCache).toBeDefined();
-            const cacheKey = String(derivedDataCache!.with?.key || '');
-            expect(cacheKey).toContain('*.swift');
-        });
-
-        it('should hash Objective-C source files (*.m) in cache key', () => {
-            const derivedDataCache = findStepByName(buildSteps, 'deriveddata');
-            expect(derivedDataCache).toBeDefined();
-            const cacheKey = String(derivedDataCache!.with?.key || '');
-            expect(cacheKey).toContain('*.m');
-        });
-
-        it('should hash Objective-C++ source files (*.mm) in cache key', () => {
-            const derivedDataCache = findStepByName(buildSteps, 'deriveddata');
-            expect(derivedDataCache).toBeDefined();
-            const cacheKey = String(derivedDataCache!.with?.key || '');
-            expect(cacheKey).toContain('*.mm');
-        });
-
         it('should hash Podfile.lock in cache key', () => {
+            // Performance optimization: Use stable Podfile.lock hash instead of source files
+            // Source files change during prebuild/pod install, invalidating the cache
+            // Podfile.lock is stable and indicates dependency changes
             const derivedDataCache = findStepByName(buildSteps, 'deriveddata');
             expect(derivedDataCache).toBeDefined();
             const cacheKey = String(derivedDataCache!.with?.key || '');
             expect(cacheKey).toContain('Podfile.lock');
+        });
+
+        it('should hash app.config.js in cache key', () => {
+            // app.config.js changes affect native code generation
+            // Including it ensures cache invalidates when config changes
+            const derivedDataCache = findStepByName(buildSteps, 'deriveddata');
+            expect(derivedDataCache).toBeDefined();
+            const cacheKey = String(derivedDataCache!.with?.key || '');
+            expect(cacheKey).toContain('app.config.js');
         });
 
         it('should use hashFiles function for cache key', () => {
@@ -173,12 +164,23 @@ describe('iOS Build Workflow - DerivedData Cache', () => {
             expect(cacheKey).toContain('hashFiles');
         });
 
-        it('should scope file hashes to ios/ directory', () => {
+        it('should use simplified key for cache stability', () => {
+            // NOTE: Previous implementation hashed *.swift, *.m, *.mm files
+            // but those files are regenerated during prebuild/pod install,
+            // causing the cache key to change even when dependencies are stable.
+            // New strategy: hash Podfile.lock + app.config.js for stability.
             const derivedDataCache = findStepByName(buildSteps, 'deriveddata');
             expect(derivedDataCache).toBeDefined();
             const cacheKey = String(derivedDataCache!.with?.key || '');
-            // The hashFiles patterns should be scoped to ios/ directory
-            expect(cacheKey).toContain('ios/');
+
+            // Should NOT include source file patterns (unstable)
+            expect(cacheKey).not.toContain('*.swift');
+            expect(cacheKey).not.toContain('*.m');
+            expect(cacheKey).not.toContain('*.mm');
+
+            // Should include dependency indicators (stable)
+            expect(cacheKey).toContain('Podfile.lock');
+            expect(cacheKey).toContain('app.config.js');
         });
     });
 
@@ -323,18 +325,20 @@ describe('iOS Build Workflow - DerivedData Cache', () => {
             expect(cachePath).toContain('build');
         });
 
-        it('should invalidate cache when source files change', () => {
-            // The cache key includes hashes of Swift and ObjC files
-            // When source files change, the hash changes, and a new cache is created
-            // This ensures stale object files don't cause build issues
+        it('should invalidate cache when dependencies change', () => {
+            // PERFORMANCE FIX: Previous implementation hashed source files (*.swift, *.m)
+            // but those are regenerated during prebuild/pod install, causing cache
+            // invalidation even when actual dependencies haven't changed.
+            //
+            // New strategy: hash Podfile.lock + app.config.js for stable cache keys
             const derivedDataCache = findStepByName(buildSteps, 'deriveddata');
             expect(derivedDataCache).toBeDefined();
             const cacheKey = String(derivedDataCache!.with?.key || '');
 
-            // Should hash source files for proper invalidation
+            // Should hash dependency indicators for proper invalidation
             expect(cacheKey).toContain('hashFiles');
-            expect(cacheKey).toContain('*.swift');
-            expect(cacheKey).toContain('*.m');
+            expect(cacheKey).toContain('Podfile.lock');
+            expect(cacheKey).toContain('app.config.js');
         });
 
         it('should fall back to partial cache when source changes but deps unchanged', () => {
