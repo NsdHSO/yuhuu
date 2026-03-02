@@ -7,6 +7,24 @@ import * as useColorSchemeModule from '@/hooks/use-color-scheme';
 // Mock Alert
 jest.spyOn(Alert, 'alert');
 
+// Mock react-i18next
+jest.mock('react-i18next', () => ({
+    useTranslation: () => ({
+        t: (key: string) => {
+            const translations: Record<string, string> = {
+                'common.usernamePlaceholder': 'Username',
+                'common.notesPlaceholder': 'Notes (optional)',
+                'common.addParticipant': 'Add Participant',
+                'common.adding': 'Adding\u2026',
+                'common.required': 'Required',
+                'common.usernameRequired': 'Please enter a username.',
+            };
+            return translations[key] ?? key;
+        },
+        i18n: { language: 'en', changeLanguage: jest.fn() },
+    }),
+}));
+
 // Mock useColorScheme hook
 jest.mock('@/hooks/use-color-scheme', () => ({
     useColorScheme: jest.fn(() => 'light'),
