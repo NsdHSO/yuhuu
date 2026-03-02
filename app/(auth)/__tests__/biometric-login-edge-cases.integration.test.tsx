@@ -8,6 +8,7 @@ import { authApi } from '@/lib/api';
 import * as tokenManager from '@/lib/tokenManager';
 import * as biometricAuth from '@/lib/biometricAuth';
 import * as secureStore from '@/lib/secureStore';
+import { initI18n } from '@/lib/i18n';
 
 /**
  * Edge Case Integration Tests for Biometric Login Flow
@@ -58,9 +59,20 @@ jest.mock('@/hooks/use-color-scheme', () => ({
 
 jest.mock('@expo/vector-icons/Ionicons', () => 'Ionicons');
 
+jest.mock('expo-localization');
+jest.mock('expo-secure-store');
+
 jest.spyOn(Alert, 'alert');
 
 jest.setTimeout(15000);
+
+beforeAll(async () => {
+    const Localization = require('expo-localization');
+    const SecureStore = require('expo-secure-store');
+    Localization.getLocales.mockReturnValue([{ languageCode: 'en' }]);
+    SecureStore.getItemAsync.mockResolvedValue(null);
+    await initI18n();
+});
 
 describe('Biometric Login - Edge Cases Integration Tests', () => {
     const mockPush = jest.fn();
