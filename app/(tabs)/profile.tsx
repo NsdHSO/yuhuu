@@ -11,6 +11,7 @@ import {
     View
 } from 'react-native';
 import { Stack } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useMyProfileQuery, useSaveMyProfileMutation } from '@/features/profile/api';
@@ -26,8 +27,10 @@ import {
     saveBiometricPreference,
 } from '@/lib/biometricAuth';
 import { useAuth } from '@/providers/AuthProvider';
+import LanguagePicker from '@/components/molecules/language-picker';
 
 export default function ProfileScreen() {
+    const { t } = useTranslation();
     // Ensure bootstrap runs; return value not needed here
     useBootstrapGate();
     // Do not issue GET /me/profile; rely on bootstrap seeding the cache.
@@ -93,10 +96,10 @@ export default function ProfileScreen() {
                 mode: profile ? 'update' : 'create'
             },
             {
-                onSuccess: () => Alert.alert('Success', 'Profile saved.'),
+                onSuccess: () => Alert.alert(t('common.success'), t('profile.saveSuccess')),
                 onError: (e: any) => {
-                    const msg = e?.response?.data?.message || 'Failed to save profile.';
-                    Alert.alert('Error', msg);
+                    const msg = e?.response?.data?.message || t('profile.saveError');
+                    Alert.alert(t('common.error'), msg);
                 },
             }
         );
@@ -105,9 +108,9 @@ export default function ProfileScreen() {
     async function handleBiometricToggle(value: boolean) {
         if (value) {
             try {
-                const authenticated = await authenticateWithBiometrics('Verify your identity to enable biometric sign-in');
+                const authenticated = await authenticateWithBiometrics(t('profile.biometricEnableTitle'));
                 if (!authenticated) {
-                    Alert.alert('Authentication Failed', 'Could not verify your identity. Please try again.');
+                    Alert.alert(t('common.error'), t('profile.biometricAuthFailed'));
                     return;
                 }
                 await saveBiometricPreference(true);
@@ -115,22 +118,22 @@ export default function ProfileScreen() {
                     await saveBiometricEmail(user.email);
                 }
                 setBiometricEnabled(true);
-                Alert.alert('Success', 'Biometric sign-in enabled.');
+                Alert.alert(t('common.success'), t('profile.biometricEnableSuccess'));
             } catch (error) {
-                Alert.alert('Error', 'Failed to enable biometric sign-in. Please try again.');
+                Alert.alert(t('common.error'), t('profile.biometricEnableError'));
                 setBiometricEnabled(false);
             }
         } else {
             Alert.alert(
-                'Disable biometric sign-in?',
-                'You will need to enter your email and password to sign in.',
+                t('profile.biometricDisableTitle'),
+                t('profile.biometricDisableMessage'),
                 [
                     {
-                        text: 'Cancel',
+                        text: t('common.cancel'),
                         style: 'cancel'
                     },
                     {
-                        text: 'Disable',
+                        text: t('common.disable'),
                         style: 'destructive',
                         onPress: async () => {
                             try {
@@ -138,7 +141,7 @@ export default function ProfileScreen() {
                                 await clearBiometricData();
                                 setBiometricEnabled(false);
                             } catch (error) {
-                                Alert.alert('Error', 'Failed to disable biometric sign-in.');
+                                Alert.alert(t('common.error'), t('profile.biometricDisableError'));
                             }
                         },
                     },
@@ -158,14 +161,14 @@ export default function ProfileScreen() {
     if (error && (error as any)?.response?.status !== 404) {
         return (
             <ThemedView className="flex-1 items-center justify-center">
-                <ThemedText>Failed to load profile.</ThemedText>
+                <ThemedText>{t('profile.loadError')}</ThemedText>
             </ThemedView>
         );
     }
 
     return (
         <ThemedView className="flex-1">
-            <Stack.Screen options={{ title: 'Profile' }}/>
+            <Stack.Screen options={{ title: t('profile.title') }}/>
             <KeyboardAvoidingView behavior={Platform.select({
                 ios: 'padding',
                 android: undefined
@@ -173,10 +176,8 @@ export default function ProfileScreen() {
                 <ScrollView contentContainerStyle={{ padding: 16 }}>
                     {!profile && (
                         <View style={{ marginBottom: 12 }}>
-                            <ThemedText type="subtitle" className="mb-2">Create your profile</ThemedText>
-                            <ThemedText lightColor="#6B7280" darkColor="#9CA3AF">We didn&apos;t find a profile. Fill in
-                                the fields below and save to
-                                create one.</ThemedText>
+                            <ThemedText type="subtitle" className="mb-2">{t('profile.createProfile')}</ThemedText>
+                            <ThemedText lightColor="#6B7280" darkColor="#9CA3AF">{t('profile.noProfile')}</ThemedText>
                         </View>
                     )}
 
@@ -184,7 +185,7 @@ export default function ProfileScreen() {
                         <TextInput
                             value={firstName}
                             onChangeText={setfirstName}
-                            placeholder="First name"
+                            placeholder={t('profile.firstNamePlaceholder')}
                             placeholderTextColor={inputStyles.placeholderColor}
                             selectionColor={inputStyles.selectionColor}
                             style={inputStyles.container as any}
@@ -192,7 +193,7 @@ export default function ProfileScreen() {
                         <TextInput
                             value={lastName}
                             onChangeText={setLastName}
-                            placeholder="Last name"
+                            placeholder={t('profile.lastNamePlaceholder')}
                             placeholderTextColor={inputStyles.placeholderColor}
                             selectionColor={inputStyles.selectionColor}
                             style={inputStyles.container as any}
@@ -200,7 +201,7 @@ export default function ProfileScreen() {
                         <TextInput
                             value={phone}
                             onChangeText={setPhone}
-                            placeholder="Phone"
+                            placeholder={t('profile.phonePlaceholder')}
                             keyboardType="phone-pad"
                             placeholderTextColor={inputStyles.placeholderColor}
                             selectionColor={inputStyles.selectionColor}
@@ -220,7 +221,7 @@ export default function ProfileScreen() {
                                 <ThemedText type="subtitle" style={{
                                     fontSize: 18,
                                     marginBottom: 8
-                                }}>Security</ThemedText>
+                                }}>{t('profile.security')}</ThemedText>
                                 <View style={{
                                     flexDirection: 'row',
                                     alignItems: 'center',
@@ -232,7 +233,7 @@ export default function ProfileScreen() {
                                         marginRight: 12
                                     }}>
                                         <ThemedText testID="biometric-label">
-                                            {Platform.OS === 'ios' ? 'Face ID / Touch ID' : 'Biometric Login'}
+                                            {Platform.OS === 'ios' ? t('profile.biometricLabel') : t('profile.biometricLabelAndroid')}
                                         </ThemedText>
                                         <ThemedText
                                             testID="biometric-description"
@@ -244,8 +245,8 @@ export default function ProfileScreen() {
                                             }}
                                         >
                                             {Platform.OS === 'ios'
-                                                ? 'Use Face ID or Touch ID to sign in quickly'
-                                                : 'Use biometrics to sign in quickly'}
+                                                ? t('profile.biometricDescription')
+                                                : t('profile.biometricDescriptionAndroid')}
                                         </ThemedText>
                                     </View>
                                     <Switch
@@ -259,14 +260,16 @@ export default function ProfileScreen() {
                                         thumbColor={biometricEnabled ? '#fff' : '#f4f3f4'}
                                         accessibilityLabel={
                                             Platform.OS === 'ios'
-                                                ? 'Enable Face ID or Touch ID sign-in'
-                                                : 'Enable biometric sign-in'
+                                                ? t('profile.biometricAccessibilityLabel')
+                                                : t('profile.biometricAccessibilityLabelAndroid')
                                         }
-                                        accessibilityHint="Toggle to enable or disable biometric authentication for signing in"
+                                        accessibilityHint={t('profile.biometricAccessibilityHint')}
                                     />
                                 </View>
                             </View>
                         )}
+
+                        <LanguagePicker />
 
                         <Pressable
                             onPress={onSave}
@@ -284,7 +287,7 @@ export default function ProfileScreen() {
                                 color: 'white',
                                 fontWeight: '600'
                             }}>
-                                {saveMutation.isPending ? 'Saving…' : 'Save'}
+                                {saveMutation.isPending ? t('profile.saving') : t('profile.save')}
                             </ThemedText>
                         </Pressable>
                     </View>
