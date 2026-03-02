@@ -2,6 +2,7 @@ import { StyleSheet, TextInput, View } from 'react-native';
 import { useState } from 'react';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
+import { useTranslation } from 'react-i18next';
 
 /**
  * DinnerIdSearch component - Search for dinner by ID
@@ -20,6 +21,7 @@ export function DinnerIdSearch({
                                    onDinnerIdChange,
                                    testID
                                }: DinnerIdSearchProps) {
+    const { t } = useTranslation();
     const scheme = useColorScheme();
     const [dinnerId, setDinnerId] = useState('');
 
@@ -50,7 +52,7 @@ export function DinnerIdSearch({
                         borderColor: Colors[scheme ?? 'light'].icon,
                     },
                 ]}
-                placeholder="Enter dinner ID"
+                placeholder={t('admin.dinnerIdPlaceholder')}
                 placeholderTextColor={Colors[scheme ?? 'light'].icon}
                 value={dinnerId}
                 onChangeText={handleChangeText}
