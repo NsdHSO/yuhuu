@@ -46,16 +46,22 @@ jobs:
     name: Test Application
     uses: ./.github/workflows/test.yml
 
-  # Build both platforms in parallel using matrix strategy
-  build-matrix:
-    name: Build ${{ matrix.platform }}
-    needs: test
-    if: always()  # Run even if tests fail
-    strategy:
-      matrix:
-        platform: [android, ios]
-      fail-fast: false
+  # Build Android only when relevant files changed
+  build-android:
+    name: Build Android
+    needs: [test, changes]
+    if: always() && needs.changes.outputs.android == 'true'
     permissions:
       contents: write
-    uses: ./.github/workflows/build-${{ matrix.platform }}.yml
+    uses: ./.github/workflows/build-android.yml
+    secrets: inherit
+
+  # Build iOS only when relevant files changed
+  build-ios:
+    name: Build iOS
+    needs: [test, changes]
+    if: always() && needs.changes.outputs.ios == 'true'
+    permissions:
+      contents: write
+    uses: ./.github/workflows/build-ios.yml
     secrets: inherit
