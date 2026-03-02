@@ -19,7 +19,7 @@ const WORKFLOW_PATH = path.resolve(
   '../../.github/workflows/build-ios.yml'
 );
 
-const PINNED_XCODE_VERSION = '15.4';
+const PINNED_XCODE_VERSION = '16.1';
 
 describe('iOS Build Workflow - Xcode Version Pinning', () => {
   let workflowContent: string;
