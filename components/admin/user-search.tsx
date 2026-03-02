@@ -2,6 +2,7 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useState } from 'react';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
+import { useTranslation } from 'react-i18next';
 
 /**
  * UserSearch component - Search for users by username
@@ -21,6 +22,7 @@ export function UserSearch({
                                onSearch,
                                testID
                            }: UserSearchProps) {
+    const { t } = useTranslation();
     const scheme = useColorScheme();
     const [username, setUsername] = useState('');
 
@@ -50,7 +52,7 @@ export function UserSearch({
                         borderColor: Colors[scheme ?? 'light'].icon,
                     },
                 ]}
-                placeholder="Search by username"
+                placeholder={t('admin.searchPlaceholder')}
                 placeholderTextColor={Colors[scheme ?? 'light'].icon}
                 value={username}
                 onChangeText={handleChangeText}
@@ -68,7 +70,7 @@ export function UserSearch({
                 ]}
                 onPress={handleSearch}
             >
-                <Text style={styles.buttonText}>Search</Text>
+                <Text style={styles.buttonText}>{t('common.search')}</Text>
             </Pressable>
         </View>
     );
