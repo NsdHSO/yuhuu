@@ -71,7 +71,7 @@ describe('DinnerSelector i18n', () => {
 
     beforeEach(async () => {
         jest.clearAllMocks();
-        const {initI18n} = require('@/lib/i18n');
+        const {initI18n} = require('@yuhuu/i18n');
         await initI18n();
     });
 

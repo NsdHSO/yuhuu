@@ -18,9 +18,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as yaml from 'js-yaml';
 
-const WORKSPACE_ROOT = path.resolve(__dirname, '../..');
+const MONOREPO_ROOT = path.resolve(__dirname, '../../../..');
 const ANDROID_WORKFLOW_PATH = path.join(
-    WORKSPACE_ROOT,
+    MONOREPO_ROOT,
     '.github',
     'workflows',
     'build-android.yml'

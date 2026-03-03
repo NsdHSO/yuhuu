@@ -12,7 +12,7 @@ import * as path from 'path';
  * but there is no aggregation job (test-complete) to gate downstream consumers.
  */
 
-const WORKFLOWS_DIR = path.resolve(__dirname, '../../.github/workflows');
+const WORKFLOWS_DIR = path.resolve(__dirname, '../../../../.github/workflows');
 
 function readWorkflow(filename: string): string {
     const filePath = path.join(WORKFLOWS_DIR, filename);

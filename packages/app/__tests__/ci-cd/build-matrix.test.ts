@@ -18,7 +18,7 @@ import * as path from 'path';
  * Expected outcome: Both platforms build in parallel using reusable workflows.
  */
 
-const WORKFLOWS_DIR = path.resolve(__dirname, '../../.github/workflows');
+const WORKFLOWS_DIR = path.resolve(__dirname, '../../../../.github/workflows');
 
 function readWorkflow(filename: string): string {
     const filePath = path.join(WORKFLOWS_DIR, filename);

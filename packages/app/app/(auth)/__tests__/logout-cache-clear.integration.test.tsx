@@ -38,6 +38,10 @@ jest.mock('@yuhuu/auth', () => ({
     getValidAccessToken: jest.fn(),
     setTokensFromLogin: jest.fn(),
     redirectToLogin: jest.fn(),
+    clearBiometricData: jest.fn(),
+    authenticateWithBiometrics: jest.fn(),
+    getBiometricEmail: jest.fn(),
+    refreshAccessToken: jest.fn(),
 }));
 
 describe('Logout Cache Clear Integration Test', () => {

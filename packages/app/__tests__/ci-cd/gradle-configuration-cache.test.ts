@@ -20,11 +20,12 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-const WORKSPACE_ROOT = path.resolve(__dirname, '../..');
-const GRADLE_PROPERTIES_PATH = path.join(WORKSPACE_ROOT, 'android', 'gradle.properties');
+const MONOREPO_ROOT = path.resolve(__dirname, '../../../..');
+const APP_ROOT = path.resolve(__dirname, '../..');
+const GRADLE_PROPERTIES_PATH = path.join(APP_ROOT, 'android', 'gradle.properties');
 
 describe('Gradle Configuration Cache Settings', () => {
-    const androidDirExists = fs.existsSync(path.join(WORKSPACE_ROOT, 'android'));
+    const androidDirExists = fs.existsSync(path.join(APP_ROOT, 'android'));
     let gradleProperties: string;
 
     beforeAll(() => {
@@ -172,7 +173,7 @@ describe('Gradle Configuration Cache Settings', () => {
 
         beforeAll(() => {
             workflowContent = fs.readFileSync(
-                path.join(WORKSPACE_ROOT, '.github', 'workflows', 'build-android.yml'),
+                path.join(MONOREPO_ROOT, '.github', 'workflows', 'build-android.yml'),
                 'utf-8'
             );
         });

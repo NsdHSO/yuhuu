@@ -22,10 +22,11 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-const WORKSPACE_ROOT = path.resolve(__dirname, '../..');
-const ANDROID_WORKFLOW_PATH = path.join(WORKSPACE_ROOT, '.github', 'workflows', 'build-android.yml');
-const APP_CONFIG_PATH = path.join(WORKSPACE_ROOT, 'app.config.js');
-const PACKAGE_JSON_PATH = path.join(WORKSPACE_ROOT, 'package.json');
+const MONOREPO_ROOT = path.resolve(__dirname, '../../../..');
+const APP_ROOT = path.resolve(__dirname, '../..');
+const ANDROID_WORKFLOW_PATH = path.join(MONOREPO_ROOT, '.github', 'workflows', 'build-android.yml');
+const APP_CONFIG_PATH = path.join(APP_ROOT, 'app.config.js');
+const PACKAGE_JSON_PATH = path.join(APP_ROOT, 'package.json');
 
 describe('Android Prebuild Caching', () => {
     let workflowContent: string;

@@ -16,7 +16,7 @@ import * as path from 'path';
 
 const WORKFLOW_PATH = path.resolve(
     __dirname,
-    '../../.github/workflows/build-ios.yml'
+    '../../../../.github/workflows/build-ios.yml'
 );
 
 const PINNED_XCODE_VERSION = '16.1';

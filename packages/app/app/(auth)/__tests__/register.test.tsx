@@ -3,7 +3,7 @@ import {fireEvent, render, screen, waitFor} from '@testing-library/react-native'
 import {Alert} from 'react-native';
 import RegisterScreen from '../register';
 import {useRouter} from 'expo-router';
-import * as tokenManager from '@yuhuu/auth';
+import * as authModule from '@yuhuu/auth';
 import {authApi} from '@yuhuu/auth';
 
 // Mock dependencies
@@ -14,7 +14,17 @@ jest.mock('expo-router', () => ({
     useRouter: jest.fn()
 }));
 
-jest.mock('@yuhuu/auth', () => ({ authApi: { post: jest.fn(), get: jest.fn() } }));
+jest.mock('@yuhuu/auth', () => ({
+    authApi: {post: jest.fn(), get: jest.fn()},
+    setTokensFromLogin: jest.fn(),
+    getValidAccessToken: jest.fn(),
+    clearTokens: jest.fn(),
+    redirectToLogin: jest.fn(),
+    refreshAccessToken: jest.fn(),
+    authenticateWithBiometrics: jest.fn(),
+    clearBiometricData: jest.fn(),
+    getBiometricEmail: jest.fn(),
+}));
 
 jest.mock('@/hooks/use-color-scheme', () => ({
     useColorScheme: () => 'light'
@@ -59,8 +69,8 @@ jest.spyOn(Alert, 'alert');
 describe('RegisterScreen', () => {
     const mockPush = jest.fn();
     const mockReplace = jest.fn();
-    const mockPost = jest.fn();
-    const mockSetTokensFromLogin = jest.fn();
+    const mockPost = authApi.post as jest.Mock;
+    const mockSetTokensFromLogin = authModule.setTokensFromLogin as jest.Mock;
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -68,8 +78,6 @@ describe('RegisterScreen', () => {
             push: mockPush,
             replace: mockReplace
         });
-        (authApi.post as jest.Mock) = mockPost;
-        (tokenManager.setTokensFromLogin as jest.Mock) = mockSetTokensFromLogin;
     });
 
     describe('Rendering', () => {

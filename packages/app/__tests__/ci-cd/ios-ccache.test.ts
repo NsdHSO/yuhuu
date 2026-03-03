@@ -21,15 +21,16 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as yaml from 'js-yaml';
 
-const WORKSPACE_ROOT = path.resolve(__dirname, '../..');
+const MONOREPO_ROOT = path.resolve(__dirname, '../../../..');
+const APP_ROOT = path.resolve(__dirname, '../..');
 const IOS_WORKFLOW_PATH = path.join(
-    WORKSPACE_ROOT,
+    MONOREPO_ROOT,
     '.github',
     'workflows',
     'build-ios.yml'
 );
 const PODFILE_PROPERTIES_PATH = path.join(
-    WORKSPACE_ROOT,
+    APP_ROOT,
     'ios',
     'Podfile.properties.json'
 );
@@ -306,7 +307,7 @@ describe('iOS ccache Integration', () => {
 // ---- Test Suite: Podfile.properties.json ------------------------------------
 
 describe('Podfile.properties.json - ccache configuration', () => {
-    const iosDirExists = fs.existsSync(path.join(WORKSPACE_ROOT, 'ios'));
+    const iosDirExists = fs.existsSync(path.join(APP_ROOT, 'ios'));
     let podfileProps: Record<string, unknown>;
 
     beforeAll(() => {

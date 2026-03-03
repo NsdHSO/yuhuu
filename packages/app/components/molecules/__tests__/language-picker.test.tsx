@@ -96,6 +96,9 @@ describe('LanguagePicker', () => {
             </I18nextProvider>
         );
 
+        // Expand the accordion first to reveal the picker
+        fireEvent.press(getByTestId('language-accordion-header'));
+
         const picker = getByTestId('language-picker');
         fireEvent(picker, 'onValueChange', 'ro');
 

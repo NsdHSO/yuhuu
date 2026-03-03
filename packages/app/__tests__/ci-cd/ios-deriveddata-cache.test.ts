@@ -16,7 +16,7 @@ import {readFileSync} from 'fs';
 import {resolve} from 'path';
 import * as yaml from 'js-yaml';
 
-const WORKSPACE_ROOT = resolve(__dirname, '../..');
+const WORKSPACE_ROOT = resolve(__dirname, '../../../..');
 const WORKFLOW_PATH = resolve(WORKSPACE_ROOT, '.github/workflows/build-ios.yml');
 
 interface WorkflowStep {

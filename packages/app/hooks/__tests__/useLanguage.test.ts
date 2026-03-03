@@ -14,7 +14,7 @@ import {act, renderHook, waitFor} from '@testing-library/react-native';
 import * as SecureStore from 'expo-secure-store';
 import i18n, {initI18n} from '@yuhuu/i18n';
 
-const LANGUAGE_KEY = '@user-language';
+const LANGUAGE_KEY = 'user-language';
 
 describe('useLanguage Hook', () => {
     beforeAll(async () => {

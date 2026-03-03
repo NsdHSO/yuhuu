@@ -11,7 +11,10 @@ import type {DinnerDto, PaginatedResponse, ParticipantDto} from '../types';
  */
 
 // Mock dependencies
-jest.mock('@yuhuu/auth', () => ({ authApi: { post: jest.fn(), get: jest.fn() } }));
+jest.mock('@yuhuu/auth', () => ({
+    authApi: {post: jest.fn(), get: jest.fn()},
+    appApi: {post: jest.fn(), get: jest.fn()},
+}));
 jest.mock('@yuhuu/http');
 
 describe('dinners/repository', () => {

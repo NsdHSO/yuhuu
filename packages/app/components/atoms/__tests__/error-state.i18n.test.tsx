@@ -8,7 +8,7 @@ jest.mock('expo-secure-store');
 
 describe('ErrorState i18n integration', () => {
     beforeEach(async () => {
-        const {initI18n} = require('@/lib/i18n');
+        const {initI18n} = require('@yuhuu/i18n');
         await initI18n();
     });
 

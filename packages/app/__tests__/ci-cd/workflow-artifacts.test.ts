@@ -22,7 +22,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as yaml from 'js-yaml';
 
-const WORKFLOWS_DIR = path.resolve(__dirname, '../../.github/workflows');
+const WORKFLOWS_DIR = path.resolve(__dirname, '../../../../.github/workflows');
 
 interface WorkflowStep {
     name?: string;

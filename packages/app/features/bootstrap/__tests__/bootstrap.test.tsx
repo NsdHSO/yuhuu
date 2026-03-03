@@ -8,18 +8,23 @@ import {appApi} from '@yuhuu/auth';
 import {useMyProfileQuery} from '@/features/profile/api';
 import {useMyRolesQuery} from '@/features/roles/meRoles';
 
-// Mock appApi + unwrap so we can observe network calls
-jest.mock('@/lib/api', () => {
-    const appApi = {
+// Mock @yuhuu/auth so we can observe network calls
+jest.mock('@yuhuu/auth', () => ({
+    appApi: {
         post: jest.fn(),
         get: jest.fn(),
-    } as any;
-    const unwrap = async <T, >(p: Promise<{ data: T }>): Promise<T> => (await p).data;
-    return {
-        appApi,
-        unwrap
-    };
-});
+    },
+    authApi: {post: jest.fn(), get: jest.fn()},
+    unwrap: jest.fn(async (p) => (await p).data),
+    getValidAccessToken: jest.fn(),
+    setTokensFromLogin: jest.fn(),
+    clearTokens: jest.fn(),
+    redirectToLogin: jest.fn(),
+    clearBiometricData: jest.fn(),
+    authenticateWithBiometrics: jest.fn(),
+    getBiometricEmail: jest.fn(),
+    refreshAccessToken: jest.fn(),
+}));
 
 function TestHooks() {
     // Invoke hooks to simulate real screens mounting

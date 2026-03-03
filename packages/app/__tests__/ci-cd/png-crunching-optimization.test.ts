@@ -23,11 +23,12 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-const ROOT = path.resolve(__dirname, '../..');
-const GRADLE_PROPERTIES_PATH = path.join(ROOT, 'android', 'gradle.properties');
-const BUILD_GRADLE_PATH = path.join(ROOT, 'android', 'app', 'build.gradle');
+const MONOREPO_ROOT = path.resolve(__dirname, '../../../..');
+const APP_ROOT = path.resolve(__dirname, '../..');
+const GRADLE_PROPERTIES_PATH = path.join(APP_ROOT, 'android', 'gradle.properties');
+const BUILD_GRADLE_PATH = path.join(APP_ROOT, 'android', 'app', 'build.gradle');
 const BUILD_ANDROID_WORKFLOW_PATH = path.join(
-    ROOT,
+    MONOREPO_ROOT,
     '.github',
     'workflows',
     'build-android.yml'
@@ -57,7 +58,7 @@ function readFileContent(filePath: string): string {
 // ---- Test Suite: PNG Crunching Configuration --------------------------------
 
 describe('PNG Crunching Optimization', () => {
-    const androidDirExists = fs.existsSync(path.join(ROOT, 'android'));
+    const androidDirExists = fs.existsSync(path.join(APP_ROOT, 'android'));
 
     describe('gradle.properties - PNG crunching default', () => {
         let gradleProps: Record<string, string>;
@@ -201,7 +202,7 @@ describe('PNG Crunching Optimization', () => {
     });
 
     describe('Resource optimization - asset verification', () => {
-        const assetsDir = path.join(ROOT, 'assets', 'images');
+        const assetsDir = path.join(APP_ROOT, 'assets', 'images');
 
         it('should have PNG assets that benefit from optimization', () => {
             // Verify the project actually has PNG files that would be processed

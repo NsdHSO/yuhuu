@@ -29,8 +29,6 @@ jest.mock('expo-router', () => ({
     useRouter: jest.fn(),
 }));
 
-jest.mock('@yuhuu/auth', () => ({ authApi: { post: jest.fn(), get: jest.fn() } }));
-
 jest.mock('@yuhuu/auth', () => ({
     isBiometricAvailable: jest.fn(),
     authenticateWithBiometrics: jest.fn(),
@@ -47,14 +45,27 @@ jest.mock('@yuhuu/auth', () => ({
     setTokensFromLogin: jest.fn(),
     clearTokens: jest.fn(),
     refreshAccessToken: jest.fn(),
+    SecureTokenStorage: jest.fn(() => ({
+        saveRefreshToken: jest.fn(),
+        loadRefreshToken: jest.fn(),
+        clearRefreshToken: jest.fn(),
+        saveAccessToken: jest.fn(),
+        loadAccessToken: jest.fn(),
+        clearAccessToken: jest.fn(),
+    })),
 }));
 
+jest.mock('@/lib/secureStore', () => ({
     loadRefreshToken: jest.fn(),
     saveRefreshToken: jest.fn(),
     clearStoredRefreshToken: jest.fn(),
     loadAccessToken: jest.fn(),
     saveAccessToken: jest.fn(),
     clearStoredAccessToken: jest.fn(),
+}));
+
+jest.mock('@/providers/QueryProvider', () => ({
+    queryClient: {clear: jest.fn()},
 }));
 
 jest.mock('@/hooks/use-color-scheme', () => ({
@@ -81,12 +92,12 @@ beforeAll(async () => {
 describe('Biometric Login - Edge Cases Integration Tests', () => {
     const mockPush = jest.fn();
     const mockReplace = jest.fn();
-    const mockPost = jest.fn();
-    const mockGet = jest.fn();
-    const mockGetValidAccessToken = jest.fn();
-    const mockSetTokensFromLogin = jest.fn();
-    const mockClearTokens = jest.fn();
-    const mockRefreshAccessToken = jest.fn();
+    const mockPost = auth.authApi.post as jest.Mock;
+    const mockGet = auth.authApi.get as jest.Mock;
+    const mockGetValidAccessToken = auth.getValidAccessToken as jest.Mock;
+    const mockSetTokensFromLogin = auth.setTokensFromLogin as jest.Mock;
+    const mockClearTokens = auth.clearTokens as jest.Mock;
+    const mockRefreshAccessToken = auth.refreshAccessToken as jest.Mock;
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -94,12 +105,6 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
             push: mockPush,
             replace: mockReplace,
         });
-        (authApi.post as jest.Mock) = mockPost;
-        (authApi.get as jest.Mock) = mockGet;
-        (auth.getValidAccessToken as jest.Mock) = mockGetValidAccessToken;
-        (auth.setTokensFromLogin as jest.Mock) = mockSetTokensFromLogin;
-        (auth.clearTokens as jest.Mock) = mockClearTokens;
-        (auth.refreshAccessToken as jest.Mock) = mockRefreshAccessToken;
 
         // Default: no existing token
         mockGetValidAccessToken.mockResolvedValue(null);

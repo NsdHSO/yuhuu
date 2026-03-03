@@ -1,29 +1,34 @@
 import React from 'react';
 import {act, renderHook, waitFor} from '@testing-library/react-native';
 import {AuthProvider, useAuth} from '../AuthProvider';
-import * as tokenManager from '@yuhuu/auth';
-import * as nav from '@yuhuu/auth';
+import * as authModule from '@yuhuu/auth';
 import {authApi} from '@yuhuu/auth';
 
 // Mock dependencies
-jest.mock('@yuhuu/auth', () => ({ authApi: { post: jest.fn(), get: jest.fn() } }));
-jest.mock('@/lib/tokenManager');
-jest.mock('@/lib/nav');
+jest.mock('@yuhuu/auth', () => ({
+    authApi: {post: jest.fn(), get: jest.fn()},
+    getValidAccessToken: jest.fn(),
+    setTokensFromLogin: jest.fn(),
+    clearTokens: jest.fn(),
+    redirectToLogin: jest.fn(),
+    refreshAccessToken: jest.fn(),
+    authenticateWithBiometrics: jest.fn(),
+    clearBiometricData: jest.fn(),
+    getBiometricEmail: jest.fn(),
+}));
+jest.mock('@/providers/QueryProvider', () => ({
+    queryClient: {clear: jest.fn()},
+}));
 
 describe('AuthProvider', () => {
-    const mockPost = jest.fn();
-    const mockGetValidAccessToken = jest.fn();
-    const mockSetTokensFromLogin = jest.fn();
-    const mockClearTokens = jest.fn();
-    const mockRedirectToLogin = jest.fn();
+    const mockPost = authApi.post as jest.Mock;
+    const mockGetValidAccessToken = authModule.getValidAccessToken as jest.Mock;
+    const mockSetTokensFromLogin = authModule.setTokensFromLogin as jest.Mock;
+    const mockClearTokens = authModule.clearTokens as jest.Mock;
+    const mockRedirectToLogin = authModule.redirectToLogin as jest.Mock;
 
     beforeEach(() => {
         jest.clearAllMocks();
-        (authApi.post as jest.Mock) = mockPost;
-        (tokenManager.getValidAccessToken as jest.Mock) = mockGetValidAccessToken;
-        (tokenManager.setTokensFromLogin as jest.Mock) = mockSetTokensFromLogin;
-        (tokenManager.clearTokens as jest.Mock) = mockClearTokens;
-        (nav.redirectToLogin as jest.Mock) = mockRedirectToLogin;
     });
 
     const wrapper = ({children}: { children: React.ReactNode }) => (

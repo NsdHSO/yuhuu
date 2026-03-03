@@ -22,8 +22,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-const WORKSPACE_ROOT = path.resolve(__dirname, '../..');
-const ANDROID_WORKFLOW_PATH = path.join(WORKSPACE_ROOT, '.github', 'workflows', 'build-android.yml');
+const MONOREPO_ROOT = path.resolve(__dirname, '../../../..');
+const APP_ROOT = path.resolve(__dirname, '../..');
+const ANDROID_WORKFLOW_PATH = path.join(MONOREPO_ROOT, '.github', 'workflows', 'build-android.yml');
 
 function loadWorkflow(): string {
     return fs.readFileSync(ANDROID_WORKFLOW_PATH, 'utf-8');
@@ -163,8 +164,8 @@ describe('Gradle Build Action Configuration', () => {
 
 describe('Gradle Properties for CI Optimization', () => {
     let gradleProperties: string;
-    const gradlePath = path.join(WORKSPACE_ROOT, 'android', 'gradle.properties');
-    const androidDirExists = fs.existsSync(path.join(WORKSPACE_ROOT, 'android'));
+    const gradlePath = path.join(APP_ROOT, 'android', 'gradle.properties');
+    const androidDirExists = fs.existsSync(path.join(APP_ROOT, 'android'));
 
     beforeAll(() => {
         if (androidDirExists) {

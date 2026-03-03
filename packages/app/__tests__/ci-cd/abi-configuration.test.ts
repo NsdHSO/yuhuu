@@ -26,12 +26,13 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-const WORKSPACE_ROOT = path.resolve(__dirname, '../..');
-const GRADLE_PROPERTIES_PATH = path.join(WORKSPACE_ROOT, 'android', 'gradle.properties');
-const ANDROID_WORKFLOW_PATH = path.join(WORKSPACE_ROOT, '.github', 'workflows', 'build-android.yml');
+const MONOREPO_ROOT = path.resolve(__dirname, '../../../..');
+const APP_ROOT = path.resolve(__dirname, '../..');
+const GRADLE_PROPERTIES_PATH = path.join(APP_ROOT, 'android', 'gradle.properties');
+const ANDROID_WORKFLOW_PATH = path.join(MONOREPO_ROOT, '.github', 'workflows', 'build-android.yml');
 
 describe('Android ABI Configuration', () => {
-    const androidDirExists = fs.existsSync(path.join(WORKSPACE_ROOT, 'android'));
+    const androidDirExists = fs.existsSync(path.join(APP_ROOT, 'android'));
 
     describe('gradle.properties ABI defaults', () => {
         let gradleProperties: string;

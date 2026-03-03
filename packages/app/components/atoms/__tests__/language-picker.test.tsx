@@ -62,7 +62,7 @@ describe('LanguagePicker', () => {
 
         await waitFor(() => {
             expect(SecureStore.setItemAsync).toHaveBeenCalledWith(
-                '@user-language',
+                'user-language',
                 'ro',
             );
         });

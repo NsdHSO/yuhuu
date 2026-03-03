@@ -18,7 +18,7 @@ import * as path from 'path';
 
 const WORKFLOW_PATH = path.resolve(
     __dirname,
-    '../../.github/workflows/build-ios.yml'
+    '../../../../.github/workflows/build-ios.yml'
 );
 
 const PACKAGE_JSON_PATH = path.resolve(__dirname, '../../package.json');

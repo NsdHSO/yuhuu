@@ -19,7 +19,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-const WORKFLOWS_DIR = path.resolve(__dirname, '../../.github/workflows');
+const WORKFLOWS_DIR = path.resolve(__dirname, '../../../../.github/workflows');
 
 function readWorkflow(filename: string): string {
     const filePath = path.join(WORKFLOWS_DIR, filename);

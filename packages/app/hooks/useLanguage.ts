@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import * as storage from '@yuhuu/storage';
 import i18n from '@yuhuu/i18n';
 
-const LANGUAGE_KEY = '@user-language';
+const LANGUAGE_KEY = 'user-language';
 
 type Language = 'en' | 'ro';
 

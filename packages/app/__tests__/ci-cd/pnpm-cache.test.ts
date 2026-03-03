@@ -2,7 +2,7 @@ import {readFileSync} from 'fs';
 import {resolve} from 'path';
 import * as yaml from 'js-yaml';
 
-const ACTION_PATH = resolve(__dirname, '../../.github/actions/setup-node/action.yml');
+const ACTION_PATH = resolve(__dirname, '../../../../.github/actions/setup-node/action.yml');
 
 interface ActionStep {
     name?: string;
@@ -256,7 +256,7 @@ describe('Setup Node Action - pnpm Cache Optimization', () => {
 
     describe('workflows using setup-node action', () => {
         it('should be used in test workflow', () => {
-            const testWorkflowPath = resolve(__dirname, '../../.github/workflows/test.yml');
+            const testWorkflowPath = resolve(__dirname, '../../../../.github/workflows/test.yml');
             const content = readFileSync(testWorkflowPath, 'utf-8');
             const testWorkflow = yaml.load(content) as Record<string, unknown>;
 
@@ -268,7 +268,7 @@ describe('Setup Node Action - pnpm Cache Optimization', () => {
         it('should be used in build-android workflow', () => {
             const androidWorkflowPath = resolve(
                 __dirname,
-                '../../.github/workflows/build-android.yml'
+                '../../../../.github/workflows/build-android.yml'
             );
             const content = readFileSync(androidWorkflowPath, 'utf-8');
             expect(content).toContain('./.github/actions/setup-node');
@@ -277,7 +277,7 @@ describe('Setup Node Action - pnpm Cache Optimization', () => {
         it('should be used in build-ios workflow', () => {
             const iosWorkflowPath = resolve(
                 __dirname,
-                '../../.github/workflows/build-ios.yml'
+                '../../../../.github/workflows/build-ios.yml'
             );
             const content = readFileSync(iosWorkflowPath, 'utf-8');
             expect(content).toContain('./.github/actions/setup-node');
