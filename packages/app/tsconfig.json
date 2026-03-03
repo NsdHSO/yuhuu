@@ -1,0 +1,32 @@
+{
+  "extends": "@yuhuu/tsconfig/expo.json",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    }
+  },
+  "references": [
+    {
+      "path": "../storage"
+    },
+    {
+      "path": "../http"
+    },
+    {
+      "path": "../i18n"
+    },
+    {
+      "path": "../auth"
+    }
+  ],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts",
+    "nativewind-env.d.ts"
+  ]
+}

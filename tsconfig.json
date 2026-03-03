@@ -5,14 +5,45 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@yuhuu/storage": [
+        "./packages/storage/src"
+      ],
+      "@yuhuu/http": [
+        "./packages/http/src"
+      ],
+      "@yuhuu/i18n": [
+        "./packages/i18n/src"
+      ],
+      "@yuhuu/auth": [
+        "./packages/auth/src"
       ]
     }
   },
+  "references": [
+    {
+      "path": "packages/storage"
+    },
+    {
+      "path": "packages/http"
+    },
+    {
+      "path": "packages/i18n"
+    },
+    {
+      "path": "packages/auth"
+    }
+  ],
   "include": [
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
     "nativewind-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "packages/*/dist",
+    "packages/*/node_modules"
   ]
 }

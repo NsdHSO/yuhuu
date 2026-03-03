@@ -43,6 +43,8 @@ app-example
 # generated native folders
 /ios
 /android
+packages/app/android
+packages/app/ios
 
 # IDE
 .idea/*

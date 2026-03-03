@@ -1,0 +1,64 @@
+{
+  "name": "@yuhuu/auth",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "react-native": "./src/index.ts",
+  "exports": {
+    ".": {
+      "react-native": "./src/index.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@yuhuu/storage": "workspace:*",
+    "@yuhuu/http": "workspace:*",
+    "axios": "^1.13.5",
+    "jwt-decode": "^4.0.0"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*",
+    "expo-secure-store": "*",
+    "expo-local-authentication": "*",
+    "expo-modules-core": "*",
+    "expo-router": "*"
+  },
+  "peerDependenciesMeta": {
+    "expo-secure-store": {
+      "optional": true
+    },
+    "expo-local-authentication": {
+      "optional": true
+    },
+    "expo-modules-core": {
+      "optional": true
+    },
+    "expo-router": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@yuhuu/tsconfig": "workspace:*",
+    "babel-jest": "^29.7.0",
+    "babel-preset-expo": "~13.0.0",
+    "jest": "^29.7.0",
+    "tsup": "^8.0.0",
+    "typescript": "~5.9.2"
+  }
+}

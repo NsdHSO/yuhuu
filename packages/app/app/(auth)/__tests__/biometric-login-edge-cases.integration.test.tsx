@@ -40,6 +40,14 @@ jest.mock('@yuhuu/auth', () => ({
     saveBiometricPreference: jest.fn(),
     saveBiometricEmail: jest.fn(),
     clearBiometricData: jest.fn(),
+    authApi: {
+        post: jest.fn(),
+        get: jest.fn(),
+    },
+    getValidAccessToken: jest.fn(),
+    setTokensFromLogin: jest.fn(),
+    clearTokens: jest.fn(),
+    refreshAccessToken: jest.fn(),
 }));
 
 jest.mock('@/lib/secureStore', () => ({

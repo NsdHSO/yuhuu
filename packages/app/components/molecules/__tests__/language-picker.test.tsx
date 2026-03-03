@@ -1,7 +1,7 @@
 import React from 'react';
 import {fireEvent, render, waitFor} from '@testing-library/react-native';
 import {I18nextProvider, initReactI18next} from 'react-i18next';
-import i18n from 'i18next';
+import {i18n} from "@yuhuu/i18n";
 
 // Mock the useLanguage hook
 jest.mock('@/hooks/useLanguage', () => ({

@@ -1,0 +1,38 @@
+{
+  "name": "@yuhuu/components",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "react-native": "./src/index.ts",
+  "exports": {
+    ".": {
+      "react-native": "./src/index.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "@expo/vector-icons": "*",
+    "expo": "*",
+    "expo-haptics": "*",
+    "expo-symbols": "*",
+    "react": "*",
+    "react-native": "*",
+    "react-native-reanimated": "*"
+  },
+  "devDependencies": {
+    "@yuhuu/tsconfig": "workspace:*",
+    "tsup": "^8.0.0",
+    "typescript": "^5.3.3"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "@yuhuu/eslint-config",
+  "version": "0.0.0",
+  "private": true,
+  "main": "index.js",
+  "files": [
+    "index.js"
+  ],
+  "peerDependencies": {
+    "eslint": "^9.0.0",
+    "eslint-config-expo": "~10.0.0"
+  }
+}
