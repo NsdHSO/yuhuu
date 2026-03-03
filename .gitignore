@@ -46,6 +46,7 @@ app-example
 /android
 packages/app/android
 packages/app/ios
+packages/i18n/tsconfig.tsbuildinfo
 
 # IDE
 .idea/*
