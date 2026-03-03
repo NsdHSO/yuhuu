@@ -28,19 +28,19 @@ jobs:
           filters: |
             android:
               - 'android/**'
-              - 'app/**'
-              - 'lib/**'
-              - 'src/**'
+              - 'packages/app/**'
+              - 'packages/**'
               - 'app.config.js'
               - 'package.json'
+              - 'pnpm-lock.yaml'
               - '.github/workflows/build-android.yml'
             ios:
               - 'ios/**'
-              - 'app/**'
-              - 'lib/**'
-              - 'src/**'
+              - 'packages/app/**'
+              - 'packages/**'
               - 'app.config.js'
               - 'package.json'
+              - 'pnpm-lock.yaml'
               - '.github/workflows/build-ios.yml'
 
   # Run tests ONCE for both platforms

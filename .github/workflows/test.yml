@@ -20,7 +20,7 @@ jobs:
         uses: ./.github/actions/setup-node
 
       - name: Run linter
-        run: pnpm lint
+        run: pnpm lint:all
 
   test:
     name: Run Tests
@@ -45,7 +45,7 @@ jobs:
 
       - name: Run tests with coverage
         id: tests
-        run: pnpm test:coverage
+        run: pnpm test:all
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4

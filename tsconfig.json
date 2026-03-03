@@ -17,6 +17,9 @@
       ],
       "@yuhuu/auth": [
         "./packages/auth/src"
+      ],
+      "@yuhuu/components": [
+        "./packages/components/src"
       ]
     }
   },
@@ -32,6 +35,9 @@
     },
     {
       "path": "packages/auth"
+    },
+    {
+      "path": "packages/components"
     }
   ],
   "include": [

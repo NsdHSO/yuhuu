@@ -12,6 +12,7 @@
     "web": "pnpm --filter @yuhuu/app web",
     "lint": "pnpm --filter @yuhuu/app lint",
     "lint:fix": "pnpm lint --fix",
+    "lint:all": "pnpm -r run lint",
     "build": "pnpm --filter @yuhuu/app build",
     "build:packages": "pnpm -r --filter='./packages/*' --filter='!@yuhuu/app' --filter='!@yuhuu/tsconfig' --filter='!@yuhuu/eslint-config' run build",
     "dev:packages": "pnpm -r --filter='./packages/*' --filter='!@yuhuu/app' --filter='!@yuhuu/tsconfig' --filter='!@yuhuu/eslint-config' run dev",
