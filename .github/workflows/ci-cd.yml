@@ -57,9 +57,9 @@ jobs:
           KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASSWORD || 'yuhuu123' }}
           KEY_PASS: ${{ secrets.KEY_PASSWORD || 'yuhuu123' }}
         run: |
-          mkdir -p android/app
+          mkdir -p packages/app/android/app
           keytool -genkeypair -v -storetype PKCS12 \
-            -keystore android/app/release.keystore \
+            -keystore packages/app/android/app/release.keystore \
             -alias yuhuu-key \
             -keyalg RSA -keysize 2048 -validity 10000 \
             -storepass "$KEYSTORE_PASS" \
@@ -67,6 +67,7 @@ jobs:
             -dname "CN=Church, OU=Mobile, O=Church, L=Bucharest, ST=Romania, C=RO"
 
       - name: Prebuild Android
+        working-directory: packages/app
         run: npx expo prebuild --platform android --clean
         env:
           EXPO_PUBLIC_GRAPHQL_URL: ${{ secrets.FAT_GRAPHQL_URL }}
@@ -83,12 +84,12 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('android/**/*.gradle*', 'android/**/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('packages/app/android/**/*.gradle*', 'packages/app/android/**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
 
       - name: Build Android Release APK
-        working-directory: android
+        working-directory: packages/app/android
         run: ./gradlew assembleRelease
         env:
           EXPO_PUBLIC_GRAPHQL_URL: ${{ secrets.FAT_GRAPHQL_URL }}
@@ -102,7 +103,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: yuhuu-${{ github.event.inputs.environment || 'fat' }}-release-${{ github.sha }}
-          path: android/app/build/outputs/apk/release/app-release.apk
+          path: packages/app/android/app/build/outputs/apk/release/app-release.apk
           retention-days: 30
 
       - name: Build summary

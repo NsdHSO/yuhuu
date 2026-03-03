@@ -27,18 +27,14 @@ jobs:
         with:
           filters: |
             android:
-              - 'android/**'
               - 'packages/app/**'
               - 'packages/**'
-              - 'app.config.js'
               - 'package.json'
               - 'pnpm-lock.yaml'
               - '.github/workflows/build-android.yml'
             ios:
-              - 'ios/**'
               - 'packages/app/**'
               - 'packages/**'
-              - 'app.config.js'
               - 'package.json'
               - 'pnpm-lock.yaml'
               - '.github/workflows/build-ios.yml'

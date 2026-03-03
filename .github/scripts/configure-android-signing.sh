@@ -2,7 +2,7 @@
 
 # Configure Android signing for release builds
 
-GRADLE_FILE="android/app/build.gradle"
+GRADLE_FILE="packages/app/android/app/build.gradle"
 
 # Add signing config to build.gradle
 if ! grep -q "signingConfigs" "$GRADLE_FILE"; then

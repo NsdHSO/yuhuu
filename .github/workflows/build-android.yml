@@ -44,9 +44,9 @@ jobs:
 
       - name: Generate Android keystore
         run: |
-          mkdir -p android/app
+          mkdir -p packages/app/android/app
           keytool -genkeypair -v -storetype PKCS12 \
-            -keystore android/app/release.keystore \
+            -keystore packages/app/android/app/release.keystore \
             -alias yuhuu-key \
             -keyalg RSA -keysize 2048 -validity 10000 \
             -storepass ${{ secrets.KEYSTORE_PASSWORD || 'yuhuu123' }} \
@@ -70,13 +70,14 @@ jobs:
         id: android-prebuild-cache
         uses: actions/cache@v4
         with:
-          path: android/
-          key: ${{ runner.os }}-android-prebuild-${{ hashFiles('app.config.js', 'package.json', 'pnpm-lock.yaml') }}
+          path: packages/app/android/
+          key: ${{ runner.os }}-android-prebuild-${{ hashFiles('packages/app/app.config.js', 'packages/app/package.json', 'pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-android-prebuild-
 
       - name: Prebuild Android
         if: steps.android-prebuild-cache.outputs.cache-hit != 'true'
+        working-directory: packages/app
         run: npx expo prebuild --platform android
         env:
           EXPO_PUBLIC_GRAPHQL_URL: ${{ secrets.FAT_GRAPHQL_URL }}
@@ -96,7 +97,7 @@ jobs:
           cache-read-only: ${{ github.ref != 'refs/heads/master' }}
 
       - name: Build Android Release APK
-        working-directory: android
+        working-directory: packages/app/android
         run: ./gradlew assembleRelease --configuration-cache -PreactNativeArchitectures=${{ env.REACT_NATIVE_ABIS }}
         env:
           EXPO_PUBLIC_GRAPHQL_URL: ${{ secrets.FAT_GRAPHQL_URL }}
@@ -113,7 +114,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: yuhuu-fat-release-${{ github.sha }}
-          path: android/app/build/outputs/apk/release/app-release.apk
+          path: packages/app/android/app/build/outputs/apk/release/app-release.apk
           retention-days: 30
 
   deploy:
