@@ -80,5 +80,11 @@
     "jest-expo": "^54.0.16",
     "typescript": "~5.9.2"
   },
+  "pnpm": {
+    "overrides": {
+      "hermes-parser": "0.32.0",
+      "babel-plugin-syntax-hermes-parser": "0.32.0"
+    }
+  },
   "private": true
 }
