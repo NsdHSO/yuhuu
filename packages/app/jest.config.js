@@ -28,6 +28,10 @@ module.exports = {
     ],
     moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/$1',
+        '^@yuhuu/auth$': '<rootDir>/../auth/src/index.ts',
+        '^@yuhuu/i18n$': '<rootDir>/../i18n/src/index.ts',
+        '^@yuhuu/http$': '<rootDir>/../http/src/index.ts',
+        '^@yuhuu/storage$': '<rootDir>/../storage/src/index.ts',
         '\\.css$': '<rootDir>/__mocks__/styleMock.js'
     }
 };
