@@ -31,18 +31,12 @@ const mockAppApi = {
     post: jest.fn(),
 };
 
-jest.mock('@/lib/api', () => ({
+jest.mock('@yuhuu/auth', () => ({
     authApi: mockAuthApi,
     appApi: mockAppApi,
-}));
-
-jest.mock('@/lib/tokenManager', () => ({
     clearTokens: jest.fn(),
     getValidAccessToken: jest.fn(),
     setTokensFromLogin: jest.fn(),
-}));
-
-jest.mock('@/lib/nav', () => ({
     redirectToLogin: jest.fn(),
 }));
 

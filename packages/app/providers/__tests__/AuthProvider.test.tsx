@@ -6,7 +6,7 @@ import * as nav from '@yuhuu/auth';
 import {authApi} from '@yuhuu/auth';
 
 // Mock dependencies
-jest.mock('@/lib/api');
+jest.mock('@yuhuu/auth', () => ({ authApi: { post: jest.fn(), get: jest.fn() } }));
 jest.mock('@/lib/tokenManager');
 jest.mock('@/lib/nav');
 

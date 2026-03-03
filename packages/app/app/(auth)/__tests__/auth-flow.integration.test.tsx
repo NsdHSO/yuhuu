@@ -23,9 +23,14 @@ jest.mock('expo-router', () => ({
     useRouter: jest.fn()
 }));
 
-jest.mock('@/lib/api');
-jest.mock('@/lib/tokenManager');
-jest.mock('@/lib/nav');
+jest.mock('@yuhuu/auth', () => ({
+    authApi: { post: jest.fn(), get: jest.fn() },
+    getValidAccessToken: jest.fn(),
+    setTokensFromLogin: jest.fn(),
+    clearTokens: jest.fn(),
+    redirectToLogin: jest.fn(),
+    isAuthPath: jest.fn(),
+}));
 jest.mock('expo-localization');
 jest.mock('expo-secure-store');
 
@@ -49,10 +54,6 @@ beforeAll(async () => {
 describe('Authentication Flow - Integration Tests', () => {
     const mockPush = jest.fn();
     const mockReplace = jest.fn();
-    const mockPost = jest.fn();
-    const mockGetValidAccessToken = jest.fn();
-    const mockSetTokensFromLogin = jest.fn();
-    const mockClearTokens = jest.fn();
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -60,14 +61,16 @@ describe('Authentication Flow - Integration Tests', () => {
             push: mockPush,
             replace: mockReplace
         });
-        (authApi.post as jest.Mock) = mockPost;
-        (tokenManager.getValidAccessToken as jest.Mock) = mockGetValidAccessToken;
-        (tokenManager.setTokensFromLogin as jest.Mock) = mockSetTokensFromLogin;
-        (tokenManager.clearTokens as jest.Mock) = mockClearTokens;
 
         // Default: no existing token
-        mockGetValidAccessToken.mockResolvedValue(null);
+        (tokenManager.getValidAccessToken as jest.Mock).mockResolvedValue(null);
     });
+
+    // Use the mocked functions directly from the module
+    const mockPost = authApi.post as jest.Mock;
+    const mockGetValidAccessToken = tokenManager.getValidAccessToken as jest.Mock;
+    const mockSetTokensFromLogin = tokenManager.setTokensFromLogin as jest.Mock;
+    const mockClearTokens = tokenManager.clearTokens as jest.Mock;
 
     const renderLoginWithAuth = () => {
         return render(

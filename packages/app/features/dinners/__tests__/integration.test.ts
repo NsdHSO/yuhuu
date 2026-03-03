@@ -12,7 +12,7 @@ import type {DinnerDto, ParticipantDto} from '../types';
  */
 
 // Mock axios
-jest.mock('@/lib/api');
+jest.mock('@yuhuu/auth', () => ({ authApi: { post: jest.fn(), get: jest.fn() } }));
 
 const mockAppApi = appApi as jest.Mocked<typeof appApi>;
 

@@ -31,9 +31,8 @@ jest.mock('expo-router', () => ({
     useRouter: jest.fn(),
 }));
 
-jest.mock('@/lib/api');
+jest.mock('@yuhuu/auth', () => ({ authApi: { post: jest.fn(), get: jest.fn() } }));
 jest.mock('@yuhuu/auth');
-jest.mock('@/lib/nav');
 
 jest.mock('@yuhuu/auth', () => ({
     isBiometricAvailable: jest.fn(),
@@ -45,7 +44,6 @@ jest.mock('@yuhuu/auth', () => ({
     clearBiometricData: jest.fn(),
 }));
 
-jest.mock('@/lib/secureStore', () => ({
     loadRefreshToken: jest.fn(),
     saveRefreshToken: jest.fn(),
     clearStoredRefreshToken: jest.fn(),

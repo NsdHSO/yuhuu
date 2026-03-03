@@ -31,8 +31,7 @@ jest.mock('expo-router', () => ({
     useRouter: jest.fn(),
 }));
 
-jest.mock('@/lib/api');
-jest.mock('@/lib/tokenManager');
+jest.mock('@yuhuu/auth', () => ({ authApi: { post: jest.fn(), get: jest.fn() } }));
 
 jest.mock('@/hooks/use-color-scheme', () => ({
     useColorScheme: () => 'light',
