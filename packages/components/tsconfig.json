@@ -3,8 +3,23 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "composite": true
+    "composite": true,
+    "paths": {
+      "@/components/*": ["./src/*"],
+      "@/hooks/*": ["./src/hooks/*"],
+      "@/constants/*": ["./src/constants/*"],
+      "@/lib/i18n": ["../i18n/src"],
+      "@/lib/authz": ["../auth/src/authz/authz"]
+    }
   },
+  "references": [
+    {
+      "path": "../i18n"
+    },
+    {
+      "path": "../auth"
+    }
+  ],
   "include": [
     "src/**/*"
   ],
