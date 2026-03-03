@@ -19,7 +19,7 @@
     "clean:packages": "pnpm -r --filter='./packages/*' run clean",
     "typecheck": "tsc --build",
     "test": "pnpm --filter @yuhuu/app test",
-    "test:all": "pnpm -r run test",
+    "test:all": "pnpm -r run test --forceExit",
     "test:watch": "pnpm --filter @yuhuu/app test:watch",
     "test:coverage": "pnpm --filter @yuhuu/app test:coverage"
   },
