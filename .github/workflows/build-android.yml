@@ -17,13 +17,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Download node_modules
-        uses: actions/download-artifact@v4
-        with:
-          name: node-modules-${{ github.sha }}
-          path: node_modules
-        continue-on-error: true
-
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node
 
@@ -35,6 +28,15 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+
+      - name: Verify workspace packages
+        run: |
+          echo "=== Workspace symlinks ==="
+          ls -la packages/app/node_modules/@yuhuu/ || echo "No @yuhuu symlinks found"
+          echo "=== @yuhuu/types resolution ==="
+          ls -la packages/app/node_modules/@yuhuu/types/src/ || echo "@yuhuu/types/src not found"
+          echo "=== pnpm workspace packages ==="
+          pnpm list --depth 0 2>/dev/null | grep @yuhuu || echo "No @yuhuu packages in pnpm list"
 
       - name: Setup Expo
         uses: expo/expo-github-action@v8
@@ -98,7 +100,7 @@ jobs:
 
       - name: Build Android Release APK
         working-directory: packages/app/android
-        run: ./gradlew assembleRelease --configuration-cache -PreactNativeArchitectures=${{ env.REACT_NATIVE_ABIS }}
+        run: ./gradlew assembleRelease --configuration-cache --info -PreactNativeArchitectures=${{ env.REACT_NATIVE_ABIS }}
         env:
           EXPO_PUBLIC_GRAPHQL_URL: ${{ secrets.FAT_GRAPHQL_URL }}
           EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}

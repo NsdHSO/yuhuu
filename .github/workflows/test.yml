@@ -36,13 +36,6 @@ jobs:
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node
 
-      - name: Upload node_modules
-        uses: actions/upload-artifact@v4
-        with:
-          name: node-modules-${{ github.sha }}
-          path: node_modules
-          retention-days: 1
-
       - name: Run tests with coverage
         id: tests
         run: pnpm test:all
