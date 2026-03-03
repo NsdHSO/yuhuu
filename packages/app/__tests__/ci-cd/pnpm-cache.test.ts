@@ -102,34 +102,26 @@ describe('Setup Node Action - pnpm Cache Optimization', () => {
         });
     });
 
-    describe('node_modules cache layer', () => {
-        it('should have a separate cache step for node_modules', () => {
+    describe('simplified caching strategy', () => {
+        it('should NOT have a node_modules cache (simplified strategy)', () => {
             const nodeModulesCache = findCacheStep(steps, 'node_modules');
-            expect(nodeModulesCache).toBeDefined();
+            // New strategy: only cache pnpm store, not node_modules
+            // This ensures workspace symlinks are always created fresh
+            expect(nodeModulesCache).toBeUndefined();
         });
 
-        it('should cache node_modules directory path', () => {
-            const nodeModulesCache = findCacheStep(steps, 'node_modules');
-            expect(nodeModulesCache).toBeDefined();
-
-            const cachePath = String(nodeModulesCache!.with?.path || '');
-            expect(cachePath).toContain('node_modules');
-        });
-
-        it('should use pnpm-lock.yaml hash in node_modules cache key', () => {
-            const nodeModulesCache = findCacheStep(steps, 'node_modules');
-            expect(nodeModulesCache).toBeDefined();
-
-            const key = String(nodeModulesCache!.with?.key || '');
-            expect(key).toContain('pnpm-lock.yaml');
-        });
-
-        it('should have restore-keys for node_modules fallback', () => {
-            const nodeModulesCache = findCacheStep(steps, 'node_modules');
-            expect(nodeModulesCache).toBeDefined();
-
-            const restoreKeys = nodeModulesCache!.with?.['restore-keys'];
-            expect(restoreKeys).toBeDefined();
+        it('should rely solely on pnpm store cache for performance', () => {
+            const storeCache = steps.find(
+                (step) =>
+                    step.uses?.startsWith('actions/cache') &&
+                    String(step.with?.path || '').includes('STORE_PATH')
+            );
+            expect(storeCache).toBeDefined();
+            // Verify this is the ONLY cache step
+            const allCacheSteps = steps.filter((step) =>
+                step.uses?.startsWith('actions/cache')
+            );
+            expect(allCacheSteps.length).toBe(1);
         });
     });
 
@@ -164,12 +156,13 @@ describe('Setup Node Action - pnpm Cache Optimization', () => {
             expect(installStep!.run).toContain('--frozen-lockfile');
         });
 
-        it('should use --offline flag in install command for cache hits', () => {
+        it('should NOT use --offline flag (allows workspace linking)', () => {
             const installStep = steps.find(
                 (step) => step.run && step.run.includes('pnpm install')
             );
             expect(installStep).toBeDefined();
-            expect(installStep!.run).toContain('--offline');
+            // --offline removed to ensure workspace symlinks are created correctly
+            expect(installStep!.run).not.toContain('--offline');
         });
     });
 
@@ -202,19 +195,19 @@ describe('Setup Node Action - pnpm Cache Optimization', () => {
             expect(storeCacheIndex).toBeLessThan(fetchIndex);
         });
 
-        it('should place node_modules cache before install', () => {
-            const nodeModulesCacheIndex = steps.findIndex(
+        it('should setup store cache before pnpm install', () => {
+            const storeCacheIndex = steps.findIndex(
                 (step) =>
                     step.uses?.startsWith('actions/cache') &&
-                    String(step.with?.path || '').includes('node_modules')
+                    String(step.with?.path || '').includes('STORE_PATH')
             );
             const installIndex = steps.findIndex(
                 (step) => step.run && step.run.includes('pnpm install')
             );
 
-            expect(nodeModulesCacheIndex).toBeGreaterThanOrEqual(0);
+            expect(storeCacheIndex).toBeGreaterThanOrEqual(0);
             expect(installIndex).toBeGreaterThanOrEqual(0);
-            expect(nodeModulesCacheIndex).toBeLessThan(installIndex);
+            expect(storeCacheIndex).toBeLessThan(installIndex);
         });
     });
 
@@ -231,12 +224,15 @@ describe('Setup Node Action - pnpm Cache Optimization', () => {
             expect(key).toContain('runner.os');
         });
 
-        it('should include runner.os in node_modules cache key', () => {
-            const nodeModulesCache = findCacheStep(steps, 'node_modules');
-            expect(nodeModulesCache).toBeDefined();
+        it('should have only one cache step (pnpm store)', () => {
+            const allCacheSteps = steps.filter((step) =>
+                step.uses?.startsWith('actions/cache')
+            );
+            // Simplified strategy: only cache pnpm store
+            expect(allCacheSteps.length).toBe(1);
 
-            const key = String(nodeModulesCache!.with?.key || '');
-            expect(key).toContain('runner.os');
+            const storeCache = allCacheSteps[0];
+            expect(String(storeCache.with?.path || '')).toContain('STORE_PATH');
         });
 
         it('should use hashFiles for pnpm-lock.yaml in cache keys', () => {
