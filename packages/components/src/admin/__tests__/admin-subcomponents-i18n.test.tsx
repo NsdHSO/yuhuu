@@ -29,17 +29,13 @@ import {render} from '@testing-library/react-native';
 import {DinnerAttendance} from '../dinner-attendance';
 import {DinnerGraph} from '../dinner-graph';
 import {ParticipantsList} from '../participants-list';
-
-const mockT = jest.fn((key: string, opts?: any) => {
+const mockT = jest.fn((key: string, opts?: Record<string, unknown>) => {
     if (opts && opts.count !== undefined) return `__${key}__${opts.count}`;
     return `__${key}__`;
 });
 
 jest.mock('react-i18next', () => ({
-    useTranslation: () => ({
-        t: mockT,
-        i18n: {language: 'en', changeLanguage: jest.fn()},
-    }),
+    useTranslation: () => ({t: mockT, i18n: {language: 'en', changeLanguage: jest.fn()}}),
 }));
 
 jest.mock('@/hooks/use-color-scheme', () => ({

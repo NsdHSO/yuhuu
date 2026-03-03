@@ -21,6 +21,11 @@ jest.mock('@/hooks/use-color-scheme', () => ({
     useColorScheme: () => 'light'
 }));
 
+jest.mock('@yuhuu/auth', () => ({
+    isBiometricAvailable: jest.fn().mockResolvedValue(false),
+    getBiometricPreference: jest.fn().mockResolvedValue(false),
+}));
+
 // Mock react-i18next to return the translation key as-is
 jest.mock('react-i18next', () => ({
     useTranslation: () => ({
@@ -53,6 +58,9 @@ jest.mock('react-i18next', () => ({
 
 // Mock Alert
 jest.spyOn(Alert, 'alert');
+
+// Increase timeout for all tests - test suite has heavy module loading overhead
+jest.setTimeout(30000);
 
 describe('LoginScreen', () => {
     const mockPush = jest.fn();

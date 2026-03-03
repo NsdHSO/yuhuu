@@ -20,10 +20,7 @@ jest.spyOn(Alert, 'alert');
 const mockT = jest.fn((key: string) => key);
 
 jest.mock('react-i18next', () => ({
-    useTranslation: () => ({
-        t: mockT,
-        i18n: {language: 'en', changeLanguage: jest.fn()},
-    }),
+    useTranslation: () => ({t: mockT, i18n: {language: 'en', changeLanguage: jest.fn()}}),
 }));
 
 jest.mock('@/hooks/use-color-scheme', () => ({

@@ -2,7 +2,6 @@ import React from 'react';
 import {render, screen} from '@testing-library/react-native';
 import {LoadingState} from '../loading-state';
 
-// Mock react-i18next
 const mockT = jest.fn((key: string) => {
     const translations: Record<string, string> = {
         'common.loading': 'Loading...',

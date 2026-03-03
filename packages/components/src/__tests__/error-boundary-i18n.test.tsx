@@ -1,5 +1,5 @@
 import React from 'react';
-import {render, screen} from '@testing-library/react-native';
+import {render, screen, act} from '@testing-library/react-native';
 import {Text} from 'react-native';
 import i18n from '@yuhuu/i18n';
 import {ErrorBoundary} from '../error-boundary';
@@ -24,12 +24,14 @@ afterAll(() => {
 
 describe('ErrorBoundary i18n', () => {
     beforeEach(async () => {
-        const {initI18n} = require('@/lib/i18n');
+        const {initI18n} = require('@yuhuu/i18n');
         await initI18n();
     });
 
     afterEach(async () => {
-        await i18n.changeLanguage('en');
+        await act(async () => {
+            await i18n.changeLanguage('en');
+        });
     });
 
     describe('uses translation keys from errors.* namespace', () => {
@@ -80,7 +82,9 @@ describe('ErrorBoundary i18n', () => {
         });
 
         it('should display Romanian title when locale is ro', async () => {
-            await i18n.changeLanguage('ro');
+            await act(async () => {
+                await i18n.changeLanguage('ro');
+            });
             render(
                 <ErrorBoundary>
                     <ThrowingComponent shouldThrow/>
@@ -105,7 +109,9 @@ describe('ErrorBoundary i18n', () => {
         });
 
         it('should display Romanian fallback message', async () => {
-            await i18n.changeLanguage('ro');
+            await act(async () => {
+                await i18n.changeLanguage('ro');
+            });
 
             function ThrowEmpty() {
                 throw new Error();
@@ -156,7 +162,9 @@ describe('ErrorBoundary i18n', () => {
         });
 
         it('should display Romanian retry text', async () => {
-            await i18n.changeLanguage('ro');
+            await act(async () => {
+                await i18n.changeLanguage('ro');
+            });
             render(
                 <ErrorBoundary>
                     <ThrowingComponent shouldThrow/>
@@ -168,7 +176,9 @@ describe('ErrorBoundary i18n', () => {
 
     describe('switches languages correctly', () => {
         it('should render Romanian translations after language change', async () => {
-            await i18n.changeLanguage('ro');
+            await act(async () => {
+                await i18n.changeLanguage('ro');
+            });
             render(
                 <ErrorBoundary>
                     <ThrowingComponent shouldThrow/>
@@ -179,8 +189,10 @@ describe('ErrorBoundary i18n', () => {
         });
 
         it('should render English translations after switching back from Romanian', async () => {
-            await i18n.changeLanguage('ro');
-            await i18n.changeLanguage('en');
+            await act(async () => {
+                await i18n.changeLanguage('ro');
+                await i18n.changeLanguage('en');
+            });
             render(
                 <ErrorBoundary>
                     <ThrowingComponent shouldThrow/>
@@ -191,7 +203,9 @@ describe('ErrorBoundary i18n', () => {
         });
 
         it('should fall back to English for unsupported language codes', async () => {
-            await i18n.changeLanguage('fr');
+            await act(async () => {
+                await i18n.changeLanguage('fr');
+            });
             render(
                 <ErrorBoundary>
                     <ThrowingComponent shouldThrow/>
@@ -203,7 +217,9 @@ describe('ErrorBoundary i18n', () => {
 
     describe('no hardcoded English strings remain', () => {
         it('should not contain hardcoded English title when language is Romanian', async () => {
-            await i18n.changeLanguage('ro');
+            await act(async () => {
+                await i18n.changeLanguage('ro');
+            });
             render(
                 <ErrorBoundary>
                     <ThrowingComponent shouldThrow/>
@@ -213,7 +229,9 @@ describe('ErrorBoundary i18n', () => {
         });
 
         it('should not contain hardcoded English fallback when language is Romanian', async () => {
-            await i18n.changeLanguage('ro');
+            await act(async () => {
+                await i18n.changeLanguage('ro');
+            });
 
             function ThrowEmpty() {
                 throw new Error();
@@ -228,7 +246,9 @@ describe('ErrorBoundary i18n', () => {
         });
 
         it('should not contain hardcoded English retry text when language is Romanian', async () => {
-            await i18n.changeLanguage('ro');
+            await act(async () => {
+                await i18n.changeLanguage('ro');
+            });
             render(
                 <ErrorBoundary>
                     <ThrowingComponent shouldThrow/>
@@ -238,7 +258,9 @@ describe('ErrorBoundary i18n', () => {
         });
 
         it('should contain only Romanian strings when language is Romanian', async () => {
-            await i18n.changeLanguage('ro');
+            await act(async () => {
+                await i18n.changeLanguage('ro');
+            });
 
             function ThrowEmpty() {
                 throw new Error();

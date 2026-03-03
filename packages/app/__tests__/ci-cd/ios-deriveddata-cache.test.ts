@@ -104,8 +104,8 @@ describe('iOS Build Workflow - DerivedData Cache', () => {
         });
 
         it('should cache path matching the xcodebuild -derivedDataPath', () => {
-            // The build step uses: -derivedDataPath build (within ios/ working directory)
-            // So the full path from repo root is ios/build
+            // The build step uses: -derivedDataPath build (within packages/app/ios/ working directory)
+            // So the full path from repo root is packages/app/ios/build
             const buildStep = findStepByName(buildSteps, 'build ios release');
             expect(buildStep).toBeDefined();
             expect(buildStep!.run).toContain('-derivedDataPath build');
@@ -113,7 +113,7 @@ describe('iOS Build Workflow - DerivedData Cache', () => {
             const derivedDataCache = findCacheStepByPath(buildSteps, 'ios/build');
             expect(derivedDataCache).toBeDefined();
             const cachePath = String(derivedDataCache!.with?.path || '');
-            expect(cachePath).toBe('ios/build');
+            expect(cachePath).toBe('packages/app/ios/build');
         });
 
         it('should NOT cache the entire ios/ directory (that is prebuild cache)', () => {
@@ -298,11 +298,11 @@ describe('iOS Build Workflow - DerivedData Cache', () => {
             expect(derivedDataPathMatch).not.toBeNull();
             const derivedDataDir = derivedDataPathMatch![1]; // "build"
 
-            // The working directory for the build step is ios/
+            // The working directory for the build step is packages/app/ios/
             const workingDir = buildStep!['working-directory'];
-            expect(workingDir).toBe('ios');
+            expect(workingDir).toBe('packages/app/ios');
 
-            // So the full DerivedData path from repo root is ios/build
+            // So the full DerivedData path from repo root is packages/app/ios/build
             const fullDerivedDataPath = `${workingDir}/${derivedDataDir}`;
 
             // This should match what the cache step caches

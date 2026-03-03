@@ -1,7 +1,6 @@
 import React from 'react';
 import {render} from '@testing-library/react-native';
 import {DinnerDetailsCard} from '../dinner-details-card';
-
 /**
  * TDD tests for DinnerDetailsCard i18n migration.
  *
@@ -16,10 +15,7 @@ import {DinnerDetailsCard} from '../dinner-details-card';
 const mockT = jest.fn((key: string) => key);
 
 jest.mock('react-i18next', () => ({
-    useTranslation: () => ({
-        t: mockT,
-        i18n: {language: 'en', changeLanguage: jest.fn()},
-    }),
+    useTranslation: () => ({t: mockT, i18n: {language: 'en', changeLanguage: jest.fn()}}),
 }));
 
 const mockDinner = {

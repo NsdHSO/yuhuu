@@ -7,20 +7,22 @@ import * as useColorSchemeModule from '@/hooks/use-color-scheme';
 // Mock Alert
 jest.spyOn(Alert, 'alert');
 
-// Mock react-i18next
+// Mock react-i18next with English translations for behavioral tests
+const mockT = jest.fn((key: string) => {
+    const translations: Record<string, string> = {
+        'common.usernamePlaceholder': 'Username',
+        'common.notesPlaceholder': 'Notes (optional)',
+        'common.addParticipant': 'Add Participant',
+        'common.adding': 'Adding\u2026',
+        'common.required': 'Required',
+        'common.usernameRequired': 'Please enter a username.',
+    };
+    return translations[key] ?? key;
+});
+
 jest.mock('react-i18next', () => ({
     useTranslation: () => ({
-        t: (key: string) => {
-            const translations: Record<string, string> = {
-                'common.usernamePlaceholder': 'Username',
-                'common.notesPlaceholder': 'Notes (optional)',
-                'common.addParticipant': 'Add Participant',
-                'common.adding': 'Adding\u2026',
-                'common.required': 'Required',
-                'common.usernameRequired': 'Please enter a username.',
-            };
-            return translations[key] ?? key;
-        },
+        t: mockT,
         i18n: {language: 'en', changeLanguage: jest.fn()},
     }),
 }));

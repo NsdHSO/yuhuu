@@ -1,5 +1,5 @@
 import React from 'react';
-import {fireEvent, render, screen, waitFor} from '@testing-library/react-native';
+import {act, fireEvent, render, screen, waitFor} from '@testing-library/react-native';
 import {Alert, Text, TouchableOpacity} from 'react-native';
 import LoginScreen from '../login';
 import {AuthProvider, useAuth} from '@/providers/AuthProvider';
@@ -326,12 +326,21 @@ describe('Biometric Login Flow - Integration Tests', () => {
 
             fireEvent.press(screen.getByTestId('biometric-login-button'));
 
+            // Wait for error alert
             await waitFor(() => {
                 expect(Alert.alert).toHaveBeenCalledWith(
                     'Error',
                     'Biometric authentication failed'
                 );
             });
+
+            // Wait for all async state updates to settle (setUser/setStatus in catch, setSubmitting in finally)
+            await waitFor(() => {
+                expect(screen.getByText('Sign in')).toBeTruthy();
+            });
+
+            // Flush remaining microtasks to prevent act() warnings
+            await act(async () => {});
 
             expect(mockRefreshAccessToken).not.toHaveBeenCalled();
             expect(mockReplace).not.toHaveBeenCalled();
@@ -348,12 +357,21 @@ describe('Biometric Login Flow - Integration Tests', () => {
 
             fireEvent.press(screen.getByTestId('biometric-login-button'));
 
+            // Wait for error alert
             await waitFor(() => {
                 expect(Alert.alert).toHaveBeenCalledWith(
                     'Error',
                     'No saved biometric credentials found'
                 );
             });
+
+            // Wait for all async state updates to settle
+            await waitFor(() => {
+                expect(screen.getByText('Sign in')).toBeTruthy();
+            });
+
+            // Flush remaining microtasks to prevent act() warnings
+            await act(async () => {});
 
             expect(auth.authenticateWithBiometrics).not.toHaveBeenCalled();
             expect(mockRefreshAccessToken).not.toHaveBeenCalled();
@@ -373,12 +391,21 @@ describe('Biometric Login Flow - Integration Tests', () => {
 
             fireEvent.press(screen.getByTestId('biometric-login-button'));
 
+            // Wait for error alert
             await waitFor(() => {
                 expect(Alert.alert).toHaveBeenCalledWith(
                     'Error',
                     'Session expired. Please sign in with your password.'
                 );
             });
+
+            // Wait for all async state updates to settle
+            await waitFor(() => {
+                expect(screen.getByText('Sign in')).toBeTruthy();
+            });
+
+            // Flush remaining microtasks to prevent act() warnings
+            await act(async () => {});
 
             expect(mockReplace).not.toHaveBeenCalled();
         });
@@ -396,9 +423,18 @@ describe('Biometric Login Flow - Integration Tests', () => {
 
             fireEvent.press(screen.getByTestId('biometric-login-button'));
 
+            // Wait for error alert
             await waitFor(() => {
                 expect(Alert.alert).toHaveBeenCalledWith('Error', 'Network error');
             });
+
+            // Wait for all async state updates to settle
+            await waitFor(() => {
+                expect(screen.getByText('Sign in')).toBeTruthy();
+            });
+
+            // Flush remaining microtasks to prevent act() warnings
+            await act(async () => {});
 
             expect(mockReplace).not.toHaveBeenCalled();
         });
@@ -424,6 +460,14 @@ describe('Biometric Login Flow - Integration Tests', () => {
             await waitFor(() => {
                 expect(Alert.alert).toHaveBeenCalled();
             });
+
+            // Wait for all state updates to settle
+            await waitFor(() => {
+                expect(screen.getByText('Sign in')).toBeTruthy();
+            });
+
+            // Flush remaining microtasks to prevent act() warnings
+            await act(async () => {});
 
             expect(mockReplace).not.toHaveBeenCalled();
             expect(screen.getByPlaceholderText('Email')).toBeTruthy();
@@ -458,6 +502,14 @@ describe('Biometric Login Flow - Integration Tests', () => {
             await waitFor(() => {
                 expect(Alert.alert).toHaveBeenCalled();
             });
+
+            // Wait for all state updates to settle
+            await waitFor(() => {
+                expect(screen.getByText('Sign in')).toBeTruthy();
+            });
+
+            // Flush remaining microtasks to prevent act() warnings
+            await act(async () => {});
 
             fireEvent.changeText(screen.getByPlaceholderText('Email'), 'user@test.com');
             fireEvent.changeText(screen.getByPlaceholderText('Password'), 'password123');
@@ -760,12 +812,21 @@ describe('Biometric Login Flow - Integration Tests', () => {
 
             fireEvent.press(screen.getByTestId('bio-trigger'));
 
+            // Wait for error alert
             await waitFor(() => {
                 expect(Alert.alert).toHaveBeenCalledWith(
                     'Error',
                     'No saved biometric credentials found'
                 );
             });
+
+            // Wait for all async state updates to settle
+            await waitFor(() => {
+                expect(screen.getByTestId('auth-status').props.children).toBe('signed-out');
+            });
+
+            // Flush remaining microtasks to prevent act() warnings
+            await act(async () => {});
 
             expect(mockRefreshAccessToken).not.toHaveBeenCalled();
         });
@@ -786,12 +847,21 @@ describe('Biometric Login Flow - Integration Tests', () => {
 
             fireEvent.press(screen.getByTestId('bio-trigger'));
 
+            // Wait for error alert
             await waitFor(() => {
                 expect(Alert.alert).toHaveBeenCalledWith(
                     'Error',
                     'Biometric authentication failed'
                 );
             });
+
+            // Wait for all async state updates to settle
+            await waitFor(() => {
+                expect(screen.getByTestId('auth-status').props.children).toBe('signed-out');
+            });
+
+            // Flush remaining microtasks to prevent act() warnings
+            await act(async () => {});
 
             expect(mockRefreshAccessToken).not.toHaveBeenCalled();
         });
@@ -813,12 +883,21 @@ describe('Biometric Login Flow - Integration Tests', () => {
 
             fireEvent.press(screen.getByTestId('bio-trigger'));
 
+            // Wait for error alert
             await waitFor(() => {
                 expect(Alert.alert).toHaveBeenCalledWith(
                     'Error',
                     'Session expired. Please sign in with your password.'
                 );
             });
+
+            // Wait for all async state updates to settle
+            await waitFor(() => {
+                expect(screen.getByTestId('auth-status').props.children).toBe('signed-out');
+            });
+
+            // Flush remaining microtasks to prevent act() warnings
+            await act(async () => {});
         });
 
         it('should set status to signed-out on biometric failure', async () => {
@@ -881,12 +960,21 @@ describe('Biometric Login Flow - Integration Tests', () => {
 
             fireEvent.press(screen.getByTestId('bio-trigger'));
 
+            // Wait for error alert
             await waitFor(() => {
                 expect(Alert.alert).toHaveBeenCalledWith(
                     'Error',
                     'Network request failed'
                 );
             });
+
+            // Wait for all async state updates to settle
+            await waitFor(() => {
+                expect(screen.getByTestId('auth-status').props.children).toBe('signed-out');
+            });
+
+            // Flush remaining microtasks to prevent act() warnings
+            await act(async () => {});
         });
     });
 

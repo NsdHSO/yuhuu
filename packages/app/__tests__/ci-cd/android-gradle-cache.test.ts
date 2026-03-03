@@ -266,7 +266,7 @@ describe('Android Gradle Cache - YAML Structure', () => {
         it('should set working-directory to android/', () => {
             const buildStep = findStepByRun(buildSteps, 'gradlew');
             expect(buildStep).toBeDefined();
-            expect(buildStep!['working-directory']).toBe('android');
+            expect(buildStep!['working-directory']).toBe('packages/app/android');
         });
     });
 

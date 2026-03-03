@@ -268,7 +268,7 @@ describe('Android Signing Configuration - YAML Structure', () => {
         it('should create android/app directory before keystore generation', () => {
             const keystoreStep = findStepByRun(buildSteps, 'keytool');
             expect(keystoreStep).toBeDefined();
-            expect(keystoreStep!.run).toContain('mkdir -p android/app');
+            expect(keystoreStep!.run).toContain('mkdir -p packages/app/android/app');
         });
 
         it('should generate a PKCS12 keystore', () => {

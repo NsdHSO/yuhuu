@@ -1,9 +1,15 @@
 import React from 'react';
 import {fireEvent, render} from '@testing-library/react-native';
 import * as Haptics from 'expo-haptics';
+import {NavigationContainer} from '@react-navigation/native';
 import {HapticTab} from '../haptic-tab';
 
 jest.mock('expo-haptics');
+
+// Wrapper component to provide NavigationContainer context
+const TestWrapper = ({children}: {children: React.ReactNode}) => (
+    <NavigationContainer>{children}</NavigationContainer>
+);
 
 describe('HapticTab Component', () => {
     const mockProps = {
@@ -19,7 +25,10 @@ describe('HapticTab Component', () => {
 
     describe('Rendering', () => {
         it('should render without crashing', () => {
-            const {getByTestId} = render(<HapticTab {...mockProps}>Tab</HapticTab>);
+            const {getByTestId} = render(
+                <HapticTab {...mockProps}>Tab</HapticTab>,
+                {wrapper: TestWrapper}
+            );
             expect(getByTestId('haptic-tab')).toBeTruthy();
         });
 
@@ -28,7 +37,8 @@ describe('HapticTab Component', () => {
                 <HapticTab {...mockProps}>
                     <></>
                     Tab Label
-                </HapticTab>
+                </HapticTab>,
+                {wrapper: TestWrapper}
             );
             expect(getByTestId('haptic-tab')).toBeTruthy();
         });
@@ -38,7 +48,10 @@ describe('HapticTab Component', () => {
         it('should trigger haptic feedback on iOS', () => {
             process.env.EXPO_OS = 'ios';
 
-            const {getByTestId} = render(<HapticTab {...mockProps}>Tab</HapticTab>);
+            const {getByTestId} = render(
+                <HapticTab {...mockProps}>Tab</HapticTab>,
+                {wrapper: TestWrapper}
+            );
             const tab = getByTestId('haptic-tab');
 
             fireEvent(tab, 'pressIn');
@@ -53,7 +66,8 @@ describe('HapticTab Component', () => {
 
             const onPressIn = jest.fn();
             const {getByTestId} = render(
-                <HapticTab {...mockProps} onPressIn={onPressIn}>Tab</HapticTab>
+                <HapticTab {...mockProps} onPressIn={onPressIn}>Tab</HapticTab>,
+                {wrapper: TestWrapper}
             );
 
             const tab = getByTestId('haptic-tab');
@@ -72,7 +86,8 @@ describe('HapticTab Component', () => {
             );
 
             const {getByTestId} = render(
-                <HapticTab {...mockProps} onPressIn={onPressIn}>Tab</HapticTab>
+                <HapticTab {...mockProps} onPressIn={onPressIn}>Tab</HapticTab>,
+                {wrapper: TestWrapper}
             );
 
             fireEvent(getByTestId('haptic-tab'), 'pressIn');
@@ -85,7 +100,8 @@ describe('HapticTab Component', () => {
         it('should call onPressIn callback on Android', () => {
             const onPressIn = jest.fn();
             const {getByTestId} = render(
-                <HapticTab {...mockProps} onPressIn={onPressIn}/>
+                <HapticTab {...mockProps} onPressIn={onPressIn}/>,
+                {wrapper: TestWrapper}
             );
 
             fireEvent(getByTestId('haptic-tab'), 'pressIn');
@@ -96,7 +112,10 @@ describe('HapticTab Component', () => {
 
     describe('Web Behavior', () => {
         it('should render on web', () => {
-            const {getByTestId} = render(<HapticTab {...mockProps}>Tab</HapticTab>);
+            const {getByTestId} = render(
+                <HapticTab {...mockProps}>Tab</HapticTab>,
+                {wrapper: TestWrapper}
+            );
             expect(getByTestId('haptic-tab')).toBeTruthy();
         });
     });
@@ -109,7 +128,10 @@ describe('HapticTab Component', () => {
                 accessible: true,
             };
 
-            const {getByTestId} = render(<HapticTab {...customProps}>Tab</HapticTab>);
+            const {getByTestId} = render(
+                <HapticTab {...customProps}>Tab</HapticTab>,
+                {wrapper: TestWrapper}
+            );
             expect(getByTestId('haptic-tab')).toBeTruthy();
         });
 
@@ -119,7 +141,8 @@ describe('HapticTab Component', () => {
             delete propsWithoutOnPressIn.onPressIn;
 
             const {getByTestId} = render(
-                <HapticTab {...(propsWithoutOnPressIn as any)}>Tab</HapticTab>
+                <HapticTab {...(propsWithoutOnPressIn as any)}>Tab</HapticTab>,
+                {wrapper: TestWrapper}
             );
 
             expect(() => {
@@ -134,7 +157,10 @@ describe('HapticTab Component', () => {
         it('should trigger haptic on multiple presses on iOS', () => {
             process.env.EXPO_OS = 'ios';
 
-            const {getByTestId} = render(<HapticTab {...mockProps}>Tab</HapticTab>);
+            const {getByTestId} = render(
+                <HapticTab {...mockProps}>Tab</HapticTab>,
+                {wrapper: TestWrapper}
+            );
             const tab = getByTestId('haptic-tab');
 
             fireEvent(tab, 'pressIn');
@@ -147,7 +173,8 @@ describe('HapticTab Component', () => {
         it('should call onPressIn multiple times', () => {
             const onPressIn = jest.fn();
             const {getByTestId} = render(
-                <HapticTab {...mockProps} onPressIn={onPressIn}>Tab</HapticTab>
+                <HapticTab {...mockProps} onPressIn={onPressIn}>Tab</HapticTab>,
+                {wrapper: TestWrapper}
             );
 
             const tab = getByTestId('haptic-tab');

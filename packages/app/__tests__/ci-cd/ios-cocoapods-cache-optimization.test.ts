@@ -275,7 +275,7 @@ describe('iOS Build Workflow - CocoaPods Cache Optimization', () => {
             expect(podInstallStep).toBeDefined();
 
             const workDir = podInstallStep!['working-directory'];
-            expect(workDir).toBe('ios');
+            expect(workDir).toBe('packages/app/ios');
         });
     });
 

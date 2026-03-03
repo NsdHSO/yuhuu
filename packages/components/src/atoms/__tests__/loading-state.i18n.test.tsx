@@ -1,5 +1,5 @@
 import React from 'react';
-import {render, screen} from '@testing-library/react-native';
+import {render, screen, act} from '@testing-library/react-native';
 import i18n from '@yuhuu/i18n';
 import {LoadingState} from '../loading-state';
 
@@ -8,12 +8,14 @@ jest.mock('expo-secure-store');
 
 describe('LoadingState i18n integration', () => {
     beforeEach(async () => {
-        const {initI18n} = require('@/lib/i18n');
+        const {initI18n} = require('@yuhuu/i18n');
         await initI18n();
     });
 
     afterEach(async () => {
-        await i18n.changeLanguage('en');
+        await act(async () => {
+            await i18n.changeLanguage('en');
+        });
     });
 
     it('should use the translation key common.loading', () => {
@@ -28,13 +30,17 @@ describe('LoadingState i18n integration', () => {
     });
 
     it('should not contain hardcoded English strings when language is Romanian', async () => {
-        await i18n.changeLanguage('ro');
+        await act(async () => {
+            await i18n.changeLanguage('ro');
+        });
         const {queryByText} = render(<LoadingState/>);
         expect(queryByText('Loading...')).toBeNull();
     });
 
     it('should render Romanian translation when language is ro', async () => {
-        await i18n.changeLanguage('ro');
+        await act(async () => {
+            await i18n.changeLanguage('ro');
+        });
         render(<LoadingState/>);
         expect(screen.getByText('Se încarcă...')).toBeTruthy();
     });
@@ -43,7 +49,9 @@ describe('LoadingState i18n integration', () => {
         const {queryByText, rerender} = render(<LoadingState/>);
         expect(queryByText('Loading...')).toBeTruthy();
 
-        await i18n.changeLanguage('ro');
+        await act(async () => {
+            await i18n.changeLanguage('ro');
+        });
         rerender(<LoadingState/>);
 
         expect(queryByText('Loading...')).toBeNull();
@@ -51,18 +59,24 @@ describe('LoadingState i18n integration', () => {
     });
 
     it('should switch from Romanian back to English', async () => {
-        await i18n.changeLanguage('ro');
+        await act(async () => {
+            await i18n.changeLanguage('ro');
+        });
         const {queryByText, rerender} = render(<LoadingState/>);
         expect(queryByText('Se încarcă...')).toBeTruthy();
 
-        await i18n.changeLanguage('en');
+        await act(async () => {
+            await i18n.changeLanguage('en');
+        });
         rerender(<LoadingState/>);
 
         expect(queryByText('Loading...')).toBeTruthy();
     });
 
     it('should fall back to English for unsupported language', async () => {
-        await i18n.changeLanguage('fr');
+        await act(async () => {
+            await i18n.changeLanguage('fr');
+        });
         render(<LoadingState/>);
         expect(screen.getByText('Loading...')).toBeTruthy();
     });

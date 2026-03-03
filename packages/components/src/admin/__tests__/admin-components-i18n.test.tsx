@@ -2,7 +2,6 @@ import React from 'react';
 import {render} from '@testing-library/react-native';
 import {UserSearch} from '../user-search';
 import {DinnerIdSearch} from '../dinner-id-search';
-
 /**
  * TDD tests for admin component i18n migration.
  *

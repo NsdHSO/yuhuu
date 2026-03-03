@@ -11,16 +11,10 @@ import {ErrorState} from '../error-state';
  */
 
 // --- Mock react-i18next ---
-const mockT = jest.fn((key: string, opts?: any) => {
-    if (opts?.date) return `${key}:${opts.date}`;
-    return key;
-});
+const mockT = jest.fn((key: string) => key);
 
 jest.mock('react-i18next', () => ({
-    useTranslation: () => ({
-        t: mockT,
-        i18n: {language: 'en', changeLanguage: jest.fn()},
-    }),
+    useTranslation: () => ({t: mockT, i18n: {language: 'en', changeLanguage: jest.fn()}}),
 }));
 
 describe('EmptyState - i18n', () => {

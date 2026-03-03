@@ -65,6 +65,80 @@ describe('storage - native (iOS/Android)', () => {
     });
 });
 
+describe('key validation', () => {
+    beforeEach(() => {
+        (Platform as any).OS = 'ios';
+    });
+
+    describe('valid keys', () => {
+        const validKeys = [
+            'test-key',
+            'my_key',
+            'app.config.theme',
+            'a',
+            'a.b-c_d',
+            '123',
+            'UPPER_CASE',
+        ];
+
+        it.each(validKeys)('getItem should accept valid key "%s"', async (key) => {
+            mockSecureStore.getItemAsync.mockResolvedValue('value');
+            await getItem(key);
+            expect(mockSecureStore.getItemAsync).toHaveBeenCalledWith(key);
+        });
+
+        it.each(validKeys)('setItem should accept valid key "%s"', async (key) => {
+            mockSecureStore.setItemAsync.mockResolvedValue();
+            await setItem(key, 'value');
+            expect(mockSecureStore.setItemAsync).toHaveBeenCalledWith(key, 'value');
+        });
+
+        it.each(validKeys)('removeItem should accept valid key "%s"', async (key) => {
+            mockSecureStore.deleteItemAsync.mockResolvedValue();
+            await removeItem(key);
+            expect(mockSecureStore.deleteItemAsync).toHaveBeenCalledWith(key);
+        });
+    });
+
+    describe('invalid keys', () => {
+        const invalidKeys = [
+            ['empty string', ''],
+            ['whitespace only', '  '],
+            ['spaces', 'key with spaces'],
+            ['@ symbol', 'key@special'],
+            ['hash', 'key#hash'],
+            ['slash', 'key/slash'],
+            ['dollar sign', 'key$dollar'],
+            ['exclamation', 'key!bang'],
+        ];
+
+        it.each(invalidKeys)('getItem should return null for %s key', async (_desc, key) => {
+            const warnSpy = jest.spyOn(console, 'warn').mockImplementation();
+            const result = await getItem(key);
+            expect(result).toBeNull();
+            expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('Invalid storage key'));
+            expect(mockSecureStore.getItemAsync).not.toHaveBeenCalled();
+            warnSpy.mockRestore();
+        });
+
+        it.each(invalidKeys)('setItem should return without storing for %s key', async (_desc, key) => {
+            const warnSpy = jest.spyOn(console, 'warn').mockImplementation();
+            await setItem(key, 'value');
+            expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('Invalid storage key'));
+            expect(mockSecureStore.setItemAsync).not.toHaveBeenCalled();
+            warnSpy.mockRestore();
+        });
+
+        it.each(invalidKeys)('removeItem should return without deleting for %s key', async (_desc, key) => {
+            const warnSpy = jest.spyOn(console, 'warn').mockImplementation();
+            await removeItem(key);
+            expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('Invalid storage key'));
+            expect(mockSecureStore.deleteItemAsync).not.toHaveBeenCalled();
+            warnSpy.mockRestore();
+        });
+    });
+});
+
 describe('storage - web', () => {
     const mockLocalStorage = {
         getItem: jest.fn(),

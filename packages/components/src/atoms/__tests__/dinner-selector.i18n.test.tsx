@@ -1,5 +1,5 @@
 import React from 'react';
-import {render, screen} from '@testing-library/react-native';
+import {render, screen, act} from '@testing-library/react-native';
 import {DinnerSelector} from '@/components/atoms/dinner-selector';
 import type {Dinner} from '@yuhuu/types';
 import i18n from '@yuhuu/i18n';
@@ -71,12 +71,14 @@ describe('DinnerSelector i18n', () => {
 
     beforeEach(async () => {
         jest.clearAllMocks();
-        const {initI18n} = require('@/lib/i18n');
+        const {initI18n} = require('@yuhuu/i18n');
         await initI18n();
     });
 
     afterEach(async () => {
-        await i18n.changeLanguage('en');
+        await act(async () => {
+            await i18n.changeLanguage('en');
+        });
     });
 
     describe('Placeholder picker item', () => {
@@ -94,7 +96,9 @@ describe('DinnerSelector i18n', () => {
         });
 
         it('should not contain hardcoded English placeholder when language is Romanian', async () => {
-            await i18n.changeLanguage('ro');
+            await act(async () => {
+                await i18n.changeLanguage('ro');
+            });
 
             const {queryByText} = render(
                 <DinnerSelector
@@ -108,7 +112,9 @@ describe('DinnerSelector i18n', () => {
         });
 
         it('should display Romanian placeholder when language is ro', async () => {
-            await i18n.changeLanguage('ro');
+            await act(async () => {
+                await i18n.changeLanguage('ro');
+            });
 
             render(
                 <DinnerSelector
@@ -154,7 +160,9 @@ describe('DinnerSelector i18n', () => {
         });
 
         it('should use Romanian fallback when language is ro', async () => {
-            await i18n.changeLanguage('ro');
+            await act(async () => {
+                await i18n.changeLanguage('ro');
+            });
 
             render(
                 <DinnerSelector
@@ -186,7 +194,9 @@ describe('DinnerSelector i18n', () => {
             expect(placeholder.props.children).toBe('Select a dinner...');
 
             // Switch to Romanian
-            await i18n.changeLanguage('ro');
+            await act(async () => {
+                await i18n.changeLanguage('ro');
+            });
             rerender(
                 <DinnerSelector
                     dinners={multipleDinners}
@@ -213,7 +223,9 @@ describe('DinnerSelector i18n', () => {
             expect(dinnerItem.props.children).toBe('Lunch - Dinner');
 
             // Switch to Romanian
-            await i18n.changeLanguage('ro');
+            await act(async () => {
+                await i18n.changeLanguage('ro');
+            });
             rerender(
                 <DinnerSelector
                     dinners={multipleDinners}

@@ -179,24 +179,23 @@ describe('CI Workflow - Conditional Execution', () => {
         });
 
         it('should define android path filter patterns', () => {
-            // Android builds should trigger on android directory changes
+            // Android builds should trigger on packages/app directory changes
             expect(ciWorkflowContent).toMatch(/android:/);
-            expect(ciWorkflowContent).toContain('\'android/**\'');
+            expect(ciWorkflowContent).toContain('\'packages/app/**\'');
         });
 
         it('should define ios path filter patterns', () => {
-            // iOS builds should trigger on ios directory changes
-            expect(ciWorkflowContent).toContain('\'ios/**\'');
+            // iOS builds should trigger on packages/app directory changes
+            expect(ciWorkflowContent).toContain('\'packages/app/**\'');
         });
 
-        it('should include app.config.js in android filter', () => {
-            // app.config.js affects both Android and iOS builds
-            // The android filter section should include it
+        it('should include packages/app glob in android filter to cover app.config.js', () => {
+            // app.config.js is inside packages/app/, covered by 'packages/app/**'
             const filtersSection = ciWorkflowContent.match(
                 /filters:\s*\|[\s\S]*?(?=\n\s{4}\w|\n\s{2}\w|\n\w|$)/
             );
             expect(filtersSection).not.toBeNull();
-            expect(filtersSection![0]).toContain('app.config.js');
+            expect(filtersSection![0]).toContain('packages/app/**');
         });
 
         it('should include package.json in android filter', () => {
@@ -208,12 +207,12 @@ describe('CI Workflow - Conditional Execution', () => {
             expect(filtersSection![0]).toContain('package.json');
         });
 
-        it('should include app.config.js in ios filter', () => {
+        it('should include packages/app glob in ios filter to cover app.config.js', () => {
             const filtersSection = ciWorkflowContent.match(
                 /filters:\s*\|[\s\S]*?(?=\n\s{4}\w|\n\s{2}\w|\n\w|$)/
             );
             expect(filtersSection).not.toBeNull();
-            expect(filtersSection![0]).toContain('app.config.js');
+            expect(filtersSection![0]).toContain('packages/app/**');
         });
 
         it('should include package.json in ios filter', () => {
@@ -324,23 +323,19 @@ describe('CI Workflow - Conditional Execution', () => {
     });
 
     describe('Source code changes trigger builds', () => {
-        it('changes to src/ or app/ or lib/ should trigger both builds via shared filters', () => {
+        it('changes to packages/ should trigger both builds via shared filters', () => {
             // Source code changes should trigger rebuilds
-            // These should be captured by filters like 'app/**', 'lib/**', 'src/**'
-            // OR by catch-all patterns in both android and ios filters
+            // In the monorepo structure, 'packages/app/**' and 'packages/**'
+            // capture all relevant source code changes
             const filtersSection = ciWorkflowContent.match(
                 /filters:\s*\|[\s\S]*?(?=\n\s{4}\w|\n\s{2}\w|\n\w|$)/
             );
             expect(filtersSection).not.toBeNull();
 
-            // At minimum, app.config.js and package.json should be in filters
-            // (already tested above). Additional source patterns are a bonus.
             const filterContent = filtersSection![0];
             const hasSourcePatterns =
-                filterContent.includes('\'app/**\'') ||
-                filterContent.includes('\'lib/**\'') ||
-                filterContent.includes('\'src/**\'') ||
-                filterContent.includes('app.config.js');
+                filterContent.includes('\'packages/app/**\'') ||
+                filterContent.includes('\'packages/**\'');
 
             expect(hasSourcePatterns).toBe(true);
         });

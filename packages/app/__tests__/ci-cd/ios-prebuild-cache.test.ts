@@ -104,7 +104,7 @@ describe('iOS Build Workflow - Prebuild Cache Optimization', () => {
             expect(cachePath).toMatch(/ios\//);
         });
 
-        it('should use cache key that hashes app.config, app.json, package.json, and pnpm-lock.yaml', () => {
+        it('should use cache key that hashes app.config.js, package.json, and pnpm-lock.yaml', () => {
             const prebuildCache = buildSteps.find(
                 (step) =>
                     step.uses?.startsWith('actions/cache') &&
@@ -114,13 +114,11 @@ describe('iOS Build Workflow - Prebuild Cache Optimization', () => {
             expect(prebuildCache).toBeDefined();
             const cacheKey = String(prebuildCache!.with?.key || '');
 
-            // Cache key must include all config files for proper invalidation:
-            // - app.config: Expo plugin config changes
-            // - app.json: app metadata changes
+            // Cache key must include config files for proper invalidation:
+            // - app.config.js: Expo plugin config changes
             // - package.json: dependency changes (including Expo SDK version)
             // - pnpm-lock.yaml: exact dependency versions (critical for cache invalidation)
             expect(cacheKey).toContain('app.config');
-            expect(cacheKey).toContain('app.json');
             expect(cacheKey).toContain('package.json');
             expect(cacheKey).toContain('pnpm-lock.yaml');
         });

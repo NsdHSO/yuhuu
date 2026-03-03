@@ -2,14 +2,16 @@ import React from 'react';
 import {render, screen} from '@testing-library/react-native';
 import {ErrorState} from '../error-state';
 
+const mockT = jest.fn((key: string, opts?: Record<string, unknown>) => {
+    if (key === 'supper.noDinnerFound' && opts?.date !== undefined) {
+        return `No dinner found for ${opts.date}`;
+    }
+    return key;
+});
+
 jest.mock('react-i18next', () => ({
     useTranslation: () => ({
-        t: (key: string, opts?: any) => {
-            if (key === 'supper.noDinnerFound' && opts?.date !== undefined) {
-                return `No dinner found for ${opts.date}`;
-            }
-            return key;
-        },
+        t: mockT,
         i18n: {language: 'en', changeLanguage: jest.fn()},
     }),
 }));

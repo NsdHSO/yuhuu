@@ -272,6 +272,14 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
             await waitFor(() => {
                 expect(Alert.alert).toHaveBeenCalled();
             });
+
+            // Wait for all state updates to settle
+            await waitFor(() => {
+                expect(screen.getByText('Sign in')).toBeTruthy();
+            });
+
+            // Flush remaining microtasks to prevent act() warnings
+            await act(async () => {});
         });
     });
 
@@ -329,12 +337,21 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
 
             fireEvent.press(screen.getByTestId('biometric-login-button'));
 
+            // Wait for error alert
             await waitFor(() => {
                 expect(Alert.alert).toHaveBeenCalledWith(
                     'Error',
                     'Biometric authentication failed'
                 );
             });
+
+            // Wait for all state updates to settle
+            await waitFor(() => {
+                expect(screen.getByText('Sign in')).toBeTruthy();
+            });
+
+            // Flush remaining microtasks to prevent act() warnings
+            await act(async () => {});
 
             expect(mockPost).not.toHaveBeenCalledWith('/auth/refresh', expect.anything());
             expect(mockReplace).not.toHaveBeenCalled();
@@ -352,12 +369,21 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
 
             fireEvent.press(screen.getByTestId('biometric-login-button'));
 
+            // Wait for error alert
             await waitFor(() => {
                 expect(Alert.alert).toHaveBeenCalledWith(
                     'Error',
                     'No saved biometric credentials found'
                 );
             });
+
+            // Wait for all state updates to settle
+            await waitFor(() => {
+                expect(screen.getByText('Sign in')).toBeTruthy();
+            });
+
+            // Flush remaining microtasks to prevent act() warnings
+            await act(async () => {});
 
             expect(auth.authenticateWithBiometrics).not.toHaveBeenCalled();
             expect(mockReplace).not.toHaveBeenCalled();
@@ -378,12 +404,21 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
 
             fireEvent.press(screen.getByTestId('biometric-login-button'));
 
+            // Wait for error alert
             await waitFor(() => {
                 expect(Alert.alert).toHaveBeenCalledWith(
                     'Error',
                     'Session expired. Please sign in with your password.'
                 );
             });
+
+            // Wait for all state updates to settle
+            await waitFor(() => {
+                expect(screen.getByText('Sign in')).toBeTruthy();
+            });
+
+            // Flush remaining microtasks to prevent act() warnings
+            await act(async () => {});
 
             expect(mockReplace).not.toHaveBeenCalled();
         });
@@ -403,12 +438,21 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
 
             fireEvent.press(screen.getByTestId('biometric-login-button'));
 
+            // Wait for error alert
             await waitFor(() => {
                 expect(Alert.alert).toHaveBeenCalledWith(
                     'Error',
                     'Session expired. Please sign in with your password.'
                 );
             });
+
+            // Wait for all state updates to settle
+            await waitFor(() => {
+                expect(screen.getByText('Sign in')).toBeTruthy();
+            });
+
+            // Flush remaining microtasks to prevent act() warnings
+            await act(async () => {});
 
             expect(mockReplace).not.toHaveBeenCalled();
         });
@@ -427,12 +471,21 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
 
             fireEvent.press(screen.getByTestId('biometric-login-button'));
 
+            // Wait for error alert
             await waitFor(() => {
                 expect(Alert.alert).toHaveBeenCalledWith(
                     'Error',
                     'Session expired. Please sign in with your password.'
                 );
             });
+
+            // Wait for all state updates to settle
+            await waitFor(() => {
+                expect(screen.getByText('Sign in')).toBeTruthy();
+            });
+
+            // Flush remaining microtasks to prevent act() warnings
+            await act(async () => {});
 
             expect(mockReplace).not.toHaveBeenCalled();
         });
@@ -457,6 +510,14 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
             await waitFor(() => {
                 expect(Alert.alert).toHaveBeenCalled();
             });
+
+            // Wait for all state updates to settle
+            await waitFor(() => {
+                expect(screen.getByText('Sign in')).toBeTruthy();
+            });
+
+            // Flush remaining microtasks to prevent act() warnings
+            await act(async () => {});
 
             // Now do password login
             mockPost.mockResolvedValue({
@@ -505,6 +566,14 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
             await waitFor(() => {
                 expect(Alert.alert).toHaveBeenCalled();
             });
+
+            // Wait for all state updates to settle
+            await waitFor(() => {
+                expect(screen.getByText('Sign in')).toBeTruthy();
+            });
+
+            // Flush remaining microtasks to prevent act() warnings
+            await act(async () => {});
 
             // Verify form elements are still functional
             const emailInput = screen.getByPlaceholderText('Email');
@@ -556,6 +625,14 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
             expect(auth.getBiometricEmail).toHaveBeenCalledTimes(1);
 
             resolveAuth!(false);
+
+            // Wait for all state updates to settle
+            await waitFor(() => {
+                expect(Alert.alert).toHaveBeenCalled();
+            });
+
+            // Flush remaining microtasks to prevent act() warnings
+            await act(async () => {});
         });
     });
 
@@ -636,12 +713,21 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
             // First attempt fails
             fireEvent.press(screen.getByTestId('biometric-login-button'));
 
+            // Wait for error alert
             await waitFor(() => {
                 expect(Alert.alert).toHaveBeenCalledWith(
                     'Error',
                     'Biometric authentication failed'
                 );
             });
+
+            // Wait for all state updates to settle
+            await waitFor(() => {
+                expect(screen.getByText('Sign in')).toBeTruthy();
+            });
+
+            // Flush remaining microtasks to prevent act() warnings
+            await act(async () => {});
 
             // Second attempt: auth succeeds with refreshAccessToken returning a token
             (auth.authenticateWithBiometrics as jest.Mock).mockResolvedValueOnce(true);

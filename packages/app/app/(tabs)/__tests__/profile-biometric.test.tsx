@@ -104,6 +104,9 @@ jest.mock('@/providers/AuthProvider', () => ({
     useAuth: () => mockUseAuth(),
 }));
 
+// Increase timeout for cold-start on CI where first render takes longer
+jest.setTimeout(15000);
+
 describe('ProfileScreen - Biometric Settings', () => {
     const originalPlatform = Platform.OS;
 
@@ -160,10 +163,11 @@ describe('ProfileScreen - Biometric Settings', () => {
         it('should show biometric toggle when hardware is available', async () => {
             mockIsBiometricAvailable.mockResolvedValue(true);
 
-            const {findByTestId} = render(<ProfileScreen/>);
+            const {getByTestId} = render(<ProfileScreen/>);
 
-            const toggle = await findByTestId('biometric-toggle');
-            expect(toggle).toBeTruthy();
+            await waitFor(() => {
+                expect(getByTestId('biometric-toggle')).toBeTruthy();
+            }, {timeout: 10000});
         });
 
         it('should NOT show biometric toggle when hardware is unavailable', async () => {
