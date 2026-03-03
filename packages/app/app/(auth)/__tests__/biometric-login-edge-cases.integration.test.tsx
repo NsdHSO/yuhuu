@@ -4,8 +4,7 @@ import {Alert} from 'react-native';
 import LoginScreen from '../login';
 import {AuthProvider} from '@/providers/AuthProvider';
 import {useRouter} from 'expo-router';
-import * as tokenManager from '@yuhuu/auth';
-import * as biometricAuth from '@yuhuu/auth';
+import * as auth from '@yuhuu/auth';
 import * as secureStore from '@/lib/secureStore';
 import {authApi} from '@yuhuu/auth';
 import {initI18n} from '@yuhuu/i18n';
@@ -31,10 +30,9 @@ jest.mock('expo-router', () => ({
 }));
 
 jest.mock('@/lib/api');
-jest.mock('@/lib/tokenManager');
 jest.mock('@/lib/nav');
 
-jest.mock('@/lib/biometricAuth', () => ({
+jest.mock('@yuhuu/auth', () => ({
     isBiometricAvailable: jest.fn(),
     authenticateWithBiometrics: jest.fn(),
     getBiometricPreference: jest.fn(),
@@ -92,10 +90,10 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
         });
         (authApi.post as jest.Mock) = mockPost;
         (authApi.get as jest.Mock) = mockGet;
-        (tokenManager.getValidAccessToken as jest.Mock) = mockGetValidAccessToken;
-        (tokenManager.setTokensFromLogin as jest.Mock) = mockSetTokensFromLogin;
-        (tokenManager.clearTokens as jest.Mock) = mockClearTokens;
-        (tokenManager.refreshAccessToken as jest.Mock) = mockRefreshAccessToken;
+        (auth.getValidAccessToken as jest.Mock) = mockGetValidAccessToken;
+        (auth.setTokensFromLogin as jest.Mock) = mockSetTokensFromLogin;
+        (auth.clearTokens as jest.Mock) = mockClearTokens;
+        (auth.refreshAccessToken as jest.Mock) = mockRefreshAccessToken;
 
         // Default: no existing token
         mockGetValidAccessToken.mockResolvedValue(null);
@@ -114,11 +112,11 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
         });
 
         // Default: biometrics not available
-        (biometricAuth.isBiometricAvailable as jest.Mock).mockResolvedValue(false);
-        (biometricAuth.getBiometricPreference as jest.Mock).mockResolvedValue(false);
-        (biometricAuth.getBiometricEmail as jest.Mock).mockResolvedValue(null);
-        (biometricAuth.authenticateWithBiometrics as jest.Mock).mockResolvedValue(false);
-        (biometricAuth.clearBiometricData as jest.Mock).mockResolvedValue(undefined);
+        (auth.isBiometricAvailable as jest.Mock).mockResolvedValue(false);
+        (auth.getBiometricPreference as jest.Mock).mockResolvedValue(false);
+        (auth.getBiometricEmail as jest.Mock).mockResolvedValue(null);
+        (auth.authenticateWithBiometrics as jest.Mock).mockResolvedValue(false);
+        (auth.clearBiometricData as jest.Mock).mockResolvedValue(undefined);
 
         // Default: no refresh token
         (secureStore.loadRefreshToken as jest.Mock).mockResolvedValue(null);
@@ -133,8 +131,8 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
     };
 
     function enableBiometricMocks() {
-        (biometricAuth.isBiometricAvailable as jest.Mock).mockResolvedValue(true);
-        (biometricAuth.getBiometricPreference as jest.Mock).mockResolvedValue(true);
+        (auth.isBiometricAvailable as jest.Mock).mockResolvedValue(true);
+        (auth.getBiometricPreference as jest.Mock).mockResolvedValue(true);
     }
 
     describe('Biometric Button Rendering via testID', () => {
@@ -159,8 +157,8 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
         });
 
         it('should NOT render biometric-login-button when biometrics are available but preference is disabled', async () => {
-            (biometricAuth.isBiometricAvailable as jest.Mock).mockResolvedValue(true);
-            (biometricAuth.getBiometricPreference as jest.Mock).mockResolvedValue(false);
+            (auth.isBiometricAvailable as jest.Mock).mockResolvedValue(true);
+            (auth.getBiometricPreference as jest.Mock).mockResolvedValue(false);
 
             renderLoginWithAuth();
 
@@ -175,8 +173,8 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
         });
 
         it('should NOT render biometric-login-button when hardware is unavailable', async () => {
-            (biometricAuth.isBiometricAvailable as jest.Mock).mockResolvedValue(false);
-            (biometricAuth.getBiometricPreference as jest.Mock).mockResolvedValue(true);
+            (auth.isBiometricAvailable as jest.Mock).mockResolvedValue(false);
+            (auth.getBiometricPreference as jest.Mock).mockResolvedValue(true);
 
             renderLoginWithAuth();
 
@@ -234,10 +232,10 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
 
         it('should disable sign in button during biometric submission', async () => {
             enableBiometricMocks();
-            (biometricAuth.getBiometricEmail as jest.Mock).mockResolvedValue('user@test.com');
+            (auth.getBiometricEmail as jest.Mock).mockResolvedValue('user@test.com');
 
             let resolveAuth: (value: boolean) => void;
-            (biometricAuth.authenticateWithBiometrics as jest.Mock).mockReturnValue(
+            (auth.authenticateWithBiometrics as jest.Mock).mockReturnValue(
                 new Promise<boolean>((resolve) => {
                     resolveAuth = resolve;
                 })
@@ -269,8 +267,8 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
     describe('Successful Biometric Login via testID', () => {
         it('should complete biometric login when pressing testID button', async () => {
             enableBiometricMocks();
-            (biometricAuth.getBiometricEmail as jest.Mock).mockResolvedValue('bio@example.com');
-            (biometricAuth.authenticateWithBiometrics as jest.Mock).mockResolvedValue(true);
+            (auth.getBiometricEmail as jest.Mock).mockResolvedValue('bio@example.com');
+            (auth.authenticateWithBiometrics as jest.Mock).mockResolvedValue(true);
             mockRefreshAccessToken.mockResolvedValue('bio-access-token');
             mockGet.mockResolvedValue({
                 data: {
@@ -292,7 +290,7 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
 
             // Verify the complete chain
             await waitFor(() => {
-                expect(biometricAuth.authenticateWithBiometrics).toHaveBeenCalledWith(
+                expect(auth.authenticateWithBiometrics).toHaveBeenCalledWith(
                     'Authenticate to sign in'
                 );
             });
@@ -308,8 +306,8 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
     describe('Biometric Failure via testID', () => {
         it('should show error when biometric auth returns false', async () => {
             enableBiometricMocks();
-            (biometricAuth.getBiometricEmail as jest.Mock).mockResolvedValue('user@test.com');
-            (biometricAuth.authenticateWithBiometrics as jest.Mock).mockResolvedValue(false);
+            (auth.getBiometricEmail as jest.Mock).mockResolvedValue('user@test.com');
+            (auth.authenticateWithBiometrics as jest.Mock).mockResolvedValue(false);
             (secureStore.loadRefreshToken as jest.Mock).mockResolvedValue('valid-rt');
 
             renderLoginWithAuth();
@@ -333,7 +331,7 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
 
         it('should show error when no saved email for biometric login', async () => {
             enableBiometricMocks();
-            (biometricAuth.getBiometricEmail as jest.Mock).mockResolvedValue(null);
+            (auth.getBiometricEmail as jest.Mock).mockResolvedValue(null);
 
             renderLoginWithAuth();
 
@@ -350,14 +348,14 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
                 );
             });
 
-            expect(biometricAuth.authenticateWithBiometrics).not.toHaveBeenCalled();
+            expect(auth.authenticateWithBiometrics).not.toHaveBeenCalled();
             expect(mockReplace).not.toHaveBeenCalled();
         });
 
         it('should show error when refresh token is expired after biometric success', async () => {
             enableBiometricMocks();
-            (biometricAuth.getBiometricEmail as jest.Mock).mockResolvedValue('user@test.com');
-            (biometricAuth.authenticateWithBiometrics as jest.Mock).mockResolvedValue(true);
+            (auth.getBiometricEmail as jest.Mock).mockResolvedValue('user@test.com');
+            (auth.authenticateWithBiometrics as jest.Mock).mockResolvedValue(true);
             // refreshAccessToken returns null when session is expired
             mockRefreshAccessToken.mockResolvedValue(null);
 
@@ -381,8 +379,8 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
 
         it('should show session expired error when refresh fails', async () => {
             enableBiometricMocks();
-            (biometricAuth.getBiometricEmail as jest.Mock).mockResolvedValue('user@test.com');
-            (biometricAuth.authenticateWithBiometrics as jest.Mock).mockResolvedValue(true);
+            (auth.getBiometricEmail as jest.Mock).mockResolvedValue('user@test.com');
+            (auth.authenticateWithBiometrics as jest.Mock).mockResolvedValue(true);
             // refreshAccessToken returns null on any failure
             mockRefreshAccessToken.mockResolvedValue(null);
 
@@ -406,8 +404,8 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
 
         it('should show session expired error when refreshAccessToken returns null', async () => {
             enableBiometricMocks();
-            (biometricAuth.getBiometricEmail as jest.Mock).mockResolvedValue('user@test.com');
-            (biometricAuth.authenticateWithBiometrics as jest.Mock).mockResolvedValue(true);
+            (auth.getBiometricEmail as jest.Mock).mockResolvedValue('user@test.com');
+            (auth.authenticateWithBiometrics as jest.Mock).mockResolvedValue(true);
             mockRefreshAccessToken.mockResolvedValue(null);
 
             renderLoginWithAuth();
@@ -432,8 +430,8 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
     describe('Fallback to Password After Biometric Failure', () => {
         it('should allow password login after biometric button failure', async () => {
             enableBiometricMocks();
-            (biometricAuth.getBiometricEmail as jest.Mock).mockResolvedValue('user@test.com');
-            (biometricAuth.authenticateWithBiometrics as jest.Mock).mockResolvedValue(false);
+            (auth.getBiometricEmail as jest.Mock).mockResolvedValue('user@test.com');
+            (auth.authenticateWithBiometrics as jest.Mock).mockResolvedValue(false);
             (secureStore.loadRefreshToken as jest.Mock).mockResolvedValue('valid-rt');
 
             renderLoginWithAuth();
@@ -482,8 +480,8 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
 
         it('should keep form inputs usable after biometric error', async () => {
             enableBiometricMocks();
-            (biometricAuth.getBiometricEmail as jest.Mock).mockResolvedValue('user@test.com');
-            (biometricAuth.authenticateWithBiometrics as jest.Mock).mockResolvedValue(false);
+            (auth.getBiometricEmail as jest.Mock).mockResolvedValue('user@test.com');
+            (auth.authenticateWithBiometrics as jest.Mock).mockResolvedValue(false);
 
             renderLoginWithAuth();
 
@@ -515,10 +513,10 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
     describe('Concurrent Submission Prevention', () => {
         it('should prevent double-tap on biometric button', async () => {
             enableBiometricMocks();
-            (biometricAuth.getBiometricEmail as jest.Mock).mockResolvedValue('user@test.com');
+            (auth.getBiometricEmail as jest.Mock).mockResolvedValue('user@test.com');
 
             let resolveAuth: (value: boolean) => void;
-            (biometricAuth.authenticateWithBiometrics as jest.Mock).mockReturnValue(
+            (auth.authenticateWithBiometrics as jest.Mock).mockReturnValue(
                 new Promise<boolean>((resolve) => {
                     resolveAuth = resolve;
                 })
@@ -544,7 +542,7 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
 
             // Only one signInWithBiometrics call should have been made
             // (authenticateWithBiometrics is called inside signInWithBiometrics)
-            expect(biometricAuth.getBiometricEmail).toHaveBeenCalledTimes(1);
+            expect(auth.getBiometricEmail).toHaveBeenCalledTimes(1);
 
             resolveAuth!(false);
         });
@@ -555,12 +553,12 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
             let resolveAvailability: (value: boolean) => void;
             let resolvePreference: (value: boolean) => void;
 
-            (biometricAuth.isBiometricAvailable as jest.Mock).mockReturnValue(
+            (auth.isBiometricAvailable as jest.Mock).mockReturnValue(
                 new Promise<boolean>((resolve) => {
                     resolveAvailability = resolve;
                 })
             );
-            (biometricAuth.getBiometricPreference as jest.Mock).mockReturnValue(
+            (auth.getBiometricPreference as jest.Mock).mockReturnValue(
                 new Promise<boolean>((resolve) => {
                     resolvePreference = resolve;
                 })
@@ -589,8 +587,8 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
 
         it('should not show biometric button when availability check resolves false', async () => {
             // isBiometricAvailable returns false (e.g. no hardware)
-            (biometricAuth.isBiometricAvailable as jest.Mock).mockResolvedValue(false);
-            (biometricAuth.getBiometricPreference as jest.Mock).mockResolvedValue(true);
+            (auth.isBiometricAvailable as jest.Mock).mockResolvedValue(false);
+            (auth.getBiometricPreference as jest.Mock).mockResolvedValue(true);
 
             renderLoginWithAuth();
 
@@ -612,10 +610,10 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
     describe('AuthProvider State Recovery', () => {
         it('should recover from biometric failure and allow retry', async () => {
             enableBiometricMocks();
-            (biometricAuth.getBiometricEmail as jest.Mock).mockResolvedValue('user@test.com');
+            (auth.getBiometricEmail as jest.Mock).mockResolvedValue('user@test.com');
 
             // First attempt: auth fails
-            (biometricAuth.authenticateWithBiometrics as jest.Mock)
+            (auth.authenticateWithBiometrics as jest.Mock)
                 .mockResolvedValueOnce(false);
 
             renderLoginWithAuth();
@@ -635,7 +633,7 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
             });
 
             // Second attempt: auth succeeds with refreshAccessToken returning a token
-            (biometricAuth.authenticateWithBiometrics as jest.Mock).mockResolvedValueOnce(true);
+            (auth.authenticateWithBiometrics as jest.Mock).mockResolvedValueOnce(true);
             mockRefreshAccessToken.mockResolvedValue('new-token');
             mockGet.mockResolvedValue({
                 data: {
@@ -661,10 +659,10 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
     });
 
     describe('Biometric Login Token Refresh', () => {
-        it('should use refreshAccessToken from tokenManager for biometric login', async () => {
+        it('should use refreshAccessToken from auth for biometric login', async () => {
             enableBiometricMocks();
-            (biometricAuth.getBiometricEmail as jest.Mock).mockResolvedValue('user@test.com');
-            (biometricAuth.authenticateWithBiometrics as jest.Mock).mockResolvedValue(true);
+            (auth.getBiometricEmail as jest.Mock).mockResolvedValue('user@test.com');
+            (auth.authenticateWithBiometrics as jest.Mock).mockResolvedValue(true);
             mockRefreshAccessToken.mockResolvedValue('refreshed-token');
             mockGet.mockResolvedValue({
                 data: {
@@ -692,8 +690,8 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
 
         it('should fetch user data after successful token refresh', async () => {
             enableBiometricMocks();
-            (biometricAuth.getBiometricEmail as jest.Mock).mockResolvedValue('user@test.com');
-            (biometricAuth.authenticateWithBiometrics as jest.Mock).mockResolvedValue(true);
+            (auth.getBiometricEmail as jest.Mock).mockResolvedValue('user@test.com');
+            (auth.authenticateWithBiometrics as jest.Mock).mockResolvedValue(true);
             mockRefreshAccessToken.mockResolvedValue('valid-token');
             mockGet.mockResolvedValue({
                 data: {
@@ -722,8 +720,8 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
 
         it('should still succeed even if /auth/me fails after token refresh', async () => {
             enableBiometricMocks();
-            (biometricAuth.getBiometricEmail as jest.Mock).mockResolvedValue('user@test.com');
-            (biometricAuth.authenticateWithBiometrics as jest.Mock).mockResolvedValue(true);
+            (auth.getBiometricEmail as jest.Mock).mockResolvedValue('user@test.com');
+            (auth.authenticateWithBiometrics as jest.Mock).mockResolvedValue(true);
             mockRefreshAccessToken.mockResolvedValue('valid-token');
             mockGet.mockRejectedValue(new Error('Network error'));
 
@@ -781,7 +779,7 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
             expect(mockReplace).toHaveBeenCalledWith('/(tabs)');
 
             // Biometric auth should NOT have been called
-            expect(biometricAuth.authenticateWithBiometrics).not.toHaveBeenCalled();
+            expect(auth.authenticateWithBiometrics).not.toHaveBeenCalled();
         });
     });
 });
