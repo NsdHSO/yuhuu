@@ -7,18 +7,11 @@ module.exports = defineConfig([
         ignores: ["dist/*", "node_modules/*"],
     },
     {
-        settings: {
-            "import/resolver": {
-                typescript: {
-                    alwaysTryTypes: true,
-                    project: ["tsconfig.json", "../../tsconfig.json", "../*/tsconfig.json"],
-                    noWarnOnMultipleProjects: true,
-                },
-            },
-        },
-    },
-    {
         rules: {
+            // Disable import/no-unresolved for workspace packages - TypeScript handles this
+            "import/no-unresolved": ["error", {
+                ignore: ["^@yuhuu/"]
+            }],
             "@typescript-eslint/no-unused-vars": [
                 "warn",
                 {
