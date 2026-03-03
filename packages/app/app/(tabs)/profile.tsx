@@ -120,7 +120,7 @@ export default function ProfileScreen() {
                 }
                 setBiometricEnabled(true);
                 Alert.alert(t('common.success'), t('profile.biometricEnableSuccess'));
-            } catch (error) {
+            } catch (_error) {
                 Alert.alert(t('common.error'), t('profile.biometricEnableError'));
                 setBiometricEnabled(false);
             }
@@ -141,7 +141,7 @@ export default function ProfileScreen() {
                                 await saveBiometricPreference(false);
                                 await clearBiometricData();
                                 setBiometricEnabled(false);
-                            } catch (_) {
+                            } catch (_error2) {
                                 Alert.alert(t('common.error'), t('profile.biometricDisableError'));
                             }
                         },

@@ -19,7 +19,7 @@ jest.mock('@react-native-picker/picker', () => {
         return <Text testID={`picker-item-${value}`}>{label}</Text>;
     };
 
-    const MockPicker = ({children, onValueChange, selectedValue}: any) => {
+    const MockPicker = ({children, onValueChange: _onValueChange, selectedValue}: any) => {
         const {View, Text} = jest.requireActual('react-native');
         return (
             <View testID="picker">

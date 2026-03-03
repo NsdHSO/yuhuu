@@ -63,7 +63,6 @@ describe('Logout Cache Clear Integration Test', () => {
         });
 
         // Mock getValidAccessToken to return null (not logged in)
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const {getValidAccessToken} = require('@/lib/tokenManager');
         getValidAccessToken.mockResolvedValue(null);
     });
@@ -291,7 +290,6 @@ describe('Logout Cache Clear Integration Test', () => {
 
     it('should integrate with AuthProvider signOut function', async () => {
         // Given: Render AuthProvider with mocked dependencies
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const {getValidAccessToken} = require('@/lib/tokenManager');
 
         // Start with no token (logged out state)
@@ -321,13 +319,11 @@ describe('Logout Cache Clear Integration Test', () => {
             } = require('@/providers/AuthProvider').useAuth();
             signOutFn = signOut;
 
-            // eslint-disable-next-line @typescript-eslint/no-require-imports
             const {Text} = require('react-native');
             return <Text>Status: {status}</Text>;
         }
 
         // Render with real AuthProvider
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const {queryClient: realQueryClient} = require('@/providers/QueryProvider');
 
         // Set some cached data
