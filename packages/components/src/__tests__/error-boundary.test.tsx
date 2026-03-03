@@ -2,7 +2,7 @@ import React from 'react';
 import {fireEvent, render, screen} from '@testing-library/react-native';
 import {ErrorBoundary} from '../error-boundary';
 import {Text} from 'react-native';
-import {initI18n} from '@/lib/i18n';
+import {initI18n} from '@yuhuu/i18n';
 
 jest.mock('expo-localization', () => ({
     getLocales: jest.fn(() => [{languageCode: 'en'}]),

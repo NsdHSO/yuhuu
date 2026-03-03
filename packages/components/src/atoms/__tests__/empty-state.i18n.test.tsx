@@ -1,6 +1,6 @@
 import React from 'react';
 import {render, screen} from '@testing-library/react-native';
-import i18n from '@/lib/i18n';
+import i18n from '@yuhuu/i18n';
 import {EmptyState} from '../empty-state';
 
 jest.mock('expo-localization');

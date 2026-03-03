@@ -1,5 +1,5 @@
 import React from 'react';
-import {hasAnyRole, hasRole} from '@/lib/authz';
+import {hasAnyRole, hasRole} from '@yuhuu/auth';
 
 export type IfRoleProps = {
     name?: string;

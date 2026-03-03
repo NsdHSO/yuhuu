@@ -1,8 +1,8 @@
 import React from 'react';
 import {render, screen} from '@testing-library/react-native';
 import {DinnerSelector} from '@/components/atoms/dinner-selector';
-import type {Dinner} from '@/features/dinners/types';
-import i18n from '@/lib/i18n';
+import type {Dinner} from '@yuhuu/types';
+import i18n from '@yuhuu/i18n';
 
 jest.mock('expo-localization');
 jest.mock('expo-secure-store');

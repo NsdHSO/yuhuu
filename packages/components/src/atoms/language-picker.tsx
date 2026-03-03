@@ -1,14 +1,14 @@
 import {Pressable, StyleSheet, View} from 'react-native';
 import {ThemedText} from '@/components/themed-text';
 import {useLanguage} from '@/hooks/useLanguage';
-import {SUPPORTED_LANGUAGES} from '@/lib/i18n';
+import {SUPPORTED_LANGUAGES, type SupportedLanguage} from '@yuhuu/i18n';
 
 export function LanguagePicker() {
     const {language, changeLanguage} = useLanguage();
 
     return (
         <View testID="language-picker" style={styles.container}>
-            {SUPPORTED_LANGUAGES.map((lang) => {
+            {SUPPORTED_LANGUAGES.map((lang: SupportedLanguage) => {
                 const isActive = language === lang.code;
                 return (
                     <Pressable

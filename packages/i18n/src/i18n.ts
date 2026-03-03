@@ -9,7 +9,7 @@ import ro from '../locales/ro.json';
 import {SUPPORTED_LOCALE_CODES, type SupportedLanguage, type SupportedLocale} from './types';
 
 // Create a dedicated instance so tests can get a fresh one via jest.resetModules()
-const i18n = i18next.createInstance();
+const i18n: ReturnType<typeof i18next.createInstance> = i18next.createInstance();
 
 const LANGUAGE_KEY = 'user-language';
 

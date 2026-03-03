@@ -1,5 +1,5 @@
 import React from 'react';
-import {hasAnyPermission, hasPermission} from '@/lib/authz';
+import {hasAnyPermission, hasPermission} from '@yuhuu/auth';
 
 export type IfPermissionProps = {
     name?: string;

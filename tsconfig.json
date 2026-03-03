@@ -38,15 +38,13 @@
     },
     {
       "path": "packages/components"
+    },
+    {
+      "path": "packages/types"
     }
   ],
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts",
-    "nativewind-env.d.ts"
-  ],
+  "include": [],
+  "files": [],
   "exclude": [
     "node_modules",
     "packages/*/dist",

@@ -4,24 +4,31 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "composite": true,
+    "declaration": true,
+    "declarationMap": true,
     "paths": {
       "@/components/*": ["./src/*"],
       "@/hooks/*": ["./src/hooks/*"],
-      "@/constants/*": ["./src/constants/*"],
-      "@/lib/i18n": ["../i18n/src"],
-      "@/lib/authz": ["../auth/src/authz/authz"]
+      "@/constants/*": ["./src/constants/*"]
     }
   },
   "references": [
     {
+      "path": "../auth"
+    },
+    {
       "path": "../i18n"
     },
     {
-      "path": "../auth"
+      "path": "../storage"
+    },
+    {
+      "path": "../types"
     }
   ],
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "nativewind-env.d.ts"
   ],
   "exclude": [
     "node_modules",

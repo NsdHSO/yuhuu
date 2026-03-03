@@ -1,7 +1,7 @@
 import React from 'react';
 import {fireEvent, render} from '@testing-library/react-native';
 import {DinnerSelector} from '@/components/atoms/dinner-selector';
-import type {Dinner} from '@/features/dinners/types';
+import type {Dinner} from '@yuhuu/types';
 import * as useColorSchemeModule from '@/hooks/use-color-scheme';
 
 // Mock useColorScheme hook

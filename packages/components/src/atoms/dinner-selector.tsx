@@ -4,7 +4,7 @@ import {Picker} from '@react-native-picker/picker';
 import {useTranslation} from 'react-i18next';
 import {useColorScheme} from '@/hooks/use-color-scheme';
 import {Colors} from '@/constants/theme';
-import type {Dinner} from '@/features/dinners/types';
+import type {Dinner} from '@yuhuu/types';
 
 /**
  * Props for DinnerSelector component

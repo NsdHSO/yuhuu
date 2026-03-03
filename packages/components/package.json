@@ -15,9 +15,9 @@
     }
   },
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
-    "clean": "rm -rf dist",
+    "build": "tsc --build",
+    "dev": "tsc --build --watch",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "typecheck": "tsc --noEmit",
     "test": "jest --passWithNoTests"
   },
@@ -26,13 +26,16 @@
     "expo": "*",
     "expo-haptics": "*",
     "expo-symbols": "*",
+    "nativewind": "*",
     "react": "*",
     "react-native": "*",
     "react-native-reanimated": "*"
   },
   "dependencies": {
+    "@yuhuu/auth": "workspace:*",
     "@yuhuu/i18n": "workspace:*",
-    "@yuhuu/auth": "workspace:*"
+    "@yuhuu/storage": "workspace:*",
+    "@yuhuu/types": "workspace:*"
   },
   "devDependencies": {
     "@testing-library/jest-native": "^5.4.3",

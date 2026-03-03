@@ -7,6 +7,11 @@ export * from './hello-wave';
 export * from './haptic-tab';
 export * from './error-boundary';
 
+// Hooks
+export * from './hooks/useLanguage';
+export * from './hooks/use-color-scheme';
+export * from './hooks/use-theme-color';
+
 // Atoms
 export * from './atoms/badge';
 export * from './atoms/date-picker';
@@ -35,5 +40,4 @@ export * from './authz';
 
 // UI
 export * from './ui/collapsible';
-export * from './ui/icon-symbol';
-export * from './ui/icon-symbol.ios';
+export {IconSymbol} from './ui/icon-symbol';

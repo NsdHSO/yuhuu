@@ -1,7 +1,7 @@
 import React, {Component, ErrorInfo, ReactNode} from 'react';
 import {View} from 'react-native';
 import {ThemedText} from './themed-text';
-import i18n from '@/lib/i18n';
+import i18n from '@yuhuu/i18n';
 
 interface Props {
     children: ReactNode;

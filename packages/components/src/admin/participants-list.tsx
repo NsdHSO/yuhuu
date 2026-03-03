@@ -2,7 +2,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {useColorScheme} from '@/hooks/use-color-scheme';
 import {Colors} from '@/constants/theme';
-import type {Participant} from '@/features/dinners/types';
+import type {Participant} from '@yuhuu/types';
 
 /**
  * ParticipantsList component - Displays list of participants for a dinner

@@ -14,7 +14,9 @@ module.exports = {
         '^@/components/(.*)$': '<rootDir>/src/$1',
         '^@/hooks/(.*)$': '<rootDir>/src/hooks/$1',
         '^@/constants/(.*)$': '<rootDir>/src/constants/$1',
-        '^@/lib/i18n$': '<rootDir>/../i18n/src/index.ts',
-        '^@/lib/authz$': '<rootDir>/../auth/src/authz/authz.ts'
+        '^@yuhuu/i18n$': '<rootDir>/../i18n/src/index.ts',
+        '^@yuhuu/auth$': '<rootDir>/../auth/src/index.ts',
+        '^@yuhuu/types$': '<rootDir>/../types/src/index.ts',
+        '^@yuhuu/storage$': '<rootDir>/../storage/src/index.ts'
     }
 };
