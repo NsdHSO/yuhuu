@@ -257,10 +257,19 @@ describe('Android Gradle Cache - YAML Structure', () => {
             expect(buildStep!.run).toContain('assembleRelease');
         });
 
-        it('should pass --configuration-cache flag', () => {
+        it('should NOT pass --configuration-cache flag (Expo SDK 54 incompatible)', () => {
             const buildStep = findStepByRun(buildSteps, 'gradlew');
             expect(buildStep).toBeDefined();
-            expect(buildStep!.run).toContain('--configuration-cache');
+            expect(buildStep!.run).not.toContain('--configuration-cache');
+        });
+
+        it('should disable configuration cache in gradle.properties (Expo SDK 54 compatibility)', () => {
+            const disableConfigCacheStep = buildSteps.find(
+                (step) => step.name?.includes('Disable Gradle configuration cache')
+            );
+            expect(disableConfigCacheStep).toBeDefined();
+            expect(disableConfigCacheStep!.run).toContain('org.gradle.configuration-cache=false');
+            expect(disableConfigCacheStep!.run).toContain('packages/app/android/gradle.properties');
         });
 
         it('should set working-directory to android/', () => {
