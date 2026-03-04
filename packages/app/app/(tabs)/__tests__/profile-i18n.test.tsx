@@ -1,6 +1,7 @@
 import React from 'react';
 import {act, fireEvent, render, waitFor} from '@testing-library/react-native';
 import {Alert, Platform} from 'react-native';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import ProfileScreen from '../profile';
 
 /**
@@ -59,13 +60,49 @@ jest.mock('@/features/bootstrap/api', () => ({
     }
 }));
 
+// Mock accordion component hooks
+jest.mock('@/features/family/api', () => ({
+    useMyFamilyQuery: () => ({data: [], isLoading: false}),
+    useDeleteMyFamilyRelationshipMutation: () => ({mutate: jest.fn(), isPending: false}),
+}));
+
+jest.mock('@/features/milestones/api', () => ({
+    useMyMilestonesQuery: () => ({data: [], isLoading: false}),
+    useDeleteMyMilestoneMutation: () => ({mutate: jest.fn(), isPending: false}),
+}));
+
+jest.mock('@/features/membership/api', () => ({
+    useMyMembershipHistoryQuery: () => ({data: [], isLoading: false}),
+    useDeleteMyMembershipHistoryMutation: () => ({mutate: jest.fn(), isPending: false}),
+}));
+
+jest.mock('@/features/skills/api', () => ({
+    useMySkillsQuery: () => ({data: [], isLoading: false}),
+    useDeleteMySkillMutation: () => ({mutate: jest.fn(), isPending: false}),
+}));
+
 const mockUseAuth = jest.fn();
 jest.mock('@/providers/AuthProvider', () => ({useAuth: () => mockUseAuth()}));
 
 describe('ProfileScreen - i18n Migration', () => {
     const originalPlatform = Platform.OS;
+    let queryClient: QueryClient;
+
+    const renderWithQueryClient = (component: React.ReactElement) => {
+        return render(
+            <QueryClientProvider client={queryClient}>
+                {component}
+            </QueryClientProvider>
+        );
+    };
 
     beforeEach(() => {
+        queryClient = new QueryClient({
+            defaultOptions: {
+                queries: {retry: false},
+                mutations: {retry: false},
+            },
+        });
         jest.clearAllMocks();
         mockUseMyProfileQuery.mockReturnValue({
             data: {
@@ -98,104 +135,104 @@ describe('ProfileScreen - i18n Migration', () => {
     });
 
     it('should call useTranslation', () => {
-        render(<ProfileScreen/>);
+        renderWithQueryClient(<ProfileScreen/>);
         expect(mockUseTranslation).toHaveBeenCalled();
     });
 
     it('should use t("profile.title") for the screen title', () => {
-        render(<ProfileScreen/>);
+        renderWithQueryClient(<ProfileScreen/>);
         expect(mockT).toHaveBeenCalledWith('profile.title');
     });
 
     it('should use t("profile.createProfile") when no profile', () => {
         mockUseMyProfileQuery.mockReturnValue({data: null, isLoading: false, error: null});
-        render(<ProfileScreen/>);
+        renderWithQueryClient(<ProfileScreen/>);
         expect(mockT).toHaveBeenCalledWith('profile.createProfile');
     });
 
     it('should use t("profile.noProfile") when no profile', () => {
         mockUseMyProfileQuery.mockReturnValue({data: null, isLoading: false, error: null});
-        render(<ProfileScreen/>);
+        renderWithQueryClient(<ProfileScreen/>);
         expect(mockT).toHaveBeenCalledWith('profile.noProfile');
     });
 
     it('should use t("profile.firstNamePlaceholder")', () => {
-        render(<ProfileScreen/>);
+        renderWithQueryClient(<ProfileScreen/>);
         expect(mockT).toHaveBeenCalledWith('profile.firstNamePlaceholder');
     });
 
     it('should use t("profile.lastNamePlaceholder")', () => {
-        render(<ProfileScreen/>);
+        renderWithQueryClient(<ProfileScreen/>);
         expect(mockT).toHaveBeenCalledWith('profile.lastNamePlaceholder');
     });
 
     it('should use t("profile.phonePlaceholder")', () => {
-        render(<ProfileScreen/>);
+        renderWithQueryClient(<ProfileScreen/>);
         expect(mockT).toHaveBeenCalledWith('profile.phonePlaceholder');
     });
 
     it('should use t("profile.security") for section title', async () => {
-        const {findByTestId} = render(<ProfileScreen/>);
+        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
         await findByTestId('biometric-section');
         expect(mockT).toHaveBeenCalledWith('profile.security');
     });
 
     it('should use t("profile.biometricLabel") on iOS', async () => {
         Object.defineProperty(Platform, 'OS', {value: 'ios', configurable: true});
-        const {findByTestId} = render(<ProfileScreen/>);
+        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
         await findByTestId('biometric-label');
         expect(mockT).toHaveBeenCalledWith('profile.biometricLabel');
     });
 
     it('should use t("profile.biometricLabelAndroid") on Android', async () => {
         Object.defineProperty(Platform, 'OS', {value: 'android', configurable: true});
-        const {findByTestId} = render(<ProfileScreen/>);
+        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
         await findByTestId('biometric-label');
         expect(mockT).toHaveBeenCalledWith('profile.biometricLabelAndroid');
     });
 
     it('should use t("profile.biometricDescription") on iOS', async () => {
         Object.defineProperty(Platform, 'OS', {value: 'ios', configurable: true});
-        const {findByTestId} = render(<ProfileScreen/>);
+        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
         await findByTestId('biometric-description');
         expect(mockT).toHaveBeenCalledWith('profile.biometricDescription');
     });
 
     it('should use t("profile.biometricDescriptionAndroid") on Android', async () => {
         Object.defineProperty(Platform, 'OS', {value: 'android', configurable: true});
-        const {findByTestId} = render(<ProfileScreen/>);
+        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
         await findByTestId('biometric-description');
         expect(mockT).toHaveBeenCalledWith('profile.biometricDescriptionAndroid');
     });
 
     it('should use t("profile.biometricAccessibilityLabel") on iOS', async () => {
         Object.defineProperty(Platform, 'OS', {value: 'ios', configurable: true});
-        const {findByTestId} = render(<ProfileScreen/>);
+        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
         await findByTestId('biometric-toggle');
         expect(mockT).toHaveBeenCalledWith('profile.biometricAccessibilityLabel');
     });
 
     it('should use t("profile.biometricAccessibilityLabelAndroid") on Android', async () => {
         Object.defineProperty(Platform, 'OS', {value: 'android', configurable: true});
-        const {findByTestId} = render(<ProfileScreen/>);
+        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
         await findByTestId('biometric-toggle');
         expect(mockT).toHaveBeenCalledWith('profile.biometricAccessibilityLabelAndroid');
     });
 
     it('should use t("profile.biometricAccessibilityHint")', async () => {
-        const {findByTestId} = render(<ProfileScreen/>);
+        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
         await findByTestId('biometric-toggle');
         expect(mockT).toHaveBeenCalledWith('profile.biometricAccessibilityHint');
     });
 
     it('should use t("profile.save") when not pending', () => {
-        render(<ProfileScreen/>);
+        renderWithQueryClient(<ProfileScreen/>);
         expect(mockT).toHaveBeenCalledWith('profile.save');
     });
 
     it('should use t("profile.saving") when pending', () => {
         mockUseSaveMyProfileMutation.mockReturnValue({mutate: mockMutate, isPending: true});
-        render(<ProfileScreen/>);
+        renderWithQueryClient(<ProfileScreen/>);
         expect(mockT).toHaveBeenCalledWith('profile.saving');
     });
 
@@ -204,7 +241,7 @@ describe('ProfileScreen - i18n Migration', () => {
             opts.onSuccess();
         });
         mockUseSaveMyProfileMutation.mockReturnValue({mutate: mockMutate, isPending: false});
-        const {getByText} = render(<ProfileScreen/>);
+        const {getByText} = renderWithQueryClient(<ProfileScreen/>);
         fireEvent.press(getByText('profile.save'));
         expect(mockT).toHaveBeenCalledWith('common.success');
         expect(mockT).toHaveBeenCalledWith('profile.saveSuccess');
@@ -215,14 +252,14 @@ describe('ProfileScreen - i18n Migration', () => {
             opts.onError({response: {data: {}}});
         });
         mockUseSaveMyProfileMutation.mockReturnValue({mutate: mockMutate, isPending: false});
-        const {getByText} = render(<ProfileScreen/>);
+        const {getByText} = renderWithQueryClient(<ProfileScreen/>);
         fireEvent.press(getByText('profile.save'));
         expect(mockT).toHaveBeenCalledWith('common.error');
         expect(mockT).toHaveBeenCalledWith('profile.saveError');
     });
 
     it('should use t("profile.biometricEnableTitle") for auth prompt', async () => {
-        const {findByTestId} = render(<ProfileScreen/>);
+        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
         const toggle = await findByTestId('biometric-toggle');
         await act(async () => {
             fireEvent(toggle, 'valueChange', true);
@@ -234,7 +271,7 @@ describe('ProfileScreen - i18n Migration', () => {
 
     it('should use t("profile.biometricAuthFailed") for auth failed', async () => {
         mockAuthenticateWithBiometrics.mockResolvedValue(false);
-        const {findByTestId} = render(<ProfileScreen/>);
+        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
         const toggle = await findByTestId('biometric-toggle');
         await act(async () => {
             fireEvent(toggle, 'valueChange', true);
@@ -245,7 +282,7 @@ describe('ProfileScreen - i18n Migration', () => {
     });
 
     it('should use t("profile.biometricEnableSuccess") for enable success', async () => {
-        const {findByTestId} = render(<ProfileScreen/>);
+        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
         const toggle = await findByTestId('biometric-toggle');
         await act(async () => {
             fireEvent(toggle, 'valueChange', true);
@@ -257,7 +294,7 @@ describe('ProfileScreen - i18n Migration', () => {
 
     it('should use t("profile.biometricEnableError") for enable error', async () => {
         mockSaveBiometricPreference.mockRejectedValue(new Error('fail'));
-        const {findByTestId} = render(<ProfileScreen/>);
+        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
         const toggle = await findByTestId('biometric-toggle');
         await act(async () => {
             fireEvent(toggle, 'valueChange', true);
@@ -269,7 +306,7 @@ describe('ProfileScreen - i18n Migration', () => {
 
     it('should use translated keys for disable confirmation dialog', async () => {
         mockGetBiometricPreference.mockResolvedValue(true);
-        const {findByTestId} = render(<ProfileScreen/>);
+        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
         const toggle = await findByTestId('biometric-toggle');
         await waitFor(() => {
             expect(toggle.props.value).toBe(true);
@@ -288,7 +325,7 @@ describe('ProfileScreen - i18n Migration', () => {
     it('should use t("profile.biometricDisableError") for disable error', async () => {
         mockGetBiometricPreference.mockResolvedValue(true);
         mockSaveBiometricPreference.mockRejectedValue(new Error('fail'));
-        const {findByTestId} = render(<ProfileScreen/>);
+        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
         const toggle = await findByTestId('biometric-toggle');
         await waitFor(() => {
             expect(toggle.props.value).toBe(true);
@@ -314,13 +351,13 @@ describe('ProfileScreen - i18n Migration', () => {
         mockUseMyProfileQuery.mockReturnValue({
             data: undefined, isLoading: false, error: {response: {status: 500}},
         });
-        render(<ProfileScreen/>);
+        renderWithQueryClient(<ProfileScreen/>);
         expect(mockT).toHaveBeenCalledWith('profile.loadError');
     });
 
     it('should not contain any original hardcoded English strings', async () => {
         mockT.mockImplementation((key: string) => `__${key}__`);
-        const {queryByText, findByTestId} = render(<ProfileScreen/>);
+        const {queryByText, findByTestId} = renderWithQueryClient(<ProfileScreen/>);
         await findByTestId('biometric-section');
         const hardcodedStrings = [
             'Profile', 'Create your profile', 'Security',

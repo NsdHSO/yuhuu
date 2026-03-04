@@ -310,7 +310,7 @@ describe('Logout Cache Clear Integration Test', () => {
 
         // Create a component that captures the signOut function
         function TestComponent() {
-             
+
             const {
                 signOut,
                 status

@@ -8,7 +8,7 @@
 import React from 'react';
 import {fireEvent, render, waitFor} from '@testing-library/react-native';
 import * as SecureStore from 'expo-secure-store';
-import  {initI18n, i18n} from '@yuhuu/i18n';
+import {i18n, initI18n} from '@yuhuu/i18n';
 import {LanguagePicker} from '../language-picker';
 
 jest.mock('expo-secure-store');

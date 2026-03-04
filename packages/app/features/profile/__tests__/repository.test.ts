@@ -9,7 +9,7 @@
 
 import {HttpProfileRepository} from '../repository';
 import {appApi, unwrap} from '@yuhuu/auth';
-import type {ProfileResponse, ProfileInput} from '../types';
+import type {ProfileInput, ProfileResponse} from '../types';
 
 // Mock the auth module
 jest.mock('@yuhuu/auth', () => ({

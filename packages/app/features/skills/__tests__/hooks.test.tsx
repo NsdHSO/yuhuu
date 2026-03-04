@@ -6,14 +6,14 @@ import {renderHook, waitFor} from '@testing-library/react-native';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import React from 'react';
 import {
-    useMySkillsQuery,
-    useMySkillQuery,
     useCreateMySkillMutation,
-    useUpdateMySkillMutation,
     useDeleteMySkillMutation,
+    useMySkillQuery,
+    useMySkillsQuery,
+    useUpdateMySkillMutation,
 } from '../hooks';
 import type {SkillsRepository} from '../repository';
-import type {UserSkill, CreateUserSkillInput} from '../types';
+import type {CreateUserSkillInput, UserSkill} from '../types';
 
 describe('Skills Hooks', () => {
     let queryClient: QueryClient;

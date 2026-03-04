@@ -2,12 +2,7 @@
  * Date Utilities Tests
  */
 
-import {
-    isValidDateFormat,
-    formatDateToBackend,
-    parseDateFromBackend,
-    formatDateForDisplay,
-} from '../dates';
+import {formatDateForDisplay, formatDateToBackend, isValidDateFormat, parseDateFromBackend,} from '../dates';
 
 describe('Date Utilities', () => {
     describe('isValidDateFormat', () => {

@@ -6,7 +6,6 @@ import {AuthProvider} from '@/providers/AuthProvider';
 import {useRouter} from 'expo-router';
 import * as auth from '@yuhuu/auth';
 import * as secureStore from '@/lib/secureStore';
-import {authApi} from '@yuhuu/auth';
 import {initI18n} from '@yuhuu/i18n';
 
 /**
@@ -279,7 +278,8 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
             });
 
             // Flush remaining microtasks to prevent act() warnings
-            await act(async () => {});
+            await act(async () => {
+            });
         });
     });
 
@@ -351,7 +351,8 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
             });
 
             // Flush remaining microtasks to prevent act() warnings
-            await act(async () => {});
+            await act(async () => {
+            });
 
             expect(mockPost).not.toHaveBeenCalledWith('/auth/refresh', expect.anything());
             expect(mockReplace).not.toHaveBeenCalled();
@@ -383,7 +384,8 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
             });
 
             // Flush remaining microtasks to prevent act() warnings
-            await act(async () => {});
+            await act(async () => {
+            });
 
             expect(auth.authenticateWithBiometrics).not.toHaveBeenCalled();
             expect(mockReplace).not.toHaveBeenCalled();
@@ -418,7 +420,8 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
             });
 
             // Flush remaining microtasks to prevent act() warnings
-            await act(async () => {});
+            await act(async () => {
+            });
 
             expect(mockReplace).not.toHaveBeenCalled();
         });
@@ -452,7 +455,8 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
             });
 
             // Flush remaining microtasks to prevent act() warnings
-            await act(async () => {});
+            await act(async () => {
+            });
 
             expect(mockReplace).not.toHaveBeenCalled();
         });
@@ -485,7 +489,8 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
             });
 
             // Flush remaining microtasks to prevent act() warnings
-            await act(async () => {});
+            await act(async () => {
+            });
 
             expect(mockReplace).not.toHaveBeenCalled();
         });
@@ -517,7 +522,8 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
             });
 
             // Flush remaining microtasks to prevent act() warnings
-            await act(async () => {});
+            await act(async () => {
+            });
 
             // Now do password login
             mockPost.mockResolvedValue({
@@ -573,7 +579,8 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
             });
 
             // Flush remaining microtasks to prevent act() warnings
-            await act(async () => {});
+            await act(async () => {
+            });
 
             // Verify form elements are still functional
             const emailInput = screen.getByPlaceholderText('Email');
@@ -632,7 +639,8 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
             });
 
             // Flush remaining microtasks to prevent act() warnings
-            await act(async () => {});
+            await act(async () => {
+            });
         });
     });
 
@@ -727,7 +735,8 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
             });
 
             // Flush remaining microtasks to prevent act() warnings
-            await act(async () => {});
+            await act(async () => {
+            });
 
             // Second attempt: auth succeeds with refreshAccessToken returning a token
             (auth.authenticateWithBiometrics as jest.Mock).mockResolvedValueOnce(true);

@@ -13,14 +13,14 @@ import {renderHook, waitFor} from '@testing-library/react-native';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import React from 'react';
 import {
-    useMyMilestonesQuery,
-    useMyMilestoneQuery,
     useCreateMyMilestoneMutation,
-    useUpdateMyMilestoneMutation,
     useDeleteMyMilestoneMutation,
+    useMyMilestoneQuery,
+    useMyMilestonesQuery,
+    useUpdateMyMilestoneMutation,
 } from '../hooks';
 import type {MilestonesRepository} from '../repository';
-import type {SpiritualMilestone, CreateSpiritualMilestoneInput} from '../types';
+import type {CreateSpiritualMilestoneInput, SpiritualMilestone} from '../types';
 
 describe('Milestones Hooks', () => {
     let queryClient: QueryClient;

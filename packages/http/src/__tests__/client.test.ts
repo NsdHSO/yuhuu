@@ -1,4 +1,4 @@
-import axios, {AxiosError, AxiosHeaders, InternalAxiosRequestConfig} from 'axios';
+import axios, {AxiosError, InternalAxiosRequestConfig} from 'axios';
 import {applyBearerAuth} from '../client';
 import type {TokenProvider} from '../types';
 

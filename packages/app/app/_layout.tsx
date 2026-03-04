@@ -9,7 +9,7 @@ import 'react-native-reanimated';
 import {useColorScheme} from '@/hooks/use-color-scheme';
 import {AuthProvider} from '@/providers/AuthProvider';
 import {QueryProvider} from '@/providers/QueryProvider';
-import{initI18n,i18n} from '@yuhuu/i18n';
+import {i18n, initI18n} from '@yuhuu/i18n';
 import './global.css';
 
 export default function RootLayout() {

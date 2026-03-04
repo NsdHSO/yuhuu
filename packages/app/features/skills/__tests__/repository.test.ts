@@ -11,7 +11,7 @@
 
 import {HttpSkillsRepository} from '../repository';
 import {appApi, unwrap} from '@yuhuu/auth';
-import type {UserSkill, CreateUserSkillInput, UpdateUserSkillInput} from '../types';
+import type {CreateUserSkillInput, UpdateUserSkillInput, UserSkill} from '../types';
 
 // Mock the auth module
 jest.mock('@yuhuu/auth', () => ({

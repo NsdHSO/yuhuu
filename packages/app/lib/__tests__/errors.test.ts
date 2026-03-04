@@ -2,7 +2,7 @@
  * Error Utilities Tests
  */
 
-import {isConflictError, isNotFoundError, isValidationError, getErrorMessage} from '../errors';
+import {getErrorMessage, isConflictError, isNotFoundError, isValidationError} from '../errors';
 
 describe('Error Utilities', () => {
     describe('isConflictError', () => {

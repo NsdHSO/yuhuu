@@ -11,7 +11,7 @@
 
 import {HttpMilestonesRepository} from '../repository';
 import {appApi, unwrap} from '@yuhuu/auth';
-import type {SpiritualMilestone, CreateSpiritualMilestoneInput, UpdateSpiritualMilestoneInput} from '../types';
+import type {CreateSpiritualMilestoneInput, SpiritualMilestone, UpdateSpiritualMilestoneInput} from '../types';
 
 // Mock the auth module
 jest.mock('@yuhuu/auth', () => ({

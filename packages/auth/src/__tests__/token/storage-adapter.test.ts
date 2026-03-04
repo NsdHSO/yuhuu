@@ -1,5 +1,5 @@
 import {SecureTokenStorage} from '../../token/storage-adapter';
-import {getItem, setItem, removeItem} from '@yuhuu/storage';
+import {getItem, removeItem, setItem} from '@yuhuu/storage';
 
 jest.mock('@yuhuu/storage', () => ({
     getItem: jest.fn(),

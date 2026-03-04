@@ -15,11 +15,7 @@
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import type {MilestonesRepository} from './repository';
 import {defaultMilestonesRepository} from './repository';
-import type {
-    SpiritualMilestone,
-    CreateSpiritualMilestoneInput,
-    UpdateSpiritualMilestoneInput,
-} from './types';
+import type {CreateSpiritualMilestoneInput, SpiritualMilestone, UpdateSpiritualMilestoneInput,} from './types';
 
 /**
  * Query hook for listing all spiritual milestones of the authenticated user.

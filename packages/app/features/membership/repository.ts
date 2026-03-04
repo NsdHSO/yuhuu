@@ -8,11 +8,7 @@
  */
 
 import {appApi, unwrap} from '@yuhuu/auth';
-import type {
-    MembershipHistory,
-    CreateMembershipHistoryInput,
-    UpdateMembershipHistoryInput,
-} from './types';
+import type {CreateMembershipHistoryInput, MembershipHistory, UpdateMembershipHistoryInput,} from './types';
 
 /**
  * Repository interface for membership history operations.

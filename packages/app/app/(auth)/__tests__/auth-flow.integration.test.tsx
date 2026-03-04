@@ -24,7 +24,7 @@ jest.mock('expo-router', () => ({
 }));
 
 jest.mock('@yuhuu/auth', () => ({
-    authApi: { post: jest.fn(), get: jest.fn() },
+    authApi: {post: jest.fn(), get: jest.fn()},
     getValidAccessToken: jest.fn(),
     setTokensFromLogin: jest.fn(),
     clearTokens: jest.fn(),

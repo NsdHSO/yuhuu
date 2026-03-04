@@ -15,11 +15,7 @@
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import type {MembershipRepository} from './repository';
 import {defaultMembershipRepository} from './repository';
-import type {
-    MembershipHistory,
-    CreateMembershipHistoryInput,
-    UpdateMembershipHistoryInput,
-} from './types';
+import type {CreateMembershipHistoryInput, MembershipHistory, UpdateMembershipHistoryInput,} from './types';
 
 /**
  * Query hook for listing all membership history records of the authenticated user.

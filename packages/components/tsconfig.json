@@ -7,9 +7,15 @@
     "declaration": true,
     "declarationMap": true,
     "paths": {
-      "@/components/*": ["./src/*"],
-      "@/hooks/*": ["./src/hooks/*"],
-      "@/constants/*": ["./src/constants/*"]
+      "@/components/*": [
+        "./src/*"
+      ],
+      "@/hooks/*": [
+        "./src/hooks/*"
+      ],
+      "@/constants/*": [
+        "./src/constants/*"
+      ]
     }
   },
   "references": [

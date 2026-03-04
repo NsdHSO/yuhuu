@@ -8,11 +8,7 @@
  */
 
 import {appApi, unwrap} from '@yuhuu/auth';
-import type {
-    SpiritualMilestone,
-    CreateSpiritualMilestoneInput,
-    UpdateSpiritualMilestoneInput,
-} from './types';
+import type {CreateSpiritualMilestoneInput, SpiritualMilestone, UpdateSpiritualMilestoneInput,} from './types';
 
 /**
  * Repository interface for spiritual milestone operations.

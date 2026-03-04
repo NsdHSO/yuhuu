@@ -11,7 +11,7 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import React from 'react';
 import {useMyProfileQuery, useSaveMyProfileMutation} from '../hooks';
 import type {ProfileRepository} from '../repository';
-import type {ProfileResponse, ProfileInput} from '../types';
+import type {ProfileInput, ProfileResponse} from '../types';
 import {bootstrapAndSeed} from '../../bootstrap/api';
 
 // Mock bootstrap service

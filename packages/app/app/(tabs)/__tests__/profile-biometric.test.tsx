@@ -1,6 +1,7 @@
 import React from 'react';
 import {act, fireEvent, render, waitFor} from '@testing-library/react-native';
 import {Alert, Platform} from 'react-native';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 // Import after mocks
 import ProfileScreen from '../profile';
 
@@ -98,6 +99,27 @@ jest.mock('@/features/bootstrap/api', () => ({
     },
 }));
 
+// Mock accordion component hooks
+jest.mock('@/features/family/api', () => ({
+    useMyFamilyQuery: () => ({data: [], isLoading: false}),
+    useDeleteMyFamilyRelationshipMutation: () => ({mutate: jest.fn(), isPending: false}),
+}));
+
+jest.mock('@/features/milestones/api', () => ({
+    useMyMilestonesQuery: () => ({data: [], isLoading: false}),
+    useDeleteMyMilestoneMutation: () => ({mutate: jest.fn(), isPending: false}),
+}));
+
+jest.mock('@/features/membership/api', () => ({
+    useMyMembershipHistoryQuery: () => ({data: [], isLoading: false}),
+    useDeleteMyMembershipHistoryMutation: () => ({mutate: jest.fn(), isPending: false}),
+}));
+
+jest.mock('@/features/skills/api', () => ({
+    useMySkillsQuery: () => ({data: [], isLoading: false}),
+    useDeleteMySkillMutation: () => ({mutate: jest.fn(), isPending: false}),
+}));
+
 // Mock useAuth - Profile screen calls useAuth() to access user.email
 const mockUseAuth = jest.fn();
 jest.mock('@/providers/AuthProvider', () => ({
@@ -109,8 +131,23 @@ jest.setTimeout(15000);
 
 describe('ProfileScreen - Biometric Settings', () => {
     const originalPlatform = Platform.OS;
+    let queryClient: QueryClient;
+
+    const renderWithQueryClient = (component: React.ReactElement) => {
+        return render(
+            <QueryClientProvider client={queryClient}>
+                {component}
+            </QueryClientProvider>
+        );
+    };
 
     beforeEach(() => {
+        queryClient = new QueryClient({
+            defaultOptions: {
+                queries: {retry: false},
+                mutations: {retry: false},
+            },
+        });
         jest.clearAllMocks();
 
         // Default: profile loaded, save mutation idle
@@ -163,7 +200,7 @@ describe('ProfileScreen - Biometric Settings', () => {
         it('should show biometric toggle when hardware is available', async () => {
             mockIsBiometricAvailable.mockResolvedValue(true);
 
-            const {getByTestId} = render(<ProfileScreen/>);
+            const {getByTestId} = renderWithQueryClient(<ProfileScreen/>);
 
             await waitFor(() => {
                 expect(getByTestId('biometric-toggle')).toBeTruthy();
@@ -173,7 +210,7 @@ describe('ProfileScreen - Biometric Settings', () => {
         it('should NOT show biometric toggle when hardware is unavailable', async () => {
             mockIsBiometricAvailable.mockResolvedValue(false);
 
-            const {queryByTestId} = render(<ProfileScreen/>);
+            const {queryByTestId} = renderWithQueryClient(<ProfileScreen/>);
 
             await waitFor(() => {
                 expect(queryByTestId('biometric-toggle')).toBeNull();
@@ -184,7 +221,7 @@ describe('ProfileScreen - Biometric Settings', () => {
             Platform.OS = 'ios' as any;
             mockIsBiometricAvailable.mockResolvedValue(true);
 
-            const {findByText} = render(<ProfileScreen/>);
+            const {findByText} = renderWithQueryClient(<ProfileScreen/>);
 
             const label = await findByText('Face ID / Touch ID');
             expect(label).toBeTruthy();
@@ -197,7 +234,7 @@ describe('ProfileScreen - Biometric Settings', () => {
             Platform.OS = 'android' as any;
             mockIsBiometricAvailable.mockResolvedValue(true);
 
-            const {findByText} = render(<ProfileScreen/>);
+            const {findByText} = renderWithQueryClient(<ProfileScreen/>);
 
             const label = await findByText('Biometric Login');
             expect(label).toBeTruthy();
@@ -206,7 +243,7 @@ describe('ProfileScreen - Biometric Settings', () => {
         it('should hide biometric section when availability check fails', async () => {
             mockIsBiometricAvailable.mockRejectedValue(new Error('Hardware check failed'));
 
-            const {queryByTestId} = render(<ProfileScreen/>);
+            const {queryByTestId} = renderWithQueryClient(<ProfileScreen/>);
 
             await waitFor(() => {
                 expect(queryByTestId('biometric-toggle')).toBeNull();
@@ -220,7 +257,7 @@ describe('ProfileScreen - Biometric Settings', () => {
             mockGetBiometricPreference.mockResolvedValue(false);
             mockAuthenticateWithBiometrics.mockResolvedValue(true);
 
-            const {findByTestId} = render(<ProfileScreen/>);
+            const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
             const toggle = await findByTestId('biometric-toggle');
 
             await act(async () => {
@@ -239,7 +276,7 @@ describe('ProfileScreen - Biometric Settings', () => {
             mockGetBiometricPreference.mockResolvedValue(false);
             mockAuthenticateWithBiometrics.mockResolvedValue(true);
 
-            const {findByTestId} = render(<ProfileScreen/>);
+            const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
             const toggle = await findByTestId('biometric-toggle');
 
             await act(async () => {
@@ -257,7 +294,7 @@ describe('ProfileScreen - Biometric Settings', () => {
             mockGetBiometricPreference.mockResolvedValue(false);
             mockAuthenticateWithBiometrics.mockResolvedValue(false);
 
-            const {findByTestId} = render(<ProfileScreen/>);
+            const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
             const toggle = await findByTestId('biometric-toggle');
 
             await act(async () => {
@@ -277,7 +314,7 @@ describe('ProfileScreen - Biometric Settings', () => {
             mockGetBiometricPreference.mockResolvedValue(false);
             mockAuthenticateWithBiometrics.mockResolvedValue(false);
 
-            const {findByTestId} = render(<ProfileScreen/>);
+            const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
             const toggle = await findByTestId('biometric-toggle');
 
             await act(async () => {
@@ -294,7 +331,7 @@ describe('ProfileScreen - Biometric Settings', () => {
             mockGetBiometricPreference.mockResolvedValue(false);
             mockAuthenticateWithBiometrics.mockResolvedValue(true);
 
-            const {findByTestId} = render(<ProfileScreen/>);
+            const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
             const toggle = await findByTestId('biometric-toggle');
 
             await act(async () => {
@@ -313,7 +350,7 @@ describe('ProfileScreen - Biometric Settings', () => {
             mockIsBiometricAvailable.mockResolvedValue(true);
             mockGetBiometricPreference.mockResolvedValue(true);
 
-            const {findByTestId} = render(<ProfileScreen/>);
+            const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
             const toggle = await findByTestId('biometric-toggle');
 
             await waitFor(() => {
@@ -327,7 +364,7 @@ describe('ProfileScreen - Biometric Settings', () => {
             mockIsBiometricAvailable.mockResolvedValue(true);
             mockGetBiometricPreference.mockResolvedValue(true);
 
-            const {findByTestId} = render(<ProfileScreen/>);
+            const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
             const toggle = await findByTestId('biometric-toggle');
 
             await waitFor(() => {
@@ -354,7 +391,7 @@ describe('ProfileScreen - Biometric Settings', () => {
             mockIsBiometricAvailable.mockResolvedValue(true);
             mockGetBiometricPreference.mockResolvedValue(true);
 
-            const {findByTestId} = render(<ProfileScreen/>);
+            const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
             const toggle = await findByTestId('biometric-toggle');
 
             await waitFor(() => {
@@ -386,7 +423,7 @@ describe('ProfileScreen - Biometric Settings', () => {
             mockIsBiometricAvailable.mockResolvedValue(true);
             mockGetBiometricPreference.mockResolvedValue(true);
 
-            const {findByTestId} = render(<ProfileScreen/>);
+            const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
             const toggle = await findByTestId('biometric-toggle');
 
             await waitFor(() => {
@@ -409,7 +446,7 @@ describe('ProfileScreen - Biometric Settings', () => {
             mockIsBiometricAvailable.mockResolvedValue(true);
             mockGetBiometricPreference.mockResolvedValue(false);
 
-            const {findByTestId} = render(<ProfileScreen/>);
+            const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
             const toggle = await findByTestId('biometric-toggle');
 
             await waitFor(() => {
@@ -423,7 +460,7 @@ describe('ProfileScreen - Biometric Settings', () => {
             mockIsBiometricAvailable.mockResolvedValue(true);
             mockGetBiometricPreference.mockResolvedValue(true);
 
-            render(<ProfileScreen/>);
+            renderWithQueryClient(<ProfileScreen/>);
 
             await waitFor(() => {
                 expect(mockIsBiometricAvailable).toHaveBeenCalled();
@@ -434,7 +471,7 @@ describe('ProfileScreen - Biometric Settings', () => {
         it('should not load preference when hardware is unavailable', async () => {
             mockIsBiometricAvailable.mockResolvedValue(false);
 
-            render(<ProfileScreen/>);
+            renderWithQueryClient(<ProfileScreen/>);
 
             await waitFor(() => {
                 expect(mockIsBiometricAvailable).toHaveBeenCalled();
@@ -447,7 +484,7 @@ describe('ProfileScreen - Biometric Settings', () => {
             mockGetBiometricPreference.mockResolvedValue(false);
             mockAuthenticateWithBiometrics.mockResolvedValue(true);
 
-            const {findByTestId} = render(<ProfileScreen/>);
+            const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
             const toggle = await findByTestId('biometric-toggle');
 
             await act(async () => {
@@ -463,7 +500,7 @@ describe('ProfileScreen - Biometric Settings', () => {
             mockIsBiometricAvailable.mockResolvedValue(true);
             mockGetBiometricPreference.mockResolvedValue(false);
 
-            const {findByTestId} = render(<ProfileScreen/>);
+            const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
             const toggle = await findByTestId('biometric-toggle');
 
             await waitFor(() => {
@@ -476,7 +513,7 @@ describe('ProfileScreen - Biometric Settings', () => {
         it('should handle biometric availability check error on mount', async () => {
             mockIsBiometricAvailable.mockRejectedValue(new Error('Check failed'));
 
-            const {queryByTestId} = render(<ProfileScreen/>);
+            const {queryByTestId} = renderWithQueryClient(<ProfileScreen/>);
 
             await waitFor(() => {
                 expect(queryByTestId('biometric-toggle')).toBeNull();
@@ -489,7 +526,7 @@ describe('ProfileScreen - Biometric Settings', () => {
             mockAuthenticateWithBiometrics.mockResolvedValue(true);
             mockSaveBiometricPreference.mockRejectedValue(new Error('Storage error'));
 
-            const {findByTestId} = render(<ProfileScreen/>);
+            const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
             const toggle = await findByTestId('biometric-toggle');
 
             // Should not crash when toggling
@@ -517,7 +554,7 @@ describe('ProfileScreen - Biometric Settings', () => {
                 signOut: jest.fn(),
             });
 
-            const {findByTestId} = render(<ProfileScreen/>);
+            const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
             const toggle = await findByTestId('biometric-toggle');
 
             await act(async () => {
@@ -541,7 +578,7 @@ describe('ProfileScreen - Biometric Settings', () => {
                 signOut: jest.fn(),
             });
 
-            const {findByTestId} = render(<ProfileScreen/>);
+            const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
             const toggle = await findByTestId('biometric-toggle');
 
             await act(async () => {
@@ -566,7 +603,7 @@ describe('ProfileScreen - Biometric Settings', () => {
                 signOut: jest.fn(),
             });
 
-            const {findByTestId} = render(<ProfileScreen/>);
+            const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
             const toggle = await findByTestId('biometric-toggle');
 
             await act(async () => {
@@ -586,7 +623,7 @@ describe('ProfileScreen - Biometric Settings', () => {
             mockGetBiometricPreference.mockResolvedValue(false);
             mockAuthenticateWithBiometrics.mockResolvedValue(true);
 
-            const {findByTestId} = render(<ProfileScreen/>);
+            const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
 
             // Step 1: Availability is checked on mount
             await waitFor(() => {
@@ -628,7 +665,7 @@ describe('ProfileScreen - Biometric Settings', () => {
             mockIsBiometricAvailable.mockResolvedValue(true);
             mockGetBiometricPreference.mockResolvedValue(true);
 
-            const {findByTestId} = render(<ProfileScreen/>);
+            const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
             const toggle = await findByTestId('biometric-toggle');
 
             await waitFor(() => {
@@ -668,7 +705,7 @@ describe('ProfileScreen - Biometric Settings', () => {
             const {
                 findByTestId,
                 getByText
-            } = render(<ProfileScreen/>);
+            } = renderWithQueryClient(<ProfileScreen/>);
 
             await findByTestId('biometric-toggle');
 
@@ -685,7 +722,7 @@ describe('ProfileScreen - Biometric Settings', () => {
                 error: null,
             });
 
-            const {queryByTestId} = render(<ProfileScreen/>);
+            const {queryByTestId} = renderWithQueryClient(<ProfileScreen/>);
 
             expect(queryByTestId('biometric-toggle')).toBeNull();
         });
@@ -700,7 +737,7 @@ describe('ProfileScreen - Biometric Settings', () => {
             const {
                 getByText,
                 queryByTestId
-            } = render(<ProfileScreen/>);
+            } = renderWithQueryClient(<ProfileScreen/>);
 
             expect(getByText('Failed to load profile.')).toBeTruthy();
             expect(queryByTestId('biometric-toggle')).toBeNull();

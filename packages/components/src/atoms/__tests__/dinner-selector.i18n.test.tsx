@@ -1,5 +1,5 @@
 import React from 'react';
-import {render, screen, act} from '@testing-library/react-native';
+import {act, render, screen} from '@testing-library/react-native';
 import {DinnerSelector} from '@/components/atoms/dinner-selector';
 import type {Dinner} from '@yuhuu/types';
 import i18n from '@yuhuu/i18n';

@@ -133,6 +133,7 @@
     "success": "Success",
     "save": "Save",
     "cancel": "Cancel",
+    "delete": "Delete",
     "disable": "Disable",
     "search": "Search",
     "ok": "OK",
@@ -143,6 +144,38 @@
     "notesPlaceholder": "Notes (optional)",
     "adding": "Adding\u2026",
     "addParticipant": "Add Participant"
+  },
+  "family": {
+    "title": "👨‍👩‍👧‍👦 Family Relationships",
+    "deleteTitle": "Delete Family Member",
+    "deleteMessage": "Remove {{name}}?",
+    "deleteSuccess": "Family member removed",
+    "thisMember": "this member",
+    "emptyState": "No family relationships added yet"
+  },
+  "milestones": {
+    "title": "✨ Spiritual Milestones",
+    "deleteTitle": "Delete Milestone",
+    "deleteMessage": "Remove {{type}}?",
+    "deleteSuccess": "Milestone removed",
+    "emptyState": "No spiritual milestones added yet"
+  },
+  "membership": {
+    "title": "⛪ Membership History",
+    "deleteTitle": "Delete Membership Record",
+    "deleteMessage": "Remove membership at {{churchName}}?",
+    "deleteSuccess": "Membership record removed",
+    "active": "Active",
+    "emptyState": "No membership history added yet"
+  },
+  "skills": {
+    "title": "🎯 Skills & Talents",
+    "deleteTitle": "Delete Skill",
+    "deleteMessage": "Remove {{skillName}}?",
+    "deleteSuccess": "Skill removed",
+    "yearsExperience": "{{count}} {{count, plural, one {year} other {years}}} experience",
+    "willingToServe": "✓ Willing to serve",
+    "emptyState": "No skills added yet"
   },
   "modal": {
     "title": "This is a modal",

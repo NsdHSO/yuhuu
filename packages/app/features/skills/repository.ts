@@ -8,7 +8,7 @@
  */
 
 import {appApi, unwrap} from '@yuhuu/auth';
-import type {UserSkill, CreateUserSkillInput, UpdateUserSkillInput} from './types';
+import type {CreateUserSkillInput, UpdateUserSkillInput, UserSkill} from './types';
 
 /**
  * Repository interface for user skills operations.

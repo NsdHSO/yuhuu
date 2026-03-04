@@ -8,11 +8,7 @@
  */
 
 import {appApi, unwrap} from '@yuhuu/auth';
-import type {
-    FamilyRelationship,
-    CreateFamilyRelationshipInput,
-    UpdateFamilyRelationshipInput,
-} from './types';
+import type {CreateFamilyRelationshipInput, FamilyRelationship, UpdateFamilyRelationshipInput,} from './types';
 
 /**
  * Repository interface for family relationship operations.

@@ -1,6 +1,7 @@
 import React from 'react';
 import {render} from '@testing-library/react-native';
 import {DinnerDetailsCard} from '../dinner-details-card';
+
 /**
  * TDD tests for DinnerDetailsCard i18n migration.
  *

@@ -7,7 +7,7 @@ import {HapticTab} from '../haptic-tab';
 jest.mock('expo-haptics');
 
 // Wrapper component to provide NavigationContainer context
-const TestWrapper = ({children}: {children: React.ReactNode}) => (
+const TestWrapper = ({children}: { children: React.ReactNode }) => (
     <NavigationContainer>{children}</NavigationContainer>
 );
 

@@ -13,14 +13,14 @@ import {renderHook, waitFor} from '@testing-library/react-native';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import React from 'react';
 import {
+    useCreateMyMembershipHistoryMutation,
+    useDeleteMyMembershipHistoryMutation,
     useMyMembershipHistoryQuery,
     useMyMembershipHistoryRecordQuery,
-    useCreateMyMembershipHistoryMutation,
     useUpdateMyMembershipHistoryMutation,
-    useDeleteMyMembershipHistoryMutation,
 } from '../hooks';
 import type {MembershipRepository} from '../repository';
-import type {MembershipHistory, CreateMembershipHistoryInput} from '../types';
+import type {CreateMembershipHistoryInput, MembershipHistory} from '../types';
 
 describe('Membership Hooks', () => {
     let queryClient: QueryClient;

@@ -29,6 +29,10 @@ import {
 } from '@yuhuu/auth';
 import {useAuth} from '@/providers/AuthProvider';
 import LanguagePicker from '@/components/molecules/language-picker';
+import {FamilyAccordion} from '@/components/profile/family-accordion';
+import {MilestonesAccordion} from '@/components/profile/milestones-accordion';
+import {MembershipAccordion} from '@/components/profile/membership-accordion';
+import {SkillsAccordion} from '@/components/profile/skills-accordion';
 
 export default function ProfileScreen() {
     const {t} = useTranslation();
@@ -294,6 +298,15 @@ export default function ProfileScreen() {
                                 </ThemedText>
                             </Pressable>
                         </View>
+
+                        {profile && (
+                            <View style={{marginTop: 24, gap: 12}}>
+                                <FamilyAccordion/>
+                                <MilestonesAccordion/>
+                                <MembershipAccordion/>
+                                <SkillsAccordion/>
+                            </View>
+                        )}
                     </ScrollView>
                 </KeyboardAvoidingView>
             </SafeAreaView>

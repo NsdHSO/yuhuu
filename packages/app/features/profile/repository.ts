@@ -8,7 +8,7 @@
  */
 
 import {appApi, unwrap} from '@yuhuu/auth';
-import type {ProfileResponse, ProfileInput} from './types';
+import type {ProfileInput, ProfileResponse} from './types';
 
 /**
  * Repository interface for profile operations.

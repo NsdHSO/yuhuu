@@ -133,6 +133,7 @@
     "success": "Succes",
     "save": "Salveaz\u0103",
     "cancel": "Anuleaz\u0103",
+    "delete": "\u0218terge",
     "disable": "Dezactiveaz\u0103",
     "search": "Caut\u0103",
     "ok": "OK",
@@ -143,6 +144,38 @@
     "notesPlaceholder": "Note (op\u021bional)",
     "adding": "Se adaug\u0103\u2026",
     "addParticipant": "Adaug\u0103 participant"
+  },
+  "family": {
+    "title": "👨‍👩‍👧‍👦 Rela\u021bii de Familie",
+    "deleteTitle": "\u0218terge membru al familiei",
+    "deleteMessage": "\u0218tergi pe {{name}}?",
+    "deleteSuccess": "Membru al familiei \u0219ters",
+    "thisMember": "acest membru",
+    "emptyState": "Nu au fost ad\u0103ugate \u00eenc\u0103 rela\u021bii de familie"
+  },
+  "milestones": {
+    "title": "✨ Repere Spirituale",
+    "deleteTitle": "\u0218terge reper",
+    "deleteMessage": "\u0218tergi {{type}}?",
+    "deleteSuccess": "Reper \u0219ters",
+    "emptyState": "Nu au fost ad\u0103ugate \u00eenc\u0103 repere spirituale"
+  },
+  "membership": {
+    "title": "⛪ Istoric Membre",
+    "deleteTitle": "\u0218terge \u00eenregistrare de membru",
+    "deleteMessage": "\u0218tergi apartenența la {{churchName}}?",
+    "deleteSuccess": "\u00cenregistrare de membru \u0219tears\u0103",
+    "active": "Activ",
+    "emptyState": "Nu a fost ad\u0103ugat \u00eenc\u0103 istoric de membre"
+  },
+  "skills": {
+    "title": "🎯 Abilit\u0103\u021bi & Talente",
+    "deleteTitle": "\u0218terge abilitate",
+    "deleteMessage": "\u0218tergi {{skillName}}?",
+    "deleteSuccess": "Abilitate \u0219tears\u0103",
+    "yearsExperience": "{{count}} {{count, plural, one {an} few {ani} other {ani}}} experien\u021b\u0103",
+    "willingToServe": "✓ Dispus s\u0103 serveasc\u0103",
+    "emptyState": "Nu au fost ad\u0103ugate \u00eenc\u0103 abilit\u0103\u021bi"
   },
   "modal": {
     "title": "Aceasta este o fereastr\u0103 modal\u0103",

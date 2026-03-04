@@ -1,5 +1,5 @@
 import React from 'react';
-import {render, screen, act} from '@testing-library/react-native';
+import {act, render, screen} from '@testing-library/react-native';
 import i18n from '@yuhuu/i18n';
 import {LoadingState} from '../loading-state';
 

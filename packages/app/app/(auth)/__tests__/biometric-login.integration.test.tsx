@@ -6,7 +6,6 @@ import {AuthProvider, useAuth} from '@/providers/AuthProvider';
 import {useRouter} from 'expo-router';
 import * as auth from '@yuhuu/auth';
 import * as secureStore from '@/lib/secureStore';
-import {authApi} from '@yuhuu/auth';
 import {initI18n} from '@yuhuu/i18n';
 
 /**
@@ -340,7 +339,8 @@ describe('Biometric Login Flow - Integration Tests', () => {
             });
 
             // Flush remaining microtasks to prevent act() warnings
-            await act(async () => {});
+            await act(async () => {
+            });
 
             expect(mockRefreshAccessToken).not.toHaveBeenCalled();
             expect(mockReplace).not.toHaveBeenCalled();
@@ -371,7 +371,8 @@ describe('Biometric Login Flow - Integration Tests', () => {
             });
 
             // Flush remaining microtasks to prevent act() warnings
-            await act(async () => {});
+            await act(async () => {
+            });
 
             expect(auth.authenticateWithBiometrics).not.toHaveBeenCalled();
             expect(mockRefreshAccessToken).not.toHaveBeenCalled();
@@ -405,7 +406,8 @@ describe('Biometric Login Flow - Integration Tests', () => {
             });
 
             // Flush remaining microtasks to prevent act() warnings
-            await act(async () => {});
+            await act(async () => {
+            });
 
             expect(mockReplace).not.toHaveBeenCalled();
         });
@@ -434,7 +436,8 @@ describe('Biometric Login Flow - Integration Tests', () => {
             });
 
             // Flush remaining microtasks to prevent act() warnings
-            await act(async () => {});
+            await act(async () => {
+            });
 
             expect(mockReplace).not.toHaveBeenCalled();
         });
@@ -467,7 +470,8 @@ describe('Biometric Login Flow - Integration Tests', () => {
             });
 
             // Flush remaining microtasks to prevent act() warnings
-            await act(async () => {});
+            await act(async () => {
+            });
 
             expect(mockReplace).not.toHaveBeenCalled();
             expect(screen.getByPlaceholderText('Email')).toBeTruthy();
@@ -509,7 +513,8 @@ describe('Biometric Login Flow - Integration Tests', () => {
             });
 
             // Flush remaining microtasks to prevent act() warnings
-            await act(async () => {});
+            await act(async () => {
+            });
 
             fireEvent.changeText(screen.getByPlaceholderText('Email'), 'user@test.com');
             fireEvent.changeText(screen.getByPlaceholderText('Password'), 'password123');
@@ -826,7 +831,8 @@ describe('Biometric Login Flow - Integration Tests', () => {
             });
 
             // Flush remaining microtasks to prevent act() warnings
-            await act(async () => {});
+            await act(async () => {
+            });
 
             expect(mockRefreshAccessToken).not.toHaveBeenCalled();
         });
@@ -861,7 +867,8 @@ describe('Biometric Login Flow - Integration Tests', () => {
             });
 
             // Flush remaining microtasks to prevent act() warnings
-            await act(async () => {});
+            await act(async () => {
+            });
 
             expect(mockRefreshAccessToken).not.toHaveBeenCalled();
         });
@@ -897,7 +904,8 @@ describe('Biometric Login Flow - Integration Tests', () => {
             });
 
             // Flush remaining microtasks to prevent act() warnings
-            await act(async () => {});
+            await act(async () => {
+            });
         });
 
         it('should set status to signed-out on biometric failure', async () => {
@@ -974,7 +982,8 @@ describe('Biometric Login Flow - Integration Tests', () => {
             });
 
             // Flush remaining microtasks to prevent act() warnings
-            await act(async () => {});
+            await act(async () => {
+            });
         });
     });
 

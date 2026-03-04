@@ -15,11 +15,7 @@
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import type {FamilyRepository} from './repository';
 import {defaultFamilyRepository} from './repository';
-import type {
-    FamilyRelationship,
-    CreateFamilyRelationshipInput,
-    UpdateFamilyRelationshipInput,
-} from './types';
+import type {CreateFamilyRelationshipInput, FamilyRelationship, UpdateFamilyRelationshipInput,} from './types';
 
 /**
  * Query hook for listing all family relationships of the authenticated user.

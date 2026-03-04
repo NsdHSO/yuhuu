@@ -11,7 +11,7 @@
 
 import {HttpFamilyRepository} from '../repository';
 import {appApi, unwrap} from '@yuhuu/auth';
-import type {FamilyRelationship, CreateFamilyRelationshipInput, UpdateFamilyRelationshipInput} from '../types';
+import type {CreateFamilyRelationshipInput, FamilyRelationship, UpdateFamilyRelationshipInput} from '../types';
 
 // Mock the auth module
 jest.mock('@yuhuu/auth', () => ({

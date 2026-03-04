@@ -15,7 +15,7 @@
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import type {SkillsRepository} from './repository';
 import {defaultSkillsRepository} from './repository';
-import type {UserSkill, CreateUserSkillInput, UpdateUserSkillInput} from './types';
+import type {CreateUserSkillInput, UpdateUserSkillInput, UserSkill} from './types';
 
 /**
  * Query hook for listing all skills of the authenticated user.

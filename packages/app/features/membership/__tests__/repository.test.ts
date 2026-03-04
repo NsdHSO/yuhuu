@@ -11,7 +11,7 @@
 
 import {HttpMembershipRepository} from '../repository';
 import {appApi, unwrap} from '@yuhuu/auth';
-import type {MembershipHistory, CreateMembershipHistoryInput, UpdateMembershipHistoryInput} from '../types';
+import type {CreateMembershipHistoryInput, MembershipHistory, UpdateMembershipHistoryInput} from '../types';
 
 // Mock the auth module
 jest.mock('@yuhuu/auth', () => ({
