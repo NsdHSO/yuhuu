@@ -1,0 +1,26 @@
+/**
+ * Spiritual Milestones Feature - Public API
+ *
+ * Barrel exports for easy importing.
+ */
+
+// Types
+export type {
+    MilestoneType,
+    SpiritualMilestone,
+    CreateSpiritualMilestoneInput,
+    UpdateSpiritualMilestoneInput,
+} from './types';
+
+// Repository
+export type {MilestonesRepository} from './repository';
+export {HttpMilestonesRepository, defaultMilestonesRepository} from './repository';
+
+// Hooks
+export {
+    useMyMilestonesQuery,
+    useMyMilestoneQuery,
+    useCreateMyMilestoneMutation,
+    useUpdateMyMilestoneMutation,
+    useDeleteMyMilestoneMutation,
+} from './hooks';
