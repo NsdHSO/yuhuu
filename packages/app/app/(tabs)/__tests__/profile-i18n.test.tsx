@@ -63,22 +63,46 @@ jest.mock('@/features/bootstrap/api', () => ({
 // Mock accordion component hooks
 jest.mock('@/features/family/api', () => ({
     useMyFamilyQuery: () => ({data: [], isLoading: false}),
+    useUserFamilyQuery: () => ({data: [], isLoading: false}),
     useDeleteMyFamilyRelationshipMutation: () => ({mutate: jest.fn(), isPending: false}),
+    useCreateMyFamilyRelationshipMutation: () => ({mutate: jest.fn(), isPending: false}),
+    useUpdateMyFamilyRelationshipMutation: () => ({mutate: jest.fn(), isPending: false}),
+    useCreateUserFamilyRelationshipMutation: () => ({mutate: jest.fn(), isPending: false}),
+    useUpdateUserFamilyRelationshipMutation: () => ({mutate: jest.fn(), isPending: false}),
+    useDeleteUserFamilyRelationshipMutation: () => ({mutate: jest.fn(), isPending: false}),
 }));
 
 jest.mock('@/features/milestones/api', () => ({
     useMyMilestonesQuery: () => ({data: [], isLoading: false}),
+    useUserMilestonesQuery: () => ({data: [], isLoading: false}),
     useDeleteMyMilestoneMutation: () => ({mutate: jest.fn(), isPending: false}),
+    useCreateMyMilestoneMutation: () => ({mutate: jest.fn(), isPending: false}),
+    useUpdateMyMilestoneMutation: () => ({mutate: jest.fn(), isPending: false}),
+    useCreateUserMilestoneMutation: () => ({mutate: jest.fn(), isPending: false}),
+    useUpdateUserMilestoneMutation: () => ({mutate: jest.fn(), isPending: false}),
+    useDeleteUserMilestoneMutation: () => ({mutate: jest.fn(), isPending: false}),
 }));
 
 jest.mock('@/features/membership/api', () => ({
     useMyMembershipHistoryQuery: () => ({data: [], isLoading: false}),
+    useUserMembershipHistoryQuery: () => ({data: [], isLoading: false}),
     useDeleteMyMembershipHistoryMutation: () => ({mutate: jest.fn(), isPending: false}),
+    useCreateMyMembershipHistoryMutation: () => ({mutate: jest.fn(), isPending: false}),
+    useUpdateMyMembershipHistoryMutation: () => ({mutate: jest.fn(), isPending: false}),
+    useCreateUserMembershipHistoryMutation: () => ({mutate: jest.fn(), isPending: false}),
+    useUpdateUserMembershipHistoryMutation: () => ({mutate: jest.fn(), isPending: false}),
+    useDeleteUserMembershipHistoryMutation: () => ({mutate: jest.fn(), isPending: false}),
 }));
 
 jest.mock('@/features/skills/api', () => ({
     useMySkillsQuery: () => ({data: [], isLoading: false}),
+    useUserSkillsQuery: () => ({data: [], isLoading: false}),
     useDeleteMySkillMutation: () => ({mutate: jest.fn(), isPending: false}),
+    useCreateMySkillMutation: () => ({mutate: jest.fn(), isPending: false}),
+    useUpdateMySkillMutation: () => ({mutate: jest.fn(), isPending: false}),
+    useCreateUserSkillMutation: () => ({mutate: jest.fn(), isPending: false}),
+    useUpdateUserSkillMutation: () => ({mutate: jest.fn(), isPending: false}),
+    useDeleteUserSkillMutation: () => ({mutate: jest.fn(), isPending: false}),
 }));
 
 const mockUseAuth = jest.fn();

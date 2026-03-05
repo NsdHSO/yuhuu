@@ -29,4 +29,7 @@ export {
     useCreateMyFamilyRelationshipMutation,
     useUpdateMyFamilyRelationshipMutation,
     useDeleteMyFamilyRelationshipMutation,
+    useCreateUserFamilyRelationshipMutation,
+    useUpdateUserFamilyRelationshipMutation,
+    useDeleteUserFamilyRelationshipMutation,
 } from './hooks';

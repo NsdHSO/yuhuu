@@ -162,3 +162,69 @@ export function useDeleteMyMembershipHistoryMutation(
         },
     });
 }
+
+/**
+ * Mutation hook for creating a new membership history record for a specific user (admin use).
+ *
+ * @param userId - The user ID to create membership history for
+ * @param repo - Injectable repository (defaults to HTTP implementation)
+ * @returns React Query mutation
+ */
+export function useCreateUserMembershipHistoryMutation(
+    userId: number,
+    repo: MembershipRepository = defaultMembershipRepository
+) {
+    const qc = useQueryClient();
+
+    return useMutation({
+        mutationFn: (data: CreateMembershipHistoryInput) => repo.createUserMembershipHistory(userId, data),
+        onSuccess: () => {
+            qc.invalidateQueries({queryKey: ['users', userId, 'membership-history']});
+        },
+    });
+}
+
+/**
+ * Mutation hook for updating an existing membership history record for a specific user (admin use).
+ *
+ * @param userId - The user ID
+ * @param repo - Injectable repository (defaults to HTTP implementation)
+ * @returns React Query mutation
+ */
+export function useUpdateUserMembershipHistoryMutation(
+    userId: number,
+    repo: MembershipRepository = defaultMembershipRepository
+) {
+    const qc = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({id, data}: { id: number; data: UpdateMembershipHistoryInput }) =>
+            repo.updateUserMembershipHistory(userId, id, data),
+        onSuccess: (_, variables) => {
+            qc.invalidateQueries({queryKey: ['users', userId, 'membership-history', variables.id]});
+            qc.invalidateQueries({queryKey: ['users', userId, 'membership-history']});
+        },
+    });
+}
+
+/**
+ * Mutation hook for deleting a membership history record for a specific user (admin use).
+ *
+ * @param userId - The user ID
+ * @param repo - Injectable repository (defaults to HTTP implementation)
+ * @returns React Query mutation
+ */
+export function useDeleteUserMembershipHistoryMutation(
+    userId: number,
+    repo: MembershipRepository = defaultMembershipRepository
+) {
+    const qc = useQueryClient();
+
+    return useMutation({
+        mutationFn: (id: number) => repo.deleteUserMembershipHistory(userId, id),
+        onSuccess: (_, id) => {
+            qc.invalidateQueries({queryKey: ['users', userId, 'membership-history', id]});
+            qc.invalidateQueries({queryKey: ['users', userId, 'membership-history']});
+        },
+    });
+}

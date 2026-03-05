@@ -62,6 +62,34 @@ export interface SkillsRepository {
      * @throws Error on network or not found (404) errors
      */
     deleteMySkill(id: number): Promise<void>;
+
+    /**
+     * Create a new skill for a specific user (admin use).
+     * @param userId - The user ID to create skill for
+     * @param data - Skill data to create
+     * @returns Created UserSkill
+     * @throws Error on network, validation, or conflict (409) errors
+     */
+    createUserSkill(userId: number, data: CreateUserSkillInput): Promise<UserSkill>;
+
+    /**
+     * Update an existing skill for a specific user (admin use).
+     * @param userId - The user ID
+     * @param id - The skill ID
+     * @param data - Skill data to update
+     * @returns Updated UserSkill
+     * @throws Error on network, validation, or not found (404) errors
+     */
+    updateUserSkill(userId: number, id: number, data: UpdateUserSkillInput): Promise<UserSkill>;
+
+    /**
+     * Delete a skill for a specific user (admin use).
+     * @param userId - The user ID
+     * @param id - The skill ID
+     * @returns void
+     * @throws Error on network or not found (404) errors
+     */
+    deleteUserSkill(userId: number, id: number): Promise<void>;
 }
 
 /**
@@ -76,7 +104,7 @@ export class HttpSkillsRepository implements SkillsRepository {
     }
 
     async listUserSkills(userId: number): Promise<UserSkill[]> {
-        return await unwrap<UserSkill[]>(appApi.get(`/users/${userId}/skills`));
+        return await unwrap<UserSkill[]>(appApi.get(`/admin/users/${userId}/skills`));
     }
 
     async getMySkill(id: number): Promise<UserSkill | null> {
@@ -99,6 +127,18 @@ export class HttpSkillsRepository implements SkillsRepository {
 
     async deleteMySkill(id: number): Promise<void> {
         await unwrap<void>(appApi.delete(`/profiles/me/skills/${id}`));
+    }
+
+    async createUserSkill(userId: number, data: CreateUserSkillInput): Promise<UserSkill> {
+        return await unwrap<UserSkill>(appApi.post(`/admin/users/${userId}/skills`, data));
+    }
+
+    async updateUserSkill(userId: number, id: number, data: UpdateUserSkillInput): Promise<UserSkill> {
+        return await unwrap<UserSkill>(appApi.put(`/admin/users/${userId}/skills/${id}`, data));
+    }
+
+    async deleteUserSkill(userId: number, id: number): Promise<void> {
+        await unwrap<void>(appApi.delete(`/admin/users/${userId}/skills/${id}`));
     }
 }
 

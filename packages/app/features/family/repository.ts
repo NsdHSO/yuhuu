@@ -62,6 +62,34 @@ export interface FamilyRepository {
      * @throws Error on network or not found (404) errors
      */
     deleteMyFamilyRelationship(id: number): Promise<void>;
+
+    /**
+     * Create a new family relationship for a specific user (admin use).
+     * @param userId - The user ID to create family relationship for
+     * @param data - Family relationship data to create
+     * @returns Created FamilyRelationship
+     * @throws Error on network, validation errors
+     */
+    createUserFamilyRelationship(userId: number, data: CreateFamilyRelationshipInput): Promise<FamilyRelationship>;
+
+    /**
+     * Update an existing family relationship for a specific user (admin use).
+     * @param userId - The user ID
+     * @param id - The family relationship ID
+     * @param data - Family relationship data to update
+     * @returns Updated FamilyRelationship
+     * @throws Error on network, validation, or not found (404) errors
+     */
+    updateUserFamilyRelationship(userId: number, id: number, data: UpdateFamilyRelationshipInput): Promise<FamilyRelationship>;
+
+    /**
+     * Delete a family relationship for a specific user (admin use).
+     * @param userId - The user ID
+     * @param id - The family relationship ID
+     * @returns void
+     * @throws Error on network or not found (404) errors
+     */
+    deleteUserFamilyRelationship(userId: number, id: number): Promise<void>;
 }
 
 /**
@@ -76,7 +104,7 @@ export class HttpFamilyRepository implements FamilyRepository {
     }
 
     async listUserFamily(userId: number): Promise<FamilyRelationship[]> {
-        return await unwrap<FamilyRelationship[]>(appApi.get(`/users/${userId}/family`));
+        return await unwrap<FamilyRelationship[]>(appApi.get(`/admin/users/${userId}/family`));
     }
 
     async getMyFamilyRelationship(id: number): Promise<FamilyRelationship | null> {
@@ -99,6 +127,18 @@ export class HttpFamilyRepository implements FamilyRepository {
 
     async deleteMyFamilyRelationship(id: number): Promise<void> {
         await unwrap<void>(appApi.delete(`/profiles/me/family/${id}`));
+    }
+
+    async createUserFamilyRelationship(userId: number, data: CreateFamilyRelationshipInput): Promise<FamilyRelationship> {
+        return await unwrap<FamilyRelationship>(appApi.post(`/admin/users/${userId}/family`, data));
+    }
+
+    async updateUserFamilyRelationship(userId: number, id: number, data: UpdateFamilyRelationshipInput): Promise<FamilyRelationship> {
+        return await unwrap<FamilyRelationship>(appApi.put(`/admin/users/${userId}/family/${id}`, data));
+    }
+
+    async deleteUserFamilyRelationship(userId: number, id: number): Promise<void> {
+        await unwrap<void>(appApi.delete(`/admin/users/${userId}/family/${id}`));
     }
 }
 

@@ -165,3 +165,69 @@ export function useDeleteMyMilestoneMutation(
         },
     });
 }
+
+/**
+ * Mutation hook for creating a new spiritual milestone for a specific user (admin use).
+ *
+ * @param userId - The user ID to create milestone for
+ * @param repo - Injectable repository (defaults to HTTP implementation)
+ * @returns React Query mutation
+ */
+export function useCreateUserMilestoneMutation(
+    userId: number,
+    repo: MilestonesRepository = defaultMilestonesRepository
+) {
+    const qc = useQueryClient();
+
+    return useMutation({
+        mutationFn: (data: CreateSpiritualMilestoneInput) => repo.createUserMilestone(userId, data),
+        onSuccess: () => {
+            qc.invalidateQueries({queryKey: ['users', userId, 'milestones']});
+        },
+    });
+}
+
+/**
+ * Mutation hook for updating an existing spiritual milestone for a specific user (admin use).
+ *
+ * @param userId - The user ID
+ * @param repo - Injectable repository (defaults to HTTP implementation)
+ * @returns React Query mutation
+ */
+export function useUpdateUserMilestoneMutation(
+    userId: number,
+    repo: MilestonesRepository = defaultMilestonesRepository
+) {
+    const qc = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({id, data}: { id: number; data: UpdateSpiritualMilestoneInput }) =>
+            repo.updateUserMilestone(userId, id, data),
+        onSuccess: (_, variables) => {
+            qc.invalidateQueries({queryKey: ['users', userId, 'milestones', variables.id]});
+            qc.invalidateQueries({queryKey: ['users', userId, 'milestones']});
+        },
+    });
+}
+
+/**
+ * Mutation hook for deleting a spiritual milestone for a specific user (admin use).
+ *
+ * @param userId - The user ID
+ * @param repo - Injectable repository (defaults to HTTP implementation)
+ * @returns React Query mutation
+ */
+export function useDeleteUserMilestoneMutation(
+    userId: number,
+    repo: MilestonesRepository = defaultMilestonesRepository
+) {
+    const qc = useQueryClient();
+
+    return useMutation({
+        mutationFn: (id: number) => repo.deleteUserMilestone(userId, id),
+        onSuccess: (_, id) => {
+            qc.invalidateQueries({queryKey: ['users', userId, 'milestones', id]});
+            qc.invalidateQueries({queryKey: ['users', userId, 'milestones']});
+        },
+    });
+}

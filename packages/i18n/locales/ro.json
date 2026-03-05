@@ -138,6 +138,7 @@
     "save": "Salveaz\u0103",
     "cancel": "Anuleaz\u0103",
     "delete": "\u0218terge",
+    "edit": "Editeaz\u0103",
     "disable": "Dezactiveaz\u0103",
     "search": "Caut\u0103",
     "ok": "OK",
@@ -155,14 +156,69 @@
     "deleteMessage": "\u0218tergi pe {{name}}?",
     "deleteSuccess": "Membru al familiei \u0219ters",
     "thisMember": "acest membru",
-    "emptyState": "Nu au fost ad\u0103ugate \u00eenc\u0103 rela\u021bii de familie"
+    "emptyState": "Nu au fost ad\u0103ugate \u00eenc\u0103 rela\u021bii de familie",
+    "addButton": "Adaug\u0103 membru al familiei",
+    "editButton": "Editeaz\u0103",
+    "createSuccess": "Membru al familiei ad\u0103ugat",
+    "updateSuccess": "Membru al familiei actualizat",
+    "createError": "Ad\u0103ugarea membrului familiei a e\u0219uat",
+    "updateError": "Actualizarea membrului familiei a e\u0219uat",
+    "fields": {
+      "relationshipType": "Tip rela\u021bie",
+      "relatedPersonName": "Nume",
+      "relatedPersonNamePlaceholder": "Introdu numele",
+      "relatedPersonDob": "Data na\u0219terii",
+      "relatedPersonPhone": "Telefon",
+      "relatedPersonPhonePlaceholder": "Introdu num\u0103rul de telefon",
+      "relatedPersonEmail": "Email",
+      "relatedPersonEmailPlaceholder": "Introdu adresa de email"
+    },
+    "relationshipTypes": {
+      "spouse": "So\u021b/So\u021bie",
+      "child": "Copil",
+      "parent": "P\u0103rinte",
+      "sibling": "Frate/Sor\u0103"
+    },
+    "errors": {
+      "nameRequired": "Numele este obligatoriu",
+      "invalidEmail": "Te rug\u0103m s\u0103 introduci o adres\u0103 de email valid\u0103"
+    }
   },
   "milestones": {
     "title": "✨ Repere Spirituale",
     "deleteTitle": "\u0218terge reper",
     "deleteMessage": "\u0218tergi {{type}}?",
     "deleteSuccess": "Reper \u0219ters",
-    "emptyState": "Nu au fost ad\u0103ugate \u00eenc\u0103 repere spirituale"
+    "emptyState": "Nu au fost ad\u0103ugate \u00eenc\u0103 repere spirituale",
+    "addButton": "Adaug\u0103 reper",
+    "editButton": "Editeaz\u0103",
+    "createSuccess": "Reper ad\u0103ugat",
+    "updateSuccess": "Reper actualizat",
+    "createError": "Ad\u0103ugarea reperului a e\u0219uat",
+    "updateError": "Actualizarea reperului a e\u0219uat",
+    "duplicateError": "Ai deja un reper de acest tip",
+    "fields": {
+      "milestoneType": "Tip reper",
+      "milestoneDate": "Data",
+      "location": "Loca\u021bie",
+      "locationPlaceholder": "Introdu loca\u021bia",
+      "officiant": "Oficiant",
+      "officiantPlaceholder": "Introdu numele oficiantului",
+      "notes": "Note",
+      "notesPlaceholder": "Introdu note"
+    },
+    "milestoneTypes": {
+      "conversion": "Convertire",
+      "baptism": "Botez",
+      "water_baptism": "Botez \u00een ap\u0103",
+      "spirit_baptism": "Botezul Duhului",
+      "confirmation": "Confirmare",
+      "dedication": "Dedicare",
+      "ordination": "Ordinare"
+    },
+    "errors": {
+      "typeRequired": "Tipul reperului este obligatoriu"
+    }
   },
   "membership": {
     "title": "⛪ Istoric Membre",
@@ -170,7 +226,36 @@
     "deleteMessage": "\u0218tergi apartenența la {{churchName}}?",
     "deleteSuccess": "\u00cenregistrare de membru \u0219tears\u0103",
     "active": "Activ",
-    "emptyState": "Nu a fost ad\u0103ugat \u00eenc\u0103 istoric de membre"
+    "emptyState": "Nu a fost ad\u0103ugat \u00eenc\u0103 istoric de membre",
+    "addButton": "Adaug\u0103 \u00eenregistrare",
+    "editButton": "Editeaz\u0103",
+    "createSuccess": "\u00cenregistrare de membru ad\u0103ugat\u0103",
+    "updateSuccess": "\u00cenregistrare de membru actualizat\u0103",
+    "createError": "Ad\u0103ugarea \u00eenregistr\u0103rii a e\u0219uat",
+    "updateError": "Actualizarea \u00eenregistr\u0103rii a e\u0219uat",
+    "duplicateActiveError": "Ai deja o apartenent\u0103 activ\u0103. Te rug\u0103m s\u0103 o \u00eenchei \u00eenainte de a ad\u0103uga una nou\u0103.",
+    "fields": {
+      "churchName": "Numele bisericii",
+      "churchNamePlaceholder": "Introdu numele bisericii",
+      "startDate": "Data \u00eenceputului",
+      "endDate": "Data sf\u00e2r\u0219itului",
+      "endDateHint": "Las\u0103 gol pentru apartenent\u0103 activ\u0103",
+      "transferType": "Tip transfer",
+      "previousRole": "Rolul anterior",
+      "previousRolePlaceholder": "Introdu rolul anterior",
+      "transferLetterReceived": "Scrisoare de transfer primit\u0103",
+      "notes": "Note",
+      "notesPlaceholder": "Introdu note"
+    },
+    "transferTypes": {
+      "transfer_in": "Transfer intrare",
+      "transfer_out": "Transfer ie\u0219ire",
+      "new_member": "Membru nou",
+      "restored": "Restaurat"
+    },
+    "errors": {
+      "churchNameRequired": "Numele bisericii este obligatoriu"
+    }
   },
   "skills": {
     "title": "🎯 Abilit\u0103\u021bi & Talente",
@@ -179,7 +264,40 @@
     "deleteSuccess": "Abilitate \u0219tears\u0103",
     "yearsExperience": "{{count}} {{count, plural, one {an} few {ani} other {ani}}} experien\u021b\u0103",
     "willingToServe": "✓ Dispus s\u0103 serveasc\u0103",
-    "emptyState": "Nu au fost ad\u0103ugate \u00eenc\u0103 abilit\u0103\u021bi"
+    "emptyState": "Nu au fost ad\u0103ugate \u00eenc\u0103 abilit\u0103\u021bi",
+    "addButton": "Adaug\u0103 abilitate",
+    "editButton": "Editeaz\u0103",
+    "createSuccess": "Abilitate ad\u0103ugat\u0103",
+    "updateSuccess": "Abilitate actualizat\u0103",
+    "createError": "Ad\u0103ugarea abilit\u0103\u021bii a e\u0219uat",
+    "updateError": "Actualizarea abilit\u0103\u021bii a e\u0219uat",
+    "duplicateError": "Ai deja o abilitate cu acest nume",
+    "fields": {
+      "skillName": "Numele abilit\u0103\u021bii",
+      "skillNamePlaceholder": "Introdu numele abilit\u0103\u021bii",
+      "skillCategory": "Categorie",
+      "proficiencyLevel": "Nivel de competen\u021b\u0103",
+      "yearsOfExperience": "Ani de experien\u021b\u0103",
+      "yearsOfExperiencePlaceholder": "Introdu anii",
+      "isWillingToServe": "Dispus s\u0103 serveasc\u0103"
+    },
+    "categories": {
+      "Music": "Muzic\u0103",
+      "Technology": "Tehnologie",
+      "Teaching": "\u00cenv\u0103\u021b\u0103m\u00e2nt",
+      "Administration": "Administra\u021bie",
+      "Hospitality": "Ospitalitate",
+      "Creative Arts": "Arte creative"
+    },
+    "proficiencyLevels": {
+      "beginner": "\u00cencep\u0103tor",
+      "intermediate": "Intermediar",
+      "advanced": "Avansat",
+      "expert": "Expert"
+    },
+    "errors": {
+      "skillNameRequired": "Numele abilit\u0103\u021bii este obligatoriu"
+    }
   },
   "modal": {
     "title": "Aceasta este o fereastr\u0103 modal\u0103",

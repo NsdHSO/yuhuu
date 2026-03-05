@@ -159,3 +159,102 @@ export function useDeleteMyFamilyRelationshipMutation(
         },
     });
 }
+
+/**
+ * Mutation hook for creating a new family relationship for a specific user (admin use).
+ *
+ * After successful creation, invalidates the user's family list query to refresh the list.
+ *
+ * Usage:
+ * ```tsx
+ * const createMutation = useCreateUserFamilyRelationshipMutation(userId);
+ * createMutation.mutate({
+ *   related_person_name: 'Jane Doe',
+ *   relationship_type: 'spouse'
+ * });
+ * ```
+ *
+ * @param userId - The user ID to create family relationship for
+ * @param repo - Injectable repository (defaults to HTTP implementation)
+ * @returns React Query mutation
+ */
+export function useCreateUserFamilyRelationshipMutation(
+    userId: number,
+    repo: FamilyRepository = defaultFamilyRepository
+) {
+    const qc = useQueryClient();
+
+    return useMutation({
+        mutationFn: (data: CreateFamilyRelationshipInput) => repo.createUserFamilyRelationship(userId, data),
+        onSuccess: () => {
+            // Invalidate user's family list to refresh
+            qc.invalidateQueries({queryKey: ['users', userId, 'family']});
+        },
+    });
+}
+
+/**
+ * Mutation hook for updating an existing family relationship for a specific user (admin use).
+ *
+ * After successful update, invalidates both the specific relationship and user's family list queries.
+ *
+ * Usage:
+ * ```tsx
+ * const updateMutation = useUpdateUserFamilyRelationshipMutation(userId);
+ * updateMutation.mutate({
+ *   id: 1,
+ *   data: { related_person_phone: '555-9999' }
+ * });
+ * ```
+ *
+ * @param userId - The user ID
+ * @param repo - Injectable repository (defaults to HTTP implementation)
+ * @returns React Query mutation
+ */
+export function useUpdateUserFamilyRelationshipMutation(
+    userId: number,
+    repo: FamilyRepository = defaultFamilyRepository
+) {
+    const qc = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({id, data}: { id: number; data: UpdateFamilyRelationshipInput }) =>
+            repo.updateUserFamilyRelationship(userId, id, data),
+        onSuccess: (_, variables) => {
+            // Invalidate specific relationship and user's family list
+            qc.invalidateQueries({queryKey: ['users', userId, 'family', variables.id]});
+            qc.invalidateQueries({queryKey: ['users', userId, 'family']});
+        },
+    });
+}
+
+/**
+ * Mutation hook for deleting a family relationship for a specific user (admin use).
+ *
+ * After successful deletion, invalidates both the specific relationship and user's family list queries.
+ *
+ * Usage:
+ * ```tsx
+ * const deleteMutation = useDeleteUserFamilyRelationshipMutation(userId);
+ * deleteMutation.mutate(1); // Delete relationship with ID 1
+ * ```
+ *
+ * @param userId - The user ID
+ * @param repo - Injectable repository (defaults to HTTP implementation)
+ * @returns React Query mutation
+ */
+export function useDeleteUserFamilyRelationshipMutation(
+    userId: number,
+    repo: FamilyRepository = defaultFamilyRepository
+) {
+    const qc = useQueryClient();
+
+    return useMutation({
+        mutationFn: (id: number) => repo.deleteUserFamilyRelationship(userId, id),
+        onSuccess: (_, id) => {
+            // Invalidate specific relationship and user's family list
+            qc.invalidateQueries({queryKey: ['users', userId, 'family', id]});
+            qc.invalidateQueries({queryKey: ['users', userId, 'family']});
+        },
+    });
+}

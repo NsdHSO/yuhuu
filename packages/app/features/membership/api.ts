@@ -24,4 +24,7 @@ export {
     useCreateMyMembershipHistoryMutation,
     useUpdateMyMembershipHistoryMutation,
     useDeleteMyMembershipHistoryMutation,
+    useCreateUserMembershipHistoryMutation,
+    useUpdateUserMembershipHistoryMutation,
+    useDeleteUserMembershipHistoryMutation,
 } from './hooks';

@@ -121,3 +121,69 @@ export function useDeleteMySkillMutation(repo: SkillsRepository = defaultSkillsR
         },
     });
 }
+
+/**
+ * Mutation hook for creating a new skill for a specific user (admin use).
+ *
+ * @param userId - The user ID to create skill for
+ * @param repo - Injectable repository (defaults to HTTP implementation)
+ * @returns React Query mutation
+ */
+export function useCreateUserSkillMutation(
+    userId: number,
+    repo: SkillsRepository = defaultSkillsRepository
+) {
+    const qc = useQueryClient();
+
+    return useMutation({
+        mutationFn: (data: CreateUserSkillInput) => repo.createUserSkill(userId, data),
+        onSuccess: () => {
+            qc.invalidateQueries({queryKey: ['users', userId, 'skills']});
+        },
+    });
+}
+
+/**
+ * Mutation hook for updating an existing skill for a specific user (admin use).
+ *
+ * @param userId - The user ID
+ * @param repo - Injectable repository (defaults to HTTP implementation)
+ * @returns React Query mutation
+ */
+export function useUpdateUserSkillMutation(
+    userId: number,
+    repo: SkillsRepository = defaultSkillsRepository
+) {
+    const qc = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({id, data}: { id: number; data: UpdateUserSkillInput }) =>
+            repo.updateUserSkill(userId, id, data),
+        onSuccess: (_, variables) => {
+            qc.invalidateQueries({queryKey: ['users', userId, 'skills', variables.id]});
+            qc.invalidateQueries({queryKey: ['users', userId, 'skills']});
+        },
+    });
+}
+
+/**
+ * Mutation hook for deleting a skill for a specific user (admin use).
+ *
+ * @param userId - The user ID
+ * @param repo - Injectable repository (defaults to HTTP implementation)
+ * @returns React Query mutation
+ */
+export function useDeleteUserSkillMutation(
+    userId: number,
+    repo: SkillsRepository = defaultSkillsRepository
+) {
+    const qc = useQueryClient();
+
+    return useMutation({
+        mutationFn: (id: number) => repo.deleteUserSkill(userId, id),
+        onSuccess: (_, id) => {
+            qc.invalidateQueries({queryKey: ['users', userId, 'skills', id]});
+            qc.invalidateQueries({queryKey: ['users', userId, 'skills']});
+        },
+    });
+}

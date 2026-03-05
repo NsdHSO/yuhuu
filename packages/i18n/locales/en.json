@@ -138,6 +138,7 @@
     "save": "Save",
     "cancel": "Cancel",
     "delete": "Delete",
+    "edit": "Edit",
     "disable": "Disable",
     "search": "Search",
     "ok": "OK",
@@ -155,14 +156,69 @@
     "deleteMessage": "Remove {{name}}?",
     "deleteSuccess": "Family member removed",
     "thisMember": "this member",
-    "emptyState": "No family relationships added yet"
+    "emptyState": "No family relationships added yet",
+    "addButton": "Add Family Member",
+    "editButton": "Edit",
+    "createSuccess": "Family member added",
+    "updateSuccess": "Family member updated",
+    "createError": "Failed to add family member",
+    "updateError": "Failed to update family member",
+    "fields": {
+      "relationshipType": "Relationship Type",
+      "relatedPersonName": "Name",
+      "relatedPersonNamePlaceholder": "Enter name",
+      "relatedPersonDob": "Date of Birth",
+      "relatedPersonPhone": "Phone",
+      "relatedPersonPhonePlaceholder": "Enter phone number",
+      "relatedPersonEmail": "Email",
+      "relatedPersonEmailPlaceholder": "Enter email address"
+    },
+    "relationshipTypes": {
+      "spouse": "Spouse",
+      "child": "Child",
+      "parent": "Parent",
+      "sibling": "Sibling"
+    },
+    "errors": {
+      "nameRequired": "Name is required",
+      "invalidEmail": "Please enter a valid email address"
+    }
   },
   "milestones": {
     "title": "✨ Spiritual Milestones",
     "deleteTitle": "Delete Milestone",
     "deleteMessage": "Remove {{type}}?",
     "deleteSuccess": "Milestone removed",
-    "emptyState": "No spiritual milestones added yet"
+    "emptyState": "No spiritual milestones added yet",
+    "addButton": "Add Milestone",
+    "editButton": "Edit",
+    "createSuccess": "Milestone added",
+    "updateSuccess": "Milestone updated",
+    "createError": "Failed to add milestone",
+    "updateError": "Failed to update milestone",
+    "duplicateError": "You already have a milestone of this type",
+    "fields": {
+      "milestoneType": "Milestone Type",
+      "milestoneDate": "Date",
+      "location": "Location",
+      "locationPlaceholder": "Enter location",
+      "officiant": "Officiant",
+      "officiantPlaceholder": "Enter officiant name",
+      "notes": "Notes",
+      "notesPlaceholder": "Enter notes"
+    },
+    "milestoneTypes": {
+      "conversion": "Conversion",
+      "baptism": "Baptism",
+      "water_baptism": "Water Baptism",
+      "spirit_baptism": "Spirit Baptism",
+      "confirmation": "Confirmation",
+      "dedication": "Dedication",
+      "ordination": "Ordination"
+    },
+    "errors": {
+      "typeRequired": "Milestone type is required"
+    }
   },
   "membership": {
     "title": "⛪ Membership History",
@@ -170,7 +226,36 @@
     "deleteMessage": "Remove membership at {{churchName}}?",
     "deleteSuccess": "Membership record removed",
     "active": "Active",
-    "emptyState": "No membership history added yet"
+    "emptyState": "No membership history added yet",
+    "addButton": "Add Membership",
+    "editButton": "Edit",
+    "createSuccess": "Membership record added",
+    "updateSuccess": "Membership record updated",
+    "createError": "Failed to add membership record",
+    "updateError": "Failed to update membership record",
+    "duplicateActiveError": "You already have an active membership. Please end it before adding a new one.",
+    "fields": {
+      "churchName": "Church Name",
+      "churchNamePlaceholder": "Enter church name",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "endDateHint": "Leave empty for active membership",
+      "transferType": "Transfer Type",
+      "previousRole": "Previous Role",
+      "previousRolePlaceholder": "Enter previous role",
+      "transferLetterReceived": "Transfer Letter Received",
+      "notes": "Notes",
+      "notesPlaceholder": "Enter notes"
+    },
+    "transferTypes": {
+      "transfer_in": "Transfer In",
+      "transfer_out": "Transfer Out",
+      "new_member": "New Member",
+      "restored": "Restored"
+    },
+    "errors": {
+      "churchNameRequired": "Church name is required"
+    }
   },
   "skills": {
     "title": "🎯 Skills & Talents",
@@ -179,7 +264,40 @@
     "deleteSuccess": "Skill removed",
     "yearsExperience": "{{count}} {{count, plural, one {year} other {years}}} experience",
     "willingToServe": "✓ Willing to serve",
-    "emptyState": "No skills added yet"
+    "emptyState": "No skills added yet",
+    "addButton": "Add Skill",
+    "editButton": "Edit",
+    "createSuccess": "Skill added",
+    "updateSuccess": "Skill updated",
+    "createError": "Failed to add skill",
+    "updateError": "Failed to update skill",
+    "duplicateError": "You already have a skill with this name",
+    "fields": {
+      "skillName": "Skill Name",
+      "skillNamePlaceholder": "Enter skill name",
+      "skillCategory": "Category",
+      "proficiencyLevel": "Proficiency Level",
+      "yearsOfExperience": "Years of Experience",
+      "yearsOfExperiencePlaceholder": "Enter years",
+      "isWillingToServe": "Willing to Serve"
+    },
+    "categories": {
+      "Music": "Music",
+      "Technology": "Technology",
+      "Teaching": "Teaching",
+      "Administration": "Administration",
+      "Hospitality": "Hospitality",
+      "Creative Arts": "Creative Arts"
+    },
+    "proficiencyLevels": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced",
+      "expert": "Expert"
+    },
+    "errors": {
+      "skillNameRequired": "Skill name is required"
+    }
   },
   "modal": {
     "title": "This is a modal",

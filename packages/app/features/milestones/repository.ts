@@ -62,6 +62,34 @@ export interface MilestonesRepository {
      * @throws Error on network or not found (404) errors
      */
     deleteMyMilestone(id: number): Promise<void>;
+
+    /**
+     * Create a new spiritual milestone for a specific user (admin use).
+     * @param userId - The user ID to create milestone for
+     * @param data - Milestone data to create
+     * @returns Created SpiritualMilestone
+     * @throws Error on network, validation, or conflict (409) errors
+     */
+    createUserMilestone(userId: number, data: CreateSpiritualMilestoneInput): Promise<SpiritualMilestone>;
+
+    /**
+     * Update an existing spiritual milestone for a specific user (admin use).
+     * @param userId - The user ID
+     * @param id - The milestone ID
+     * @param data - Milestone data to update
+     * @returns Updated SpiritualMilestone
+     * @throws Error on network, validation, or not found (404) errors
+     */
+    updateUserMilestone(userId: number, id: number, data: UpdateSpiritualMilestoneInput): Promise<SpiritualMilestone>;
+
+    /**
+     * Delete a spiritual milestone for a specific user (admin use).
+     * @param userId - The user ID
+     * @param id - The milestone ID
+     * @returns void
+     * @throws Error on network or not found (404) errors
+     */
+    deleteUserMilestone(userId: number, id: number): Promise<void>;
 }
 
 /**
@@ -76,7 +104,7 @@ export class HttpMilestonesRepository implements MilestonesRepository {
     }
 
     async listUserMilestones(userId: number): Promise<SpiritualMilestone[]> {
-        return await unwrap<SpiritualMilestone[]>(appApi.get(`/users/${userId}/milestones`));
+        return await unwrap<SpiritualMilestone[]>(appApi.get(`/admin/users/${userId}/milestones`));
     }
 
     async getMyMilestone(id: number): Promise<SpiritualMilestone | null> {
@@ -99,6 +127,18 @@ export class HttpMilestonesRepository implements MilestonesRepository {
 
     async deleteMyMilestone(id: number): Promise<void> {
         await unwrap<void>(appApi.delete(`/profiles/me/milestones/${id}`));
+    }
+
+    async createUserMilestone(userId: number, data: CreateSpiritualMilestoneInput): Promise<SpiritualMilestone> {
+        return await unwrap<SpiritualMilestone>(appApi.post(`/admin/users/${userId}/milestones`, data));
+    }
+
+    async updateUserMilestone(userId: number, id: number, data: UpdateSpiritualMilestoneInput): Promise<SpiritualMilestone> {
+        return await unwrap<SpiritualMilestone>(appApi.put(`/admin/users/${userId}/milestones/${id}`, data));
+    }
+
+    async deleteUserMilestone(userId: number, id: number): Promise<void> {
+        await unwrap<void>(appApi.delete(`/admin/users/${userId}/milestones/${id}`));
     }
 }
 

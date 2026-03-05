@@ -23,4 +23,7 @@ export {
     useCreateMySkillMutation,
     useUpdateMySkillMutation,
     useDeleteMySkillMutation,
+    useCreateUserSkillMutation,
+    useUpdateUserSkillMutation,
+    useDeleteUserSkillMutation,
 } from './hooks';

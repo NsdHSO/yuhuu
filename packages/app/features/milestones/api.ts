@@ -24,4 +24,7 @@ export {
     useCreateMyMilestoneMutation,
     useUpdateMyMilestoneMutation,
     useDeleteMyMilestoneMutation,
+    useCreateUserMilestoneMutation,
+    useUpdateUserMilestoneMutation,
+    useDeleteUserMilestoneMutation,
 } from './hooks';

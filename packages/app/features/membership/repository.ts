@@ -62,6 +62,34 @@ export interface MembershipRepository {
      * @throws Error on network or server errors
      */
     listUserMembershipHistory(userId: number): Promise<MembershipHistory[]>;
+
+    /**
+     * Create a new membership history record for a specific user (admin use).
+     * @param userId - The user ID to create membership history for
+     * @param data - Membership history data to create
+     * @returns Created MembershipHistory
+     * @throws Error on network, validation, or conflict (409) errors
+     */
+    createUserMembershipHistory(userId: number, data: CreateMembershipHistoryInput): Promise<MembershipHistory>;
+
+    /**
+     * Update an existing membership history record for a specific user (admin use).
+     * @param userId - The user ID
+     * @param id - The membership history ID
+     * @param data - Membership history data to update
+     * @returns Updated MembershipHistory
+     * @throws Error on network, validation, or not found (404) errors
+     */
+    updateUserMembershipHistory(userId: number, id: number, data: UpdateMembershipHistoryInput): Promise<MembershipHistory>;
+
+    /**
+     * Delete a membership history record for a specific user (admin use).
+     * @param userId - The user ID
+     * @param id - The membership history ID
+     * @returns void
+     * @throws Error on network or not found (404) errors
+     */
+    deleteUserMembershipHistory(userId: number, id: number): Promise<void>;
 }
 
 /**
@@ -98,7 +126,19 @@ export class HttpMembershipRepository implements MembershipRepository {
     }
 
     async listUserMembershipHistory(userId: number): Promise<MembershipHistory[]> {
-        return await unwrap<MembershipHistory[]>(appApi.get(`/users/${userId}/membership`));
+        return await unwrap<MembershipHistory[]>(appApi.get(`/admin/users/${userId}/membership-history`));
+    }
+
+    async createUserMembershipHistory(userId: number, data: CreateMembershipHistoryInput): Promise<MembershipHistory> {
+        return await unwrap<MembershipHistory>(appApi.post(`/admin/users/${userId}/membership-history`, data));
+    }
+
+    async updateUserMembershipHistory(userId: number, id: number, data: UpdateMembershipHistoryInput): Promise<MembershipHistory> {
+        return await unwrap<MembershipHistory>(appApi.put(`/admin/users/${userId}/membership-history/${id}`, data));
+    }
+
+    async deleteUserMembershipHistory(userId: number, id: number): Promise<void> {
+        await unwrap<void>(appApi.delete(`/admin/users/${userId}/membership-history/${id}`));
     }
 }
 
