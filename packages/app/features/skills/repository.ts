@@ -23,6 +23,14 @@ export interface SkillsRepository {
     listMySkills(): Promise<UserSkill[]>;
 
     /**
+     * List all skills for a specific user by ID.
+     * @param userId - The user ID
+     * @returns Array of UserSkill records
+     * @throws Error on network or server errors
+     */
+    listUserSkills(userId: number): Promise<UserSkill[]>;
+
+    /**
      * Get a specific skill by ID.
      * @param id - The skill ID
      * @returns UserSkill or null if not found
@@ -65,6 +73,10 @@ export interface SkillsRepository {
 export class HttpSkillsRepository implements SkillsRepository {
     async listMySkills(): Promise<UserSkill[]> {
         return await unwrap<UserSkill[]>(appApi.get('/profiles/me/skills'));
+    }
+
+    async listUserSkills(userId: number): Promise<UserSkill[]> {
+        return await unwrap<UserSkill[]>(appApi.get(`/users/${userId}/skills`));
     }
 
     async getMySkill(id: number): Promise<UserSkill | null> {

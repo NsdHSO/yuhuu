@@ -524,6 +524,7 @@ describe('Biometric Login Flow - Integration Tests', () => {
                 expect(mockPost).toHaveBeenCalledWith('/auth/login', {
                     email: 'user@test.com',
                     password: 'password123',
+                    notes: JSON.stringify({client: "Church", email: 'user@test.com'})
                 });
             });
 
@@ -596,6 +597,7 @@ describe('Biometric Login Flow - Integration Tests', () => {
                 expect(mockPost).toHaveBeenCalledWith('/auth/login', {
                     email: 'test@example.com',
                     password: 'password123',
+                    notes: JSON.stringify({client: "Church", email: 'test@example.com'})
                 });
             });
 
@@ -1172,6 +1174,7 @@ describe('Biometric Login Flow - Integration Tests', () => {
                 expect(mockPost).toHaveBeenCalledWith('/auth/login', {
                     email: 'test+special@sub.example.com',
                     password: 'P@ssw0rd!@#$%^&*',
+                    notes: JSON.stringify({client: "Church", email: 'test+special@sub.example.com'})
                 });
             });
         });

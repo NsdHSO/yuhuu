@@ -32,6 +32,24 @@ export function useMyMembershipHistoryQuery(repo: MembershipRepository = default
 }
 
 /**
+ * Query hook for listing all membership history records of a specific user (admin use).
+ *
+ * @param userId - The user ID to fetch membership history for
+ * @param repo - Injectable repository (defaults to HTTP implementation)
+ * @returns React Query result with array of MembershipHistory
+ */
+export function useUserMembershipHistoryQuery(
+    userId: number,
+    repo: MembershipRepository = defaultMembershipRepository
+) {
+    return useQuery<MembershipHistory[]>({
+        queryKey: ['users', userId, 'membership'],
+        queryFn: () => repo.listUserMembershipHistory(userId),
+        staleTime: 5 * 60_000, // 5 minutes
+    });
+}
+
+/**
  * Query hook for fetching a specific membership history record by ID.
  *
  * @param id - The membership history ID

@@ -54,6 +54,14 @@ export interface MembershipRepository {
      * @throws Error on network or not found (404) errors
      */
     deleteMyMembershipHistory(id: number): Promise<void>;
+
+    /**
+     * List all membership history records for a specific user (admin use).
+     * @param userId - The user ID to fetch membership history for
+     * @returns Array of MembershipHistory records
+     * @throws Error on network or server errors
+     */
+    listUserMembershipHistory(userId: number): Promise<MembershipHistory[]>;
 }
 
 /**
@@ -87,6 +95,10 @@ export class HttpMembershipRepository implements MembershipRepository {
 
     async deleteMyMembershipHistory(id: number): Promise<void> {
         await unwrap<void>(appApi.delete(`/profiles/me/membership-history/${id}`));
+    }
+
+    async listUserMembershipHistory(userId: number): Promise<MembershipHistory[]> {
+        return await unwrap<MembershipHistory[]>(appApi.get(`/users/${userId}/membership`));
     }
 }
 

@@ -32,6 +32,25 @@ export function useMyMilestonesQuery(repo: MilestonesRepository = defaultMilesto
 }
 
 /**
+ * Query hook for listing all spiritual milestones of a specific user by ID.
+ *
+ * @param userId - The user ID to fetch milestones for
+ * @param repo - Injectable repository (defaults to HTTP implementation)
+ * @returns React Query result with array of SpiritualMilestone
+ */
+export function useUserMilestonesQuery(
+    userId: number,
+    repo: MilestonesRepository = defaultMilestonesRepository
+) {
+    return useQuery<SpiritualMilestone[]>({
+        queryKey: ['users', userId, 'milestones'],
+        queryFn: () => repo.listUserMilestones(userId),
+        enabled: userId > 0,
+        staleTime: 5 * 60_000, // 5 minutes
+    });
+}
+
+/**
  * Query hook for fetching a specific spiritual milestone by ID.
  *
  * @param id - The milestone ID

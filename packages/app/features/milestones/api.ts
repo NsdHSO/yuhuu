@@ -19,6 +19,7 @@ export {HttpMilestonesRepository, defaultMilestonesRepository} from './repositor
 // Hooks
 export {
     useMyMilestonesQuery,
+    useUserMilestonesQuery,
     useMyMilestoneQuery,
     useCreateMyMilestoneMutation,
     useUpdateMyMilestoneMutation,

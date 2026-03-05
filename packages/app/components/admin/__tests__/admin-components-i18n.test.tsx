@@ -27,6 +27,10 @@ jest.mock('@/hooks/use-color-scheme', () => ({
     useColorScheme: () => 'light',
 }));
 
+jest.mock('@/features/admin/api', () => ({
+    useUserSearchQuery: () => ({data: [], isLoading: false, error: null}),
+}));
+
 describe('UserSearch - i18n', () => {
     beforeEach(() => jest.clearAllMocks());
 
@@ -35,16 +39,11 @@ describe('UserSearch - i18n', () => {
         expect(mockT).toHaveBeenCalledWith('admin.searchPlaceholder');
     });
 
-    it('should use t("common.search") for search button text', () => {
-        render(<UserSearch onSearch={jest.fn()}/>);
-        expect(mockT).toHaveBeenCalledWith('common.search');
-    });
-
     it('should not contain hardcoded English strings', () => {
         mockT.mockImplementation((key: string) => `__${key}__`);
         const {queryByText} = render(<UserSearch onSearch={jest.fn()}/>);
         expect(queryByText('Search by username')).toBeNull();
-        expect(queryByText('Search')).toBeNull();
+        expect(queryByText('Search by name...')).toBeNull();
     });
 });
 

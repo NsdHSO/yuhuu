@@ -6,16 +6,24 @@ import {ThemedText} from '@/components/themed-text';
 import {useColorScheme} from '@/hooks/use-color-scheme';
 import {
     useMyMembershipHistoryQuery,
+    useUserMembershipHistoryQuery,
     useDeleteMyMembershipHistoryMutation,
 } from '@/features/membership/api';
 import {getErrorMessage} from '@/lib/errors';
 import {formatDateForDisplay} from '@/lib/dates';
 import {Colors} from '@/constants/theme';
 
-export function MembershipAccordion() {
+interface MembershipAccordionProps {
+    userId?: number;
+}
+
+export function MembershipAccordion({userId}: MembershipAccordionProps) {
     const {t} = useTranslation();
     const scheme = useColorScheme() ?? 'light';
-    const {data: history, isLoading} = useMyMembershipHistoryQuery();
+    const isAdminView = userId !== undefined;
+    const myQuery = useMyMembershipHistoryQuery();
+    const userQuery = useUserMembershipHistoryQuery(userId!);
+    const {data: history, isLoading} = isAdminView ? userQuery : myQuery;
     const deleteMutation = useDeleteMyMembershipHistoryMutation();
 
     const handleDelete = (id: number, churchName: string) => {
@@ -87,12 +95,14 @@ export function MembershipAccordion() {
                                         </View>
                                     )}
                                 </View>
-                                <Pressable
-                                    onPress={() => handleDelete(record.id, record.church_name)}
-                                    style={{padding: 4}}
-                                >
-                                    <ThemedText style={{color: '#EF4444', fontSize: 14}}>{t('common.delete')}</ThemedText>
-                                </Pressable>
+                                {!isAdminView && (
+                                    <Pressable
+                                        onPress={() => handleDelete(record.id, record.church_name)}
+                                        style={{padding: 4}}
+                                    >
+                                        <ThemedText style={{color: '#EF4444', fontSize: 14}}>{t('common.delete')}</ThemedText>
+                                    </Pressable>
+                                )}
                             </View>
                             {record.transfer_type && (
                                 <ThemedText style={{fontSize: 14, color: Colors[scheme].tabIconDefault, marginTop: 4}}>

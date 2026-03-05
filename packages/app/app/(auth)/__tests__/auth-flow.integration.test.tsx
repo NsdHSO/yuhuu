@@ -116,7 +116,8 @@ describe('Authentication Flow - Integration Tests', () => {
             await waitFor(() => {
                 expect(mockPost).toHaveBeenCalledWith('/auth/login', {
                     email: 'test@example.com',
-                    password: 'password123'
+                    password: 'password123',
+                    notes: JSON.stringify({client: "Church", email: 'test@example.com'})
                 });
             }, {timeout: 10000});
 
@@ -420,7 +421,8 @@ describe('Authentication Flow - Integration Tests', () => {
             await waitFor(() => {
                 expect(mockPost).toHaveBeenCalledWith('/auth/login', {
                     email: 'test@example.com',
-                    password: 'password123'
+                    password: 'password123',
+                    notes: JSON.stringify({client: "Church", email: 'test@example.com'})
                 });
             });
         });

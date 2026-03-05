@@ -6,6 +6,7 @@ import {ThemedText} from '@/components/themed-text';
 import {useColorScheme} from '@/hooks/use-color-scheme';
 import {
     useMyFamilyQuery,
+    useUserFamilyQuery,
     useCreateMyFamilyRelationshipMutation,
     useDeleteMyFamilyRelationshipMutation,
     type FamilyRelationship,
@@ -13,10 +14,17 @@ import {
 import {isConflictError, getErrorMessage} from '@/lib/errors';
 import {Colors} from '@/constants/theme';
 
-export function FamilyAccordion() {
+interface FamilyAccordionProps {
+    userId?: number;
+}
+
+export function FamilyAccordion({userId}: FamilyAccordionProps) {
     const {t} = useTranslation();
     const scheme = useColorScheme() ?? 'light';
-    const {data: family, isLoading} = useMyFamilyQuery();
+    const isAdmin = userId !== undefined;
+    const myFamily = useMyFamilyQuery();
+    const userFamily = useUserFamilyQuery(userId ?? 0);
+    const {data: family, isLoading} = isAdmin ? userFamily : myFamily;
     const deleteMutation = useDeleteMyFamilyRelationshipMutation();
 
     const handleDelete = (id: number, name: string) => {
@@ -70,12 +78,14 @@ export function FamilyAccordion() {
                                 <ThemedText style={{fontSize: 16, fontWeight: '600'}}>
                                     {member.related_person_name || `User #${member.related_user_id}`}
                                 </ThemedText>
-                                <Pressable
-                                    onPress={() => handleDelete(member.id, member.related_person_name || t('family.thisMember'))}
-                                    style={{padding: 4}}
-                                >
-                                    <Text style={{color: '#EF4444', fontSize: 14}}>{t('common.delete')}</Text>
-                                </Pressable>
+                                {!isAdmin && (
+                                    <Pressable
+                                        onPress={() => handleDelete(member.id, member.related_person_name || t('family.thisMember'))}
+                                        style={{padding: 4}}
+                                    >
+                                        <Text style={{color: '#EF4444', fontSize: 14}}>{t('common.delete')}</Text>
+                                    </Pressable>
+                                )}
                             </View>
                             <ThemedText style={{fontSize: 14, color: Colors[scheme].tabIconDefault}}>
                                 {getRelationshipLabel(member.relationship_type)}

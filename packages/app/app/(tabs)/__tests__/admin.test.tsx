@@ -1,5 +1,6 @@
 import React from 'react';
 import {fireEvent, render, waitFor} from '@testing-library/react-native';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 
 import AdminScreen from '../admin';
 
@@ -71,6 +72,32 @@ jest.mock('@/features/admin/hooks', () => {
     return {
         ...actualHooks,
         useDinnerStatsQuery: () => mockUseDinnerStatsQuery(),
+        useUserSearchQuery: (searchTerm: string) => {
+            if (!searchTerm || searchTerm === '') {
+                return {data: [], isLoading: false, error: null};
+            }
+            // Return array of search results
+            return {
+                data: [
+                    {id: 1, user_id: 1, middle_name: searchTerm, phone: '0812345678'}
+                ],
+                isLoading: false,
+                error: null
+            };
+        },
+        useUserLookupQuery: (searchTerm: string) => {
+            // Alias for backward compatibility
+            if (!searchTerm || searchTerm === '') {
+                return {data: [], isLoading: false, error: null};
+            }
+            return {
+                data: [
+                    {id: 1, user_id: 1, middle_name: searchTerm, phone: '0812345678'}
+                ],
+                isLoading: false,
+                error: null
+            };
+        },
         useUserAttendanceQuery: (username: string) => {
             // Return mock based on username
             if (!username || username === '') {
@@ -99,6 +126,42 @@ jest.mock('@/features/dinners/hooks', () => ({
     },
 }));
 
+// Mock profile hooks to avoid QueryClient errors
+jest.mock('@/features/family/hooks', () => ({
+    useMyFamilyQuery: () => ({ data: [], isLoading: false, error: null }),
+    useUserFamilyQuery: () => ({ data: [], isLoading: false, error: null }),
+    useDeleteMyFamilyRelationshipMutation: () => ({ mutateAsync: jest.fn() }),
+}));
+jest.mock('@/features/milestones/hooks', () => ({
+    useMyMilestonesQuery: () => ({ data: [], isLoading: false, error: null }),
+    useUserMilestonesQuery: () => ({ data: [], isLoading: false, error: null }),
+    useDeleteMyMilestoneMutation: () => ({ mutateAsync: jest.fn() }),
+}));
+jest.mock('@/features/membership/hooks', () => ({
+    useMyMembershipHistoryQuery: () => ({ data: [], isLoading: false, error: null }),
+    useUserMembershipHistoryQuery: () => ({ data: [], isLoading: false, error: null }),
+    useDeleteMyMembershipHistoryMutation: () => ({ mutateAsync: jest.fn() }),
+}));
+jest.mock('@/features/skills/hooks', () => ({
+    useMySkillsQuery: () => ({ data: [], isLoading: false, error: null }),
+    useUserSkillsQuery: () => ({ data: [], isLoading: false, error: null }),
+    useDeleteMySkillMutation: () => ({ mutateAsync: jest.fn() }),
+}));
+
+// Helper to wrap components with QueryClient
+function renderWithQueryClient(component: React.ReactElement) {
+    const queryClient = new QueryClient({
+        defaultOptions: {
+            queries: { retry: false },
+        },
+    });
+    return render(
+        <QueryClientProvider client={queryClient}>
+            {component}
+        </QueryClientProvider>
+    );
+}
+
 describe('AdminScreen', () => {
     beforeEach(() => {
         jest.clearAllMocks();
@@ -122,7 +185,7 @@ describe('AdminScreen', () => {
     describe('Multiple Sections Layout', () => {
         it('should render all admin sections', () => {
             // Given: Admin screen is rendered
-            const {getByTestId} = render(<AdminScreen/>);
+            const {getByTestId} = renderWithQueryClient(<AdminScreen/>);
 
             // Then: All sections should be present
             expect(getByTestId('admin-container')).toBeTruthy();
@@ -132,7 +195,7 @@ describe('AdminScreen', () => {
 
         it('should display section titles', () => {
             // Given: Admin screen is rendered
-            const {getByText} = render(<AdminScreen/>);
+            const {getByText} = renderWithQueryClient(<AdminScreen/>);
 
             // Then: Section titles should be visible
             expect(getByText('Dinner Participation Graph')).toBeTruthy();
@@ -143,7 +206,7 @@ describe('AdminScreen', () => {
     describe('Dinner Graph Section', () => {
         it('should render dinner graph component', () => {
             // Given: Admin screen is rendered
-            const {getByTestId} = render(<AdminScreen/>);
+            const {getByTestId} = renderWithQueryClient(<AdminScreen/>);
 
             // Then: Dinner graph should be present
             expect(getByTestId('dinner-graph')).toBeTruthy();
@@ -158,7 +221,7 @@ describe('AdminScreen', () => {
             });
 
             // When: Admin screen renders
-            const {getByTestId} = render(<AdminScreen/>);
+            const {getByTestId} = renderWithQueryClient(<AdminScreen/>);
 
             // Then: Loading indicator should be visible
             expect(getByTestId('dinner-graph-loading')).toBeTruthy();
@@ -177,7 +240,7 @@ describe('AdminScreen', () => {
             });
 
             // When: Admin screen renders
-            const {getByTestId} = render(<AdminScreen/>);
+            const {getByTestId} = renderWithQueryClient(<AdminScreen/>);
 
             // Then: Stats should be displayed
             expect(getByTestId('dinner-graph')).toBeTruthy();
@@ -192,7 +255,7 @@ describe('AdminScreen', () => {
             });
 
             // When: Admin screen renders
-            const {getByText} = render(<AdminScreen/>);
+            const {getByText} = renderWithQueryClient(<AdminScreen/>);
 
             // Then: Error message should be visible
             expect(getByText(/Failed to load/i)).toBeTruthy();
@@ -202,7 +265,7 @@ describe('AdminScreen', () => {
     describe('User Search Section', () => {
         it('should render user search component', () => {
             // Given: Admin screen is rendered
-            const {getByTestId} = render(<AdminScreen/>);
+            const {getByTestId} = renderWithQueryClient(<AdminScreen/>);
 
             // Then: User search should be present
             expect(getByTestId('user-search')).toBeTruthy();
@@ -210,28 +273,38 @@ describe('AdminScreen', () => {
 
         it('should have search input field', () => {
             // Given: Admin screen is rendered
-            const {getByTestId} = render(<AdminScreen/>);
+            const {getByTestId} = renderWithQueryClient(<AdminScreen/>);
 
             // Then: Search input should be present
             expect(getByTestId('search-input')).toBeTruthy();
         });
 
-        it('should trigger search when user types username', () => {
+        it('should trigger search when user types username', async () => {
             // Given: Admin screen is rendered with search handler
-            const {getByTestId} = render(<AdminScreen/>);
+            const {getByTestId, getByText} = renderWithQueryClient(<AdminScreen/>);
             const searchInput = getByTestId('search-input');
 
             // When: User types a username
             fireEvent.changeText(searchInput, 'john_doe');
 
-            // Then: Search should be triggered
-            // This will be verified by checking if attendance data is requested
-            expect(mockUseUserAttendanceQuery).toHaveBeenCalled();
+            // Then: Search results should be displayed
+            await waitFor(() => {
+                expect(getByText('john_doe')).toBeTruthy();
+            });
+
+            // And: User can select a result
+            const userResult = getByTestId('user-result-1');
+            fireEvent.press(userResult);
+
+            // Then: Attendance query should be triggered
+            await waitFor(() => {
+                expect(mockUseUserAttendanceQuery).toHaveBeenCalled();
+            });
         });
 
         it('should NOT search when input is empty', () => {
             // Given: Admin screen is rendered
-            const {getByTestId} = render(<AdminScreen/>);
+            const {getByTestId} = renderWithQueryClient(<AdminScreen/>);
             const searchInput = getByTestId('search-input');
 
             // When: User clears the input
@@ -266,11 +339,18 @@ describe('AdminScreen', () => {
             });
 
             // When: Admin screen renders and user searches
-            const {getByTestId} = render(<AdminScreen/>);
+            const {getByTestId, getByText} = renderWithQueryClient(<AdminScreen/>);
             const searchInput = getByTestId('search-input');
 
-            // Enter username to trigger search (onChangeText triggers search automatically)
+            // Enter username to show search results
             fireEvent.changeText(searchInput, 'john_doe');
+
+            // Wait for and click on search result
+            await waitFor(() => {
+                expect(getByText('john_doe')).toBeTruthy();
+            });
+            const userResult = getByTestId('user-result-1');
+            fireEvent.press(userResult);
 
             // Then: Attendance data should be displayed
             await waitFor(() => {
@@ -296,9 +376,16 @@ describe('AdminScreen', () => {
             const {
                 getByTestId,
                 getByText
-            } = render(<AdminScreen/>);
+            } = renderWithQueryClient(<AdminScreen/>);
             const searchInput = getByTestId('search-input');
             fireEvent.changeText(searchInput, 'john_doe');
+
+            // Wait for and click on search result
+            await waitFor(() => {
+                expect(getByText('john_doe')).toBeTruthy();
+            });
+            const userResult = getByTestId('user-result-1');
+            fireEvent.press(userResult);
 
             // Then: Attendance status should show "Attended"
             await waitFor(() => {
@@ -324,9 +411,16 @@ describe('AdminScreen', () => {
             const {
                 getByTestId,
                 getByText
-            } = render(<AdminScreen/>);
+            } = renderWithQueryClient(<AdminScreen/>);
             const searchInput = getByTestId('search-input');
             fireEvent.changeText(searchInput, 'john_doe');
+
+            // Wait for and click on search result
+            await waitFor(() => {
+                expect(getByText('john_doe')).toBeTruthy();
+            });
+            const userResult = getByTestId('user-result-1');
+            fireEvent.press(userResult);
 
             // Then: Attendance status should show "Not Attended"
             await waitFor(() => {
@@ -352,9 +446,16 @@ describe('AdminScreen', () => {
             const {
                 getByTestId,
                 getByText
-            } = render(<AdminScreen/>);
+            } = renderWithQueryClient(<AdminScreen/>);
             const searchInput = getByTestId('search-input');
             fireEvent.changeText(searchInput, 'john_doe');
+
+            // Wait for and click on search result
+            await waitFor(() => {
+                expect(getByText('john_doe')).toBeTruthy();
+            });
+            const userResult = getByTestId('user-result-1');
+            fireEvent.press(userResult);
 
             // Then: Date and location should be visible
             await waitFor(() => {
@@ -363,7 +464,7 @@ describe('AdminScreen', () => {
             });
         });
 
-        it('should show loading state when fetching user attendance', () => {
+        it('should show loading state when fetching user attendance', async () => {
             // Given: User attendance is loading
             mockUseUserAttendanceQuery.mockReturnValue({
                 data: undefined,
@@ -372,15 +473,24 @@ describe('AdminScreen', () => {
             });
 
             // When: Admin screen renders and user searches
-            const {getByTestId} = render(<AdminScreen/>);
+            const {getByTestId, getByText} = renderWithQueryClient(<AdminScreen/>);
             const searchInput = getByTestId('search-input');
             fireEvent.changeText(searchInput, 'john_doe');
 
+            // Wait for and click on search result
+            await waitFor(() => {
+                expect(getByText('john_doe')).toBeTruthy();
+            });
+            const userResult = getByTestId('user-result-1');
+            fireEvent.press(userResult);
+
             // Then: Loading indicator should be visible
-            expect(getByTestId('attendance-loading')).toBeTruthy();
+            await waitFor(() => {
+                expect(getByTestId('attendance-loading')).toBeTruthy();
+            });
         });
 
-        it('should show error when user attendance fails to load', () => {
+        it('should show error when user attendance fails to load', async () => {
             // Given: User attendance failed to load
             mockUseUserAttendanceQuery.mockReturnValue({
                 data: undefined,
@@ -392,12 +502,21 @@ describe('AdminScreen', () => {
             const {
                 getByTestId,
                 getByText
-            } = render(<AdminScreen/>);
+            } = renderWithQueryClient(<AdminScreen/>);
             const searchInput = getByTestId('search-input');
             fireEvent.changeText(searchInput, 'john_doe');
 
+            // Wait for and click on search result
+            await waitFor(() => {
+                expect(getByText('john_doe')).toBeTruthy();
+            });
+            const userResult = getByTestId('user-result-1');
+            fireEvent.press(userResult);
+
             // Then: Error message should be visible
-            expect(getByText(/not found/i)).toBeTruthy();
+            await waitFor(() => {
+                expect(getByText(/not found/i)).toBeTruthy();
+            });
         });
 
         it('should show empty state when user has no attendance records', async () => {
@@ -412,9 +531,16 @@ describe('AdminScreen', () => {
             const {
                 getByTestId,
                 getByText
-            } = render(<AdminScreen/>);
+            } = renderWithQueryClient(<AdminScreen/>);
             const searchInput = getByTestId('search-input');
             fireEvent.changeText(searchInput, 'john_doe');
+
+            // Wait for and click on search result
+            await waitFor(() => {
+                expect(getByText('john_doe')).toBeTruthy();
+            });
+            const userResult = getByTestId('user-result-1');
+            fireEvent.press(userResult);
 
             // Then: Empty state message should be visible
             await waitFor(() => {
@@ -442,13 +568,17 @@ describe('AdminScreen', () => {
             const {
                 getByTestId,
                 getByText
-            } = render(<AdminScreen/>);
+            } = renderWithQueryClient(<AdminScreen/>);
             const searchInput = getByTestId('search-input');
 
             fireEvent.changeText(searchInput, 'john_doe');
 
-            const searchButton = getByTestId('search-button');
-            fireEvent.press(searchButton);
+            // Wait for and click on search result
+            await waitFor(() => {
+                expect(getByText('john_doe')).toBeTruthy();
+            });
+            const userResult = getByTestId('user-result-1');
+            fireEvent.press(userResult);
 
             // Then: Full flow should complete with results displayed
             await waitFor(() => {
@@ -462,7 +592,7 @@ describe('AdminScreen', () => {
     describe('Dinner Participants Section', () => {
         it('should render dinner participants section', () => {
             // Given: Admin screen is rendered
-            const {getByTestId} = render(<AdminScreen/>);
+            const {getByTestId} = renderWithQueryClient(<AdminScreen/>);
 
             // Then: Participants section should be present
             expect(getByTestId('dinner-participants-section')).toBeTruthy();
@@ -470,7 +600,7 @@ describe('AdminScreen', () => {
 
         it('should have dinner ID input field', () => {
             // Given: Admin screen is rendered
-            const {getByTestId} = render(<AdminScreen/>);
+            const {getByTestId} = renderWithQueryClient(<AdminScreen/>);
 
             // When: User expands the accordion
             const accordionHeader = getByTestId('dinner-participants-accordion-header');
@@ -501,7 +631,7 @@ describe('AdminScreen', () => {
             const {
                 getByTestId,
                 getByText
-            } = render(<AdminScreen/>);
+            } = renderWithQueryClient(<AdminScreen/>);
             const accordionHeader = getByTestId('dinner-participants-accordion-header');
             fireEvent.press(accordionHeader);
 
@@ -523,7 +653,7 @@ describe('AdminScreen', () => {
             });
 
             // When: User expands accordion and enters dinner ID
-            const {getByTestId} = render(<AdminScreen/>);
+            const {getByTestId} = renderWithQueryClient(<AdminScreen/>);
             const accordionHeader = getByTestId('dinner-participants-accordion-header');
             fireEvent.press(accordionHeader);
 
@@ -546,7 +676,7 @@ describe('AdminScreen', () => {
             const {
                 getByTestId,
                 getByText
-            } = render(<AdminScreen/>);
+            } = renderWithQueryClient(<AdminScreen/>);
             const accordionHeader = getByTestId('dinner-participants-accordion-header');
             fireEvent.press(accordionHeader);
 
@@ -569,7 +699,7 @@ describe('AdminScreen', () => {
             const {
                 getByTestId,
                 getByText
-            } = render(<AdminScreen/>);
+            } = renderWithQueryClient(<AdminScreen/>);
             const accordionHeader = getByTestId('dinner-participants-accordion-header');
             fireEvent.press(accordionHeader);
 
@@ -603,7 +733,7 @@ describe('AdminScreen', () => {
             const {
                 getByTestId,
                 getByText
-            } = render(<AdminScreen/>);
+            } = renderWithQueryClient(<AdminScreen/>);
             const accordionHeader = getByTestId('dinner-participants-accordion-header');
             fireEvent.press(accordionHeader);
 
@@ -638,7 +768,7 @@ describe('AdminScreen', () => {
             const {
                 getByTestId,
                 getByText
-            } = render(<AdminScreen/>);
+            } = renderWithQueryClient(<AdminScreen/>);
             const accordionHeader = getByTestId('dinner-participants-accordion-header');
             fireEvent.press(accordionHeader);
 
@@ -680,7 +810,7 @@ describe('AdminScreen', () => {
             const {
                 getByTestId,
                 getByText
-            } = render(<AdminScreen/>);
+            } = renderWithQueryClient(<AdminScreen/>);
             const accordionHeader = getByTestId('dinner-participants-accordion-header');
             fireEvent.press(accordionHeader);
 
@@ -698,7 +828,7 @@ describe('AdminScreen', () => {
 
         it('should NOT fetch participants when input is empty', () => {
             // Given: Admin screen is rendered
-            render(<AdminScreen/>);
+            renderWithQueryClient(<AdminScreen/>);
 
             // Then: Participants query should not be called with empty input
             expect(mockUseParticipantsByDinnerQuery).not.toHaveBeenCalled();
@@ -724,7 +854,7 @@ describe('AdminScreen', () => {
             const {
                 getByTestId,
                 queryByText
-            } = render(<AdminScreen/>);
+            } = renderWithQueryClient(<AdminScreen/>);
             const accordionHeader = getByTestId('dinner-participants-accordion-header');
             fireEvent.press(accordionHeader);
 

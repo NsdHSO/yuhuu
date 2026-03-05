@@ -12,6 +12,10 @@ import {DinnerAttendance} from '@/components/admin/dinner-attendance';
 import {Accordion} from '@/components/admin/accordion';
 import {DinnerIdSearch} from '@/components/admin/dinner-id-search';
 import {ParticipantsList} from '@/components/admin/participants-list';
+import {FamilyAccordion} from '@/components/profile/family-accordion';
+import {MilestonesAccordion} from '@/components/profile/milestones-accordion';
+import {MembershipAccordion} from '@/components/profile/membership-accordion';
+import {SkillsAccordion} from '@/components/profile/skills-accordion';
 
 /**
  * Admin screen - Only accessible to users with Admin role
@@ -24,7 +28,7 @@ import {ParticipantsList} from '@/components/admin/participants-list';
 export default function AdminScreen() {
     const {t} = useTranslation();
     const scheme = useColorScheme();
-    const [searchedUsername, setSearchedUsername] = useState<string>('');
+    const [searchedUser, setSearchedUser] = useState<{ id: number; username: string } | null>(null);
     const [selectedDinnerId, setSelectedDinnerId] = useState<number | null>(null);
 
     // Fetch dinner stats for the graph
@@ -39,7 +43,7 @@ export default function AdminScreen() {
         data: userAttendance,
         isLoading: isLoadingAttendance,
         error: attendanceError,
-    } = useUserAttendanceQuery(searchedUsername);
+    } = useUserAttendanceQuery(searchedUser?.username ?? '');
 
     // Fetch participants for selected dinner
     const {
@@ -48,8 +52,8 @@ export default function AdminScreen() {
         error: participantsError,
     } = useParticipantsByDinnerQuery(selectedDinnerId);
 
-    const handleSearch = (username: string) => {
-        setSearchedUsername(username);
+    const handleSearch = (user: { id: number; username: string }) => {
+        setSearchedUser(user);
     };
 
     const handleDinnerIdChange = (dinnerId: number | null) => {
@@ -86,7 +90,7 @@ export default function AdminScreen() {
                         <UserSearch testID="user-search" onSearch={handleSearch}/>
 
                         {/* Attendance Results */}
-                        {searchedUsername && (
+                        {searchedUser && (
                             <View style={styles.attendanceContainer}>
                                 {isLoadingAttendance ? (
                                     <View testID="attendance-loading" style={styles.loadingContainer}>
@@ -101,13 +105,23 @@ export default function AdminScreen() {
                                         {t('admin.noAttendanceRecords')}
                                     </Text>
                                 ) : (
-                                    <DinnerAttendance testID="dinner-attendance" username={searchedUsername}
+                                    <DinnerAttendance testID="dinner-attendance" username={searchedUser.username}
                                                       data={userAttendance}/>
                                 )}
                             </View>
                         )}
                     </Accordion>
                 </View>
+
+                {/* User Profile Accordions - Shown when a user is searched */}
+                {searchedUser && (
+                    <View style={{marginTop: 16, gap: 12}}>
+                        <FamilyAccordion userId={searchedUser.id} />
+                        <MilestonesAccordion userId={searchedUser.id} />
+                        <MembershipAccordion userId={searchedUser.id} />
+                        <SkillsAccordion userId={searchedUser.id} />
+                    </View>
+                )}
 
                 {/* Dinner Participants Section - Expandable */}
                 <View testID="dinner-participants-section" style={styles.section}>

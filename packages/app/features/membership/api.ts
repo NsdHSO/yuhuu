@@ -19,6 +19,7 @@ export {HttpMembershipRepository, defaultMembershipRepository} from './repositor
 // Hooks
 export {
     useMyMembershipHistoryQuery,
+    useUserMembershipHistoryQuery,
     useMyMembershipHistoryRecordQuery,
     useCreateMyMembershipHistoryMutation,
     useUpdateMyMembershipHistoryMutation,

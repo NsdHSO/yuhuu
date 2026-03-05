@@ -6,16 +6,24 @@ import {ThemedText} from '@/components/themed-text';
 import {useColorScheme} from '@/hooks/use-color-scheme';
 import {
     useMyMilestonesQuery,
+    useUserMilestonesQuery,
     useDeleteMyMilestoneMutation,
 } from '@/features/milestones/api';
 import {getErrorMessage} from '@/lib/errors';
 import {formatDateForDisplay} from '@/lib/dates';
 import {Colors} from '@/constants/theme';
 
-export function MilestonesAccordion() {
+interface MilestonesAccordionProps {
+    userId?: number;
+}
+
+export function MilestonesAccordion({userId}: MilestonesAccordionProps) {
     const {t} = useTranslation();
     const scheme = useColorScheme() ?? 'light';
-    const {data: milestones, isLoading} = useMyMilestonesQuery();
+    const isAdmin = userId !== undefined;
+    const myMilestones = useMyMilestonesQuery();
+    const userMilestones = useUserMilestonesQuery(userId ?? 0);
+    const {data: milestones, isLoading} = isAdmin ? userMilestones : myMilestones;
     const deleteMutation = useDeleteMyMilestoneMutation();
 
     const handleDelete = (id: number, type: string) => {
@@ -76,12 +84,14 @@ export function MilestonesAccordion() {
                                 <ThemedText style={{fontSize: 16, fontWeight: '600'}}>
                                     {getMilestoneIcon(milestone.milestone_type)} {getMilestoneLabel(milestone.milestone_type)}
                                 </ThemedText>
-                                <Pressable
-                                    onPress={() => handleDelete(milestone.id, getMilestoneLabel(milestone.milestone_type))}
-                                    style={{padding: 4}}
-                                >
-                                    <ThemedText style={{color: '#EF4444', fontSize: 14}}>{t('common.delete')}</ThemedText>
-                                </Pressable>
+                                {!isAdmin && (
+                                    <Pressable
+                                        onPress={() => handleDelete(milestone.id, getMilestoneLabel(milestone.milestone_type))}
+                                        style={{padding: 4}}
+                                    >
+                                        <ThemedText style={{color: '#EF4444', fontSize: 14}}>{t('common.delete')}</ThemedText>
+                                    </Pressable>
+                                )}
                             </View>
                             {milestone.milestone_date && (
                                 <ThemedText style={{fontSize: 14, color: Colors[scheme].tabIconDefault}}>

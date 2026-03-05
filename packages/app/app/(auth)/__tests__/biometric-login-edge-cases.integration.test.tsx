@@ -548,6 +548,7 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
                 expect(mockPost).toHaveBeenCalledWith('/auth/login', {
                     email: 'user@test.com',
                     password: 'password123',
+                    notes: JSON.stringify({client: "Church", email: 'user@test.com'})
                 });
             });
 
@@ -879,6 +880,7 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
                 expect(mockPost).toHaveBeenCalledWith('/auth/login', {
                     email: 'password@test.com',
                     password: 'mypassword',
+                    notes: JSON.stringify({client: "Church", email: 'password@test.com'})
                 });
             });
 

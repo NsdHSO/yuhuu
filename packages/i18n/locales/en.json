@@ -125,7 +125,11 @@
     "addedLabel": "Added:",
     "totalCount": "Total: {{count}} participant(s)",
     "participantCount_one": "Total: {{count}} participant",
-    "participantCount_other": "Total: {{count}} participants"
+    "participantCount_other": "Total: {{count}} participants",
+    "searchMinChars": "Type at least 2 characters to search",
+    "searchFailed": "Search failed. Please try again",
+    "adminAccessRequired": "Admin access required",
+    "noUsersFound": "No users found"
   },
   "common": {
     "loading": "Loading...",

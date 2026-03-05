@@ -122,7 +122,8 @@ describe('AuthProvider', () => {
 
             expect(mockPost).toHaveBeenCalledWith('/auth/login', {
                 email: 'test@example.com',
-                password: 'password123'
+                password: 'password123',
+                notes: JSON.stringify({client: "Church", email: 'test@example.com'})
             });
 
             expect(mockSetTokensFromLogin).toHaveBeenCalledWith('access-token', 'refresh-token');

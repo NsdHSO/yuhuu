@@ -18,6 +18,7 @@ export {HttpSkillsRepository, defaultSkillsRepository} from './repository';
 // Hooks
 export {
     useMySkillsQuery,
+    useUserSkillsQuery,
     useMySkillQuery,
     useCreateMySkillMutation,
     useUpdateMySkillMutation,

@@ -24,6 +24,7 @@ export {HttpFamilyRepository, defaultFamilyRepository} from './repository';
 // Hooks
 export {
     useMyFamilyQuery,
+    useUserFamilyQuery,
     useMyFamilyRelationshipQuery,
     useCreateMyFamilyRelationshipMutation,
     useUpdateMyFamilyRelationshipMutation,

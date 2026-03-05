@@ -125,7 +125,11 @@
     "addedLabel": "Ad\u0103ugat:",
     "totalCount": "Total: {{count}} participan\u021bi",
     "participantCount_one": "Total: {{count}} participant",
-    "participantCount_other": "Total: {{count}} participan\u021bi"
+    "participantCount_other": "Total: {{count}} participan\u021bi",
+    "searchMinChars": "Introduceți cel puțin 2 caractere pentru a căuta",
+    "searchFailed": "Căutarea a eșuat. Vă rugăm să încercați din nou",
+    "adminAccessRequired": "Este necesară acces de administrator",
+    "noUsersFound": "Nu s-au găsit utilizatori"
   },
   "common": {
     "loading": "Se \u00eencarc\u0103...",

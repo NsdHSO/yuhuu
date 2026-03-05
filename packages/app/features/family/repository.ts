@@ -23,6 +23,14 @@ export interface FamilyRepository {
     listMyFamily(): Promise<FamilyRelationship[]>;
 
     /**
+     * List all family relationships for a specific user (admin use).
+     * @param userId - The user ID to fetch family for
+     * @returns Array of FamilyRelationship records
+     * @throws Error on network or server errors
+     */
+    listUserFamily(userId: number): Promise<FamilyRelationship[]>;
+
+    /**
      * Get a specific family relationship by ID.
      * @param id - The family relationship ID
      * @returns FamilyRelationship or null if not found
@@ -65,6 +73,10 @@ export interface FamilyRepository {
 export class HttpFamilyRepository implements FamilyRepository {
     async listMyFamily(): Promise<FamilyRelationship[]> {
         return await unwrap<FamilyRelationship[]>(appApi.get('/profiles/me/family'));
+    }
+
+    async listUserFamily(userId: number): Promise<FamilyRelationship[]> {
+        return await unwrap<FamilyRelationship[]>(appApi.get(`/users/${userId}/family`));
     }
 
     async getMyFamilyRelationship(id: number): Promise<FamilyRelationship | null> {

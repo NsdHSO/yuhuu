@@ -54,7 +54,7 @@ jest.mock('@/components/admin/user-search', () => ({
         const {Pressable} = require('react-native');
         return React.createElement(Pressable, {
             testID: 'user-search-trigger',
-            onPress: () => onSearch('testuser'),
+            onPress: () => onSearch({id: 1, username: 'testuser'}),
         });
     },
 }));
@@ -83,6 +83,28 @@ jest.mock('@/components/admin/dinner-id-search', () => ({
 }));
 jest.mock('@/components/admin/participants-list', () => ({
     ParticipantsList: () => null,
+}));
+
+// Mock profile hooks to avoid QueryClient errors
+jest.mock('@/features/family/hooks', () => ({
+    useMyFamilyQuery: () => ({ data: [], isLoading: false, error: null }),
+    useUserFamilyQuery: () => ({ data: [], isLoading: false, error: null }),
+    useDeleteMyFamilyRelationshipMutation: () => ({ mutateAsync: jest.fn() }),
+}));
+jest.mock('@/features/milestones/hooks', () => ({
+    useMyMilestonesQuery: () => ({ data: [], isLoading: false, error: null }),
+    useUserMilestonesQuery: () => ({ data: [], isLoading: false, error: null }),
+    useDeleteMyMilestoneMutation: () => ({ mutateAsync: jest.fn() }),
+}));
+jest.mock('@/features/membership/hooks', () => ({
+    useMyMembershipHistoryQuery: () => ({ data: [], isLoading: false, error: null }),
+    useUserMembershipHistoryQuery: () => ({ data: [], isLoading: false, error: null }),
+    useDeleteMyMembershipHistoryMutation: () => ({ mutateAsync: jest.fn() }),
+}));
+jest.mock('@/features/skills/hooks', () => ({
+    useMySkillsQuery: () => ({ data: [], isLoading: false, error: null }),
+    useUserSkillsQuery: () => ({ data: [], isLoading: false, error: null }),
+    useDeleteMySkillMutation: () => ({ mutateAsync: jest.fn() }),
 }));
 
 describe('AdminScreen - i18n Migration', () => {

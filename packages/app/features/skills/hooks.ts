@@ -32,6 +32,26 @@ export function useMySkillsQuery(repo: SkillsRepository = defaultSkillsRepositor
 }
 
 /**
+ * Query hook for listing all skills of a specific user by ID.
+ *
+ * @param userId - The user ID to fetch skills for
+ * @param repo - Injectable repository (defaults to HTTP implementation)
+ * @returns React Query result with array of UserSkill
+ */
+export function useUserSkillsQuery(
+    userId: number,
+    options?: { enabled?: boolean; repo?: SkillsRepository },
+) {
+    const repo = options?.repo ?? defaultSkillsRepository;
+    return useQuery<UserSkill[]>({
+        queryKey: ['users', userId, 'skills'],
+        queryFn: () => repo.listUserSkills(userId),
+        staleTime: 5 * 60_000, // 5 minutes
+        enabled: options?.enabled,
+    });
+}
+
+/**
  * Query hook for fetching a specific skill by ID.
  *
  * @param id - The skill ID

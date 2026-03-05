@@ -23,6 +23,14 @@ export interface MilestonesRepository {
     listMyMilestones(): Promise<SpiritualMilestone[]>;
 
     /**
+     * List all spiritual milestones for a specific user by ID.
+     * @param userId - The user ID
+     * @returns Array of SpiritualMilestone records
+     * @throws Error on network or server errors
+     */
+    listUserMilestones(userId: number): Promise<SpiritualMilestone[]>;
+
+    /**
      * Get a specific spiritual milestone by ID.
      * @param id - The milestone ID
      * @returns SpiritualMilestone or null if not found
@@ -65,6 +73,10 @@ export interface MilestonesRepository {
 export class HttpMilestonesRepository implements MilestonesRepository {
     async listMyMilestones(): Promise<SpiritualMilestone[]> {
         return await unwrap<SpiritualMilestone[]>(appApi.get('/profiles/me/milestones'));
+    }
+
+    async listUserMilestones(userId: number): Promise<SpiritualMilestone[]> {
+        return await unwrap<SpiritualMilestone[]>(appApi.get(`/users/${userId}/milestones`));
     }
 
     async getMyMilestone(id: number): Promise<SpiritualMilestone | null> {

@@ -4,14 +4,21 @@ import {useTranslation} from 'react-i18next';
 import {Accordion} from '@/components/admin/accordion';
 import {ThemedText} from '@/components/themed-text';
 import {useColorScheme} from '@/hooks/use-color-scheme';
-import {useDeleteMySkillMutation, useMySkillsQuery,} from '@/features/skills/api';
+import {useDeleteMySkillMutation, useMySkillsQuery, useUserSkillsQuery,} from '@/features/skills/api';
 import {getErrorMessage} from '@/lib/errors';
 import {Colors} from '@/constants/theme';
 
-export function SkillsAccordion() {
+type SkillsAccordionProps = {
+    userId?: number;
+};
+
+export function SkillsAccordion({userId}: SkillsAccordionProps) {
     const {t} = useTranslation();
     const scheme = useColorScheme() ?? 'light';
-    const {data: skills, isLoading} = useMySkillsQuery();
+    const isAdmin = userId !== undefined;
+    const mySkills = useMySkillsQuery();
+    const userSkills = useUserSkillsQuery(userId ?? 0, {enabled: isAdmin});
+    const {data: skills, isLoading} = isAdmin ? userSkills : mySkills;
     const deleteMutation = useDeleteMySkillMutation();
 
     const handleDelete = (id: number, skillName: string) => {
@@ -100,12 +107,14 @@ export function SkillsAccordion() {
                                         </View>
                                     )}
                                 </View>
-                                <Pressable
-                                    onPress={() => handleDelete(skill.id, skill.skill_name)}
-                                    style={{padding: 4}}
-                                >
-                                    <ThemedText style={{color: '#EF4444', fontSize: 14}}>{t('common.delete')}</ThemedText>
-                                </Pressable>
+                                {!isAdmin && (
+                                    <Pressable
+                                        onPress={() => handleDelete(skill.id, skill.skill_name)}
+                                        style={{padding: 4}}
+                                    >
+                                        <ThemedText style={{color: '#EF4444', fontSize: 14}}>{t('common.delete')}</ThemedText>
+                                    </Pressable>
+                                )}
                             </View>
                             {skill.skill_category && (
                                 <ThemedText style={{fontSize: 14, color: Colors[scheme].tabIconDefault, marginTop: 4}}>

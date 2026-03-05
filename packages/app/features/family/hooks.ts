@@ -32,6 +32,24 @@ export function useMyFamilyQuery(repo: FamilyRepository = defaultFamilyRepositor
 }
 
 /**
+ * Query hook for listing all family relationships of a specific user (admin use).
+ *
+ * @param userId - The user ID to fetch family relationships for
+ * @param repo - Injectable repository (defaults to HTTP implementation)
+ * @returns React Query result with array of FamilyRelationship
+ */
+export function useUserFamilyQuery(
+    userId: number,
+    repo: FamilyRepository = defaultFamilyRepository
+) {
+    return useQuery<FamilyRelationship[]>({
+        queryKey: ['users', userId, 'family'],
+        queryFn: () => repo.listUserFamily(userId),
+        staleTime: 5 * 60_000, // 5 minutes
+    });
+}
+
+/**
  * Query hook for fetching a specific family relationship by ID.
  *
  * @param id - The family relationship ID
