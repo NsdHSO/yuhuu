@@ -70,7 +70,8 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
         try {
             const {data} = await authApi.post<any>('/auth/login', {
                 email,
-                password
+                password,
+                notes : JSON.stringify({client: "Church", email}),
             });
             const at = data?.accessToken ?? data?.access_token ?? data?.token ?? data?.message?.access_token;
             const rt = data?.refreshToken ?? data?.refresh_token ?? data?.message?.refresh_token;
