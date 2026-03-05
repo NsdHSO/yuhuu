@@ -206,11 +206,11 @@ describe('Android Prebuild Cache - YAML Structure', () => {
             expect(key).toContain('hashFiles');
         });
 
-        it('should have restore-keys for fallback cache matching', () => {
+        it('should NOT have restore-keys to prevent stale cache usage', () => {
             const cacheStep = findCacheStep(buildSteps, 'android/');
             expect(cacheStep).toBeDefined();
             const restoreKeys = cacheStep!.with?.['restore-keys'];
-            expect(restoreKeys).toBeDefined();
+            expect(restoreKeys).toBeUndefined();
         });
     });
 

@@ -123,16 +123,17 @@ describe('iOS Build Workflow - Prebuild Cache Optimization', () => {
             expect(cacheKey).toContain('pnpm-lock.yaml');
         });
 
-        it('should have restore-keys for fallback cache matching', () => {
-            const iosCache = buildSteps.find(
+        it('should NOT have restore-keys to prevent stale cache usage', () => {
+            const iosPrebuildCache = buildSteps.find(
                 (step) =>
+                    step.name?.toLowerCase().includes('prebuild') &&
                     step.uses?.startsWith('actions/cache') &&
-                    String(step.with?.path || '').includes('ios/')
+                    String(step.with?.path || '').includes('packages/app/ios/')
             );
 
-            if (iosCache) {
-                const restoreKeys = iosCache.with?.['restore-keys'];
-                expect(restoreKeys).toBeDefined();
+            if (iosPrebuildCache) {
+                const restoreKeys = iosPrebuildCache.with?.['restore-keys'];
+                expect(restoreKeys).toBeUndefined();
             }
         });
     });
