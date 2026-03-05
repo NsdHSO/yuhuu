@@ -79,8 +79,6 @@ jobs:
         with:
           path: packages/app/ios/
           key: ${{ runner.os }}-ios-prebuild-${{ hashFiles('packages/app/app.config.js', 'packages/app/package.json', 'pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-ios-prebuild-
 
       - name: Prebuild iOS
         if: steps.prebuild-cache.outputs.cache-hit != 'true'

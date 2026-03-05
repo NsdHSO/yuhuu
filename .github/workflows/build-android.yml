@@ -74,8 +74,6 @@ jobs:
         with:
           path: packages/app/android/
           key: ${{ runner.os }}-android-prebuild-${{ hashFiles('packages/app/app.config.js', 'packages/app/package.json', 'pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-android-prebuild-
 
       - name: Prebuild Android
         if: steps.android-prebuild-cache.outputs.cache-hit != 'true'
