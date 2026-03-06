@@ -2,10 +2,7 @@ import {Tabs} from 'expo-router';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 
-import {HapticTab} from '@/components/haptic-tab';
-import {IconSymbol} from '@/components/ui/icon-symbol';
-import {Colors} from '@/constants/theme';
-import {useColorScheme} from '@/hooks/use-color-scheme';
+import {HapticTab, IconSymbol, Colors, useColorScheme} from '@yuhuu/components';
 import {useMyRolesQuery} from '@/features/roles/meRoles';
 import {useBootstrapGate} from '@/features/bootstrap/api';
 
