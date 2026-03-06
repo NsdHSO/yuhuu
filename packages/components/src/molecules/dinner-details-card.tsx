@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import {ThemedText} from '@/components/themed-text';
+import {ThemedText} from '../themed-text';
 import type {Dinner} from '@yuhuu/types';
 import {useTranslation} from 'react-i18next';
 
