@@ -28,6 +28,7 @@ export * from './atoms/loading-state';
 export * from './atoms/dinner-id-search';
 export * from './atoms/search-input';
 export * from './atoms/glass';
+export * from './atoms/tab-liquid-blob';
 
 // Molecules
 export * from './molecules/category-badge';

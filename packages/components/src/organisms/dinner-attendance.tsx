@@ -2,6 +2,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {useColorScheme} from '../hooks/use-color-scheme';
 import {Colors} from '../constants/theme';
+import {GlassCard} from '../atoms/glass/GlassCard';
 
 /**
  * DinnerAttendance component - Displays user's dinner attendance history
@@ -49,13 +50,14 @@ export function DinnerAttendance({
             </Text>
 
             {data.map((record, index) => (
-                <View
+                <GlassCard
                     key={index}
                     testID={`attendance-item-${index}`}
+                    variant="tinted"
+                    borderRadius={8}
                     style={[
                         styles.attendanceCard,
                         {
-                            backgroundColor: scheme === 'dark' ? '#1F2937' : '#F3F4F6',
                             borderLeftColor: record.attended ? '#10B981' : '#EF4444',
                         },
                     ]}
@@ -104,7 +106,7 @@ export function DinnerAttendance({
                             </Text>
                         </View>
                     )}
-                </View>
+                </GlassCard>
             ))}
         </View>
     );
@@ -120,7 +122,6 @@ const styles = StyleSheet.create({
         marginBottom: 12,
     },
     attendanceCard: {
-        borderRadius: 8,
         padding: 16,
         marginBottom: 12,
         borderLeftWidth: 4,

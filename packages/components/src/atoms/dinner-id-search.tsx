@@ -1,8 +1,9 @@
-import {StyleSheet, TextInput, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {useState} from 'react';
 import {useColorScheme} from '../hooks/use-color-scheme';
 import {Colors} from '../constants/theme';
 import {useTranslation} from 'react-i18next';
+import {GlassInput} from './glass/GlassInput';
 
 /**
  * DinnerIdSearch component - Search for dinner by ID
@@ -42,23 +43,16 @@ export function DinnerIdSearch({
 
     return (
         <View testID={testID} style={styles.container}>
-            <TextInput
+            <GlassInput
                 testID="dinner-id-input"
-                style={[
-                    styles.input,
-                    {
-                        backgroundColor: scheme === 'dark' ? '#1F2937' : '#F3F4F6',
-                        color: Colors[scheme ?? 'light'].text,
-                        borderColor: Colors[scheme ?? 'light'].icon,
-                    },
-                ]}
                 placeholder={t('admin.dinnerIdPlaceholder')}
-                placeholderTextColor={Colors[scheme ?? 'light'].icon}
                 value={dinnerId}
                 onChangeText={handleChangeText}
                 keyboardType="numeric"
                 autoCapitalize="none"
                 autoCorrect={false}
+                variant="tinted"
+                style={{height: 48, fontSize: 16}}
             />
         </View>
     );

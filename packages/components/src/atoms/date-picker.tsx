@@ -1,7 +1,8 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {Calendar} from 'react-native-calendars';
 import {useColorScheme} from '../hooks/use-color-scheme';
+import {GlassCard} from './glass/GlassCard';
 
 /**
  * Props for the DatePicker component
@@ -31,13 +32,12 @@ export function DatePicker({
                            }: DatePickerProps) {
     const scheme = useColorScheme() ?? 'light';
 
-    // Fancy blue water theme colors - ocean inspired!
-    // Both modes use DARK RICH BLUE (no ugly light blue!)
-    const primaryColor = scheme === 'dark' ? '#06B6D4' : '#1E3A8A'; // Cyan / Rich navy blue
-    const bgColor = scheme === 'dark' ? '#0F172A' : '#1E293B'; // Deep ocean / Dark slate blue
-    const textColor = scheme === 'dark' ? '#E0F2FE' : '#F1F5F9'; // Light blue / Light gray
-    const disabledColor = scheme === 'dark' ? '#334155' : '#475569'; // Slate / Medium slate
-    const todayColor = scheme === 'dark' ? '#22D3EE' : '#06B6D4'; // Bright cyan for both
+    // Liquid glass theme colors
+    const primaryColor = scheme === 'dark' ? '#06B6D4' : '#1E3A8A';
+    const bgColor = 'transparent'; // Transparent for liquid glass effect
+    const textColor = scheme === 'dark' ? '#E0F2FE' : '#F1F5F9';
+    const disabledColor = scheme === 'dark' ? '#64748B' : '#94A3B8';
+    const todayColor = scheme === 'dark' ? '#22D3EE' : '#06B6D4';
 
     // Mark the selected date
     const markedDates = selectedDate
@@ -50,16 +50,10 @@ export function DatePicker({
         : {};
 
     return (
-        <View
-            style={[
-                styles.container,
-                {
-                    backgroundColor: bgColor,
-                    borderRadius: 12,
-                    padding: 8,
-                    overflow: 'hidden',
-                },
-            ]}
+        <GlassCard
+            variant="frosted"
+            borderRadius={12}
+            style={styles.container}
         >
             <Calendar
                 onDayPress={(day) => onDateSelect(day.dateString)}
@@ -82,19 +76,13 @@ export function DatePicker({
                     backgroundColor: bgColor,
                 }}
             />
-        </View>
+        </GlassCard>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2
-        },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 4,
+        padding: 8,
+        overflow: 'hidden',
     },
 });

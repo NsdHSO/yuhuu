@@ -1,10 +1,10 @@
 import type { GlassVariant } from '../types/glass';
 
 export const GLASS_VARIANTS: Record<GlassVariant, { tint: string; intensity: number; opacity: number }> = {
-  frosted: { tint: 'light', intensity: 80, opacity: 0.12 },
-  tinted: { tint: 'default', intensity: 70, opacity: 0.15 },
-  vibrant: { tint: 'prominent', intensity: 90, opacity: 0.18 },
-  'ultra-thin': { tint: 'regular', intensity: 30, opacity: 0.08 },
+  frosted: { tint: 'light', intensity: 100, opacity: 0.12 },
+  tinted: { tint: 'default', intensity: 90, opacity: 0.15 },
+  vibrant: { tint: 'prominent', intensity: 100, opacity: 0.18 },
+  'ultra-thin': { tint: 'regular', intensity: 60, opacity: 0.08 },
   prominent: { tint: 'prominent', intensity: 100, opacity: 0.25 },
 };
 
@@ -17,11 +17,11 @@ export const GLASS_COLORS: Record<'light' | 'dark', Record<GlassVariant, string>
     prominent: 'rgba(255, 255, 255, 0.35)',
   },
   dark: {
-    frosted: 'rgba(40, 40, 45, 0.40)',
-    tinted: 'rgba(45, 45, 50, 0.35)',
-    vibrant: 'rgba(35, 35, 40, 0.38)',
-    'ultra-thin': 'rgba(50, 50, 55, 0.25)',
-    prominent: 'rgba(30, 30, 35, 0.50)',
+    frosted: 'rgba(40, 40, 50, 0.60)',
+    tinted: 'rgba(35, 35, 45, 0.55)',
+    vibrant: 'rgba(45, 45, 55, 0.65)',
+    'ultra-thin': 'rgba(30, 30, 40, 0.50)',
+    prominent: 'rgba(50, 50, 60, 0.70)',
   },
 };
 

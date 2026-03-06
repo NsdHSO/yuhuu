@@ -227,7 +227,7 @@ export function MilestonesAccordion({userId}: MilestonesAccordionProps) {
                 </ThemedText>
             )}
 
-            <ThemedText glass style={{fontSize: 14, fontWeight: '600'}}>
+            <ThemedText style={{fontSize: 14, fontWeight: '600'}}>
                 {t('milestones.fields.location')}
             </ThemedText>
             <GlassInput
@@ -239,7 +239,7 @@ export function MilestonesAccordion({userId}: MilestonesAccordionProps) {
                 variant="ultra-thin"
             />
 
-            <ThemedText glass style={{fontSize: 14, fontWeight: '600'}}>
+            <ThemedText style={{fontSize: 14, fontWeight: '600'}}>
                 {t('milestones.fields.officiant')}
             </ThemedText>
             <GlassInput
@@ -251,7 +251,7 @@ export function MilestonesAccordion({userId}: MilestonesAccordionProps) {
                 variant="ultra-thin"
             />
 
-            <ThemedText glass style={{fontSize: 14, fontWeight: '600'}}>
+            <ThemedText style={{fontSize: 14, fontWeight: '600'}}>
                 {t('milestones.fields.notes')}
             </ThemedText>
             <GlassInput

@@ -32,16 +32,12 @@ export default function TabLayout() {
                     tabBarLabelStyle: {
                         fontSize: 11,
                         fontWeight: '600',
-                        textShadowColor: 'rgba(0, 0, 0, 0.3)',
-                        textShadowOffset: { width: 0, height: 1 },
-                        textShadowRadius: 2,
                     },
                     tabBarBackground: () => (
                         <GlassView
                             variant="prominent"
                             borderRadius={0}
-                            enableShadow={true}
-                            shadowLevel="medium"
+                            enableShadow={false}
                             enableBorder={false}
                             style={{flex: 1}}
                         />

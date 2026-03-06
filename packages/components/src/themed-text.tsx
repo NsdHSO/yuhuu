@@ -63,12 +63,8 @@ export function ThemedText({
         dark: darkColor
     }, 'text');
 
-    // Glass mode text shadow for readability on glass backgrounds
-    const glassStyle = glass ? {
-        textShadowColor: 'rgba(0, 0, 0, 0.25)',
-        textShadowOffset: { width: 0, height: 1 },
-        textShadowRadius: 2,
-    } : {};
+    // Glass mode - no shadow, keep text crisp
+    const glassStyle = {};
 
     // Build className from props
     const classes = [

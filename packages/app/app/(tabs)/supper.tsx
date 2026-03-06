@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Alert, ScrollView, StyleSheet, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
-import {ThemedView, ThemedText, DatePicker, DinnerSelector, LoadingState, ErrorState, EmptyState, ParticipantForm, DinnerDetailsCard} from '@yuhuu/components';
+import {ThemedView, ThemedText, DatePicker, DinnerSelector, LoadingState, ErrorState, EmptyState, ParticipantForm, DinnerDetailsCard, GlassBackground} from '@yuhuu/components';
 import {useAddParticipantMutation, useDinnersByDateQuery} from '@/features/dinners/hooks';
 
 /**
@@ -82,7 +82,7 @@ export default function SupperScreen() {
     };
 
     return (
-        <ThemedView style={styles.container}>
+        <GlassBackground variant="vibrant">
             <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
                 <ScrollView contentContainerStyle={styles.scrollContent}>
                     {/* Calendar for date selection */}
@@ -135,7 +135,7 @@ export default function SupperScreen() {
                     {!selectedDate && !isLoading && <EmptyState/>}
                 </ScrollView>
             </SafeAreaView>
-        </ThemedView>
+        </GlassBackground>
     );
 }
 

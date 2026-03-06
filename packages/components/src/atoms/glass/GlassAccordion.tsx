@@ -76,17 +76,11 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '700',
     flex: 1,
-    textShadowColor: 'rgba(0, 0, 0, 0.25)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
   },
   chevron: {
     fontSize: 14,
     marginLeft: 8,
     opacity: 0.8,
-    textShadowColor: 'rgba(0, 0, 0, 0.2)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
   },
   content: {
     paddingHorizontal: 16,

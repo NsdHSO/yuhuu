@@ -1,8 +1,9 @@
-import {Pressable, StyleSheet, Text, TextInput, View} from 'react-native';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
 import {useState} from 'react';
 import {useColorScheme} from '../hooks/use-color-scheme';
 import {Colors} from '../constants/theme';
 import {useTranslation} from 'react-i18next';
+import {GlassInput} from '../atoms/glass/GlassInput';
 
 /**
  * UserSearch component - Search for users by username
@@ -42,22 +43,15 @@ export function UserSearch({
 
     return (
         <View testID={testID} style={styles.container}>
-            <TextInput
+            <GlassInput
                 testID="search-input"
-                style={[
-                    styles.input,
-                    {
-                        backgroundColor: scheme === 'dark' ? '#1F2937' : '#F3F4F6',
-                        color: Colors[scheme ?? 'light'].text,
-                        borderColor: Colors[scheme ?? 'light'].icon,
-                    },
-                ]}
                 placeholder={t('admin.searchPlaceholder')}
-                placeholderTextColor={Colors[scheme ?? 'light'].icon}
                 value={username}
                 onChangeText={handleChangeText}
                 autoCapitalize="none"
                 autoCorrect={false}
+                variant="tinted"
+                style={{height: 48, fontSize: 16}}
             />
 
             <Pressable
