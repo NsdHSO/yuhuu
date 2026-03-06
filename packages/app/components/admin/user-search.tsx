@@ -1,12 +1,14 @@
 import {ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View} from 'react-native';
 import {useState} from 'react';
-import {useColorScheme} from '@/hooks/use-color-scheme';
-import {Colors} from '@/constants/theme';
+import {useColorScheme, Colors} from '@yuhuu/components';
 import {useTranslation} from 'react-i18next';
 import {useUserSearchQuery, type UserSearchResult} from '@/features/admin/api';
 
 /**
  * UserSearch component - Search for users by name
+ *
+ * This is the APP-SPECIFIC version with API integration.
+ * Different from the generic molecules/user-search.tsx in the shared library.
  *
  * SOLID Principles:
  * - Single Responsibility: Only handles user search input and result selection
