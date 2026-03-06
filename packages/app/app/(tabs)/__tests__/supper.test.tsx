@@ -25,90 +25,50 @@ jest.mock('@/features/dinners/hooks', () => ({
     useAddParticipantMutation: (...args: any[]) => mockUseAddParticipantMutation(...args),
 }));
 
-// Mock components
-jest.mock('@/components/atoms/date-picker', () => ({
+// Mock shared components from @yuhuu/components
+jest.mock('@yuhuu/components', () => ({
+    ...jest.requireActual('@yuhuu/components'),
     DatePicker: ({onDateSelect}: any) => {
-        const {
-            Pressable,
-            Text
-        } = jest.requireActual('react-native');
+        const {Pressable, Text} = jest.requireActual('react-native');
         return (
-            <Pressable
-                testID="date-picker"
-                onPress={() => onDateSelect('2026-02-28')}
-            >
+            <Pressable testID="date-picker" onPress={() => onDateSelect('2026-02-28')}>
                 <Text>Select Date</Text>
             </Pressable>
         );
     },
-}));
-
-jest.mock('@/components/atoms/dinner-selector', () => ({
-    DinnerSelector: ({
-                         onSelectDinner,
-                         dinners
-                     }: any) => {
-        const {
-            Pressable,
-            Text
-        } = jest.requireActual('react-native');
+    DinnerSelector: ({onSelectDinner, dinners}: any) => {
+        const {Pressable, Text} = jest.requireActual('react-native');
         if (dinners.length === 0) return null;
         return (
-            <Pressable
-                testID="dinner-selector"
-                onPress={() => onSelectDinner(dinners[0].id)}
-            >
+            <Pressable testID="dinner-selector" onPress={() => onSelectDinner(dinners[0].id)}>
                 <Text>Select Dinner</Text>
             </Pressable>
         );
     },
-}));
-
-jest.mock('@/components/molecules/participant-form', () => ({
     ParticipantForm: ({onSubmit}: any) => {
-        const {
-            Pressable,
-            Text,
-            TextInput,
-            View
-        } = jest.requireActual('react-native');
+        const {Pressable, Text, TextInput, View} = jest.requireActual('react-native');
         return (
             <View testID="participant-form">
                 <TextInput placeholder="Username" testID="username-input"/>
                 <TextInput placeholder="Notes (optional)" testID="notes-input"/>
-                <Pressable
-                    testID="submit-button"
-                    onPress={() => onSubmit('john_doe', 'Vegetarian')}
-                >
+                <Pressable testID="submit-button" onPress={() => onSubmit('john_doe', 'Vegetarian')}>
                     <Text>Add Participant</Text>
                 </Pressable>
             </View>
         );
     },
-}));
-
-jest.mock('@/components/atoms/loading-state', () => ({
     LoadingState: () => {
         const {Text} = jest.requireActual('react-native');
         return <Text testID="loading-state">Loading...</Text>;
     },
-}));
-
-jest.mock('@/components/atoms/error-state', () => ({
     ErrorState: () => {
         const {Text} = jest.requireActual('react-native');
         return <Text testID="error-state">Error</Text>;
     },
-}));
-
-jest.mock('@/components/atoms/empty-state', () => ({
     EmptyState: () => {
         const {Text} = jest.requireActual('react-native');
         return <Text testID="empty-state">Select a date</Text>;
     },
-}));
-
-jest.mock('@/components/molecules/dinner-details-card', () => ({
     DinnerDetailsCard: () => {
         const {Text} = jest.requireActual('react-native');
         return <Text testID="dinner-details">Dinner Details</Text>;
