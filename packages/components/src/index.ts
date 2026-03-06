@@ -1,3 +1,6 @@
+// ==================== CONSTANTS ====================
+export * from './constants/theme';
+
 // Re-export all components
 export * from './themed-text';
 export * from './themed-view';
@@ -13,6 +16,7 @@ export * from './hooks/use-color-scheme';
 export * from './hooks/use-theme-color';
 
 // Atoms
+export * from './atoms/accordion';
 export * from './atoms/badge';
 export * from './atoms/date-picker';
 export * from './atoms/dinner-selector';
@@ -20,20 +24,20 @@ export * from './atoms/language-picker';
 export * from './atoms/empty-state';
 export * from './atoms/error-state';
 export * from './atoms/loading-state';
+export * from './atoms/dinner-id-search';
+export * from './atoms/search-input';
 
 // Molecules
 export * from './molecules/category-badge';
 export * from './molecules/participant-form';
 export * from './molecules/dinner-details-card';
 export * from './molecules/language-picker';
+export * from './molecules/dinner-graph';
+export * from './molecules/user-search';
 
-// Admin
-export * from './admin/accordion';
-export * from './admin/user-search';
-export * from './admin/dinner-id-search';
-export * from './admin/dinner-attendance';
-export * from './admin/dinner-graph';
-export * from './admin/participants-list';
+// Organisms
+export * from './organisms/dinner-attendance';
+export * from './organisms/participants-list';
 
 // Authz
 export * from './authz';
