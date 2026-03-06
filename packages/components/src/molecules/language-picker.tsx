@@ -2,10 +2,10 @@ import React from 'react';
 import {Platform, Pressable, View} from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import {useTranslation} from 'react-i18next';
-import {useLanguage} from '@/hooks/useLanguage';
-import {ThemedText} from '@/components/themed-text';
-import {useColorScheme} from '@/hooks/use-color-scheme';
-import {Colors} from '@/constants/theme';
+import {useLanguage} from '../hooks/useLanguage';
+import {ThemedText} from '../themed-text';
+import {useColorScheme} from '../hooks/use-color-scheme';
+import {Colors} from '../constants/theme';
 
 type Language = 'en' | 'ro';
 
