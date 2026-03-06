@@ -55,10 +55,13 @@ jest.mock('react-i18next', () => ({
     }),
 }));
 
-jest.mock('@/components/molecules/language-picker', () => {
-    const R = require('react');
-    return {__esModule: true, default: () => R.createElement('View', {testID: 'language-picker'})};
-});
+jest.mock('@yuhuu/components', () => ({
+    ...jest.requireActual('@yuhuu/components'),
+    LanguagePicker: () => {
+        const R = require('react');
+        return R.createElement('View', {testID: 'language-picker'});
+    },
+}));
 
 jest.spyOn(Alert, 'alert');
 
