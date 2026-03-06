@@ -1,6 +1,6 @@
 import {Pressable, StyleSheet, View} from 'react-native';
-import {ThemedText} from '@/components/themed-text';
-import {useLanguage} from '@/hooks/useLanguage';
+import {ThemedText} from '../themed-text';
+import {useLanguage} from '../hooks/useLanguage';
 import {SUPPORTED_LANGUAGES, type SupportedLanguage} from '@yuhuu/i18n';
 
 export function LanguagePicker() {
