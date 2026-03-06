@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Calendar} from 'react-native-calendars';
-import {useColorScheme} from '@/hooks/use-color-scheme';
+import {useColorScheme} from '../hooks/use-color-scheme';
 
 /**
  * Props for the DatePicker component
