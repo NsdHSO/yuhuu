@@ -2,16 +2,10 @@ import {ActivityIndicator, ScrollView, StyleSheet, Text, View} from 'react-nativ
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useColorScheme} from '@/hooks/use-color-scheme';
-import {Colors} from '@/constants/theme';
+import {useColorScheme, Colors, DinnerGraph, DinnerAttendance, Accordion, DinnerIdSearch, ParticipantsList} from '@yuhuu/components';
 import {useDinnerStatsQuery, useUserAttendanceQuery} from '@/features/admin/hooks';
 import {useParticipantsByDinnerQuery} from '@/features/dinners/hooks';
-import {DinnerGraph} from '@/components/admin/dinner-graph';
 import {UserSearch} from '@/components/admin/user-search';
-import {DinnerAttendance} from '@/components/admin/dinner-attendance';
-import {Accordion} from '@/components/admin/accordion';
-import {DinnerIdSearch} from '@/components/admin/dinner-id-search';
-import {ParticipantsList} from '@/components/admin/participants-list';
 import {FamilyAccordion} from '@/components/profile/family-accordion';
 import {MilestonesAccordion} from '@/components/profile/milestones-accordion';
 import {MembershipAccordion} from '@/components/profile/membership-accordion';
