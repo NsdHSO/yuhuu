@@ -1,79 +1,77 @@
-import { useEffect } from 'react';
-import { StyleSheet, Dimensions } from 'react-native';
+import { BlurView } from "expo-blur";
+import { useEffect } from "react";
+import { Dimensions, StyleSheet } from "react-native";
 import Animated, {
-  useSharedValue,
   useAnimatedStyle,
+  useSharedValue,
   withSpring,
-  withSequence,
-  withTiming,
-} from 'react-native-reanimated';
-import { BlurView } from 'expo-blur';
-import { useColorScheme } from '../hooks/use-color-scheme';
+} from "react-native-reanimated";
+import { useColorScheme } from "../hooks/use-color-scheme";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 type TabLiquidBlobProps = {
   currentTabIndex: number;
   tabCount: number;
 };
 
-export function TabLiquidBlob({ currentTabIndex, tabCount }: TabLiquidBlobProps) {
-  const scheme = useColorScheme() ?? 'light';
+export function TabLiquidBlob({
+  currentTabIndex,
+  tabCount,
+}: TabLiquidBlobProps) {
+  const scheme = useColorScheme() ?? "light";
 
-  // Shared values for animation
+  // Shared value for pill position
   const translateX = useSharedValue(0);
-  const scale = useSharedValue(1);
 
-  // Calculate tab width
+  // Calculate dimensions - compact pill that wraps icon + label
   const tabWidth = width / tabCount;
-  const blobSize = tabWidth * 0.7; // Smaller, contained within tab
+  const pillWidth = tabWidth * 0.75; // Narrower pill (75% of tab)
+  const pillHeight = 38; // Compact height
 
   useEffect(() => {
-    // Calculate position for current tab (centered in tab)
-    const targetX = currentTabIndex * tabWidth + (tabWidth - blobSize) / 2;
+    // Calculate center position for current tab
+    const targetX = currentTabIndex * tabWidth + (tabWidth - pillWidth) / 2;
 
-    // Wave animation: magnify briefly, then settle
-    scale.value = withSequence(
-      withSpring(1.2, { damping: 8, stiffness: 150 }), // Quick magnify
-      withSpring(1, { damping: 15, stiffness: 100 }) // Settle back
-    );
-
+    // Smooth spring animation to new position
     translateX.value = withSpring(targetX, {
-      damping: 18,
-      stiffness: 120,
-      mass: 0.8,
+      damping: 25,
+      stiffness: 180,
+      mass: 0.4,
     });
-  }, [currentTabIndex, tabWidth, blobSize]);
+  }, [currentTabIndex, tabWidth, pillWidth]);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { translateX: translateX.value },
-      { scale: scale.value },
-    ],
+    transform: [{ translateX: translateX.value }],
   }));
 
   return (
     <Animated.View
       style={[
-        styles.blobContainer,
+        styles.pillContainer,
         {
-          width: blobSize,
-          height: blobSize,
-          bottom: 5,
+          width: pillWidth,
+          height: pillHeight,
         },
         animatedStyle,
       ]}
       pointerEvents="none"
     >
       <BlurView
-        intensity={120}
-        tint={scheme === 'dark' ? 'light' : 'dark'}
+        intensity={40}
+        tint={scheme === "dark" ? "light" : "dark"}
         style={[
-          styles.blob,
+          styles.pill,
           {
-            backgroundColor: scheme === 'dark'
-              ? 'rgba(100, 200, 255, 0.4)'
-              : 'rgba(59, 130, 246, 0.35)',
+            backgroundColor:
+              scheme === "dark"
+                ? "rgba(100, 120, 140, 0.8)"
+                : "rgba(255, 255, 255, 0.9)",
+            borderWidth: 1,
+            borderColor:
+              scheme === "dark"
+                ? "rgba(255, 255, 255, 0.1)"
+                : "rgba(0, 0, 0, 0.05)",
           },
         ]}
       />
@@ -82,18 +80,19 @@ export function TabLiquidBlob({ currentTabIndex, tabCount }: TabLiquidBlobProps)
 }
 
 const styles = StyleSheet.create({
-  blobContainer: {
-    position: 'absolute',
-    zIndex: 1000,
-    borderRadius: 1000,
+  pillContainer: {
+    position: "absolute",
+    bottom: 8,
+    left: 0,
+    zIndex: 9999,
+    elevation: 10,
   },
-  blob: {
+  pill: {
     flex: 1,
-    borderRadius: 1000,
-    shadowColor: '#06B6D4',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.6,
-    shadowRadius: 12,
-    elevation: 8,
+    borderRadius: 19, // Capsule shape (half of 38px height)
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
   },
 });

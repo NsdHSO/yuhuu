@@ -42,7 +42,13 @@ export function DinnerGraph({
 
     return (
         <View testID={testID} style={styles.container}>
-            <GlassCard variant="tinted" borderRadius={12} style={styles.card}>
+            <GlassCard
+                variant="tinted"
+                borderRadius={12}
+                enableElectric={true}
+                enableWaves={true}
+                style={styles.card}
+            >
                 <View style={styles.statRow}>
                     <Text style={[styles.statLabel, {color: Colors[scheme ?? 'light'].icon}]}>
                         {t('admin.totalDinners')}

@@ -55,6 +55,8 @@ export function DinnerAttendance({
                     testID={`attendance-item-${index}`}
                     variant="tinted"
                     borderRadius={8}
+                    enableElectric={true}
+                    enableWaves={true}
                     style={[
                         styles.attendanceCard,
                         {

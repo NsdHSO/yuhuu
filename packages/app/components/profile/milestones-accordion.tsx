@@ -297,7 +297,13 @@ export function MilestonesAccordion({userId}: MilestonesAccordionProps) {
     );
 
     return (
-        <GlassAccordion title={t('milestones.title')} variant="frosted" testID="milestones-accordion">
+        <GlassAccordion
+            title={t('milestones.title')}
+            variant="frosted"
+            enableElectric={true}
+            enableWaves={true}
+            testID="milestones-accordion"
+        >
             {isLoading ? (
                 <ActivityIndicator />
             ) : milestones && milestones.length > 0 ? (

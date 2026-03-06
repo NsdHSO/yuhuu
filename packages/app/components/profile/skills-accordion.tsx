@@ -325,7 +325,13 @@ export function SkillsAccordion({userId}: SkillsAccordionProps) {
     );
 
     return (
-        <GlassAccordion title={t('skills.title')} variant="frosted" testID="skills-accordion">
+        <GlassAccordion
+            title={t('skills.title')}
+            variant="frosted"
+            enableElectric={true}
+            enableWaves={true}
+            testID="skills-accordion"
+        >
             {isLoading ? (
                 <ActivityIndicator/>
             ) : skills && skills.length > 0 ? (

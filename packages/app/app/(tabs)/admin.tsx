@@ -1,8 +1,8 @@
 import { UserSearch } from "@/components/admin/user-search";
-import { FamilyGlassAccordion } from "@/components/profile/family-accordion";
-import { MembershipGlassAccordion } from "@/components/profile/membership-accordion";
-import { MilestonesGlassAccordion } from "@/components/profile/milestones-accordion";
-import { SkillsGlassAccordion } from "@/components/profile/skills-accordion";
+import { FamilyAccordion } from "@/components/profile/family-accordion";
+import { MembershipAccordion } from "@/components/profile/membership-accordion";
+import { MilestonesAccordion } from "@/components/profile/milestones-accordion";
+import { SkillsAccordion } from "@/components/profile/skills-accordion";
 import {
     useDinnerStatsQuery,
     useUserAttendanceQuery,
@@ -85,6 +85,8 @@ export default function AdminScreen() {
               title={t("admin.dinnerParticipation")}
               variant="frosted"
               defaultExpanded={true}
+              enableElectric={true}
+              enableWaves={true}
               testID="dinner-graph-accordion"
             >
               {isLoadingStats ? (
@@ -113,6 +115,8 @@ export default function AdminScreen() {
               title={t("admin.searchUser")}
               variant="frosted"
               defaultExpanded={true}
+              enableElectric={true}
+              enableWaves={true}
               testID="user-search-accordion"
             >
               <UserSearch testID="user-search" onSearch={handleSearch} />
@@ -155,13 +159,13 @@ export default function AdminScreen() {
             </GlassAccordion>
           </View>
 
-          {/* User Profile GlassAccordions - Shown when a user is searched */}
+          {/* User Profile Accordions - Shown when a user is searched */}
           {searchedUser && (
             <View style={{ marginTop: 16, gap: 12 }}>
-              <FamilyGlassAccordion userId={searchedUser.id} />
-              <MilestonesGlassAccordion userId={searchedUser.id} />
-              <MembershipGlassAccordion userId={searchedUser.id} />
-              <SkillsGlassAccordion userId={searchedUser.id} />
+              <FamilyAccordion userId={searchedUser.id} />
+              <MilestonesAccordion userId={searchedUser.id} />
+              <MembershipAccordion userId={searchedUser.id} />
+              <SkillsAccordion userId={searchedUser.id} />
             </View>
           )}
 
@@ -171,6 +175,8 @@ export default function AdminScreen() {
               title={t("admin.viewParticipants")}
               variant="frosted"
               defaultExpanded={false}
+              enableElectric={true}
+              enableWaves={true}
               testID="dinner-participants-accordion"
             >
               <DinnerIdSearch

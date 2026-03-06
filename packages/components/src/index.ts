@@ -15,6 +15,7 @@ export * from './error-boundary';
 export * from './hooks/useLanguage';
 export * from './hooks/use-color-scheme';
 export * from './hooks/use-theme-color';
+export * from './hooks/useElectricBorder';
 
 // Atoms
 export * from './atoms/accordion';
@@ -29,6 +30,7 @@ export * from './atoms/dinner-id-search';
 export * from './atoms/search-input';
 export * from './atoms/glass';
 export * from './atoms/tab-liquid-blob';
+export * from './atoms/custom-tab-bar';
 
 // Molecules
 export * from './molecules/category-badge';

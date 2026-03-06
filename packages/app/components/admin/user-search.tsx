@@ -1,6 +1,6 @@
-import {ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View} from 'react-native';
+import {ActivityIndicator, Pressable, StyleSheet, Text, View} from 'react-native';
 import {useState} from 'react';
-import {useColorScheme, Colors} from '@yuhuu/components';
+import {useColorScheme, Colors, GlassInput, GlassCard} from '@yuhuu/components';
 import {useTranslation} from 'react-i18next';
 import {useUserSearchQuery, type UserSearchResult} from '@/features/admin/api';
 
@@ -67,22 +67,16 @@ export function UserSearch({
 
     return (
         <View testID={testID} style={styles.container}>
-            <TextInput
+            <GlassInput
                 testID="search-input"
-                style={[
-                    styles.input,
-                    {
-                        backgroundColor: scheme === 'dark' ? '#1F2937' : '#F3F4F6',
-                        color: Colors[scheme ?? 'light'].text,
-                        borderColor: Colors[scheme ?? 'light'].icon,
-                    },
-                ]}
+                variant="tinted"
+                borderRadius={8}
                 placeholder={t('admin.searchPlaceholder') || 'Search by name...'}
-                placeholderTextColor={Colors[scheme ?? 'light'].icon}
                 value={searchTerm}
                 onChangeText={handleChangeText}
                 autoCapitalize="words"
                 autoCorrect={false}
+                style={styles.input}
             />
 
             {/* Validation Hint */}
@@ -96,23 +90,28 @@ export function UserSearch({
 
             {/* Error Display */}
             {error && searchTerm.length >= 2 && (
-                <View style={styles.errorContainer}>
+                <GlassCard
+                    variant="ultra-thin"
+                    borderRadius={8}
+                    enableElectric={true}
+                    style={styles.errorContainer}
+                >
                     <Text style={styles.errorText}>
                         {getErrorMessage(error)}
                     </Text>
-                </View>
+                </GlassCard>
             )}
 
             {/* Results List */}
             {showResults && searchTerm.length >= 2 && !error && (
-                <View
-                    style={[
-                        styles.resultsContainer,
-                        {
-                            backgroundColor: scheme === 'dark' ? '#1F2937' : '#FFFFFF',
-                            borderColor: Colors[scheme ?? 'light'].icon,
-                        },
-                    ]}
+                <GlassCard
+                    variant="tinted"
+                    borderRadius={8}
+                    enableShadow={true}
+                    shadowLevel="medium"
+                    enableElectric={true}
+                    enableWaves={true}
+                    style={styles.resultsContainer}
                 >
                     {isLoading ? (
                         <View style={styles.loadingContainer}>
@@ -154,7 +153,7 @@ export function UserSearch({
                             </Pressable>
                         ))
                     )}
-                </View>
+                </GlassCard>
             )}
         </View>
     );
@@ -166,15 +165,10 @@ const styles = StyleSheet.create({
     },
     input: {
         height: 48,
-        borderRadius: 8,
-        borderWidth: 1,
-        paddingHorizontal: 16,
         fontSize: 16,
         marginBottom: 4,
     },
     resultsContainer: {
-        borderRadius: 8,
-        borderWidth: 1,
         maxHeight: 300,
         marginTop: 4,
     },
@@ -222,8 +216,6 @@ const styles = StyleSheet.create({
     errorContainer: {
         padding: 12,
         marginTop: 4,
-        backgroundColor: '#FEE2E2',
-        borderRadius: 8,
         borderLeftWidth: 4,
         borderLeftColor: '#EF4444',
     },

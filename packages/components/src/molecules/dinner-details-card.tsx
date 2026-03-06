@@ -24,7 +24,14 @@ export type DinnerDetailsCardProps = {
 export function DinnerDetailsCard({dinner, testID}: DinnerDetailsCardProps) {
     const {t} = useTranslation();
     return (
-        <GlassCard variant="tinted" borderRadius={12} style={styles.card} testID={testID}>
+        <GlassCard
+            variant="tinted"
+            borderRadius={12}
+            enableElectric={true}
+            enableWaves={true}
+            style={styles.card}
+            testID={testID}
+        >
             <ThemedText style={styles.label}>{t('supper.dateLabel')}</ThemedText>
             <ThemedText style={styles.value}>{dinner.dinnerDate}</ThemedText>
 

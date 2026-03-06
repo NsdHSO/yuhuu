@@ -324,7 +324,13 @@ export function MembershipAccordion({userId}: MembershipAccordionProps) {
     );
 
     return (
-        <GlassAccordion title={t('membership.title')} variant="frosted" testID="membership-accordion">
+        <GlassAccordion
+            title={t('membership.title')}
+            variant="frosted"
+            enableElectric={true}
+            enableWaves={true}
+            testID="membership-accordion"
+        >
             {isLoading ? (
                 <ActivityIndicator />
             ) : history && history.length > 0 ? (

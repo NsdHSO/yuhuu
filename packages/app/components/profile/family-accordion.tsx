@@ -277,7 +277,13 @@ export function FamilyAccordion({userId}: FamilyAccordionProps) {
     );
 
     return (
-        <GlassAccordion title={t('family.title')} variant="frosted" testID="family-accordion">
+        <GlassAccordion
+            title={t('family.title')}
+            variant="frosted"
+            enableElectric={true}
+            enableWaves={true}
+            testID="family-accordion"
+        >
             {isLoading ? (
                 <ActivityIndicator />
             ) : family && family.length > 0 ? (

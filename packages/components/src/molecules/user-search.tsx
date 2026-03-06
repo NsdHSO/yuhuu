@@ -4,6 +4,7 @@ import {useColorScheme} from '../hooks/use-color-scheme';
 import {Colors} from '../constants/theme';
 import {useTranslation} from 'react-i18next';
 import {GlassInput} from '../atoms/glass/GlassInput';
+import {GlassView} from '../atoms/glass/GlassView';
 
 /**
  * UserSearch component - Search for users by username
@@ -54,18 +55,25 @@ export function UserSearch({
                 style={{height: 48, fontSize: 16}}
             />
 
-            <Pressable
-                testID="search-button"
-                style={[
-                    styles.button,
-                    {
-                        backgroundColor: scheme === 'dark' ? '#3B82F6' : '#2563EB',
-                    },
-                ]}
-                onPress={handleSearch}
+            <GlassView
+                variant="vibrant"
+                borderRadius={8}
+                enableShadow={true}
+                shadowLevel="medium"
             >
-                <Text style={styles.buttonText}>{t('common.search')}</Text>
-            </Pressable>
+                <Pressable
+                    testID="search-button"
+                    style={styles.button}
+                    onPress={handleSearch}
+                >
+                    <Text style={[
+                        styles.buttonText,
+                        {color: scheme === 'dark' ? '#60A5FA' : '#3B82F6'}
+                    ]}>
+                        {t('common.search')}
+                    </Text>
+                </Pressable>
+            </GlassView>
         </View>
     );
 }
@@ -74,22 +82,12 @@ const styles = StyleSheet.create({
     container: {
         marginVertical: 8,
     },
-    input: {
-        height: 48,
-        borderRadius: 8,
-        borderWidth: 1,
-        paddingHorizontal: 16,
-        fontSize: 16,
-        marginBottom: 12,
-    },
     button: {
         height: 48,
-        borderRadius: 8,
         alignItems: 'center',
         justifyContent: 'center',
     },
     buttonText: {
-        color: '#FFFFFF',
         fontSize: 16,
         fontWeight: '600',
     },
