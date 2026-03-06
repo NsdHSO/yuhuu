@@ -1,9 +1,7 @@
 import React, {useMemo, useState} from 'react';
 import {ActivityIndicator, Alert, Pressable, Switch, TextInput, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {Accordion} from '@/components/admin/accordion';
-import {ThemedText} from '@/components/themed-text';
-import {useColorScheme} from '@/hooks/use-color-scheme';
+import {Accordion, ThemedText, useColorScheme, Colors} from '@yuhuu/components';
 import {
     useCreateMySkillMutation,
     useCreateUserSkillMutation,
@@ -16,7 +14,6 @@ import {
 } from '@/features/skills/api';
 import type {CreateUserSkillInput, ProficiencyLevel, SkillCategory} from '@/features/skills/api';
 import {getErrorMessage, isConflictError} from '@/lib/errors';
-import {Colors} from '@/constants/theme';
 
 type FormMode = 'view' | 'create' | 'edit';
 
