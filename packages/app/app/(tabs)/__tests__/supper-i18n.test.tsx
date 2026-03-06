@@ -46,8 +46,9 @@ jest.mock('@/features/dinners/hooks', () => ({
     useAddParticipantMutation: (...args: any[]) => mockUseAddParticipantMutation(...args),
 }));
 
-// Mock components
-jest.mock('@/components/atoms/date-picker', () => ({
+// Mock shared components from @yuhuu/components
+jest.mock('@yuhuu/components', () => ({
+    ...jest.requireActual('@yuhuu/components'),
     DatePicker: ({onDateSelect}: any) => {
         const {Pressable, Text} = jest.requireActual('react-native');
         return (
@@ -56,9 +57,6 @@ jest.mock('@/components/atoms/date-picker', () => ({
             </Pressable>
         );
     },
-}));
-
-jest.mock('@/components/atoms/dinner-selector', () => ({
     DinnerSelector: ({onSelectDinner, dinners}: any) => {
         const {Pressable, Text} = jest.requireActual('react-native');
         if (dinners.length === 0) return null;
@@ -68,9 +66,6 @@ jest.mock('@/components/atoms/dinner-selector', () => ({
             </Pressable>
         );
     },
-}));
-
-jest.mock('@/components/molecules/participant-form', () => ({
     ParticipantForm: ({onSubmit}: any) => {
         const {Pressable, Text, View} = jest.requireActual('react-native');
         return (
@@ -81,30 +76,18 @@ jest.mock('@/components/molecules/participant-form', () => ({
             </View>
         );
     },
-}));
-
-jest.mock('@/components/atoms/loading-state', () => ({
     LoadingState: () => {
         const {Text} = jest.requireActual('react-native');
         return <Text testID="loading-state">Loading...</Text>;
     },
-}));
-
-jest.mock('@/components/atoms/error-state', () => ({
     ErrorState: () => {
         const {Text} = jest.requireActual('react-native');
         return <Text testID="error-state">Error</Text>;
     },
-}));
-
-jest.mock('@/components/atoms/empty-state', () => ({
     EmptyState: () => {
         const {Text} = jest.requireActual('react-native');
         return <Text testID="empty-state">Select a date</Text>;
     },
-}));
-
-jest.mock('@/components/molecules/dinner-details-card', () => ({
     DinnerDetailsCard: () => {
         const {Text} = jest.requireActual('react-native');
         return <Text testID="dinner-details">Mock Dinner Card</Text>;
