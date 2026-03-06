@@ -1,7 +1,7 @@
 import React, {useMemo, useState} from 'react';
 import {Alert, Pressable, StyleSheet, Text, TextInput, View} from 'react-native';
-import {useColorScheme} from '@/hooks/use-color-scheme';
-import {Colors} from '@/constants/theme';
+import {useColorScheme} from '../hooks/use-color-scheme';
+import {Colors} from '../constants/theme';
 import {useTranslation} from 'react-i18next';
 
 /**
