@@ -1,9 +1,7 @@
 import React, {useCallback, useState} from 'react';
 import {Platform, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import {Stack} from 'expo-router';
-import {ThemedText} from '@/components/themed-text';
-import {ThemedView} from '@/components/themed-view';
-import {useColorScheme} from '@/hooks/use-color-scheme';
+import {ThemedText, ThemedView, useColorScheme} from '@yuhuu/components';
 import {NativeModulesProxy, requireNativeModule} from 'expo-modules-core';
 import * as LocalAuth from 'expo-local-authentication';
 
