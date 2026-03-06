@@ -13,12 +13,9 @@ import {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Stack} from 'expo-router';
 import {useTranslation} from 'react-i18next';
-import {ThemedText} from '@/components/themed-text';
-import {ThemedView} from '@/components/themed-view';
+import {ThemedText, ThemedView, useColorScheme, Colors} from '@yuhuu/components';
 import {useMyProfileQuery, useSaveMyProfileMutation} from '@/features/profile/api';
 import {useBootstrapGate} from '@/features/bootstrap/api';
-import {useColorScheme} from '@/hooks/use-color-scheme';
-import {Colors} from '@/constants/theme';
 import {
     authenticateWithBiometrics,
     clearBiometricData,
@@ -28,7 +25,7 @@ import {
     saveBiometricPreference,
 } from '@yuhuu/auth';
 import {useAuth} from '@/providers/AuthProvider';
-import LanguagePicker from '@/components/molecules/language-picker';
+import {LanguagePicker} from '@yuhuu/components';
 import {FamilyAccordion} from '@/components/profile/family-accordion';
 import {MilestonesAccordion} from '@/components/profile/milestones-accordion';
 import {MembershipAccordion} from '@/components/profile/membership-accordion';
