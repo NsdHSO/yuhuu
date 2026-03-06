@@ -14,11 +14,8 @@ import {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Stack, useRouter} from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import {ThemedText} from '@/components/themed-text';
-import {ThemedView} from '@/components/themed-view';
+import {ThemedText, ThemedView, useColorScheme, Colors} from '@yuhuu/components';
 import {useAuth} from '@/providers/AuthProvider';
-import {useColorScheme} from '@/hooks/use-color-scheme';
-import {Colors} from '@/constants/theme';
 import {getBiometricPreference, isBiometricAvailable} from '@yuhuu/auth';
 import {useTranslation} from 'react-i18next';
 
