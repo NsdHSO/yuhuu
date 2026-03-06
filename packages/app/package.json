@@ -34,6 +34,7 @@
     "@yuhuu/types": "workspace:*",
     "axios": "^1.13.5",
     "expo": "~54.0.32",
+    "expo-blur": "~14.0.3",
     "expo-constants": "~18.0.13",
     "expo-dev-client": "~6.0.20",
     "expo-font": "~14.0.11",

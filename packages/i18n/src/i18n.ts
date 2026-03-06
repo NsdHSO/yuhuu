@@ -42,23 +42,41 @@ const resources = {
 };
 
 export async function initI18n(): Promise<void> {
-    const savedLanguage = await getItem(LANGUAGE_KEY);
-    const lng = detectLanguage(savedLanguage);
+    try {
+        const savedLanguage = await getItem(LANGUAGE_KEY);
+        const lng = detectLanguage(savedLanguage);
 
-    if (i18n.isInitialized) {
-        await i18n.changeLanguage(lng);
-        return;
+        if (i18n.isInitialized) {
+            await i18n.changeLanguage(lng);
+            return;
+        }
+
+        await i18n.use(initReactI18next).init({
+            resources,
+            lng,
+            fallbackLng: 'en',
+            interpolation: {
+                escapeValue: false,
+            },
+            compatibilityJSON: 'v4',
+            // Add debug mode for development
+            debug: process.env.NODE_ENV === 'development',
+        });
+    } catch (error) {
+        console.error('[i18n] Initialization error:', error);
+        // Fallback initialization with English
+        if (!i18n.isInitialized) {
+            await i18n.use(initReactI18next).init({
+                resources,
+                lng: 'en',
+                fallbackLng: 'en',
+                interpolation: {
+                    escapeValue: false,
+                },
+                compatibilityJSON: 'v4',
+            });
+        }
     }
-
-    await i18n.use(initReactI18next).init({
-        resources,
-        lng,
-        fallbackLng: 'en',
-        interpolation: {
-            escapeValue: false,
-        },
-        compatibilityJSON: 'v4',
-    });
 }
 
 export function getCurrentLanguage(): SupportedLocale {

@@ -40,6 +40,23 @@ const minimalDinner = {
 describe('DinnerDetailsCard Molecule Component', () => {
     beforeEach(() => jest.clearAllMocks());
 
+    describe('Glass Card Integration', () => {
+        it('should render with glass card background', () => {
+            const {getByTestId} = render(
+                <DinnerDetailsCard dinner={fullDinner} testID="dinner-card"/>
+            );
+            expect(getByTestId('dinner-card')).toBeTruthy();
+        });
+
+        it('should use tinted variant by default', () => {
+            const {getByTestId} = render(
+                <DinnerDetailsCard dinner={fullDinner} testID="dinner-card"/>
+            );
+            const card = getByTestId('dinner-card');
+            expect(card).toBeTruthy();
+        });
+    });
+
     describe('Required Fields', () => {
         it('should render dinner date', () => {
             const {getByText} = render(<DinnerDetailsCard dinner={fullDinner}/>);

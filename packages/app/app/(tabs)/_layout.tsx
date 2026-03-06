@@ -2,7 +2,7 @@ import {Tabs} from 'expo-router';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 
-import {HapticTab, IconSymbol, Colors, useColorScheme} from '@yuhuu/components';
+import {HapticTab, IconSymbol, Colors, useColorScheme, GlassView} from '@yuhuu/components';
 import {useMyRolesQuery} from '@/features/roles/meRoles';
 import {useBootstrapGate} from '@/features/bootstrap/api';
 
@@ -23,6 +23,29 @@ export default function TabLayout() {
                 screenOptions={{
                     tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
                     headerShown: false,
+                    tabBarStyle: {
+                        position: 'absolute',
+                        borderTopWidth: 0,
+                        backgroundColor: 'transparent',
+                        elevation: 0,
+                    },
+                    tabBarLabelStyle: {
+                        fontSize: 11,
+                        fontWeight: '600',
+                        textShadowColor: 'rgba(0, 0, 0, 0.3)',
+                        textShadowOffset: { width: 0, height: 1 },
+                        textShadowRadius: 2,
+                    },
+                    tabBarBackground: () => (
+                        <GlassView
+                            variant="prominent"
+                            borderRadius={0}
+                            enableShadow={true}
+                            shadowLevel="medium"
+                            enableBorder={false}
+                            style={{flex: 1}}
+                        />
+                    ),
                 }}
             >
                 {/* Home tab - hidden for Member-only users */}

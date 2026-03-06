@@ -1,7 +1,8 @@
-import {StyleSheet, TextInput, View} from 'react-native';
+import {StyleSheet, TextInput} from 'react-native';
 import {useState} from 'react';
 import {useColorScheme} from '../hooks/use-color-scheme';
 import {Colors} from '../constants/theme';
+import {GlassView} from './glass';
 
 type SearchInputProps = {
     type: 'text' | 'numeric';
@@ -40,13 +41,19 @@ export function SearchInput({
     };
 
     return (
-        <View testID={testID} style={styles.container}>
+        <GlassView
+            variant="ultra-thin"
+            borderRadius={8}
+            enableShadow={false}
+            testID={testID}
+            style={styles.container}
+        >
             <TextInput
                 testID="search-input-field"
                 style={[
                     styles.input,
                     {
-                        backgroundColor: scheme === 'dark' ? '#1F2937' : '#F3F4F6',
+                        backgroundColor: 'transparent',
                         color: Colors[scheme ?? 'light'].text,
                         borderColor: Colors[scheme ?? 'light'].icon,
                     },
@@ -60,7 +67,7 @@ export function SearchInput({
                 autoCorrect={false}
                 editable={editable}
             />
-        </View>
+        </GlassView>
     );
 }
 
@@ -71,7 +78,7 @@ const styles = StyleSheet.create({
     input: {
         height: 48,
         borderRadius: 8,
-        borderWidth: 1,
+        borderWidth: 0,
         paddingHorizontal: 16,
         fontSize: 16,
     },

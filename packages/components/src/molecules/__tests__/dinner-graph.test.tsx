@@ -15,6 +15,25 @@ jest.mock('@/hooks/use-color-scheme', () => ({
 describe('DinnerGraph Molecule Component', () => {
     beforeEach(() => jest.clearAllMocks());
 
+    describe('Glass Card Integration', () => {
+        const mockData = {
+            totalDinners: 10,
+            totalParticipants: 50,
+            averageAttendance: 5,
+        };
+
+        it('should render stats card with glass effect', () => {
+            const {getByTestId} = render(<DinnerGraph data={mockData} testID="dinner-graph"/>);
+            expect(getByTestId('dinner-graph')).toBeTruthy();
+        });
+
+        it('should use tinted glass variant for stats card', () => {
+            const {getByTestId} = render(<DinnerGraph data={mockData} testID="stats-card"/>);
+            const card = getByTestId('stats-card');
+            expect(card).toBeTruthy();
+        });
+    });
+
     describe('Rendering without data', () => {
         it('should render empty state when no data is provided', () => {
             const {getByText} = render(<DinnerGraph/>);

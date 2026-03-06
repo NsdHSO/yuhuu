@@ -17,7 +17,18 @@ export default function RootLayout() {
     const [i18nReady, setI18nReady] = React.useState(false);
 
     React.useEffect(() => {
-        initI18n().then(() => setI18nReady(true));
+        initI18n()
+            .then(() => {
+                console.log('[i18n] Initialized successfully');
+                console.log('[i18n] Current language:', i18n.language);
+                console.log('[i18n] Has translations:', i18n.hasResourceBundle('en', 'translation'));
+                setI18nReady(true);
+            })
+            .catch((error) => {
+                console.error('[i18n] Failed to initialize:', error);
+                // Initialize with fallback anyway to prevent app crash
+                setI18nReady(true);
+            });
     }, []);
 
     if (!i18nReady) {

@@ -1,7 +1,7 @@
 import React, {useMemo, useState} from 'react';
 import {ActivityIndicator, Alert, Pressable, Switch, TextInput, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {Accordion, ThemedText, useColorScheme, Colors} from '@yuhuu/components';
+import {GlassAccordion, GlassCard, ThemedText, useColorScheme, Colors} from '@yuhuu/components';
 import {
     useCreateMyMembershipHistoryMutation,
     useDeleteMyMembershipHistoryMutation,
@@ -324,7 +324,7 @@ export function MembershipAccordion({userId}: MembershipAccordionProps) {
     );
 
     return (
-        <Accordion title={t('membership.title')} testID="membership-accordion">
+        <GlassAccordion title={t('membership.title')} variant="frosted" testID="membership-accordion">
             {isLoading ? (
                 <ActivityIndicator />
             ) : history && history.length > 0 ? (
@@ -333,14 +333,12 @@ export function MembershipAccordion({userId}: MembershipAccordionProps) {
                         mode === 'edit' && editingId === record.id ? (
                             <View key={record.id}>{renderForm()}</View>
                         ) : (
-                            <View
+                            <GlassCard
                                 key={record.id}
+                                variant="tinted"
+                                borderRadius={8}
                                 style={{
                                     padding: 12,
-                                    borderRadius: 8,
-                                    backgroundColor: scheme === 'dark' ? '#1F2937' : '#F9FAFB',
-                                    borderWidth: 1,
-                                    borderColor: scheme === 'dark' ? '#374151' : '#E5E7EB',
                                 }}
                             >
                                 <View style={{flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4}}>
@@ -406,7 +404,7 @@ export function MembershipAccordion({userId}: MembershipAccordionProps) {
                                         {record.notes}
                                     </ThemedText>
                                 )}
-                            </View>
+                            </GlassCard>
                         )
                     ))}
                 </View>
@@ -439,6 +437,6 @@ export function MembershipAccordion({userId}: MembershipAccordionProps) {
                     </ThemedText>
                 </Pressable>
             )}
-        </Accordion>
+        </GlassAccordion>
     );
 }

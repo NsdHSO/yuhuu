@@ -33,6 +33,9 @@ export type ThemedTextProps = TextProps & {
     uppercase?: boolean;
     lowercase?: boolean;
     capitalize?: boolean;
+
+    // Glass mode - adds text shadow for readability on glass backgrounds
+    glass?: boolean;
 };
 
 export function ThemedText({
@@ -51,6 +54,7 @@ export function ThemedText({
                                uppercase,
                                lowercase,
                                capitalize,
+                               glass,
                                className,
                                ...rest
                            }: ThemedTextProps) {
@@ -58,6 +62,13 @@ export function ThemedText({
         light: lightColor,
         dark: darkColor
     }, 'text');
+
+    // Glass mode text shadow for readability on glass backgrounds
+    const glassStyle = glass ? {
+        textShadowColor: 'rgba(0, 0, 0, 0.25)',
+        textShadowOffset: { width: 0, height: 1 },
+        textShadowRadius: 2,
+    } : {};
 
     // Build className from props
     const classes = [
@@ -106,7 +117,7 @@ export function ThemedText({
 
     return (
         <Text
-            style={[{color}, style]}
+            style={[{color}, glassStyle, style]}
             className={classes}
             {...rest}
         />

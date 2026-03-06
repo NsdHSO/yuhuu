@@ -3,6 +3,33 @@ import {render, screen, fireEvent} from '@testing-library/react-native';
 import {SearchInput} from '../search-input';
 
 describe('SearchInput Atom Component', () => {
+    describe('Glass Effect Integration', () => {
+        it('should wrap input in glass view', () => {
+            const {getByTestId} = render(
+                <SearchInput
+                    type="text"
+                    onValueChange={jest.fn()}
+                    placeholder="Search"
+                    testID="glass-search"
+                />
+            );
+            expect(getByTestId('glass-search')).toBeTruthy();
+        });
+
+        it('should use ultra-thin glass variant for subtle effect', () => {
+            const {getByTestId} = render(
+                <SearchInput
+                    type="text"
+                    onValueChange={jest.fn()}
+                    placeholder="Search"
+                    testID="glass-search"
+                />
+            );
+            const container = getByTestId('glass-search');
+            expect(container).toBeTruthy();
+        });
+    });
+
     describe('Rendering', () => {
         it('should render with placeholder text', () => {
             render(

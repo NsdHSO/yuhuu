@@ -2,6 +2,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {useColorScheme} from '../hooks/use-color-scheme';
 import {Colors} from '../constants/theme';
+import {GlassCard} from '../atoms/glass';
 
 /**
  * DinnerGraph component - Displays dinner participation statistics
@@ -41,7 +42,7 @@ export function DinnerGraph({
 
     return (
         <View testID={testID} style={styles.container}>
-            <View style={[styles.card, {backgroundColor: scheme === 'dark' ? '#1F2937' : '#F3F4F6'}]}>
+            <GlassCard variant="tinted" borderRadius={12} style={styles.card}>
                 <View style={styles.statRow}>
                     <Text style={[styles.statLabel, {color: Colors[scheme ?? 'light'].icon}]}>
                         {t('admin.totalDinners')}
@@ -68,7 +69,7 @@ export function DinnerGraph({
                         {data.averageAttendance}
                     </Text>
                 </View>
-            </View>
+            </GlassCard>
         </View>
     );
 }

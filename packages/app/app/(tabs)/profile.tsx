@@ -13,7 +13,7 @@ import {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Stack} from 'expo-router';
 import {useTranslation} from 'react-i18next';
-import {ThemedText, ThemedView, useColorScheme, Colors} from '@yuhuu/components';
+import {ThemedText, ThemedView, useColorScheme, Colors, GlassBackground, GlassInput} from '@yuhuu/components';
 import {useMyProfileQuery, useSaveMyProfileMutation} from '@/features/profile/api';
 import {useBootstrapGate} from '@/features/bootstrap/api';
 import {
@@ -169,7 +169,7 @@ export default function ProfileScreen() {
     }
 
     return (
-        <ThemedView className="flex-1">
+        <GlassBackground variant="vibrant">
             <Stack.Screen options={{title: t('profile.title')}}/>
             <SafeAreaView style={{flex: 1}} edges={['top', 'left', 'right']}>
                 <KeyboardAvoidingView behavior={Platform.select({
@@ -186,30 +186,27 @@ export default function ProfileScreen() {
                         )}
 
                         <View style={{gap: 12}}>
-                            <TextInput
+                            <GlassInput
                                 value={firstName}
                                 onChangeText={setfirstName}
                                 placeholder={t('profile.firstNamePlaceholder')}
-                                placeholderTextColor={inputStyles.placeholderColor}
                                 selectionColor={inputStyles.selectionColor}
-                                style={inputStyles.container as any}
+                                variant="tinted"
                             />
-                            <TextInput
+                            <GlassInput
                                 value={lastName}
                                 onChangeText={setLastName}
                                 placeholder={t('profile.lastNamePlaceholder')}
-                                placeholderTextColor={inputStyles.placeholderColor}
                                 selectionColor={inputStyles.selectionColor}
-                                style={inputStyles.container as any}
+                                variant="tinted"
                             />
-                            <TextInput
+                            <GlassInput
                                 value={phone}
                                 onChangeText={setPhone}
                                 placeholder={t('profile.phonePlaceholder')}
                                 keyboardType="phone-pad"
-                                placeholderTextColor={inputStyles.placeholderColor}
                                 selectionColor={inputStyles.selectionColor}
-                                style={inputStyles.container as any}
+                                variant="tinted"
                             />
 
                             {biometricAvailable && (
@@ -305,6 +302,6 @@ export default function ProfileScreen() {
                     </ScrollView>
                 </KeyboardAvoidingView>
             </SafeAreaView>
-        </ThemedView>
+        </GlassBackground>
     );
 }

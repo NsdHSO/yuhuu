@@ -1,7 +1,7 @@
 import React, {useMemo, useState} from 'react';
 import {ActivityIndicator, Alert, Pressable, TextInput, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {Accordion, ThemedText, useColorScheme, Colors} from '@yuhuu/components';
+import {GlassAccordion, GlassCard, GlassInput, ThemedText, useColorScheme, Colors} from '@yuhuu/components';
 import {
     useCreateMyFamilyRelationshipMutation,
     useCreateUserFamilyRelationshipMutation,
@@ -277,7 +277,7 @@ export function FamilyAccordion({userId}: FamilyAccordionProps) {
     );
 
     return (
-        <Accordion title={t('family.title')} testID="family-accordion">
+        <GlassAccordion title={t('family.title')} variant="frosted" testID="family-accordion">
             {isLoading ? (
                 <ActivityIndicator />
             ) : family && family.length > 0 ? (
@@ -286,14 +286,13 @@ export function FamilyAccordion({userId}: FamilyAccordionProps) {
                         mode === 'edit' && editingId === member.id ? (
                             <View key={member.id}>{renderForm()}</View>
                         ) : (
-                            <View
+                            <GlassCard
                                 key={member.id}
+                                variant="tinted"
+                                borderRadius={8}
                                 style={{
                                     padding: 12,
-                                    borderRadius: 8,
-                                    backgroundColor: scheme === 'dark' ? '#1F2937' : '#F9FAFB',
-                                    borderWidth: 1,
-                                    borderColor: scheme === 'dark' ? '#374151' : '#E5E7EB',
+                                    marginBottom: 8,
                                 }}
                             >
                                 <View style={{flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4}}>
@@ -333,7 +332,7 @@ export function FamilyAccordion({userId}: FamilyAccordionProps) {
                                         ✉️ {member.related_person_email}
                                     </ThemedText>
                                 )}
-                            </View>
+                            </GlassCard>
                         )
                     ))}
                 </View>
@@ -366,6 +365,6 @@ export function FamilyAccordion({userId}: FamilyAccordionProps) {
                     </ThemedText>
                 </Pressable>
             )}
-        </Accordion>
+        </GlassAccordion>
     );
 }

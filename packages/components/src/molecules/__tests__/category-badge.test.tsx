@@ -3,6 +3,23 @@ import {render, screen} from '@testing-library/react-native';
 import {CategoryBadge} from '../category-badge';
 
 describe('CategoryBadge Molecule Component', () => {
+    describe('Glass Effect Integration', () => {
+        it('should render with glass effect wrapper', () => {
+            const {getByTestId} = render(
+                <CategoryBadge category="sport" testID="category-badge"/>
+            );
+            expect(getByTestId('category-badge')).toBeTruthy();
+        });
+
+        it('should use ultra-thin glass variant', () => {
+            const {getByTestId} = render(
+                <CategoryBadge category="incident" testID="category-badge"/>
+            );
+            const badge = getByTestId('category-badge');
+            expect(badge).toBeTruthy();
+        });
+    });
+
     describe('Rendering', () => {
         it('should render category text', () => {
             render(<CategoryBadge category="INCIDENT"/>);

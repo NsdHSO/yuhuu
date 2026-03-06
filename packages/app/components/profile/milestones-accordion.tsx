@@ -1,7 +1,7 @@
 import React, {useMemo, useState} from 'react';
 import {ActivityIndicator, Alert, Pressable, TextInput, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {Accordion, ThemedText, useColorScheme, Colors} from '@yuhuu/components';
+import {GlassAccordion, GlassCard, GlassInput, ThemedText, useColorScheme, Colors} from '@yuhuu/components';
 import {
     useCreateMyMilestoneMutation,
     useDeleteMyMilestoneMutation,
@@ -227,44 +227,42 @@ export function MilestonesAccordion({userId}: MilestonesAccordionProps) {
                 </ThemedText>
             )}
 
-            <ThemedText style={{fontSize: 14, fontWeight: '600'}}>
+            <ThemedText glass style={{fontSize: 14, fontWeight: '600'}}>
                 {t('milestones.fields.location')}
             </ThemedText>
-            <TextInput
+            <GlassInput
                 testID="milestone-location-input"
                 value={formData.location}
                 onChangeText={(text) => setFormData(prev => ({...prev, location: text}))}
                 placeholder={t('milestones.fields.locationPlaceholder')}
-                style={inputStyles.container}
-                placeholderTextColor={inputStyles.placeholderColor}
                 editable={!isSubmitting}
+                variant="ultra-thin"
             />
 
-            <ThemedText style={{fontSize: 14, fontWeight: '600'}}>
+            <ThemedText glass style={{fontSize: 14, fontWeight: '600'}}>
                 {t('milestones.fields.officiant')}
             </ThemedText>
-            <TextInput
+            <GlassInput
                 testID="milestone-officiant-input"
                 value={formData.officiant}
                 onChangeText={(text) => setFormData(prev => ({...prev, officiant: text}))}
                 placeholder={t('milestones.fields.officiantPlaceholder')}
-                style={inputStyles.container}
-                placeholderTextColor={inputStyles.placeholderColor}
                 editable={!isSubmitting}
+                variant="ultra-thin"
             />
 
-            <ThemedText style={{fontSize: 14, fontWeight: '600'}}>
+            <ThemedText glass style={{fontSize: 14, fontWeight: '600'}}>
                 {t('milestones.fields.notes')}
             </ThemedText>
-            <TextInput
+            <GlassInput
                 testID="milestone-notes-input"
                 value={formData.notes}
                 onChangeText={(text) => setFormData(prev => ({...prev, notes: text}))}
                 placeholder={t('milestones.fields.notesPlaceholder')}
-                style={[inputStyles.container, {minHeight: 80, textAlignVertical: 'top'}]}
-                placeholderTextColor={inputStyles.placeholderColor}
+                style={{minHeight: 80, textAlignVertical: 'top'}}
                 multiline
                 editable={!isSubmitting}
+                variant="ultra-thin"
             />
 
             <View style={{flexDirection: 'row', gap: 12, marginTop: 8}}>
@@ -299,7 +297,7 @@ export function MilestonesAccordion({userId}: MilestonesAccordionProps) {
     );
 
     return (
-        <Accordion title={t('milestones.title')} testID="milestones-accordion">
+        <GlassAccordion title={t('milestones.title')} variant="frosted" testID="milestones-accordion">
             {isLoading ? (
                 <ActivityIndicator />
             ) : milestones && milestones.length > 0 ? (
@@ -308,14 +306,12 @@ export function MilestonesAccordion({userId}: MilestonesAccordionProps) {
                         mode === 'edit' && editingId === milestone.id ? (
                             <View key={milestone.id}>{renderForm()}</View>
                         ) : (
-                            <View
+                            <GlassCard
                                 key={milestone.id}
+                                variant="tinted"
+                                borderRadius={8}
                                 style={{
                                     padding: 12,
-                                    borderRadius: 8,
-                                    backgroundColor: scheme === 'dark' ? '#1F2937' : '#F9FAFB',
-                                    borderWidth: 1,
-                                    borderColor: scheme === 'dark' ? '#374151' : '#E5E7EB',
                                 }}
                             >
                                 <View style={{flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4}}>
@@ -362,7 +358,7 @@ export function MilestonesAccordion({userId}: MilestonesAccordionProps) {
                                         {milestone.notes}
                                     </ThemedText>
                                 )}
-                            </View>
+                            </GlassCard>
                         )
                     ))}
                 </View>
@@ -395,6 +391,6 @@ export function MilestonesAccordion({userId}: MilestonesAccordionProps) {
                     </ThemedText>
                 </Pressable>
             )}
-        </Accordion>
+        </GlassAccordion>
     );
 }

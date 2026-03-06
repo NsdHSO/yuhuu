@@ -1,7 +1,7 @@
 import React, {useMemo, useState} from 'react';
 import {ActivityIndicator, Alert, Pressable, Switch, TextInput, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {Accordion, ThemedText, useColorScheme, Colors} from '@yuhuu/components';
+import {GlassAccordion, GlassCard, ThemedText, useColorScheme, Colors} from '@yuhuu/components';
 import {
     useCreateMySkillMutation,
     useCreateUserSkillMutation,
@@ -325,7 +325,7 @@ export function SkillsAccordion({userId}: SkillsAccordionProps) {
     );
 
     return (
-        <Accordion title={t('skills.title')} testID="skills-accordion">
+        <GlassAccordion title={t('skills.title')} variant="frosted" testID="skills-accordion">
             {isLoading ? (
                 <ActivityIndicator/>
             ) : skills && skills.length > 0 ? (
@@ -334,14 +334,12 @@ export function SkillsAccordion({userId}: SkillsAccordionProps) {
                         mode === 'edit' && editingId === skill.id ? (
                             <View key={skill.id}>{renderForm()}</View>
                         ) : (
-                            <View
+                            <GlassCard
                                 key={skill.id}
+                                variant="tinted"
+                                borderRadius={8}
                                 style={{
                                     padding: 12,
-                                    borderRadius: 8,
-                                    backgroundColor: scheme === 'dark' ? '#1F2937' : '#F9FAFB',
-                                    borderWidth: 1,
-                                    borderColor: scheme === 'dark' ? '#374151' : '#E5E7EB',
                                 }}
                             >
                                 <View style={{
@@ -413,7 +411,7 @@ export function SkillsAccordion({userId}: SkillsAccordionProps) {
                                         {t('skills.willingToServe')}
                                     </ThemedText>
                                 )}
-                            </View>
+                            </GlassCard>
                         )
                     ))}
                 </View>
@@ -446,6 +444,6 @@ export function SkillsAccordion({userId}: SkillsAccordionProps) {
                     </ThemedText>
                 </Pressable>
             )}
-        </Accordion>
+        </GlassAccordion>
     );
 }
