@@ -2,15 +2,7 @@ import React, {useState} from 'react';
 import {Alert, ScrollView, StyleSheet, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
-import {ThemedView} from '@/components/themed-view';
-import {ThemedText} from '@/components/themed-text';
-import {DatePicker} from '@/components/atoms/date-picker';
-import {DinnerSelector} from '@/components/atoms/dinner-selector';
-import {LoadingState} from '@/components/atoms/loading-state';
-import {ErrorState} from '@/components/atoms/error-state';
-import {EmptyState} from '@/components/atoms/empty-state';
-import {ParticipantForm} from '@/components/molecules/participant-form';
-import {DinnerDetailsCard} from '@/components/molecules/dinner-details-card';
+import {ThemedView, ThemedText, DatePicker, DinnerSelector, LoadingState, ErrorState, EmptyState, ParticipantForm, DinnerDetailsCard} from '@yuhuu/components';
 import {useAddParticipantMutation, useDinnersByDateQuery} from '@/features/dinners/hooks';
 
 /**
