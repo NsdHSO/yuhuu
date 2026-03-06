@@ -14,10 +14,7 @@ import {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Stack, useRouter} from 'expo-router';
 import {useTranslation} from 'react-i18next';
-import {ThemedText} from '@/components/themed-text';
-import {ThemedView} from '@/components/themed-view';
-import {useColorScheme} from '@/hooks/use-color-scheme';
-import {Colors} from '@/constants/theme';
+import {ThemedText, ThemedView, useColorScheme, Colors} from '@yuhuu/components';
 import {authApi, setTokensFromLogin} from '@yuhuu/auth';
 
 export default function RegisterScreen() {
