@@ -1,4 +1,4 @@
-import {Badge} from '@/components/atoms/badge';
+import {Badge} from '../atoms/badge';
 
 export interface CategoryBadgeProps {
     category: string;
