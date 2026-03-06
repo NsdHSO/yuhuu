@@ -60,7 +60,7 @@ module.exports = {
         ],
         experiments: {
             typedRoutes: true,
-            reactCompiler: true
+            reactCompiler: false  // Disabled - incompatible with RN 0.81.5
         },
         extra: {
             router: {},
@@ -68,8 +68,10 @@ module.exports = {
                 // TODO: Replace with your EAS project ID
                 // projectId: "your-project-id-here",
             },
-            // Read environment variable at build time and bundle it into the app
+            // Read environment variables at build time and bundle them into the app
             EXPO_PUBLIC_GRAPHQL_URL: process.env.EXPO_PUBLIC_GRAPHQL_URL || 'http://localhost:2003/strapi-proxy',
+            EXPO_PUBLIC_API_URL: process.env.EXPO_PUBLIC_API_URL || 'http://localhost:2003',
+            EXPO_PUBLIC_AUTH_API_URL: process.env.EXPO_PUBLIC_AUTH_API_URL || 'http://localhost:4100',
             EXPO_PUBLIC_ENV: process.env.EXPO_PUBLIC_ENV || 'local'
         },
         owner: 'nsdhso'

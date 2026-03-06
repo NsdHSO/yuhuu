@@ -60,8 +60,20 @@ jobs:
           if [ -z "${EXPO_PUBLIC_GRAPHQL_URL}" ]; then
             echo "::error::EXPO_PUBLIC_GRAPHQL_URL is not set. Define FAT_GRAPHQL_URL secret." && exit 1
           fi
+          if [ -z "${EXPO_PUBLIC_API_URL}" ]; then
+            echo "::error::EXPO_PUBLIC_API_URL is not set. Define EXPO_PUBLIC_API_URL secret." && exit 1
+          fi
+          if [ -z "${EXPO_PUBLIC_AUTH_API_URL}" ]; then
+            echo "::error::EXPO_PUBLIC_AUTH_API_URL is not set. Define EXPO_PUBLIC_AUTH_API_URL secret." && exit 1
+          fi
           if printf "%s" "$EXPO_PUBLIC_GRAPHQL_URL" | grep -Eq '^http://(localhost|127\.0\.0\.1)'; then
             echo "::error::Refusing to build release with localhost URL. Set FAT_GRAPHQL_URL to a reachable host." && exit 1
+          fi
+          if printf "%s" "$EXPO_PUBLIC_API_URL" | grep -Eq '^http://(localhost|127\.0\.0\.1)'; then
+            echo "::error::Refusing to build release with localhost URL. Set EXPO_PUBLIC_API_URL to a reachable host." && exit 1
+          fi
+          if printf "%s" "$EXPO_PUBLIC_AUTH_API_URL" | grep -Eq '^http://(localhost|127\.0\.0\.1)'; then
+            echo "::error::Refusing to build release with localhost URL. Set EXPO_PUBLIC_AUTH_API_URL to a reachable host." && exit 1
           fi
         env:
           EXPO_PUBLIC_GRAPHQL_URL: ${{ secrets.FAT_GRAPHQL_URL }}
