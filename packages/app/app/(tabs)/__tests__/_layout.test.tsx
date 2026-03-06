@@ -49,7 +49,7 @@ jest.mock('expo-router', () => {
         } = jest.requireActual('react-native');
         return (
             <View testID={`tab-${name}`}>
-                <Text>{options?.title || name}</Text>
+                <Text>{options?.tabBarLabel || name}</Text>
             </View>
         );
     };

@@ -49,7 +49,7 @@ jest.mock('@yuhuu/components', () => ({
     ...jest.requireActual('@yuhuu/components'),
     DinnerGraph: () => null,
     DinnerAttendance: () => null,
-    Accordion: ({title, children}: any) => {
+    GlassAccordion: ({title, children}: any) => {
         const React = require('react');
         const {View, Text} = require('react-native');
         return React.createElement(View, null,
