@@ -66,12 +66,10 @@ jest.mock('expo-router', () => {
     };
 });
 
-// Mock components
-jest.mock('@/components/haptic-tab', () => ({
+// Mock shared components from @yuhuu/components
+jest.mock('@yuhuu/components', () => ({
+    ...jest.requireActual('@yuhuu/components'),
     HapticTab: () => null,
-}));
-
-jest.mock('@/components/ui/icon-symbol', () => ({
     IconSymbol: () => null,
 }));
 
