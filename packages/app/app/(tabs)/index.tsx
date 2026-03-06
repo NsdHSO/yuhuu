@@ -4,9 +4,7 @@ import {Pressable, StyleSheet, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 
-import {ThemedText} from '@/components/themed-text';
-import {ThemedView} from '@/components/themed-view';
-import {HelloWave} from '@/components/hello-wave';
+import {ThemedText, ThemedView, HelloWave} from '@yuhuu/components';
 import {useAuth} from '@/providers/AuthProvider';
 import {hasRole} from '@yuhuu/auth';
 
