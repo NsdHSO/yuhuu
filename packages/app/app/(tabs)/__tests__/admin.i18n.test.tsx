@@ -44,10 +44,31 @@ jest.mock('@/features/dinners/hooks', () => ({
     useParticipantsByDinnerQuery: (dinnerId: number | null) => mockUseParticipantsByDinnerQuery(dinnerId),
 }));
 
-// --- Mock admin components ---
-jest.mock('@/components/admin/dinner-graph', () => ({
+// --- Mock shared components ---
+jest.mock('@yuhuu/components', () => ({
+    ...jest.requireActual('@yuhuu/components'),
     DinnerGraph: () => null,
+    DinnerAttendance: () => null,
+    Accordion: ({title, children}: any) => {
+        const React = require('react');
+        const {View, Text} = require('react-native');
+        return React.createElement(View, null,
+            React.createElement(Text, null, title),
+            children
+        );
+    },
+    DinnerIdSearch: ({onDinnerIdChange}: any) => {
+        const React = require('react');
+        const {Pressable} = require('react-native');
+        return React.createElement(Pressable, {
+            testID: 'dinner-id-trigger',
+            onPress: () => onDinnerIdChange(1),
+        });
+    },
+    ParticipantsList: () => null,
 }));
+
+// --- Mock app-specific admin components ---
 jest.mock('@/components/admin/user-search', () => ({
     UserSearch: ({onSearch}: any) => {
         const React = require('react');
@@ -57,32 +78,6 @@ jest.mock('@/components/admin/user-search', () => ({
             onPress: () => onSearch({id: 1, username: 'testuser'}),
         });
     },
-}));
-jest.mock('@/components/admin/dinner-attendance', () => ({
-    DinnerAttendance: () => null,
-}));
-jest.mock('@/components/admin/accordion', () => ({
-    Accordion: ({title, children}: any) => {
-        const React = require('react');
-        const {View, Text} = require('react-native');
-        return React.createElement(View, null,
-            React.createElement(Text, null, title),
-            children
-        );
-    },
-}));
-jest.mock('@/components/admin/dinner-id-search', () => ({
-    DinnerIdSearch: ({onDinnerIdChange}: any) => {
-        const React = require('react');
-        const {Pressable} = require('react-native');
-        return React.createElement(Pressable, {
-            testID: 'dinner-id-trigger',
-            onPress: () => onDinnerIdChange(1),
-        });
-    },
-}));
-jest.mock('@/components/admin/participants-list', () => ({
-    ParticipantsList: () => null,
 }));
 
 // Mock profile hooks to avoid QueryClient errors
