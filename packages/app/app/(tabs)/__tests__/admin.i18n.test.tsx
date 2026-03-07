@@ -1,5 +1,21 @@
 import React from 'react';
 import {fireEvent, render} from '@testing-library/react-native';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+
+// Mock react-native-safe-area-context
+jest.mock('react-native-safe-area-context', () => ({
+    useSafeAreaInsets: jest.fn(() => ({ top: 0, bottom: 0, left: 0, right: 0 })),
+    SafeAreaView: ({ children, ...props }: any) => {
+        const R = require('react');
+        const { View } = require('react-native');
+        return R.createElement(View, props, children);
+    },
+    SafeAreaProvider: ({ children, ...props }: any) => {
+        const R = require('react');
+        const { View } = require('react-native');
+        return R.createElement(View, props, children);
+    },
+}));
 
 /**
  * TDD tests for Admin Screen i18n Migration
@@ -66,6 +82,11 @@ jest.mock('@yuhuu/components', () => ({
         });
     },
     ParticipantsList: () => null,
+    TabScreenWrapper: ({children, testID}: any) => {
+        const React = require('react');
+        const {ScrollView} = require('react-native');
+        return React.createElement(ScrollView, {testID: testID ? `${testID}-scroll` : undefined}, children);
+    },
 }));
 
 // --- Mock app-specific admin components ---
@@ -154,6 +175,13 @@ describe('AdminScreen - i18n Migration', () => {
     beforeEach(() => {
         jest.clearAllMocks();
 
+        // Re-initialize mock return values after clearing
+        mockUseTranslation.mockReturnValue({
+            t: mockT,
+            i18n: {language: 'en', changeLanguage: jest.fn()},
+        });
+        mockT.mockImplementation((key: string) => key);
+
         mockUseDinnerStatsQuery.mockReturnValue({
             data: null,
             isLoading: false,
@@ -174,7 +202,11 @@ describe('AdminScreen - i18n Migration', () => {
     describe('useTranslation hook integration', () => {
         it('should call useTranslation to get the t function', () => {
             const AdminScreen = require('../admin').default;
-            render(<AdminScreen/>);
+            render(
+                <SafeAreaProvider>
+                    <AdminScreen/>
+                </SafeAreaProvider>
+            );
 
             expect(mockUseTranslation).toHaveBeenCalled();
         });
@@ -183,21 +215,33 @@ describe('AdminScreen - i18n Migration', () => {
     describe('Accordion title strings', () => {
         it('should use t() for "Dinner Participation Graph" accordion title', () => {
             const AdminScreen = require('../admin').default;
-            render(<AdminScreen/>);
+            render(
+                <SafeAreaProvider>
+                    <AdminScreen/>
+                </SafeAreaProvider>
+            );
 
             expect(mockT).toHaveBeenCalledWith('admin.dinnerParticipation');
         });
 
         it('should use t() for "Search User Attendance" accordion title', () => {
             const AdminScreen = require('../admin').default;
-            render(<AdminScreen/>);
+            render(
+                <SafeAreaProvider>
+                    <AdminScreen/>
+                </SafeAreaProvider>
+            );
 
             expect(mockT).toHaveBeenCalledWith('admin.searchUser');
         });
 
         it('should use t() for "View Dinner Participants" accordion title', () => {
             const AdminScreen = require('../admin').default;
-            render(<AdminScreen/>);
+            render(
+                <SafeAreaProvider>
+                    <AdminScreen/>
+                </SafeAreaProvider>
+            );
 
             expect(mockT).toHaveBeenCalledWith('admin.viewParticipants');
         });
@@ -212,7 +256,11 @@ describe('AdminScreen - i18n Migration', () => {
             });
 
             const AdminScreen = require('../admin').default;
-            render(<AdminScreen/>);
+            render(
+                <SafeAreaProvider>
+                    <AdminScreen/>
+                </SafeAreaProvider>
+            );
 
             expect(mockT).toHaveBeenCalledWith('admin.loadError');
         });
@@ -225,7 +273,11 @@ describe('AdminScreen - i18n Migration', () => {
             });
 
             const AdminScreen = require('../admin').default;
-            const {getByTestId} = render(<AdminScreen/>);
+            const {getByTestId} = render(
+                <SafeAreaProvider>
+                    <AdminScreen/>
+                </SafeAreaProvider>
+            );
 
             // Trigger a search to set searchedUsername state, which shows the error branch
             fireEvent.press(getByTestId('user-search-trigger'));
@@ -241,7 +293,11 @@ describe('AdminScreen - i18n Migration', () => {
             });
 
             const AdminScreen = require('../admin').default;
-            const {getByTestId} = render(<AdminScreen/>);
+            const {getByTestId} = render(
+                <SafeAreaProvider>
+                    <AdminScreen/>
+                </SafeAreaProvider>
+            );
 
             // Trigger dinner ID selection to set selectedDinnerId state, which shows the error branch
             fireEvent.press(getByTestId('dinner-id-trigger'));
@@ -259,7 +315,11 @@ describe('AdminScreen - i18n Migration', () => {
             });
 
             const AdminScreen = require('../admin').default;
-            const {getByTestId} = render(<AdminScreen/>);
+            const {getByTestId} = render(
+                <SafeAreaProvider>
+                    <AdminScreen/>
+                </SafeAreaProvider>
+            );
 
             // Trigger a search to set searchedUsername state, which shows the empty state branch
             fireEvent.press(getByTestId('user-search-trigger'));
@@ -281,7 +341,11 @@ describe('AdminScreen - i18n Migration', () => {
             });
 
             const AdminScreen = require('../admin').default;
-            const {queryByText} = render(<AdminScreen/>);
+            const {queryByText} = render(
+                <SafeAreaProvider>
+                    <AdminScreen/>
+                </SafeAreaProvider>
+            );
 
             const hardcodedStrings = [
                 'Dinner Participation Graph',

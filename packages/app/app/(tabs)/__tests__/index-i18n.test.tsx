@@ -1,7 +1,6 @@
 import React from 'react';
 import {render} from '@testing-library/react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import HomeScreen from '../index';
 
 /**
  * TDD tests for Home Screen i18n Migration
@@ -15,6 +14,41 @@ import HomeScreen from '../index';
  * home.encouragement -> "We're glad you're here..."
  * home.signOut       -> "Sign out"
  */
+
+// --- Mock react-native-safe-area-context ---
+jest.mock('react-native-safe-area-context', () => ({
+    useSafeAreaInsets: jest.fn(() => ({ top: 0, bottom: 0, left: 0, right: 0 })),
+    SafeAreaView: ({ children, ...props }: any) => {
+        const R = require('react');
+        const { View } = require('react-native');
+        return R.createElement(View, props, children);
+    },
+    SafeAreaProvider: ({ children, ...props }: any) => {
+        const R = require('react');
+        const { View } = require('react-native');
+        return R.createElement(View, props, children);
+    },
+}));
+
+// --- Mock expo-router ---
+jest.mock('expo-router', () => ({
+    Redirect: () => null,
+    Stack: {
+        Screen: () => null,
+    },
+}));
+
+// --- Mock GlassBackground from @yuhuu/components ---
+jest.mock('@yuhuu/components', () => {
+    const actual = jest.requireActual('@yuhuu/components');
+    const React = require('react');
+    const { ScrollView } = require('react-native');
+    return {
+        ...actual,
+        GlassBackground: ({children}: any) => React.createElement(React.Fragment, {}, children),
+        TabScreenWrapper: ({children, testID}: any) => React.createElement(ScrollView, { testID: testID ? `${testID}-scroll` : undefined }, children),
+    };
+});
 
 // --- Mock react-i18next ---
 const mockT = jest.fn((key: string) => key);
@@ -42,6 +76,9 @@ jest.mock('@yuhuu/auth', () => ({
     hasRole: jest.fn(() => false),
 }));
 
+// Import HomeScreen after all mocks are set up
+import HomeScreen from '../index';
+
 // Helper to wrap component with SafeAreaProvider
 function renderWithProvider(component: React.ReactElement) {
     return render(
@@ -54,6 +91,12 @@ function renderWithProvider(component: React.ReactElement) {
 describe('HomeScreen - i18n Migration', () => {
     beforeEach(() => {
         jest.clearAllMocks();
+        // Re-initialize mock return values after clearing
+        mockUseTranslation.mockReturnValue({
+            t: mockT,
+            i18n: {language: 'en', changeLanguage: jest.fn()},
+        });
+        mockT.mockImplementation((key: string) => key);
     });
 
     describe('useTranslation hook integration', () => {

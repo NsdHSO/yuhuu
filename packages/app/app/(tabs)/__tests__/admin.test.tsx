@@ -3,14 +3,27 @@ import {fireEvent, render, waitFor} from '@testing-library/react-native';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 
-import AdminScreen from '../admin';
-
 /**
  * Unit tests for Admin Screen
  * SOLID Principles:
  * - Single Responsibility: Each test validates one specific admin feature
  * - Open/Closed: Tests ensure features can be extended without modifying existing logic
  */
+
+// Mock react-native-safe-area-context
+jest.mock('react-native-safe-area-context', () => ({
+    useSafeAreaInsets: jest.fn(() => ({ top: 0, bottom: 0, left: 0, right: 0 })),
+    SafeAreaView: ({ children, ...props }: any) => {
+        const R = require('react');
+        const { View } = require('react-native');
+        return R.createElement(View, props, children);
+    },
+    SafeAreaProvider: ({ children, ...props }: any) => {
+        const R = require('react');
+        const { View } = require('react-native');
+        return R.createElement(View, props, children);
+    },
+}));
 
 // Mock react-i18next - return English values from translation keys
 const translations: Record<string, string> = {
@@ -127,6 +140,23 @@ jest.mock('@/features/dinners/hooks', () => ({
     },
 }));
 
+// Mock GlassBackground and TabScreenWrapper to render children directly
+jest.mock('@yuhuu/components', () => {
+    const actual = jest.requireActual('@yuhuu/components');
+    const React = require('react');
+    const { ScrollView } = require('react-native');
+    return {
+        ...actual,
+        GlassBackground: ({children}: any) => React.createElement(React.Fragment, {}, children),
+        TabScreenWrapper: ({children, testID}: any) => {
+            const { View } = require('react-native');
+            return React.createElement(View, { testID },
+                React.createElement(ScrollView, { testID: testID ? `${testID}-scroll` : undefined }, children)
+            );
+        },
+    };
+});
+
 // Mock profile hooks to avoid QueryClient errors
 jest.mock('@/features/family/hooks', () => ({
     useMyFamilyQuery: () => ({ data: [], isLoading: false, error: null }),
@@ -196,6 +226,9 @@ jest.mock('@/features/skills/api', () => ({
     useUpdateUserSkillMutation: () => ({ mutate: jest.fn(), isPending: false }),
     useDeleteUserSkillMutation: () => ({ mutate: jest.fn(), isPending: false }),
 }));
+
+// Import AdminScreen after all mocks are set up
+import AdminScreen from '../admin';
 
 // Helper to wrap components with QueryClient and SafeAreaProvider
 function renderWithQueryClient(component: React.ReactElement) {

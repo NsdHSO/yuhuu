@@ -2,8 +2,23 @@ import React from 'react';
 import {fireEvent, render} from '@testing-library/react-native';
 import {Alert} from 'react-native';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import SupperScreen from '../supper';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 import type {Dinner} from '@/features/dinners/types';
+
+// Mock react-native-safe-area-context
+jest.mock('react-native-safe-area-context', () => ({
+    useSafeAreaInsets: jest.fn(() => ({ top: 0, bottom: 0, left: 0, right: 0 })),
+    SafeAreaView: ({ children, ...props }: any) => {
+        const R = require('react');
+        const { View } = require('react-native');
+        return R.createElement(View, props, children);
+    },
+    SafeAreaProvider: ({ children, ...props }: any) => {
+        const R = require('react');
+        const { View } = require('react-native');
+        return R.createElement(View, props, children);
+    },
+}));
 
 /**
  * TDD tests for Supper Screen i18n Migration
@@ -92,6 +107,10 @@ jest.mock('@yuhuu/components', () => ({
         const {Text} = jest.requireActual('react-native');
         return <Text testID="dinner-details">Mock Dinner Card</Text>;
     },
+    TabScreenWrapper: ({children, testID}: any) => {
+        const {ScrollView} = jest.requireActual('react-native');
+        return <ScrollView testID={testID ? `${testID}-scroll` : undefined}>{children}</ScrollView>;
+    },
 }));
 
 function createWrapper() {
@@ -103,7 +122,9 @@ function createWrapper() {
     });
 
     const Wrapper = ({children}: { children: React.ReactNode }) => (
-        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+        <SafeAreaProvider>
+            <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+        </SafeAreaProvider>
     );
     Wrapper.displayName = 'QueryClientWrapper';
     return Wrapper;
@@ -140,9 +161,20 @@ const multipleDinners: Dinner[] = [
     },
 ];
 
+// Import SupperScreen after all mocks are set up
+import SupperScreen from '../supper';
+
 describe('SupperScreen - i18n Migration', () => {
     beforeEach(() => {
         jest.clearAllMocks();
+
+        // Re-initialize mock return values after clearing
+        mockUseTranslation.mockReturnValue({
+            t: mockT,
+            i18n: {language: 'en', changeLanguage: jest.fn()},
+        });
+        mockT.mockImplementation((key: string) => key);
+
         mockUseDinnersByDateQuery.mockReturnValue({
             data: undefined,
             isLoading: false,
