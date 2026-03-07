@@ -89,7 +89,10 @@ describe('TabScreenWrapper', () => {
 
     it('uses padding behavior on iOS', () => {
       const Platform = require('react-native/Libraries/Utilities/Platform');
-      jest.spyOn(Platform, 'select').mockImplementation((obj) => obj.ios);
+      Object.defineProperty(Platform, 'OS', {
+        get: () => 'ios',
+        configurable: true,
+      });
 
       const { UNSAFE_getByType } = render(
         <TabScreenWrapper>
@@ -100,13 +103,14 @@ describe('TabScreenWrapper', () => {
       const KeyboardAvoidingView = require('react-native').KeyboardAvoidingView;
       const keyboardView = UNSAFE_getByType(KeyboardAvoidingView);
       expect(keyboardView.props.behavior).toBe('padding');
-
-      jest.restoreAllMocks();
     });
 
     it('uses undefined behavior on Android', () => {
       const Platform = require('react-native/Libraries/Utilities/Platform');
-      jest.spyOn(Platform, 'select').mockImplementation((obj) => obj.android);
+      Object.defineProperty(Platform, 'OS', {
+        get: () => 'android',
+        configurable: true,
+      });
 
       const { UNSAFE_getByType } = render(
         <TabScreenWrapper>
@@ -117,13 +121,14 @@ describe('TabScreenWrapper', () => {
       const KeyboardAvoidingView = require('react-native').KeyboardAvoidingView;
       const keyboardView = UNSAFE_getByType(KeyboardAvoidingView);
       expect(keyboardView.props.behavior).toBeUndefined();
-
-      jest.restoreAllMocks();
     });
 
     it('uses undefined behavior on Web', () => {
       const Platform = require('react-native/Libraries/Utilities/Platform');
-      jest.spyOn(Platform, 'select').mockImplementation((obj) => obj.web);
+      Object.defineProperty(Platform, 'OS', {
+        get: () => 'web',
+        configurable: true,
+      });
 
       const { UNSAFE_getByType } = render(
         <TabScreenWrapper>
@@ -134,8 +139,6 @@ describe('TabScreenWrapper', () => {
       const KeyboardAvoidingView = require('react-native').KeyboardAvoidingView;
       const keyboardView = UNSAFE_getByType(KeyboardAvoidingView);
       expect(keyboardView.props.behavior).toBeUndefined();
-
-      jest.restoreAllMocks();
     });
   });
 });
