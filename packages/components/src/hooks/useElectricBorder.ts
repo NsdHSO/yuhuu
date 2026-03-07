@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import {
-  useSharedValue,
-  useAnimatedStyle,
-  withRepeat,
-  withTiming,
-  withSequence,
   Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withTiming,
 } from 'react-native-reanimated';
 
 export function useElectricBorder(isActive: boolean = true) {
@@ -42,8 +42,8 @@ export function useElectricBorder(isActive: boolean = true) {
     if (!isActive) return { opacity: 0, top: 0, left: 0, width: 0, height: 0 };
 
     const progress = electricProgress.value % 4; // 0-4 for 4 edges
-    const segmentLength = 30; // Percentage of edge
-    const thickness = 3;
+    const segmentLength = 40; // Percentage of edge
+    const thickness = 1;
 
     if (progress < 1) {
       // Top edge: moving left to right
