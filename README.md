@@ -5,23 +5,11 @@ and Expo. Features complete authentication flow, comprehensive test coverage, an
 
 ## 📥 Download Latest Build
 
-[![Latest FAT Build](https://img.shields.io/github/v/release/NsdHSO/yuhuu?include_prereleases&label=Latest%20FAT%20Build&color=blue&filter=latest-fat-v*)](https://github.com/NsdHSO/yuhuu/releases?q=latest-fat-v&expanded=true)
+[![Latest FAT Build](https://img.shields.io/github/v/release/NsdHSO/yuhuu?include_prereleases&label=Latest%20FAT%20Build&color=blue&filter=latest-fat-v*)](https://github.com/NsdHSO/yuhuu/releases)
 
-**[📱 Download Latest Android APK](https://github.com/NsdHSO/yuhuu/releases?q=latest-fat-v&expanded=true)** • **[🍎 Download Latest iOS IPA](https://github.com/NsdHSO/yuhuu/releases/tag/latest-fat-ios)**
+**[📱 Download Latest Android APK](https://github.com/NsdHSO/yuhuu/releases)** • **[🍎 Download Latest iOS IPA](https://github.com/NsdHSO/yuhuu/releases/tag/latest-fat-ios)**
 
-> 💡 **Tip:** FAT builds are versioned by GitHub Actions run number (e.g., v85, v86, v87). Click the link above and download the **highest version number** for the latest build.
-
-### GitHub Actions Build Summary
-
-After each successful build, GitHub Actions displays download links directly in the workflow run summary. This makes it easy to quickly download the latest APK/IPA without navigating to the Releases page.
-
-**Example workflow step:**
-
-```yaml
-- name: Add download link to job summary
-  run: |
-    echo "- [📥 FAT APK v${{ github.run_number }}](https://github.com/${{ github.repository }}/releases/tag/latest-fat-v${{ github.run_number }})" >> $GITHUB_STEP_SUMMARY
-```
+> 💡 **Tip:** Look for releases titled "FAT Build v##" (e.g., v85, v86, v87). Download the **highest version number** for the latest build.
 
 **What this does:**
 
