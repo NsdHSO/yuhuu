@@ -31,6 +31,7 @@ export * from './atoms/search-input';
 export * from './atoms/glass';
 export * from './atoms/tab-liquid-blob';
 export * from './atoms/custom-tab-bar';
+export * from './atoms/tab-screen-wrapper';
 
 // Molecules
 export * from './molecules/category-badge';
