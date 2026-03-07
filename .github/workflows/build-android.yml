@@ -80,12 +80,25 @@ jobs:
           EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}
           EXPO_PUBLIC_AUTH_API_URL: ${{ secrets.EXPO_PUBLIC_AUTH_API_URL }}
 
+      - name: Generate env cache key
+        id: env-cache-key
+        run: |
+          # Hash the environment variables to bust cache when they change
+          ENV_HASH=$(echo "$EXPO_PUBLIC_GRAPHQL_URL$EXPO_PUBLIC_API_URL$EXPO_PUBLIC_AUTH_API_URL$EXPO_PUBLIC_ENV" | sha256sum | cut -d' ' -f1)
+          echo "hash=$ENV_HASH" >> $GITHUB_OUTPUT
+          echo "Environment variables hash: $ENV_HASH"
+        env:
+          EXPO_PUBLIC_GRAPHQL_URL: ${{ secrets.FAT_GRAPHQL_URL }}
+          EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}
+          EXPO_PUBLIC_AUTH_API_URL: ${{ secrets.EXPO_PUBLIC_AUTH_API_URL }}
+          EXPO_PUBLIC_ENV: fat
+
       - name: Cache Android prebuild
         id: android-prebuild-cache
         uses: actions/cache@v4
         with:
           path: packages/app/android/
-          key: ${{ runner.os }}-android-prebuild-v2-${{ hashFiles('packages/app/app.config.js', 'packages/app/package.json', 'packages/app/assets/images/**', 'pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-android-prebuild-${{ steps.env-cache-key.outputs.hash }}-${{ hashFiles('packages/app/app.config.js', 'packages/app/package.json', 'packages/app/assets/images/**', 'pnpm-lock.yaml') }}
 
       - name: Prebuild Android
         if: steps.android-prebuild-cache.outputs.cache-hit != 'true'
