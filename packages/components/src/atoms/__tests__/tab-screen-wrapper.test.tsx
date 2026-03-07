@@ -199,4 +199,33 @@ describe('TabScreenWrapper', () => {
       expect(getByTestId('custom-wrapper-scroll')).toBeTruthy();
     });
   });
+
+  describe('Layout Structure', () => {
+    beforeEach(() => {
+      mockUseSafeAreaInsets.mockReturnValue({ top: 0, bottom: 0, left: 0, right: 0 });
+    });
+
+    it('renders SafeAreaView with correct edges', () => {
+      const { UNSAFE_getByType } = render(
+        <TabScreenWrapper>
+          <></>
+        </TabScreenWrapper>
+      );
+
+      const SafeAreaView = require('react-native-safe-area-context').SafeAreaView;
+      const safeArea = UNSAFE_getByType(SafeAreaView);
+      expect(safeArea.props.edges).toEqual(['top', 'left', 'right']);
+    });
+
+    it('renders children inside ScrollView', () => {
+      const { getByText } = render(
+        <TabScreenWrapper>
+          <>{/* Test content */}</>
+        </TabScreenWrapper>
+      );
+
+      // Component structure should exist
+      expect(() => getByText('Test content')).not.toThrow();
+    });
+  });
 });
