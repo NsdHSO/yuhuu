@@ -228,4 +228,40 @@ describe('TabScreenWrapper', () => {
       expect(() => getByText('Test content')).not.toThrow();
     });
   });
+
+  describe('Snapshots', () => {
+    beforeEach(() => {
+      mockUseSafeAreaInsets.mockReturnValue({ top: 0, bottom: 0, left: 0, right: 0 });
+    });
+
+    it('matches snapshot with default props', () => {
+      const { toJSON } = render(
+        <TabScreenWrapper>
+          <></>
+        </TabScreenWrapper>
+      );
+
+      expect(toJSON()).toMatchSnapshot();
+    });
+
+    it('matches snapshot with custom contentContainerStyle', () => {
+      const { toJSON } = render(
+        <TabScreenWrapper contentContainerStyle={{ padding: 20 }}>
+          <></>
+        </TabScreenWrapper>
+      );
+
+      expect(toJSON()).toMatchSnapshot();
+    });
+
+    it('matches snapshot with scrollEnabled=false', () => {
+      const { toJSON } = render(
+        <TabScreenWrapper scrollEnabled={false}>
+          <></>
+        </TabScreenWrapper>
+      );
+
+      expect(toJSON()).toMatchSnapshot();
+    });
+  });
 });
