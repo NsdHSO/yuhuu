@@ -1,6 +1,7 @@
 import React from 'react';
 import {fireEvent, render, waitFor} from '@testing-library/react-native';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 import AdminScreen from '../admin';
 
@@ -196,7 +197,7 @@ jest.mock('@/features/skills/api', () => ({
     useDeleteUserSkillMutation: () => ({ mutate: jest.fn(), isPending: false }),
 }));
 
-// Helper to wrap components with QueryClient
+// Helper to wrap components with QueryClient and SafeAreaProvider
 function renderWithQueryClient(component: React.ReactElement) {
     const queryClient = new QueryClient({
         defaultOptions: {
@@ -204,9 +205,11 @@ function renderWithQueryClient(component: React.ReactElement) {
         },
     });
     return render(
-        <QueryClientProvider client={queryClient}>
-            {component}
-        </QueryClientProvider>
+        <SafeAreaProvider>
+            <QueryClientProvider client={queryClient}>
+                {component}
+            </QueryClientProvider>
+        </SafeAreaProvider>
     );
 }
 

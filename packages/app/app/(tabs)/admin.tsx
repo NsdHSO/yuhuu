@@ -16,18 +16,17 @@ import {
     GlassAccordion,
     GlassBackground,
     ParticipantsList,
+    TabScreenWrapper,
     useColorScheme,
 } from "@yuhuu/components";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
     ActivityIndicator,
-    ScrollView,
     StyleSheet,
     Text,
     View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 /**
  * Admin screen - Only accessible to users with Admin role
@@ -77,8 +76,7 @@ export default function AdminScreen() {
 
   return (
     <GlassBackground variant="vibrant">
-      <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
-        <ScrollView testID="admin-container" style={styles.container}>
+      <TabScreenWrapper testID="admin-container" contentContainerStyle={styles.container}>
           {/* Dinner Graph Section - Expandable */}
           <View testID="dinner-graph-section" style={styles.section}>
             <GlassAccordion
@@ -211,18 +209,13 @@ export default function AdminScreen() {
               )}
             </GlassAccordion>
           </View>
-        </ScrollView>
-      </SafeAreaView>
+      </TabScreenWrapper>
     </GlassBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
   container: {
-    flex: 1,
     padding: 16,
   },
   section: {
