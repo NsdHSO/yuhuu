@@ -3,7 +3,13 @@
 A production-ready, fully-tested boilerplate for building cross-platform mobile and web applications with React Native
 and Expo. Features complete authentication flow, comprehensive test coverage, and modern development practices.
 
-**[📥 Download Latest FAT APK](https://github.com/NsdHSO/yuhuu/releases/tag/latest-fat)** | \* \*[📱 Download Latest iOS IPA](https://github.com/NsdHSO/yuhuu/releases/tag/latest-fat-ios)\*\*
+## 📥 Download Latest Build
+
+[![Latest FAT Build](https://img.shields.io/github/v/release/NsdHSO/yuhuu?include_prereleases&label=Latest%20FAT%20Build&color=blue&filter=latest-fat-v*)](https://github.com/NsdHSO/yuhuu/releases?q=latest-fat-v&expanded=true)
+
+**[📱 Download Latest Android APK](https://github.com/NsdHSO/yuhuu/releases?q=latest-fat-v&expanded=true)** • **[🍎 Download Latest iOS IPA](https://github.com/NsdHSO/yuhuu/releases/tag/latest-fat-ios)**
+
+> 💡 **Tip:** FAT builds are versioned by GitHub Actions run number (e.g., v85, v86, v87). Click the link above and download the **highest version number** for the latest build.
 
 ### GitHub Actions Build Summary
 
