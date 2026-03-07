@@ -281,7 +281,7 @@ export function FamilyAccordion({userId}: FamilyAccordionProps) {
             title={t('family.title')}
             variant="frosted"
             enableElectric={true}
-            enableWaves={true}
+            enableWaves={false}
             testID="family-accordion"
         >
             {isLoading ? (

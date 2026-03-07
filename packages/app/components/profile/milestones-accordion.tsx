@@ -301,7 +301,7 @@ export function MilestonesAccordion({userId}: MilestonesAccordionProps) {
             title={t('milestones.title')}
             variant="frosted"
             enableElectric={true}
-            enableWaves={true}
+            enableWaves={false}
             testID="milestones-accordion"
         >
             {isLoading ? (

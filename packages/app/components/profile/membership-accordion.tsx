@@ -328,7 +328,7 @@ export function MembershipAccordion({userId}: MembershipAccordionProps) {
             title={t('membership.title')}
             variant="frosted"
             enableElectric={true}
-            enableWaves={true}
+            enableWaves={false}
             testID="membership-accordion"
         >
             {isLoading ? (

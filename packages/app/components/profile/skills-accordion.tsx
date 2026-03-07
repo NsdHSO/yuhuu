@@ -329,7 +329,7 @@ export function SkillsAccordion({userId}: SkillsAccordionProps) {
             title={t('skills.title')}
             variant="frosted"
             enableElectric={true}
-            enableWaves={true}
+            enableWaves={false}
             testID="skills-accordion"
         >
             {isLoading ? (

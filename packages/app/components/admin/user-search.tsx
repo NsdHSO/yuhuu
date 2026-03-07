@@ -93,7 +93,6 @@ export function UserSearch({
                 <GlassCard
                     variant="ultra-thin"
                     borderRadius={8}
-                    enableElectric={true}
                     style={styles.errorContainer}
                 >
                     <Text style={styles.errorText}>
@@ -109,8 +108,6 @@ export function UserSearch({
                     borderRadius={8}
                     enableShadow={true}
                     shadowLevel="medium"
-                    enableElectric={true}
-                    enableWaves={true}
                     style={styles.resultsContainer}
                 >
                     {isLoading ? (
