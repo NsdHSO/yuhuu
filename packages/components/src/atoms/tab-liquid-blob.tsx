@@ -1,6 +1,6 @@
-import { BlurView } from "expo-blur";
+// import { BlurView } from "expo-blur"; // TEMPORARILY DISABLED - expo-blur broken
 import { useEffect } from "react";
-import { Dimensions, StyleSheet } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -57,16 +57,14 @@ export function TabLiquidBlob({
       ]}
       pointerEvents="none"
     >
-      <BlurView
-        intensity={40}
-        tint={scheme === "dark" ? "light" : "dark"}
+      <View
         style={[
           styles.pill,
           {
             backgroundColor:
               scheme === "dark"
-                ? "rgba(100, 120, 140, 0.8)"
-                : "rgba(255, 255, 255, 0.9)",
+                ? "rgba(100, 120, 140, 0.95)"
+                : "rgba(255, 255, 255, 0.95)",
             borderWidth: 1,
             borderColor:
               scheme === "dark"
