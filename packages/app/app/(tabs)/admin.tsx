@@ -86,7 +86,7 @@ export default function AdminScreen() {
               variant="frosted"
               defaultExpanded={true}
               enableElectric={true}
-              enableWaves={true}
+              enableWaves={false}
               testID="dinner-graph-accordion"
             >
               {isLoadingStats ? (
@@ -116,7 +116,7 @@ export default function AdminScreen() {
               variant="frosted"
               defaultExpanded={true}
               enableElectric={true}
-              enableWaves={true}
+              enableWaves={false}
               testID="user-search-accordion"
             >
               <UserSearch testID="user-search" onSearch={handleSearch} />
@@ -176,7 +176,7 @@ export default function AdminScreen() {
               variant="frosted"
               defaultExpanded={false}
               enableElectric={true}
-              enableWaves={true}
+              enableWaves={false}
               testID="dinner-participants-accordion"
             >
               <DinnerIdSearch
