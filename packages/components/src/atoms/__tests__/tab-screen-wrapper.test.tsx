@@ -88,10 +88,8 @@ describe('TabScreenWrapper', () => {
     });
 
     it('uses padding behavior on iOS', () => {
-      jest.mock('react-native/Libraries/Utilities/Platform', () => ({
-        OS: 'ios',
-        select: jest.fn((obj) => obj.ios),
-      }));
+      const Platform = require('react-native/Libraries/Utilities/Platform');
+      jest.spyOn(Platform, 'select').mockImplementation((obj) => obj.ios);
 
       const { UNSAFE_getByType } = render(
         <TabScreenWrapper>
@@ -102,13 +100,13 @@ describe('TabScreenWrapper', () => {
       const KeyboardAvoidingView = require('react-native').KeyboardAvoidingView;
       const keyboardView = UNSAFE_getByType(KeyboardAvoidingView);
       expect(keyboardView.props.behavior).toBe('padding');
+
+      jest.restoreAllMocks();
     });
 
     it('uses undefined behavior on Android', () => {
-      jest.mock('react-native/Libraries/Utilities/Platform', () => ({
-        OS: 'android',
-        select: jest.fn((obj) => obj.android),
-      }));
+      const Platform = require('react-native/Libraries/Utilities/Platform');
+      jest.spyOn(Platform, 'select').mockImplementation((obj) => obj.android);
 
       const { UNSAFE_getByType } = render(
         <TabScreenWrapper>
@@ -119,13 +117,13 @@ describe('TabScreenWrapper', () => {
       const KeyboardAvoidingView = require('react-native').KeyboardAvoidingView;
       const keyboardView = UNSAFE_getByType(KeyboardAvoidingView);
       expect(keyboardView.props.behavior).toBeUndefined();
+
+      jest.restoreAllMocks();
     });
 
     it('uses undefined behavior on Web', () => {
-      jest.mock('react-native/Libraries/Utilities/Platform', () => ({
-        OS: 'web',
-        select: jest.fn((obj) => obj.web),
-      }));
+      const Platform = require('react-native/Libraries/Utilities/Platform');
+      jest.spyOn(Platform, 'select').mockImplementation((obj) => obj.web);
 
       const { UNSAFE_getByType } = render(
         <TabScreenWrapper>
@@ -136,6 +134,8 @@ describe('TabScreenWrapper', () => {
       const KeyboardAvoidingView = require('react-native').KeyboardAvoidingView;
       const keyboardView = UNSAFE_getByType(KeyboardAvoidingView);
       expect(keyboardView.props.behavior).toBeUndefined();
+
+      jest.restoreAllMocks();
     });
   });
 });
