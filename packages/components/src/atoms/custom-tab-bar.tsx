@@ -7,7 +7,7 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
 } from 'react-native-reanimated';
-import { BlurView } from 'expo-blur';
+// import { BlurView } from 'expo-blur'; // TEMPORARILY DISABLED - expo-blur broken
 import { useColorScheme } from '../hooks/use-color-scheme';
 
 export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
@@ -47,22 +47,16 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom }]}>
       {/* Glass background */}
-      <BlurView
-        intensity={100}
-        tint={scheme === 'dark' ? 'dark' : 'light'}
-        style={StyleSheet.absoluteFill}
-      >
-        <View
-          style={[
-            StyleSheet.absoluteFill,
-            {
-              backgroundColor: scheme === 'dark'
-                ? 'rgba(50, 50, 60, 0.70)'
-                : 'rgba(250, 250, 255, 0.50)',
-            },
-          ]}
-        />
-      </BlurView>
+      <View
+        style={[
+          StyleSheet.absoluteFill,
+          {
+            backgroundColor: scheme === 'dark'
+              ? 'rgba(50, 50, 60, 0.95)'
+              : 'rgba(250, 250, 255, 0.95)',
+          },
+        ]}
+      />
 
       {/* Sliding pill indicator - ON TOP */}
       <Animated.View
@@ -75,15 +69,13 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
           pillStyle,
         ]}
       >
-        <BlurView
-          intensity={100}
-          tint={scheme === 'dark' ? 'light' : 'dark'}
+        <View
           style={[
             styles.pill,
             {
               backgroundColor: scheme === 'dark'
-                ? 'rgba(100, 120, 140, 0.8)'
-                : 'rgba(255, 255, 255, 0.9)',
+                ? 'rgba(100, 120, 140, 0.95)'
+                : 'rgba(255, 255, 255, 0.95)',
               borderWidth: 1,
               borderColor: scheme === 'dark'
                 ? 'rgba(255, 255, 255, 0.1)'
