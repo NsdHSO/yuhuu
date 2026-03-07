@@ -223,6 +223,27 @@ describe('IconSymbol Component', () => {
             );
             expect(root).toBeTruthy();
         });
+
+        it('should map shield.fill to admin-panel-settings', () => {
+            const {root} = render(
+                <IconSymbol name="shield.fill" color="#000000"/>
+            );
+            expect(root).toBeTruthy();
+        });
+
+        it('should map fork.knife to restaurant', () => {
+            const {root} = render(
+                <IconSymbol name="fork.knife" color="#000000"/>
+            );
+            expect(root).toBeTruthy();
+        });
+
+        it('should map person.crop.circle to account-circle', () => {
+            const {root} = render(
+                <IconSymbol name="person.crop.circle" color="#000000"/>
+            );
+            expect(root).toBeTruthy();
+        });
     });
 
     describe('Edge Cases', () => {
