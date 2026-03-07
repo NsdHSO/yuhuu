@@ -52,7 +52,7 @@ export class ErrorBoundary extends Component<Props, State> {
                             marginBottom: 24,
                             textAlign: 'center'
                         }}>
-                            The app encountered an error and couldn't continue
+                            The app encountered an error and could not continue
                         </Text>
 
                         <ScrollView style={{
