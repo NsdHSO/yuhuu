@@ -141,4 +141,62 @@ describe('TabScreenWrapper', () => {
       expect(keyboardView.props.behavior).toBeUndefined();
     });
   });
+
+  describe('Props Handling', () => {
+    beforeEach(() => {
+      mockUseSafeAreaInsets.mockReturnValue({ top: 0, bottom: 0, left: 0, right: 0 });
+    });
+
+    it('applies scrollEnabled prop to ScrollView', () => {
+      const { getByTestId } = render(
+        <TabScreenWrapper testID="wrapper" scrollEnabled={false}>
+          <></>
+        </TabScreenWrapper>
+      );
+
+      const scrollView = getByTestId('wrapper-scroll');
+      expect(scrollView.props.scrollEnabled).toBe(false);
+    });
+
+    it('defaults scrollEnabled to true when not provided', () => {
+      const { getByTestId } = render(
+        <TabScreenWrapper testID="wrapper">
+          <></>
+        </TabScreenWrapper>
+      );
+
+      const scrollView = getByTestId('wrapper-scroll');
+      expect(scrollView.props.scrollEnabled).toBe(true);
+    });
+
+    it('merges contentContainerStyle with bottom padding', () => {
+      const customStyle = { padding: 16, backgroundColor: 'red' };
+
+      const { getByTestId } = render(
+        <TabScreenWrapper testID="wrapper" contentContainerStyle={customStyle}>
+          <></>
+        </TabScreenWrapper>
+      );
+
+      const scrollView = getByTestId('wrapper-scroll');
+      expect(scrollView.props.contentContainerStyle).toEqual(
+        expect.objectContaining({
+          padding: 16,
+          backgroundColor: 'red',
+          paddingBottom: 105, // 0 + 65 + 40
+        })
+      );
+    });
+
+    it('applies testID correctly', () => {
+      const { getByTestId } = render(
+        <TabScreenWrapper testID="custom-wrapper">
+          <></>
+        </TabScreenWrapper>
+      );
+
+      expect(getByTestId('custom-wrapper')).toBeTruthy();
+      expect(getByTestId('custom-wrapper-scroll')).toBeTruthy();
+    });
+  });
 });
