@@ -85,7 +85,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: packages/app/android/
-          key: ${{ runner.os }}-android-prebuild-${{ hashFiles('packages/app/app.config.js', 'packages/app/package.json', 'pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-android-prebuild-${{ hashFiles('packages/app/app.config.js', 'packages/app/package.json', 'packages/app/assets/images/**', 'pnpm-lock.yaml') }}
 
       - name: Prebuild Android
         if: steps.android-prebuild-cache.outputs.cache-hit != 'true'
@@ -154,21 +154,25 @@ jobs:
         id: release-body
         run: |
           cat << 'EOF' > release-body.md
-          ## Latest FAT Build 🚀
+          ## FAT Build v${{ github.run_number }} 🚀
 
           **Branch:** ${{ github.ref_name }}
           **Commit:** ${{ github.sha }}
           **Build Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          **Version:** v${{ github.run_number }}
 
           ### Download
           Download the APK file below and install it on your Android device.
+
+          ### Build History
+          See all FAT builds: [Releases](https://github.com/${{ github.repository }}/releases?q=latest-fat-v)
           EOF
 
-      - name: Create/Update Release
+      - name: Create Versioned Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: latest-fat
-          name: Latest FAT Build
+          tag_name: latest-fat-v${{ github.run_number }}
+          name: FAT Build v${{ github.run_number }}
           body_path: release-body.md
           files: yuhuu-fat-${{ github.sha }}.apk
           prerelease: true
@@ -182,13 +186,15 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "✅ FAT deployment completed successfully" >> $GITHUB_STEP_SUMMARY
           echo "📱 Environment: FAT" >> $GITHUB_STEP_SUMMARY
+          echo "🔢 Version: v${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
           echo "🌐 Branch: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
           echo "📦 Commit: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Download:" >> $GITHUB_STEP_SUMMARY
-          echo "- [📥 Latest FAT APK](https://github.com/${{ github.repository }}/releases/tag/latest-fat)" >> $GITHUB_STEP_SUMMARY
+          echo "- [📥 FAT APK v${{ github.run_number }}](https://github.com/${{ github.repository }}/releases/tag/latest-fat-v${{ github.run_number }})" >> $GITHUB_STEP_SUMMARY
+          echo "- [📜 All FAT Builds](https://github.com/${{ github.repository }}/releases?q=latest-fat-v)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "📋 Next steps:" >> $GITHUB_STEP_SUMMARY
-          echo "1. Download APK from the release link above" >> $GITHUB_STEP_SUMMARY
+          echo "1. Download APK v${{ github.run_number }} from the release link above" >> $GITHUB_STEP_SUMMARY
           echo "2. Test the FAT build on device" >> $GITHUB_STEP_SUMMARY
           echo "3. Create PR to promote to UAT if tests pass" >> $GITHUB_STEP_SUMMARY
