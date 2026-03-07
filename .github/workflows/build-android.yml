@@ -85,7 +85,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: packages/app/android/
-          key: ${{ runner.os }}-android-prebuild-${{ hashFiles('packages/app/app.config.js', 'packages/app/package.json', 'packages/app/assets/images/**', 'pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-android-prebuild-v2-${{ hashFiles('packages/app/app.config.js', 'packages/app/package.json', 'packages/app/assets/images/**', 'pnpm-lock.yaml') }}
 
       - name: Prebuild Android
         if: steps.android-prebuild-cache.outputs.cache-hit != 'true'
