@@ -10,11 +10,11 @@ export const GLASS_VARIANTS: Record<GlassVariant, { tint: string; intensity: num
 
 export const GLASS_COLORS: Record<'light' | 'dark', Record<GlassVariant, string>> = {
   light: {
-    frosted: 'rgba(255, 255, 255, 0.12)',
-    tinted: 'rgba(248, 248, 248, 0.15)',
-    vibrant: 'rgba(255, 255, 255, 0.18)',
-    'ultra-thin': 'rgba(250, 250, 250, 0.08)',
-    prominent: 'rgba(255, 255, 255, 0.35)',
+    frosted: 'rgba(200, 210, 230, 0.85)',
+    tinted: 'rgba(190, 200, 220, 0.80)',
+    vibrant: 'rgba(180, 195, 220, 0.88)',
+    'ultra-thin': 'rgba(220, 225, 235, 0.70)',
+    prominent: 'rgba(170, 185, 210, 0.90)',
   },
   dark: {
     frosted: 'rgba(40, 40, 50, 0.60)',
