@@ -20,6 +20,7 @@
     "typecheck": "tsc --build",
     "test": "pnpm --filter @yuhuu/app test",
     "test:all": "pnpm -r run test --forceExit",
+    "test:coverage:all": "pnpm -r run test:coverage --forceExit",
     "test:watch": "pnpm --filter @yuhuu/app test:watch",
     "test:coverage": "pnpm --filter @yuhuu/app test:coverage"
   },
