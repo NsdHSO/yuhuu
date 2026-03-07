@@ -7,6 +7,10 @@ on:
         description: "Whether tests passed"
         value: ${{ jobs.test.outputs.passed }}
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lint:
     name: Lint

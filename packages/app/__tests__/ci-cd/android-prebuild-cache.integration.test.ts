@@ -566,15 +566,19 @@ describe('Android Workflow Configuration - YAML Structure', () => {
     });
 
     describe('Unit: Concurrency settings', () => {
-        it('should NOT have concurrency (parent ci.yml handles it)', () => {
-            // Concurrency removed from child workflows to prevent queuing
-            // Only parent ci.yml workflow has concurrency control
-            expect(workflow.concurrency).toBeUndefined();
+        it('should have shared concurrency group with parent CI', () => {
+            // All workflows (parent + children) share same concurrency group
+            // This ensures they all cancel together when new commits arrive
+            expect(workflow.concurrency).toBeDefined();
+            expect(workflow.concurrency!['cancel-in-progress']).toBe(true);
         });
 
-        it('concurrency is controlled by parent CI pipeline', () => {
-            // This is a workflow_call workflow, so concurrency is handled by ci.yml
-            expect(workflow.on).toHaveProperty('workflow_call');
+        it('should use ci-${{ github.ref }} group (shared with parent)', () => {
+            // Shared group name ensures parent + child workflows cancel together
+            expect(workflow.concurrency).toBeDefined();
+            const group = String(workflow.concurrency!.group || '');
+            expect(group).toContain('ci-');
+            expect(group).toContain('github.ref');
         });
     });
 
