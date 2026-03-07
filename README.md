@@ -3,20 +3,14 @@
 A production-ready, fully-tested boilerplate for building cross-platform mobile and web applications with React Native
 and Expo. Features complete authentication flow, comprehensive test coverage, and modern development practices.
 
-## 📥 Download Latest Build
-
-[![Latest FAT Release](https://img.shields.io/github/v/release/NsdHSO/yuhuu?include_prereleases&label=Latest%20FAT%20Build&color=blue&filter=latest-fat-v*)](https://github.com/NsdHSO/yuhuu/releases?q=latest-fat-v&expanded=true)
-
-**Android APK:** [📱 Browse All FAT Builds](https://github.com/NsdHSO/yuhuu/releases?q=latest-fat-v&expanded=true) • **iOS IPA:** [🍎 Latest iOS Build](https://github.com/NsdHSO/yuhuu/releases/tag/latest-fat-ios)
-
-> **💡 Quick Tip:** FAT builds are numbered by GitHub Actions run number (e.g., v81, v82, v83). Click "Browse All FAT Builds" and download the **highest version number** for the latest APK.
+**[📥 Download Latest FAT APK](https://github.com/NsdHSO/yuhuu/releases/tag/latest-fat)** | \* \*[📱 Download Latest iOS IPA](https://github.com/NsdHSO/yuhuu/releases/tag/latest-fat-ios)\*\*
 
 ## ✨ Features
 
 ### Core Features
 
 - 🎯 **Cross-Platform**: iOS, Android, and Web support with unified codebase
-- 🔐 **Complete Authentication**: Login, register, JWT token management with auto-refresh
+- 🔐 **Complete Authentication**: Login, register, JWT token management with auto-refresh®†
 - 🎨 **NativeWind**: Tailwind CSS v4 for React Native styling
 - 📱 **Expo Router**: File-based navigation with type safety
 - ⚡ **TypeScript**: Full type safety across the entire codebase
@@ -70,7 +64,7 @@ Time:        ~4s
 ## 🛠 Tech Stack
 
 | Category             | Technology                                     |
-|----------------------|------------------------------------------------|
+| -------------------- | ---------------------------------------------- |
 | **Framework**        | Expo 54 with React Native 0.81                 |
 | **UI Library**       | NativeWind (Tailwind CSS v4)                   |
 | **Navigation**       | Expo Router (file-based)                       |
@@ -94,12 +88,14 @@ Time:        ~4s
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/NsdHSO/yuhuu.git
    cd yuhuu
    ```
 
 2. **Install dependencies**
+
    ```bash
    pnpm install
    # or
@@ -107,11 +103,13 @@ Time:        ~4s
    ```
 
 3. **Set up environment variables**
+
    ```bash
    cp .env.example .env
    ```
 
    Edit `.env` with your backend URLs:
+
    ```bash
    EXPO_PUBLIC_ENV=local
    EXPO_PUBLIC_AUTH_API_URL=http://localhost:4100
@@ -120,6 +118,7 @@ Time:        ~4s
    ```
 
 4. **Start the development server**
+
    ```bash
    pnpm start
    # or
@@ -263,25 +262,25 @@ it('should sign in successfully', async () => {
 ### How Authentication Works
 
 1. **Login/Register**
-    - User enters credentials
-    - API returns `access_token` and `refresh_token`
-    - Tokens are stored securely (SecureStore/localStorage)
+   - User enters credentials
+   - API returns `access_token` and `refresh_token`
+   - Tokens are stored securely (SecureStore/localStorage)
 
 2. **Token Management**
-    - Access token kept in memory for API calls
-    - Persisted to secure storage for app reloads
-    - Automatic refresh when token expires (30s buffer)
-    - HTTP-only refresh token cookie for web
+   - Access token kept in memory for API calls
+   - Persisted to secure storage for app reloads
+   - Automatic refresh when token expires (30s buffer)
+   - HTTP-only refresh token cookie for web
 
 3. **Protected Routes**
-    - Token checked on app load
-    - Auto-redirect to login if invalid/expired
-    - Role-based access control via `hasRole()` helper
+   - Token checked on app load
+   - Auto-redirect to login if invalid/expired
+   - Role-based access control via `hasRole()` helper
 
 4. **API Calls**
-    - All requests via `appApi` include `Authorization: Bearer <token>`
-    - Automatic token refresh on 401 responses
-    - Request retry after successful refresh
+   - All requests via `appApi` include `Authorization: Bearer <token>`
+   - Automatic token refresh on 401 responses
+   - Request retry after successful refresh
 
 ### Backend Requirements
 
@@ -346,17 +345,11 @@ Cors::default()
 
 This boilerplate includes three deployment environments:
 
-| Environment | Trigger                     | Description                 | Release Tag Format       |
-|-------------|-----------------------------|-----------------------------|--------------------------|
-| **FAT**     | Push to `master`            | Automatic build and release | `latest-fat-v1`, `v2`... |
-| **UAT**     | PR with `deploy-uat` label  | User acceptance testing     | `latest-uat-v1`, `v2`... |
-| **PROD**    | PR with `deploy-prod` label | Production release          | `latest-prod-v1`, `v2`...|
-
-**Versioned Releases:**
-- Each build creates a new versioned release (incrementing build number)
-- Download links in releases page show all available versions
-- Latest version = highest `vN` number
-- Old builds are preserved for rollback capability
+| Environment | Trigger                    | Description                 |
+| ----------- | -------------------------- | --------------------------- |
+| **FAT**     | Push to`master`            | Automatic build and release |
+| **UAT**     | PR with`deploy-uat` label  | User acceptance testing     |
+| **PROD**    | PR with`deploy-prod` label | Production release          |
 
 ### Android Build
 
@@ -410,10 +403,10 @@ Edit `app.config.js`:
 // app.config.js
 module.exports = {
   expo: {
-    name: 'Your App Name',
-    slug: 'your-app-slug',
-  }
-}
+    name: "Your App Name",
+    slug: "your-app-slug",
+  },
+};
 ```
 
 **Update Bundle Identifiers:**
@@ -436,15 +429,15 @@ android: {
 // constants/theme.ts
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: '#1e90ff',
+    text: "#11181C",
+    background: "#fff",
+    tint: "#1e90ff",
     // ... other colors
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: '#1e90ff',
+    text: "#ECEDEE",
+    background: "#151718",
+    tint: "#1e90ff",
     // ... other colors
   },
 };
@@ -459,10 +452,10 @@ module.exports = {
     extend: {
       colors: {
         // Your custom colors
-      }
-    }
-  }
-}
+      },
+    },
+  },
+};
 ```
 
 ### 3. App Icon & Splash Screen
@@ -487,7 +480,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 ```typescript
 if (password !== confirm) {
-  return Alert.alert('Password mismatch', 'Passwords do not match.');
+  return Alert.alert("Password mismatch", "Passwords do not match.");
 }
 ```
 
@@ -502,7 +495,7 @@ const scrollToInput = (inputRef) => {
       const screenCenterY = SCREEN_HEIGHT / 2;
       const scrollToY = inputCenterY - screenCenterY + 100;
       scrollViewRef.current.scrollTo({ y: scrollToY, animated: true });
-    }
+    },
   );
 };
 ```
