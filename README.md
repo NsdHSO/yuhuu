@@ -5,6 +5,32 @@ and Expo. Features complete authentication flow, comprehensive test coverage, an
 
 **[📥 Download Latest FAT APK](https://github.com/NsdHSO/yuhuu/releases/tag/latest-fat)** | \* \*[📱 Download Latest iOS IPA](https://github.com/NsdHSO/yuhuu/releases/tag/latest-fat-ios)\*\*
 
+### GitHub Actions Build Summary
+
+After each successful build, GitHub Actions displays download links directly in the workflow run summary. This makes it easy to quickly download the latest APK/IPA without navigating to the Releases page.
+
+**Example workflow step:**
+
+```yaml
+- name: Add download link to job summary
+  run: |
+    echo "- [📥 FAT APK v${{ github.run_number }}](https://github.com/${{ github.repository }}/releases/tag/latest-fat-v${{ github.run_number }})" >> $GITHUB_STEP_SUMMARY
+```
+
+**What this does:**
+
+- Adds a clickable download link to the workflow run summary
+- Uses the GitHub run number for versioned releases (e.g., v81, v82, v83)
+- Makes it easy to share build links with your team
+- Visible immediately after the workflow completes
+
+**To view:**
+
+1. Go to your repository's **Actions** tab
+2. Click on any workflow run
+3. Scroll to the bottom of the run summary
+4. Click the download link to get the APK/IPA
+
 ## ✨ Features
 
 ### Core Features
