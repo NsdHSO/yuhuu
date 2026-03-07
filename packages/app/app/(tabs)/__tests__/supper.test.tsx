@@ -2,6 +2,7 @@ import React from 'react';
 import {fireEvent, render, waitFor} from '@testing-library/react-native';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {Alert} from 'react-native';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 import SupperScreen from '../supper';
 import type {Dinner} from '@/features/dinners/types';
 
@@ -84,7 +85,9 @@ function createWrapper() {
     });
 
     const Wrapper = ({children}: { children: React.ReactNode }) => (
-        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+        <SafeAreaProvider>
+            <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+        </SafeAreaProvider>
     );
     Wrapper.displayName = 'QueryClientWrapper';
     return Wrapper;
