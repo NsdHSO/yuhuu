@@ -3,8 +3,13 @@
 A production-ready, fully-tested boilerplate for building cross-platform mobile and web applications with React Native
 and Expo. Features complete authentication flow, comprehensive test coverage, and modern development practices.
 
-**[📥 Download Latest FAT APK](https://github.com/NsdHSO/yuhuu/releases/tag/latest-fat)** | *
-*[📱 Download Latest iOS IPA](https://github.com/NsdHSO/yuhuu/releases/tag/latest-fat-ios)**
+## 📥 Download Latest Build
+
+[![Latest FAT Release](https://img.shields.io/github/v/release/NsdHSO/yuhuu?include_prereleases&label=Latest%20FAT%20Build&color=blue&filter=latest-fat-v*)](https://github.com/NsdHSO/yuhuu/releases?q=latest-fat-v&expanded=true)
+
+**Android APK:** [📱 Browse All FAT Builds](https://github.com/NsdHSO/yuhuu/releases?q=latest-fat-v&expanded=true) • **iOS IPA:** [🍎 Latest iOS Build](https://github.com/NsdHSO/yuhuu/releases/tag/latest-fat-ios)
+
+> **💡 Quick Tip:** FAT builds are numbered by GitHub Actions run number (e.g., v81, v82, v83). Click "Browse All FAT Builds" and download the **highest version number** for the latest APK.
 
 ## ✨ Features
 
@@ -341,11 +346,17 @@ Cors::default()
 
 This boilerplate includes three deployment environments:
 
-| Environment | Trigger                     | Description                 |
-|-------------|-----------------------------|-----------------------------|
-| **FAT**     | Push to `master`            | Automatic build and release |
-| **UAT**     | PR with `deploy-uat` label  | User acceptance testing     |
-| **PROD**    | PR with `deploy-prod` label | Production release          |
+| Environment | Trigger                     | Description                 | Release Tag Format       |
+|-------------|-----------------------------|-----------------------------|--------------------------|
+| **FAT**     | Push to `master`            | Automatic build and release | `latest-fat-v1`, `v2`... |
+| **UAT**     | PR with `deploy-uat` label  | User acceptance testing     | `latest-uat-v1`, `v2`... |
+| **PROD**    | PR with `deploy-prod` label | Production release          | `latest-prod-v1`, `v2`...|
+
+**Versioned Releases:**
+- Each build creates a new versioned release (incrementing build number)
+- Download links in releases page show all available versions
+- Latest version = highest `vN` number
+- Old builds are preserved for rollback capability
 
 ### Android Build
 
