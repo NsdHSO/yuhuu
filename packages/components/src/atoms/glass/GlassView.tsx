@@ -1,4 +1,4 @@
-import { BlurView } from 'expo-blur';
+// import { BlurView } from 'expo-blur'; // TEMPORARILY DISABLED - expo-blur broken
 import { Platform, StyleSheet, View, AccessibilityInfo } from 'react-native';
 import { useEffect, useState } from 'react';
 import { useColorScheme } from '../../hooks/use-color-scheme';
@@ -54,36 +54,23 @@ export function GlassView({
     );
   }
 
-  // Native iOS/Android with platform-specific optimizations
-  const blurViewProps = {
-    intensity: supportsNativeBlur() ? finalIntensity : 0,
-    tint: scheme,
-    ...(shouldRasterize() ? { shouldRasterizeIOS: true } : {}),
-    ...(Platform.OS === 'android' ? { renderToHardwareTextureAndroid: true } : {}),
-  };
-
+  // Native iOS/Android - TEMPORARY: using View instead of BlurView
   return (
-    <BlurView
-      {...blurViewProps}
+    <View
       style={[
-        { borderRadius, overflow: 'hidden' },
+        {
+          borderRadius,
+          overflow: 'hidden',
+          backgroundColor: GLASS_COLORS[scheme][variant],
+          borderWidth: enableBorder ? 1 : 0,
+          borderColor: scheme === 'dark' ? 'rgba(255, 255, 255, 0.18)' : 'rgba(0, 0, 0, 0.1)',
+        },
         enableShadow && GLASS_SHADOWS[shadowLevel],
         style,
       ]}
       {...props}
     >
-      <View
-        style={[
-          StyleSheet.absoluteFill,
-          {
-            backgroundColor: GLASS_COLORS[scheme][variant],
-            borderRadius,
-            borderWidth: enableBorder ? 1 : 0,
-            borderColor: scheme === 'dark' ? 'rgba(255, 255, 255, 0.18)' : 'rgba(0, 0, 0, 0.1)',
-          },
-        ]}
-      />
       {children}
-    </BlurView>
+    </View>
   );
 }
