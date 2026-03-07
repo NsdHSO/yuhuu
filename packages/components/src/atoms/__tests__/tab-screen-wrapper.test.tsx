@@ -81,4 +81,61 @@ describe('TabScreenWrapper', () => {
       );
     });
   });
+
+  describe('KeyboardAvoidingView Platform Behavior', () => {
+    beforeEach(() => {
+      mockUseSafeAreaInsets.mockReturnValue({ top: 0, bottom: 0, left: 0, right: 0 });
+    });
+
+    it('uses padding behavior on iOS', () => {
+      jest.mock('react-native/Libraries/Utilities/Platform', () => ({
+        OS: 'ios',
+        select: jest.fn((obj) => obj.ios),
+      }));
+
+      const { UNSAFE_getByType } = render(
+        <TabScreenWrapper>
+          <></>
+        </TabScreenWrapper>
+      );
+
+      const KeyboardAvoidingView = require('react-native').KeyboardAvoidingView;
+      const keyboardView = UNSAFE_getByType(KeyboardAvoidingView);
+      expect(keyboardView.props.behavior).toBe('padding');
+    });
+
+    it('uses undefined behavior on Android', () => {
+      jest.mock('react-native/Libraries/Utilities/Platform', () => ({
+        OS: 'android',
+        select: jest.fn((obj) => obj.android),
+      }));
+
+      const { UNSAFE_getByType } = render(
+        <TabScreenWrapper>
+          <></>
+        </TabScreenWrapper>
+      );
+
+      const KeyboardAvoidingView = require('react-native').KeyboardAvoidingView;
+      const keyboardView = UNSAFE_getByType(KeyboardAvoidingView);
+      expect(keyboardView.props.behavior).toBeUndefined();
+    });
+
+    it('uses undefined behavior on Web', () => {
+      jest.mock('react-native/Libraries/Utilities/Platform', () => ({
+        OS: 'web',
+        select: jest.fn((obj) => obj.web),
+      }));
+
+      const { UNSAFE_getByType } = render(
+        <TabScreenWrapper>
+          <></>
+        </TabScreenWrapper>
+      );
+
+      const KeyboardAvoidingView = require('react-native').KeyboardAvoidingView;
+      const keyboardView = UNSAFE_getByType(KeyboardAvoidingView);
+      expect(keyboardView.props.behavior).toBeUndefined();
+    });
+  });
 });
