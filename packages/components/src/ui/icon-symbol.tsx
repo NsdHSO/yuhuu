@@ -22,6 +22,7 @@ const MAPPING = {
     'chevron.down': 'expand-more',
     'fork.knife': 'restaurant',
     'person.crop.circle': 'account-circle',
+    'shield.fill': 'admin-panel-settings',
 } as IconMapping;
 
 /**
