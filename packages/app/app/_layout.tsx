@@ -9,6 +9,7 @@ import 'react-native-reanimated';
 import {useColorScheme} from '@/hooks/use-color-scheme';
 import {AuthProvider} from '@/providers/AuthProvider';
 import {QueryProvider} from '@/providers/QueryProvider';
+import {ErrorBoundary} from '@/components/ErrorBoundary';
 import {i18n, initI18n} from '@yuhuu/i18n';
 import './global.css';
 
@@ -36,23 +37,25 @@ export default function RootLayout() {
     }
 
     return (
-        <I18nextProvider i18n={i18n}>
-            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-                <QueryProvider>
-                    <AuthProvider>
-                        <Stack>
-                            <Stack.Screen name="index" options={{headerShown: false}}/>
-                            <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
-                            {/* (auth) group will be discovered automatically; do not register a non-existent index */}
-                            <Stack.Screen name="modal" options={{
-                                presentation: 'modal',
-                                title: i18n.t('modal.title')
-                            }}/>
-                        </Stack>
-                        <StatusBar style="auto"/>
-                    </AuthProvider>
-                </QueryProvider>
-            </ThemeProvider>
-        </I18nextProvider>
+        <ErrorBoundary>
+            <I18nextProvider i18n={i18n}>
+                <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+                    <QueryProvider>
+                        <AuthProvider>
+                            <Stack>
+                                <Stack.Screen name="index" options={{headerShown: false}}/>
+                                <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
+                                {/* (auth) group will be discovered automatically; do not register a non-existent index */}
+                                <Stack.Screen name="modal" options={{
+                                    presentation: 'modal',
+                                    title: i18n.t('modal.title')
+                                }}/>
+                            </Stack>
+                            <StatusBar style="auto"/>
+                        </AuthProvider>
+                    </QueryProvider>
+                </ThemeProvider>
+            </I18nextProvider>
+        </ErrorBoundary>
     );
 }
