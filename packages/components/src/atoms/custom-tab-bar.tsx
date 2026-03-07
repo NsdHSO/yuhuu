@@ -1,18 +1,22 @@
-import React, { useEffect } from 'react';
-import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
-import { View, Pressable, StyleSheet, Platform, Text } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import { useEffect } from "react";
+import { Pressable, StyleSheet, View } from "react-native";
 import Animated, {
-  useSharedValue,
   useAnimatedStyle,
+  useSharedValue,
   withSpring,
-} from 'react-native-reanimated';
+} from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 // import { BlurView } from 'expo-blur'; // TEMPORARILY DISABLED - expo-blur broken
-import { useColorScheme } from '../hooks/use-color-scheme';
+import { useColorScheme } from "../hooks/use-color-scheme";
 
-export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
+export function CustomTabBar({
+  state,
+  descriptors,
+  navigation,
+}: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
-  const scheme = useColorScheme() ?? 'light';
+  const scheme = useColorScheme() ?? "light";
 
   // Filter visible routes (exclude href: null)
   const visibleRoutes = state.routes.filter((route) => {
@@ -22,7 +26,9 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
 
   // Find active tab index in visible routes
   const activeRoute = state.routes[state.index];
-  const activeVisibleIndex = visibleRoutes.findIndex((route) => route.key === activeRoute.key);
+  const activeVisibleIndex = visibleRoutes.findIndex(
+    (route) => route.key === activeRoute.key,
+  );
 
   // Pill animation
   const pillPosition = useSharedValue(0);
@@ -51,9 +57,10 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
         style={[
           StyleSheet.absoluteFill,
           {
-            backgroundColor: scheme === 'dark'
-              ? 'rgba(50, 50, 60, 0.95)'
-              : 'rgba(250, 250, 255, 0.95)',
+            backgroundColor:
+              scheme === "dark"
+                ? "rgba(50, 50, 60, 0.95)"
+                : "rgba(250, 250, 255, 0.95)",
           },
         ]}
       />
@@ -65,6 +72,8 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
           {
             width: `${tabWidth * 0.75}%`,
             marginLeft: `${tabWidth * 0.125}%`,
+            bottom: -4 + insets.bottom,
+            top: 1,
           },
           pillStyle,
         ]}
@@ -73,13 +82,15 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
           style={[
             styles.pill,
             {
-              backgroundColor: scheme === 'dark'
-                ? 'rgba(100, 120, 140, 0.95)'
-                : 'rgba(255, 255, 255, 0.95)',
+              backgroundColor:
+                scheme === "dark"
+                  ? "rgba(100, 120, 140, 0.95)"
+                  : "rgba(255, 255, 255, 0.95)",
               borderWidth: 1,
-              borderColor: scheme === 'dark'
-                ? 'rgba(255, 255, 255, 0.1)'
-                : 'rgba(0, 0, 0, 0.05)',
+              borderColor:
+                scheme === "dark"
+                  ? "rgba(255, 255, 255, 0.1)"
+                  : "rgba(0, 0, 0, 0.05)",
             },
           ]}
         />
@@ -93,7 +104,7 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
 
           const onPress = () => {
             const event = navigation.emit({
-              type: 'tabPress',
+              type: "tabPress",
               target: route.key,
               canPreventDefault: true,
             });
@@ -105,7 +116,7 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
 
           const onLongPress = () => {
             navigation.emit({
-              type: 'tabLongPress',
+              type: "tabLongPress",
               target: route.key,
             });
           };
@@ -121,29 +132,38 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
               onLongPress={onLongPress}
               style={styles.tab}
             >
-              {options.tabBarIcon ? (
-                options.tabBarIcon({
-                  focused: isFocused,
-                  color: isFocused
-                    ? (scheme === 'dark' ? '#60A5FA' : '#3B82F6')
-                    : (scheme === 'dark' ? '#9CA3AF' : '#6B7280'),
-                  size: 28,
-                })
-              ) : null}
-              {options.tabBarLabel && typeof options.tabBarLabel === 'string' && (
-                <Animated.Text
-                  style={[
-                    styles.label,
-                    {
-                      color: isFocused
-                        ? (scheme === 'dark' ? '#60A5FA' : '#3B82F6')
-                        : (scheme === 'dark' ? '#9CA3AF' : '#6B7280'),
-                    },
-                  ]}
-                >
-                  {options.tabBarLabel}
-                </Animated.Text>
-              )}
+              {options.tabBarIcon
+                ? options.tabBarIcon({
+                    focused: isFocused,
+                    color: isFocused
+                      ? scheme === "dark"
+                        ? "#60A5FA"
+                        : "#3B82F6"
+                      : scheme === "dark"
+                        ? "#9CA3AF"
+                        : "#6B7280",
+                    size: 28,
+                  })
+                : null}
+              {options.tabBarLabel &&
+                typeof options.tabBarLabel === "string" && (
+                  <Animated.Text
+                    style={[
+                      styles.label,
+                      {
+                        color: isFocused
+                          ? scheme === "dark"
+                            ? "#60A5FA"
+                            : "#3B82F6"
+                          : scheme === "dark"
+                            ? "#9CA3AF"
+                            : "#6B7280",
+                      },
+                    ]}
+                  >
+                    {options.tabBarLabel}
+                  </Animated.Text>
+                )}
             </Pressable>
           );
         })}
@@ -154,39 +174,38 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
     minHeight: 65,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   tabsContainer: {
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: "row",
     zIndex: 100,
   },
   tab: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingTop: 8,
   },
   label: {
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: "600",
     marginTop: 4,
   },
   pillContainer: {
-    position: 'absolute',
-    bottom: 8,
-    height: 38,
+    position: "absolute",
+    height: 62,
     zIndex: 50,
   },
   pill: {
     flex: 1,
-    borderRadius: 19,
-    shadowColor: '#000',
+    borderRadius: 26,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
     shadowRadius: 6,
