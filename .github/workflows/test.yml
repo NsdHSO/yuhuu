@@ -40,13 +40,23 @@ jobs:
         id: tests
         run: pnpm test:all
 
+      - name: Check if coverage exists
+        id: coverage-check
+        run: |
+          if [ -d "coverage" ] && [ "$(ls -A coverage)" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+        if: always()
+
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report-${{ github.sha }}
           path: coverage/
           retention-days: 30
-        if: always()
+        if: always() && steps.coverage-check.outputs.exists == 'true'
 
       - name: Test summary
         if: always()
@@ -54,12 +64,16 @@ jobs:
           echo "## Test Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           if [ "${{ steps.tests.outcome }}" == "success" ]; then
-            echo "All tests passed!" >> $GITHUB_STEP_SUMMARY
+            echo "✅ All tests passed!" >> $GITHUB_STEP_SUMMARY
           else
-            echo "Tests failed!" >> $GITHUB_STEP_SUMMARY
+            echo "❌ Tests failed!" >> $GITHUB_STEP_SUMMARY
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Coverage report uploaded as artifact" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.coverage-check.outputs.exists }}" == "true" ]; then
+            echo "📊 Coverage report uploaded as artifact" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️ No coverage generated (run \`pnpm test:coverage\` to generate)" >> $GITHUB_STEP_SUMMARY
+          fi
 
   test-complete:
     name: Tests Complete
