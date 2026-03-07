@@ -55,6 +55,15 @@ jest.mock('@yuhuu/components', () => ({
     },
 }));
 
+jest.mock('react-native-safe-area-context', () => ({
+    useSafeAreaInsets: jest.fn(() => ({ top: 0, bottom: 34, left: 0, right: 0 })),
+    SafeAreaView: ({ children, ...props }: any) => {
+        const React = require('react');
+        const { View } = require('react-native');
+        return React.createElement(View, props, children);
+    },
+}));
+
 /**
  * Integration tests for Profile Biometric Settings
  * Tests the biometric toggle on the Profile screen:
