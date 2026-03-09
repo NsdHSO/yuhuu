@@ -1,6 +1,6 @@
 module.exports = {
   expo: {
-    name: "Yuhuu",
+    name: "Church",
     slug: "Yuhuu",
     version: "1.0.0",
     orientation: "portrait",
@@ -13,7 +13,7 @@ module.exports = {
       bundleIdentifier: "com.anonymous.yuhuu",
       infoPlist: {
         NSFaceIDUsageDescription:
-          "Allow Yuhuu to use Face ID for quick and secure sign-in.",
+          "Allow Church to use Face ID for quick and secure sign-in.",
       },
     },
     android: {
@@ -44,7 +44,7 @@ module.exports = {
         "expo-local-authentication",
         {
           faceIDPermission:
-            "Allow Yuhuu to use Face ID for quick and secure sign-in.",
+            "Allow Church to use Face ID for quick and secure sign-in.",
         },
       ],
       [
