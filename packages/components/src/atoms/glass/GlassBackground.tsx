@@ -1,39 +1,49 @@
-import { View, StyleSheet, Dimensions } from 'react-native';
-import { useColorScheme } from '../../hooks/use-color-scheme';
+import { Dimensions, StyleSheet, View } from "react-native";
+import { useColorScheme } from "../../hooks/use-color-scheme";
 
 type GlassBackgroundProps = {
-  variant?: 'subtle' | 'vibrant' | 'warm' | 'cool';
+  variant?: "subtle" | "vibrant" | "warm" | "cool";
   children?: React.ReactNode;
 };
 
-export function GlassBackground({ variant = 'subtle', children }: GlassBackgroundProps) {
-  const scheme = useColorScheme() ?? 'light';
-  const { width, height } = Dimensions.get('window');
+export function GlassBackground({
+  variant = "subtle",
+  children,
+}: GlassBackgroundProps) {
+  const scheme = useColorScheme() ?? "light";
+  const { width, height } = Dimensions.get("window");
 
-  // Create gradient effect using multiple positioned views
-  const gradients = {
+  // Soft glowing circles - smooth blurred shadows create ethereal wave effect
+  const glowColors = {
     subtle: {
-      light: ['#E0F2FE', '#DBEAFE', '#E0F2FE'],
-      dark: ['#0F172A', '#1E293B', '#0F172A'],
+      light: ["#64748B"], // Medium slate - MUCH more visible on white
+      dark: ["#60A5FA"],  // Sky blue glow - visible in dark with elegance
     },
     vibrant: {
-      light: ['#D97706', '#E11D48', '#6B21A8', '#1D4ED8'],
-      dark: ['#0D1B3E', '#2D1448', '#5A0D2F', '#5A0F0F'],
+      light: ["#7C3AED"], // Deep vivid purple - highly visible
+      dark: ["#A78BFA"],  // Purple glow - maintains vibrancy in dark
     },
     warm: {
-      light: ['#FBBF24', '#FB923C', '#F87171'],
-      dark: ['#92400E', '#991B1B', '#7C2D12'],
+      light: ["#EA580C"], // Deep orange - very visible and warm
+      dark: ["#F59E0B"],  // Orange glow - cozy radiance
     },
     cool: {
-      light: ['#60A5FA', '#A78BFA', '#C084FC'],
-      dark: ['#1E40AF', '#5B21B6', '#7C3AED'],
+      light: ["#2563EB"], // Deep vivid blue - highly visible on white
+      dark: ["#60A5FA"],  // Sky blue glow - serene consistency
     },
   };
 
-  const colors = gradients[variant][scheme];
+  // Background colors that respect dark/light mode
+  const backgroundColors = {
+    light: "#FFFFFF", // Pure white for light mode
+    dark: "#0F172A",  // Deep navy for dark mode
+  };
+
+  const colors = glowColors[variant][scheme];
+  const backgroundColor = backgroundColors[scheme];
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor }]}>
       {/* Wave-like gradient layers - multiple overlapping circles for water effect */}
 
       {/* Top wave - large circles */}
@@ -41,13 +51,20 @@ export function GlassBackground({ variant = 'subtle', children }: GlassBackgroun
         style={[
           styles.gradientLayer,
           {
-            backgroundColor: colors[0],
+            backgroundColor: 'rgba(255, 255, 255, 0.01)', // iOS needs this for shadows
             width: width * 1.8,
             height: height * 0.7,
             top: -height * 0.2,
             left: -width * 0.4,
             borderRadius: width * 1.2,
-            opacity: 0.5,
+            opacity: 0.8, // Increased for visibility
+            borderWidth: 2, // Thicker border
+            borderColor: colors[0],
+            shadowColor: colors[0],
+            shadowOffset: { width: 0, height: 0 },
+            shadowOpacity: 1, // Maximum shadow
+            shadowRadius: 15,
+            elevation: 10,
           },
         ]}
       />
@@ -55,13 +72,20 @@ export function GlassBackground({ variant = 'subtle', children }: GlassBackgroun
         style={[
           styles.gradientLayer,
           {
-            backgroundColor: colors[3],
+            backgroundColor: 'rgba(255, 255, 255, 0.01)', // iOS needs barely-visible bg for shadows
             width: width * 1.2,
             height: height * 0.5,
             top: -height * 0.05,
             right: -width * 0.2,
             borderRadius: width * 0.9,
-            opacity: 0.6,
+            opacity: 0.8,
+            borderWidth: 2,
+            borderColor: colors[0],
+            shadowColor: colors[0],
+            shadowOffset: { width: 0, height: 0 },
+            shadowOpacity: 1,
+            shadowRadius: 15,
+            elevation: 10,
           },
         ]}
       />
@@ -71,13 +95,20 @@ export function GlassBackground({ variant = 'subtle', children }: GlassBackgroun
         style={[
           styles.gradientLayer,
           {
-            backgroundColor: colors[1],
+            backgroundColor: 'rgba(255, 255, 255, 0.01)', // iOS needs barely-visible bg for shadows
             width: width * 1.6,
             height: height * 0.8,
             top: height * 0.15,
             right: -width * 0.5,
             borderRadius: width * 1.0,
-            opacity: 0.55,
+            opacity: 0.8,
+            borderWidth: 2,
+            borderColor: colors[0],
+            shadowColor: colors[0],
+            shadowOffset: { width: 0, height: 0 },
+            shadowOpacity: 1,
+            shadowRadius: 15,
+            elevation: 10,
           },
         ]}
       />
@@ -85,13 +116,20 @@ export function GlassBackground({ variant = 'subtle', children }: GlassBackgroun
         style={[
           styles.gradientLayer,
           {
-            backgroundColor: colors[2],
+            backgroundColor: 'rgba(255, 255, 255, 0.01)', // iOS needs barely-visible bg for shadows
             width: width * 1.4,
             height: height * 0.6,
             top: height * 0.25,
             left: -width * 0.3,
             borderRadius: width * 0.85,
-            opacity: 0.6,
+            opacity: 0.8,
+            borderWidth: 2,
+            borderColor: colors[0],
+            shadowColor: colors[0],
+            shadowOffset: { width: 0, height: 0 },
+            shadowOpacity: 1,
+            shadowRadius: 15,
+            elevation: 10,
           },
         ]}
       />
@@ -101,13 +139,20 @@ export function GlassBackground({ variant = 'subtle', children }: GlassBackgroun
         style={[
           styles.gradientLayer,
           {
-            backgroundColor: colors[0],
+            backgroundColor: 'rgba(255, 255, 255, 0.01)', // iOS needs barely-visible bg for shadows
             width: width * 1.5,
             height: height * 0.55,
             bottom: -height * 0.15,
             left: width * 0.2,
             borderRadius: width * 0.8,
             opacity: 0.5,
+            borderWidth: 2,
+            borderColor: colors[0],
+            shadowColor: colors[0],
+            shadowOffset: { width: 0, height: 0 },
+            shadowOpacity: 1,
+            shadowRadius: 15,
+            elevation: 10,
           },
         ]}
       />
@@ -115,13 +160,20 @@ export function GlassBackground({ variant = 'subtle', children }: GlassBackgroun
         style={[
           styles.gradientLayer,
           {
-            backgroundColor: colors[3],
+            backgroundColor: 'rgba(255, 255, 255, 0.01)', // iOS needs barely-visible bg for shadows
             width: width * 1.3,
             height: height * 0.5,
             bottom: -height * 0.1,
             right: width * 0.1,
             borderRadius: width * 0.75,
-            opacity: 0.6,
+            opacity: 0.8,
+            borderWidth: 2,
+            borderColor: colors[0],
+            shadowColor: colors[0],
+            shadowOffset: { width: 0, height: 0 },
+            shadowOpacity: 1,
+            shadowRadius: 15,
+            elevation: 10,
           },
         ]}
       />
@@ -131,13 +183,20 @@ export function GlassBackground({ variant = 'subtle', children }: GlassBackgroun
         style={[
           styles.gradientLayer,
           {
-            backgroundColor: colors[1],
+            backgroundColor: 'rgba(255, 255, 255, 0.01)', // iOS needs barely-visible bg for shadows
             width: width * 0.8,
             height: height * 0.35,
             top: height * 0.4,
             left: width * 0.6,
             borderRadius: width * 0.5,
-            opacity: 0.45,
+            opacity: 0.7,
+            borderWidth: 2,
+            borderColor: colors[0],
+            shadowColor: colors[0],
+            shadowOffset: { width: 0, height: 0 },
+            shadowOpacity: 1,
+            shadowRadius: 15,
+            elevation: 10,
           },
         ]}
       />
@@ -145,13 +204,20 @@ export function GlassBackground({ variant = 'subtle', children }: GlassBackgroun
         style={[
           styles.gradientLayer,
           {
-            backgroundColor: colors[2],
+            backgroundColor: 'rgba(255, 255, 255, 0.01)', // iOS needs barely-visible bg for shadows
             width: width * 0.7,
             height: height * 0.3,
             top: height * 0.1,
             left: width * 0.1,
             borderRadius: width * 0.45,
-            opacity: 0.4,
+            opacity: 0.7,
+            borderWidth: 2,
+            borderColor: colors[0],
+            shadowColor: colors[0],
+            shadowOffset: { width: 0, height: 0 },
+            shadowOpacity: 1,
+            shadowRadius: 15,
+            elevation: 10,
           },
         ]}
       />
@@ -165,12 +231,11 @@ export function GlassBackground({ variant = 'subtle', children }: GlassBackgroun
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    position: 'relative',
-    overflow: 'hidden',
-    backgroundColor: '#FFFFFF',
+    position: "relative",
+    overflow: "hidden",
   },
   gradientLayer: {
-    position: 'absolute',
+    position: "absolute",
   },
   content: {
     flex: 1,
