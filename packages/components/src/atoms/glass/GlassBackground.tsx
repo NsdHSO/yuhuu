@@ -1,8 +1,10 @@
 import { Dimensions, StyleSheet, View } from "react-native";
 import { useColorScheme } from "../../hooks/use-color-scheme";
+import { glowColors } from "../../constants/glowColors";
+import type { GlowVariant } from "../../constants/glowColors";
 
 type GlassBackgroundProps = {
-  variant?: "subtle" | "vibrant" | "warm" | "cool";
+  variant?: GlowVariant;
   children?: React.ReactNode;
 };
 
@@ -12,26 +14,6 @@ export function GlassBackground({
 }: GlassBackgroundProps) {
   const scheme = useColorScheme() ?? "light";
   const { width, height } = Dimensions.get("window");
-
-  // Soft glowing circles - smooth blurred shadows create ethereal wave effect
-  const glowColors = {
-    subtle: {
-      light: ["#94A3B8"], // Soft slate - visible but subtle on white
-      dark: ["#60A5FA"],  // Sky blue glow - visible in dark with elegance
-    },
-    vibrant: {
-      light: ["#A78BFA"], // Soft purple - elegant and visible
-      dark: ["#A78BFA"],  // Purple glow - maintains vibrancy in dark
-    },
-    warm: {
-      light: ["#FB923C"], // Soft orange - warm but not overwhelming
-      dark: ["#F59E0B"],  // Orange glow - cozy radiance
-    },
-    cool: {
-      light: ["#60A5FA"], // Soft blue - gentle and fresh
-      dark: ["#60A5FA"],  // Sky blue glow - serene consistency
-    },
-  };
 
   // Background colors that respect dark/light mode
   const backgroundColors = {
