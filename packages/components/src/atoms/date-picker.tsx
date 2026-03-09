@@ -35,7 +35,7 @@ export function DatePicker({
     // Liquid glass theme colors
     const primaryColor = scheme === 'dark' ? '#06B6D4' : '#1E3A8A';
     const bgColor = 'transparent'; // Transparent for liquid glass effect
-    const textColor = scheme === 'dark' ? '#E0F2FE' : '#F1F5F9';
+    const textColor = scheme === 'dark' ? '#E0F2FE' : '#1E293B'; // Dark text for light mode
     const disabledColor = scheme === 'dark' ? '#64748B' : '#94A3B8';
     const todayColor = scheme === 'dark' ? '#22D3EE' : '#06B6D4';
 
