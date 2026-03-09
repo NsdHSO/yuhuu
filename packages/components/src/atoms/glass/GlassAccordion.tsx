@@ -50,7 +50,7 @@ export function GlassAccordion({
   const electricStyle = useElectricBorder(enableElectric && isExpanded);
 
   // Border width animation
-  const borderWidth = useSharedValue(defaultExpanded ? 4 : 0);
+  const borderWidth = useSharedValue(defaultExpanded ? 1.5 : 0);
 
   // Content height animation
   const contentHeight = useSharedValue(defaultExpanded ? 1 : 0);
@@ -65,7 +65,7 @@ export function GlassAccordion({
     if (isExpanded) {
       borderWidth.value = withSequence(
         withTiming(0, { duration: 0 }),
-        withTiming(4, { duration: 500, easing: Easing.out(Easing.cubic) })
+        withTiming(1.5, { duration: 500, easing: Easing.out(Easing.cubic) })
       );
     } else {
       borderWidth.value = withTiming(0, {
