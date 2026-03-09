@@ -16,19 +16,19 @@ export function GlassBackground({
   // Soft glowing circles - smooth blurred shadows create ethereal wave effect
   const glowColors = {
     subtle: {
-      light: ["#64748B"], // Medium slate - MUCH more visible on white
+      light: ["#94A3B8"], // Soft slate - visible but subtle on white
       dark: ["#60A5FA"],  // Sky blue glow - visible in dark with elegance
     },
     vibrant: {
-      light: ["#7C3AED"], // Deep vivid purple - highly visible
+      light: ["#A78BFA"], // Soft purple - elegant and visible
       dark: ["#A78BFA"],  // Purple glow - maintains vibrancy in dark
     },
     warm: {
-      light: ["#EA580C"], // Deep orange - very visible and warm
+      light: ["#FB923C"], // Soft orange - warm but not overwhelming
       dark: ["#F59E0B"],  // Orange glow - cozy radiance
     },
     cool: {
-      light: ["#2563EB"], // Deep vivid blue - highly visible on white
+      light: ["#60A5FA"], // Soft blue - gentle and fresh
       dark: ["#60A5FA"],  // Sky blue glow - serene consistency
     },
   };
@@ -57,8 +57,8 @@ export function GlassBackground({
             top: -height * 0.2,
             left: -width * 0.4,
             borderRadius: width * 1.2,
-            opacity: 0.8, // Increased for visibility
-            borderWidth: 2, // Thicker border
+            opacity: 0.4, // Increased for visibility
+            borderWidth: 1, // Thicker border
             borderColor: colors[0],
             shadowColor: colors[0],
             shadowOffset: { width: 0, height: 0 },
@@ -78,14 +78,14 @@ export function GlassBackground({
             top: -height * 0.05,
             right: -width * 0.2,
             borderRadius: width * 0.9,
-            opacity: 0.8,
-            borderWidth: 2,
+            opacity: 0.4,
+            borderWidth: 1,
             borderColor: colors[0],
             shadowColor: colors[0],
             shadowOffset: { width: 0, height: 0 },
-            shadowOpacity: 1,
-            shadowRadius: 15,
-            elevation: 10,
+            shadowOpacity: 0.5,
+            shadowRadius: 10,
+            elevation: 6,
           },
         ]}
       />
@@ -101,14 +101,14 @@ export function GlassBackground({
             top: height * 0.15,
             right: -width * 0.5,
             borderRadius: width * 1.0,
-            opacity: 0.8,
-            borderWidth: 2,
+            opacity: 0.4,
+            borderWidth: 1,
             borderColor: colors[0],
             shadowColor: colors[0],
             shadowOffset: { width: 0, height: 0 },
-            shadowOpacity: 1,
-            shadowRadius: 15,
-            elevation: 10,
+            shadowOpacity: 0.5,
+            shadowRadius: 10,
+            elevation: 6,
           },
         ]}
       />
@@ -122,14 +122,14 @@ export function GlassBackground({
             top: height * 0.25,
             left: -width * 0.3,
             borderRadius: width * 0.85,
-            opacity: 0.8,
-            borderWidth: 2,
+            opacity: 0.4,
+            borderWidth: 1,
             borderColor: colors[0],
             shadowColor: colors[0],
             shadowOffset: { width: 0, height: 0 },
-            shadowOpacity: 1,
-            shadowRadius: 15,
-            elevation: 10,
+            shadowOpacity: 0.5,
+            shadowRadius: 10,
+            elevation: 6,
           },
         ]}
       />
@@ -145,14 +145,14 @@ export function GlassBackground({
             bottom: -height * 0.15,
             left: width * 0.2,
             borderRadius: width * 0.8,
-            opacity: 0.5,
-            borderWidth: 2,
+            opacity: 0.3,
+            borderWidth: 1,
             borderColor: colors[0],
             shadowColor: colors[0],
             shadowOffset: { width: 0, height: 0 },
-            shadowOpacity: 1,
-            shadowRadius: 15,
-            elevation: 10,
+            shadowOpacity: 0.5,
+            shadowRadius: 10,
+            elevation: 6,
           },
         ]}
       />
@@ -166,14 +166,14 @@ export function GlassBackground({
             bottom: -height * 0.1,
             right: width * 0.1,
             borderRadius: width * 0.75,
-            opacity: 0.8,
-            borderWidth: 2,
+            opacity: 0.4,
+            borderWidth: 1,
             borderColor: colors[0],
             shadowColor: colors[0],
             shadowOffset: { width: 0, height: 0 },
-            shadowOpacity: 1,
-            shadowRadius: 15,
-            elevation: 10,
+            shadowOpacity: 0.5,
+            shadowRadius: 10,
+            elevation: 6,
           },
         ]}
       />
@@ -189,14 +189,14 @@ export function GlassBackground({
             top: height * 0.4,
             left: width * 0.6,
             borderRadius: width * 0.5,
-            opacity: 0.7,
-            borderWidth: 2,
+            opacity: 0.35,
+            borderWidth: 1,
             borderColor: colors[0],
             shadowColor: colors[0],
             shadowOffset: { width: 0, height: 0 },
-            shadowOpacity: 1,
-            shadowRadius: 15,
-            elevation: 10,
+            shadowOpacity: 0.5,
+            shadowRadius: 10,
+            elevation: 6,
           },
         ]}
       />
@@ -210,14 +210,14 @@ export function GlassBackground({
             top: height * 0.1,
             left: width * 0.1,
             borderRadius: width * 0.45,
-            opacity: 0.7,
-            borderWidth: 2,
+            opacity: 0.35,
+            borderWidth: 1,
             borderColor: colors[0],
             shadowColor: colors[0],
             shadowOffset: { width: 0, height: 0 },
-            shadowOpacity: 1,
-            shadowRadius: 15,
-            elevation: 10,
+            shadowOpacity: 0.5,
+            shadowRadius: 10,
+            elevation: 6,
           },
         ]}
       />
