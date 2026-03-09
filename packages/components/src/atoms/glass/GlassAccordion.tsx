@@ -12,12 +12,15 @@ import { GlassView } from './GlassView';
 import { useColorScheme } from '../../hooks/use-color-scheme';
 import { useElectricBorder } from '../../hooks/useElectricBorder';
 import { Colors } from '../../constants/theme';
+import { getGlowColor } from '../../constants/glowColors';
 import type { GlassVariant } from '../../types/glass';
+import type { GlowVariant } from '../../constants/glowColors';
 
 type GlassAccordionProps = {
   title: string;
   children?: React.ReactNode;
   variant?: GlassVariant;
+  glowVariant?: GlowVariant;
   borderRadius?: number;
   defaultExpanded?: boolean;
   enableShadow?: boolean;
@@ -32,6 +35,7 @@ export function GlassAccordion({
   title,
   children,
   variant = 'frosted',
+  glowVariant = 'cool',
   borderRadius = 12,
   defaultExpanded = false,
   enableShadow = true,
@@ -147,9 +151,8 @@ export function GlassAccordion({
     transform: [{ scaleY: contentHeight.value }],
   }));
 
-  const electricColor1 = scheme === 'dark' ? '#60A5FA' : '#2563EB';
-  const electricColor2 = scheme === 'dark' ? '#C084FC' : '#A855F7';
-  const electricColor3 = scheme === 'dark' ? '#34D399' : '#059669';
+  // Get electric color from shared glow colors
+  const electricColor = getGlowColor(glowVariant, scheme);
 
   if (!enableElectric && !enableWaves) {
     return (
@@ -184,7 +187,7 @@ export function GlassAccordion({
             StyleSheet.absoluteFill,
             {
               borderRadius,
-              borderColor: scheme === 'dark' ? 'rgba(96, 165, 250, 0.4)' : 'rgba(59, 130, 246, 0.35)',
+              borderColor: `${electricColor}${scheme === 'dark' ? '66' : '59'}`, // 40% / 35% opacity
             },
             borderStyle,
           ]}
@@ -210,7 +213,7 @@ export function GlassAccordion({
                 StyleSheet.absoluteFill,
                 {
                   borderRadius,
-                  backgroundColor: scheme === 'dark' ? 'rgba(96, 165, 250, 0.35)' : 'rgba(59, 130, 246, 0.25)',
+                  backgroundColor: `${electricColor}${scheme === 'dark' ? '59' : '40'}`, // 35% / 25% opacity
                 },
                 wave1Style,
               ]}
@@ -221,7 +224,7 @@ export function GlassAccordion({
                 StyleSheet.absoluteFill,
                 {
                   borderRadius,
-                  backgroundColor: scheme === 'dark' ? 'rgba(167, 139, 250, 0.30)' : 'rgba(139, 92, 246, 0.22)',
+                  backgroundColor: `${electricColor}${scheme === 'dark' ? '4D' : '38'}`, // 30% / 22% opacity
                 },
                 wave2Style,
               ]}
@@ -232,7 +235,7 @@ export function GlassAccordion({
                 StyleSheet.absoluteFill,
                 {
                   borderRadius,
-                  backgroundColor: scheme === 'dark' ? 'rgba(52, 211, 153, 0.32)' : 'rgba(16, 185, 129, 0.23)',
+                  backgroundColor: `${electricColor}${scheme === 'dark' ? '52' : '3B'}`, // 32% / 23% opacity
                 },
                 wave3Style,
               ]}
@@ -267,7 +270,7 @@ export function GlassAccordion({
           StyleSheet.absoluteFill,
           {
             borderRadius,
-            borderColor: scheme === 'dark' ? 'rgba(96, 165, 250, 0.4)' : 'rgba(59, 130, 246, 0.35)',
+            borderColor: `${electricColor}${scheme === 'dark' ? '66' : '59'}`, // 40% / 35% opacity
           },
           borderStyle,
         ]}
@@ -288,8 +291,8 @@ export function GlassAccordion({
               electricStyle,
               {
                 position: 'absolute',
-                backgroundColor: electricColor1,
-                shadowColor: electricColor1,
+                backgroundColor: electricColor,
+                shadowColor: electricColor,
                 shadowOffset: { width: 0, height: 0 },
                 shadowOpacity: 1,
                 shadowRadius: 12,
