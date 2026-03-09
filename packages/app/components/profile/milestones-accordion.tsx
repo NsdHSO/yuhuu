@@ -300,6 +300,7 @@ export function MilestonesAccordion({userId}: MilestonesAccordionProps) {
         <GlassAccordion
             title={t('milestones.title')}
             variant="frosted"
+            glowVariant="vibrant"
             enableElectric={true}
             enableWaves={false}
             testID="milestones-accordion"
