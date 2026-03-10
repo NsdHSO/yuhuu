@@ -5,6 +5,9 @@ import {Alert} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import type {Dinner} from '@/features/dinners/types';
 
+// Import SupperScreen after all mocks are set up
+import SupperScreen from '../supper';
+
 // Mock react-native-safe-area-context
 jest.mock('react-native-safe-area-context', () => ({
     useSafeAreaInsets: jest.fn(() => ({ top: 0, bottom: 0, left: 0, right: 0 })),
@@ -98,9 +101,6 @@ jest.mock('@yuhuu/components', () => {
     },
     };
 });
-
-// Import SupperScreen after all mocks are set up
-import SupperScreen from '../supper';
 
 function createWrapper() {
     const queryClient = new QueryClient({

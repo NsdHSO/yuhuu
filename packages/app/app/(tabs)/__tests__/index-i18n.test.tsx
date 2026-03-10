@@ -2,6 +2,9 @@ import React from 'react';
 import {render} from '@testing-library/react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 
+// Import HomeScreen after all mocks are set up
+import HomeScreen from '../index';
+
 /**
  * TDD tests for Home Screen i18n Migration
  *
@@ -75,9 +78,6 @@ jest.mock('@/providers/AuthProvider', () => ({
 jest.mock('@yuhuu/auth', () => ({
     hasRole: jest.fn(() => false),
 }));
-
-// Import HomeScreen after all mocks are set up
-import HomeScreen from '../index';
 
 // Helper to wrap component with SafeAreaProvider
 function renderWithProvider(component: React.ReactElement) {

@@ -5,6 +5,9 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import type {Dinner} from '@/features/dinners/types';
 
+// Import SupperScreen after all mocks are set up
+import SupperScreen from '../supper';
+
 // Mock react-native-safe-area-context
 jest.mock('react-native-safe-area-context', () => ({
     useSafeAreaInsets: jest.fn(() => ({ top: 0, bottom: 0, left: 0, right: 0 })),
@@ -160,9 +163,6 @@ const multipleDinners: Dinner[] = [
         updatedAt: '2026-02-25T11:00:00Z',
     },
 ];
-
-// Import SupperScreen after all mocks are set up
-import SupperScreen from '../supper';
 
 describe('SupperScreen - i18n Migration', () => {
     beforeEach(() => {

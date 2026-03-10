@@ -3,6 +3,9 @@ import {fireEvent, render, waitFor} from '@testing-library/react-native';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 
+// Import AdminScreen after all mocks are set up
+import AdminScreen from '../admin';
+
 /**
  * Unit tests for Admin Screen
  * SOLID Principles:
@@ -226,9 +229,6 @@ jest.mock('@/features/skills/api', () => ({
     useUpdateUserSkillMutation: () => ({ mutate: jest.fn(), isPending: false }),
     useDeleteUserSkillMutation: () => ({ mutate: jest.fn(), isPending: false }),
 }));
-
-// Import AdminScreen after all mocks are set up
-import AdminScreen from '../admin';
 
 // Helper to wrap components with QueryClient and SafeAreaProvider
 function renderWithQueryClient(component: React.ReactElement) {

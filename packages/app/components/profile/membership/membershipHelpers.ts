@@ -30,7 +30,7 @@ export function validateMembershipForm(
     data: MembershipFormData,
     t: (key: string) => string,
     mode: 'create' | 'edit',
-    existingHistory?: Array<{end_date: string | null}>,
+    existingHistory?: {end_date: string | null}[],
 ): string | null {
     if (!data.church_name.trim()) {
         return t('membership.errors.churchNameRequired');
