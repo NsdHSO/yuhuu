@@ -25,17 +25,21 @@ interface FamilyAccordionProps {
 export function FamilyAccordion({userId}: FamilyAccordionProps) {
     const {t} = useTranslation();
     const isAdmin = userId !== undefined;
-    const {data: family, isLoading} = isAdmin ? useUserFamilyQuery(userId!) : useMyFamilyQuery();
 
-    const createMutation = isAdmin
-        ? useCreateUserFamilyRelationshipMutation(userId!)
-        : useCreateMyFamilyRelationshipMutation();
-    const updateMutation = isAdmin
-        ? useUpdateUserFamilyRelationshipMutation(userId!)
-        : useUpdateMyFamilyRelationshipMutation();
-    const deleteMutation = isAdmin
-        ? useDeleteUserFamilyRelationshipMutation(userId!)
-        : useDeleteMyFamilyRelationshipMutation();
+    const myFamily = useMyFamilyQuery();
+    const userFamily = useUserFamilyQuery(userId ?? 0);
+    const {data: family, isLoading} = isAdmin ? userFamily : myFamily;
+
+    const createMy = useCreateMyFamilyRelationshipMutation();
+    const updateMy = useUpdateMyFamilyRelationshipMutation();
+    const deleteMy = useDeleteMyFamilyRelationshipMutation();
+    const createUser = useCreateUserFamilyRelationshipMutation(userId ?? 0);
+    const updateUser = useUpdateUserFamilyRelationshipMutation(userId ?? 0);
+    const deleteUser = useDeleteUserFamilyRelationshipMutation(userId ?? 0);
+
+    const createMutation = isAdmin ? createUser : createMy;
+    const updateMutation = isAdmin ? updateUser : updateMy;
+    const deleteMutation = isAdmin ? deleteUser : deleteMy;
 
     const {mode, editingId, formData, setFormData, startCreate, startEdit, cancel} =
         useAccordionForm(initialFamilyFormData);
