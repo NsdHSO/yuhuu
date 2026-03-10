@@ -11,16 +11,15 @@ import Animated, {
 import { GlassView } from './GlassView';
 import { useColorScheme } from '../../hooks/use-color-scheme';
 import { useElectricBorder } from '../../hooks/useElectricBorder';
+import { useGlowVariant } from '../../hooks/useGlowVariant';
 import { Colors } from '../../constants/theme';
 import { getGlowColor } from '../../constants/glowColors';
 import type { GlassVariant } from '../../types/glass';
-import type { GlowVariant } from '../../constants/glowColors';
 
 type GlassAccordionProps = {
   title: string;
   children?: React.ReactNode;
   variant?: GlassVariant;
-  glowVariant?: GlowVariant;
   borderRadius?: number;
   defaultExpanded?: boolean;
   enableShadow?: boolean;
@@ -35,7 +34,6 @@ export function GlassAccordion({
   title,
   children,
   variant = 'frosted',
-  glowVariant = 'cool',
   borderRadius = 12,
   defaultExpanded = false,
   enableShadow = true,
@@ -45,6 +43,7 @@ export function GlassAccordion({
   style,
   testID,
 }: GlassAccordionProps) {
+  const { glowVariant } = useGlowVariant();
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const scheme = useColorScheme() ?? 'light';
   const textColor = Colors[scheme].text;
