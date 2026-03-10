@@ -18,8 +18,9 @@ export function ChurchInformationAccordion({ userId }: ChurchInformationAccordio
     <GlassAccordion
       title={t('church.information')}
       variant="frosted"
-      enableElectric={true}
+      enableElectric={false}
       enableWaves={false}
+      headerOnly={true}
       testID="church-information-accordion"
     >
       <View style={{ gap: 8 }}>
