@@ -33,13 +33,21 @@ interface MilestonesAccordionProps {
 export function MilestonesAccordion({userId}: MilestonesAccordionProps) {
     const {t} = useTranslation();
     const isAdmin = userId !== undefined;
-    const {data: milestones, isLoading} = isAdmin
-        ? useUserMilestonesQuery(userId!)
-        : useMyMilestonesQuery();
 
-    const createMutation = isAdmin ? useCreateUserMilestoneMutation(userId!) : useCreateMyMilestoneMutation();
-    const updateMutation = isAdmin ? useUpdateUserMilestoneMutation(userId!) : useUpdateMyMilestoneMutation();
-    const deleteMutation = isAdmin ? useDeleteUserMilestoneMutation(userId!) : useDeleteMyMilestoneMutation();
+    const myMilestones = useMyMilestonesQuery();
+    const userMilestones = useUserMilestonesQuery(userId ?? 0);
+    const {data: milestones, isLoading} = isAdmin ? userMilestones : myMilestones;
+
+    const createMy = useCreateMyMilestoneMutation();
+    const updateMy = useUpdateMyMilestoneMutation();
+    const deleteMy = useDeleteMyMilestoneMutation();
+    const createUser = useCreateUserMilestoneMutation(userId ?? 0);
+    const updateUser = useUpdateUserMilestoneMutation(userId ?? 0);
+    const deleteUser = useDeleteUserMilestoneMutation(userId ?? 0);
+
+    const createMutation = isAdmin ? createUser : createMy;
+    const updateMutation = isAdmin ? updateUser : updateMy;
+    const deleteMutation = isAdmin ? deleteUser : deleteMy;
 
     const {mode, editingId, formData, setFormData, startCreate, startEdit, cancel} =
         useAccordionForm(initialMilestoneFormData);
