@@ -327,9 +327,8 @@ export function MembershipAccordion({userId}: MembershipAccordionProps) {
         <GlassAccordion
             title={t('membership.title')}
             variant="frosted"
-            enableElectric={false}
+            enableElectric={true}
             enableWaves={false}
-            headerOnly={true}
             testID="membership-accordion"
         >
             {isLoading ? (

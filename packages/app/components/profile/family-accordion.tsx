@@ -280,9 +280,8 @@ export function FamilyAccordion({userId}: FamilyAccordionProps) {
         <GlassAccordion
             title={t('family.title')}
             variant="frosted"
-            enableElectric={false}
+            enableElectric={true}
             enableWaves={false}
-            headerOnly={true}
             testID="family-accordion"
         >
             {isLoading ? (
