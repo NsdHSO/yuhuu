@@ -26,6 +26,7 @@ type GlassAccordionProps = {
   shadowLevel?: 'subtle' | 'medium' | 'elevated';
   enableElectric?: boolean;
   enableWaves?: boolean;
+  headerOnly?: boolean;
   style?: ViewStyle;
   testID?: string;
 };
@@ -40,6 +41,7 @@ export function GlassAccordion({
   shadowLevel = 'subtle',
   enableElectric = false,
   enableWaves = false,
+  headerOnly = false,
   style,
   testID,
 }: GlassAccordionProps) {
@@ -152,6 +154,34 @@ export function GlassAccordion({
 
   // Get electric color from shared glow colors
   const electricColor = getGlowColor(glowVariant, scheme);
+
+  // Header-only mode for nested accordions (no background)
+  if (headerOnly) {
+    return (
+      <View style={[styles.container, style]}>
+        <Pressable
+          onPress={() => setIsExpanded(!isExpanded)}
+          style={[styles.header, {
+            backgroundColor: scheme === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
+            borderRadius: borderRadius,
+            borderWidth: 1,
+            borderColor: scheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.06)',
+          }]}
+          testID={testID ? `${testID}-header` : undefined}
+        >
+          <Text style={[styles.title, { color: textColor }]}>{title}</Text>
+          <Text style={[styles.chevron, { color: iconColor }]}>
+            {isExpanded ? '▼' : '▶'}
+          </Text>
+        </Pressable>
+        {isExpanded && children && (
+          <Animated.View style={[styles.content, contentStyle]}>
+            {children}
+          </Animated.View>
+        )}
+      </View>
+    );
+  }
 
   if (!enableElectric && !enableWaves) {
     return (
