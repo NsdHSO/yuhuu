@@ -158,15 +158,20 @@ export function GlassAccordion({
   // Header-only mode for nested accordions (no background)
   if (headerOnly) {
     return (
-      <View style={[styles.container, style]}>
+      <View style={[
+        styles.container,
+        style,
+        {
+          borderRadius: borderRadius,
+          borderWidth: 1,
+          borderColor: scheme === 'dark' ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.1)',
+          backgroundColor: scheme === 'dark' ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.4)',
+          overflow: 'hidden',
+        }
+      ]}>
         <Pressable
           onPress={() => setIsExpanded(!isExpanded)}
-          style={[styles.header, {
-            backgroundColor: scheme === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
-            borderRadius: borderRadius,
-            borderWidth: 1,
-            borderColor: scheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.06)',
-          }]}
+          style={styles.header}
           testID={testID ? `${testID}-header` : undefined}
         >
           <Text style={[styles.title, { color: textColor }]}>{title}</Text>
