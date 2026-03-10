@@ -22,11 +22,19 @@ export function ChurchInformationAccordion({ userId }: ChurchInformationAccordio
       enableWaves={false}
       testID="church-information-accordion"
     >
-      <View style={{ gap: 12 }}>
-        <FamilyAccordion userId={userId} />
-        <MilestonesAccordion userId={userId} />
-        <MembershipAccordion userId={userId} />
-        <SkillsAccordion userId={userId} />
+      <View style={{ gap: 8 }}>
+        <View style={{ marginBottom: 4 }}>
+          <FamilyAccordion userId={userId} />
+        </View>
+        <View style={{ marginBottom: 4 }}>
+          <MilestonesAccordion userId={userId} />
+        </View>
+        <View style={{ marginBottom: 4 }}>
+          <MembershipAccordion userId={userId} />
+        </View>
+        <View style={{ marginBottom: 4 }}>
+          <SkillsAccordion userId={userId} />
+        </View>
       </View>
     </GlassAccordion>
   );
