@@ -25,11 +25,21 @@ interface SkillsAccordionProps {
 export function SkillsAccordion({userId}: SkillsAccordionProps) {
     const {t} = useTranslation();
     const isAdmin = userId !== undefined;
-    const {data: skills, isLoading} = isAdmin ? useUserSkillsQuery(userId!) : useMySkillsQuery();
 
-    const createMutation = isAdmin ? useCreateUserSkillMutation(userId!) : useCreateMySkillMutation();
-    const updateMutation = isAdmin ? useUpdateUserSkillMutation(userId!) : useUpdateMySkillMutation();
-    const deleteMutation = isAdmin ? useDeleteUserSkillMutation(userId!) : useDeleteMySkillMutation();
+    const mySkills = useMySkillsQuery();
+    const userSkills = useUserSkillsQuery(userId ?? 0);
+    const {data: skills, isLoading} = isAdmin ? userSkills : mySkills;
+
+    const createMy = useCreateMySkillMutation();
+    const updateMy = useUpdateMySkillMutation();
+    const deleteMy = useDeleteMySkillMutation();
+    const createUser = useCreateUserSkillMutation(userId ?? 0);
+    const updateUser = useUpdateUserSkillMutation(userId ?? 0);
+    const deleteUser = useDeleteUserSkillMutation(userId ?? 0);
+
+    const createMutation = isAdmin ? createUser : createMy;
+    const updateMutation = isAdmin ? updateUser : updateMy;
+    const deleteMutation = isAdmin ? deleteUser : deleteMy;
 
     const {mode, editingId, formData, setFormData, startCreate, startEdit, cancel} =
         useAccordionForm(initialSkillFormData);
