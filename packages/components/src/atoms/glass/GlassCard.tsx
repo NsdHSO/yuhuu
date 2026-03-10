@@ -12,6 +12,8 @@ import { GlassView } from './GlassView';
 import type { GlassViewProps } from '../../types/glass';
 import { useColorScheme } from '../../hooks/use-color-scheme';
 import { useElectricBorder } from '../../hooks/useElectricBorder';
+import { useGlowVariant } from '../../hooks/useGlowVariant';
+import { getGlowColor } from '../../constants/glowColors';
 
 type GlassCardProps = GlassViewProps & {
   enableElectric?: boolean;
@@ -28,6 +30,10 @@ export function GlassCard({
   ...props
 }: GlassCardProps) {
   const scheme = useColorScheme() ?? 'light';
+  const { glowVariant } = useGlowVariant();
+
+  // Get electric color from shared glow colors
+  const electricColor = getGlowColor(glowVariant, scheme);
 
   // Electric border animation - using shared hook
   const electricStyle = useElectricBorder(enableElectric);
@@ -102,10 +108,6 @@ export function GlassCard({
     };
   });
 
-  const electricColor1 = scheme === 'dark' ? '#60A5FA' : '#2563EB';
-  const electricColor2 = scheme === 'dark' ? '#C084FC' : '#A855F7';
-  const electricColor3 = scheme === 'dark' ? '#34D399' : '#059669';
-
   if (!enableElectric && !enableWaves) {
     // Simple glass card without effects
     return (
@@ -126,7 +128,7 @@ export function GlassCard({
                 StyleSheet.absoluteFill,
                 {
                   borderRadius,
-                  backgroundColor: scheme === 'dark' ? 'rgba(96, 165, 250, 0.35)' : 'rgba(59, 130, 246, 0.25)',
+                  backgroundColor: `${electricColor}${scheme === 'dark' ? '59' : '40'}`, // 35% / 25% opacity
                 },
                 wave1Style,
               ]}
@@ -137,7 +139,7 @@ export function GlassCard({
                 StyleSheet.absoluteFill,
                 {
                   borderRadius,
-                  backgroundColor: scheme === 'dark' ? 'rgba(167, 139, 250, 0.30)' : 'rgba(139, 92, 246, 0.22)',
+                  backgroundColor: `${electricColor}${scheme === 'dark' ? '4D' : '38'}`, // 30% / 22% opacity
                 },
                 wave2Style,
               ]}
@@ -148,7 +150,7 @@ export function GlassCard({
                 StyleSheet.absoluteFill,
                 {
                   borderRadius,
-                  backgroundColor: scheme === 'dark' ? 'rgba(52, 211, 153, 0.32)' : 'rgba(16, 185, 129, 0.23)',
+                  backgroundColor: `${electricColor}${scheme === 'dark' ? '52' : '3B'}`, // 32% / 23% opacity
                 },
                 wave3Style,
               ]}
@@ -175,8 +177,8 @@ export function GlassCard({
               electricStyle,
               {
                 position: 'absolute',
-                backgroundColor: electricColor1,
-                shadowColor: electricColor1,
+                backgroundColor: electricColor,
+                shadowColor: electricColor,
                 shadowOffset: { width: 0, height: 0 },
                 shadowOpacity: 1,
                 shadowRadius: 12,
@@ -193,7 +195,7 @@ export function GlassCard({
               {
                 borderRadius,
                 borderWidth: 1,
-                borderColor: scheme === 'dark' ? 'rgba(96, 165, 250, 0.2)' : 'rgba(59, 130, 246, 0.15)',
+                borderColor: `${electricColor}${scheme === 'dark' ? '33' : '26'}`, // 20% / 15% opacity
               },
             ]}
             pointerEvents="none"
