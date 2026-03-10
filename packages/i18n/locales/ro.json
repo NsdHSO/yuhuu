@@ -67,7 +67,13 @@
     "biometricDisableTitle": "Dezactivezi autentificarea biometric\u0103?",
     "biometricDisableMessage": "Va trebui s\u0103 introduci email \u0219i parola pentru autentificare.",
     "biometricDisableError": "Dezactivarea autentific\u0103rii biometrice a e\u0219uat.",
-    "biometricAuthFailed": "Nu s-a putut verifica identitatea. Te rug\u0103m s\u0103 \u00eencerci din nou."
+    "biometricAuthFailed": "Nu s-a putut verifica identitatea. Te rug\u0103m s\u0103 \u00eencerci din nou.",
+    "personalInfo": "Informa\u021bii personale",
+    "churchDetails": "Detalii biseric\u0103",
+    "noChurchDetails": "Nu exist\u0103 detalii despre biseric\u0103",
+    "settings": "Set\u0103ri",
+    "glowTheme": "Culoare tem\u0103",
+    "noName": "Nume nesetat"
   },
   "supper": {
     "title": "Cin\u0103",
@@ -298,6 +304,11 @@
     "errors": {
       "skillNameRequired": "Numele abilit\u0103\u021bii este obligatoriu"
     }
+  },
+  "church": {
+    "information": "Informa\u021bii Biserice\u0219ti",
+    "title": "Detalii Biserice\u0219ti",
+    "placeholder": "Detaliile bisericii vor fi disponibile \u00een cur\u00e2nd"
   },
   "modal": {
     "title": "Aceasta este o fereastr\u0103 modal\u0103",

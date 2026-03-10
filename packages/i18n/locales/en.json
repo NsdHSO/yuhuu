@@ -67,7 +67,13 @@
     "biometricDisableTitle": "Disable biometric sign-in?",
     "biometricDisableMessage": "You will need to enter your email and password to sign in.",
     "biometricDisableError": "Failed to disable biometric sign-in.",
-    "biometricAuthFailed": "Could not verify your identity. Please try again."
+    "biometricAuthFailed": "Could not verify your identity. Please try again.",
+    "personalInfo": "Personal Information",
+    "churchDetails": "Church Details",
+    "noChurchDetails": "No church details available",
+    "settings": "Settings",
+    "glowTheme": "Theme Color",
+    "noName": "No name set"
   },
   "supper": {
     "title": "Supper",
@@ -298,6 +304,11 @@
     "errors": {
       "skillNameRequired": "Skill name is required"
     }
+  },
+  "church": {
+    "information": "Church Information",
+    "title": "Church Details",
+    "placeholder": "Church details will be available soon"
   },
   "modal": {
     "title": "This is a modal",
