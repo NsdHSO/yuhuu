@@ -328,8 +328,9 @@ export function SkillsAccordion({userId}: SkillsAccordionProps) {
         <GlassAccordion
             title={t('skills.title')}
             variant="frosted"
-            enableElectric={true}
+            enableElectric={false}
             enableWaves={false}
+            headerOnly={true}
             testID="skills-accordion"
         >
             {isLoading ? (
