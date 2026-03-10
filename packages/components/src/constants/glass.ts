@@ -18,7 +18,7 @@ export const GLASS_COLORS: Record<'light' | 'dark', Record<GlassVariant, string>
   },
   dark: {
     frosted: 'rgba(40, 40, 50, 0.60)',
-    tinted: 'rgba(35, 35, 45, 0.55)',
+    tinted: 'rgba(60, 65, 75, 0.75)',
     vibrant: 'rgba(45, 45, 55, 0.65)',
     'ultra-thin': 'rgba(30, 30, 40, 0.50)',
     prominent: 'rgba(50, 50, 60, 0.70)',

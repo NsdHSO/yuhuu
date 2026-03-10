@@ -1,7 +1,7 @@
 import React, {useMemo, useState} from 'react';
 import {ActivityIndicator, Alert, Pressable, Switch, TextInput, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {GlassAccordion, GlassCard, ThemedText, useColorScheme, Colors} from '@yuhuu/components';
+import {GlassAccordion, GlassCard, ThemedText, useColorScheme, Colors, getGlowColor, useGlowVariant} from '@yuhuu/components';
 import {
     useCreateMySkillMutation,
     useCreateUserSkillMutation,
@@ -43,6 +43,8 @@ type SkillsAccordionProps = {
 export function SkillsAccordion({userId}: SkillsAccordionProps) {
     const {t} = useTranslation();
     const scheme = useColorScheme() ?? 'light';
+    const {glowVariant} = useGlowVariant();
+    const activeColor = getGlowColor(glowVariant, scheme);
     const isAdmin = userId !== undefined;
     const mySkills = useMySkillsQuery();
     const userSkills = useUserSkillsQuery(userId ?? 0, {enabled: isAdmin});
@@ -208,7 +210,7 @@ export function SkillsAccordion({userId}: SkillsAccordionProps) {
             <ThemedText style={{fontSize: 14, fontWeight: '600'}}>
                 {t('skills.fields.skillCategory')}
             </ThemedText>
-            <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>
+            <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 4}}>
                 {CATEGORIES.map(cat => (
                     <Pressable
                         key={cat}
@@ -216,20 +218,34 @@ export function SkillsAccordion({userId}: SkillsAccordionProps) {
                             ...prev,
                             skill_category: prev.skill_category === cat ? '' : cat,
                         }))}
-                        style={{
-                            paddingHorizontal: 12,
-                            paddingVertical: 6,
-                            borderRadius: 16,
-                            borderWidth: 1,
+                        style={({pressed}) => ({
+                            paddingHorizontal: 18,
+                            paddingVertical: 12,
+                            borderRadius: 24,
+                            borderWidth: 2.5,
                             borderColor: formData.skill_category === cat
-                                ? (scheme === 'dark' ? '#3B82F6' : '#2563EB')
-                                : (scheme === 'dark' ? '#374151' : '#D1D5DB'),
+                                ? activeColor
+                                : (scheme === 'dark' ? '#6B7280' : '#9CA3AF'),
                             backgroundColor: formData.skill_category === cat
-                                ? (scheme === 'dark' ? '#1E3A5F' : '#DBEAFE')
-                                : 'transparent',
-                        }}
+                                ? `${activeColor}${scheme === 'dark' ? '4D' : '33'}`
+                                : (scheme === 'dark' ? 'rgba(75, 85, 99, 0.5)' : 'rgba(255, 255, 255, 0.9)'),
+                            shadowColor: formData.skill_category === cat ? activeColor : '#000',
+                            shadowOffset: {width: 0, height: 3},
+                            shadowOpacity: formData.skill_category === cat ? 0.4 : 0.15,
+                            shadowRadius: formData.skill_category === cat ? 6 : 3,
+                            elevation: formData.skill_category === cat ? 6 : 3,
+                            transform: [{scale: pressed ? 0.92 : 1}],
+                            opacity: pressed ? 0.7 : 1,
+                        })}
                     >
-                        <ThemedText style={{fontSize: 13}}>
+                        <ThemedText style={{
+                            fontSize: 15,
+                            fontWeight: formData.skill_category === cat ? '700' : '600',
+                            letterSpacing: 0.3,
+                            color: formData.skill_category === cat
+                                ? (scheme === 'dark' ? '#FFFFFF' : activeColor)
+                                : (scheme === 'dark' ? '#D1D5DB' : '#374151')
+                        }}>
                             {t(`skills.categories.${cat}`)}
                         </ThemedText>
                     </Pressable>
@@ -312,7 +328,7 @@ export function SkillsAccordion({userId}: SkillsAccordionProps) {
                         alignItems: 'center',
                         backgroundColor: isSubmitting
                             ? (scheme === 'dark' ? '#374151' : '#D1D5DB')
-                            : (scheme === 'dark' ? '#3B82F6' : '#2563EB'),
+                            : activeColor,
                         opacity: isSubmitting ? 0.7 : 1,
                     }}
                 >
@@ -382,7 +398,7 @@ export function SkillsAccordion({userId}: SkillsAccordionProps) {
                                                 style={{padding: 4}}
                                             >
                                                 <ThemedText style={{
-                                                    color: scheme === 'dark' ? '#3B82F6' : '#2563EB',
+                                                    color: activeColor,
                                                     fontSize: 14
                                                 }}>{t('common.edit')}</ThemedText>
                                             </Pressable>
@@ -443,7 +459,7 @@ export function SkillsAccordion({userId}: SkillsAccordionProps) {
                     }}
                 >
                     <ThemedText style={{
-                        color: scheme === 'dark' ? '#3B82F6' : '#2563EB',
+                        color: activeColor,
                         fontWeight: '600'
                     }}>
                         {t('skills.addButton')}

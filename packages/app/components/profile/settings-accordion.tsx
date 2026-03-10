@@ -7,6 +7,7 @@ import {
     ThemedText,
     useColorScheme,
     Colors,
+    getGlowColor,
     useGlowVariant,
 } from '@yuhuu/components';
 import type {GlowVariant} from '@yuhuu/components/src/constants/glowColors';
@@ -34,6 +35,7 @@ export function SettingsAccordion({
     const {t} = useTranslation();
     const scheme = useColorScheme() ?? 'light';
     const {glowVariant, setGlowVariant} = useGlowVariant();
+    const activeColor = getGlowColor(glowVariant, scheme);
 
     return (
         <GlassAccordion
@@ -76,7 +78,7 @@ export function SettingsAccordion({
                             testID={testID ? `${testID}-biometric-toggle` : undefined}
                             value={biometricEnabled}
                             onValueChange={onBiometricToggle}
-                            trackColor={{false: '#767577', true: '#1e90ff'}}
+                            trackColor={{false: '#767577', true: activeColor}}
                             thumbColor={biometricEnabled ? '#fff' : '#f4f3f4'}
                         />
                     </View>

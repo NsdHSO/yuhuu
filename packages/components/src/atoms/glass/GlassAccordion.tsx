@@ -198,6 +198,18 @@ export function GlassAccordion({
           shadowLevel={shadowLevel}
           testID={testID}
         >
+          {/* Subtle glow tint overlay */}
+          <View
+            style={[
+              StyleSheet.absoluteFill,
+              {
+                borderRadius,
+                backgroundColor: `${electricColor}${scheme === 'dark' ? '0D' : '0A'}`, // 5% / 4% opacity
+              },
+            ]}
+            pointerEvents="none"
+          />
+
           <Pressable
             onPress={() => setIsExpanded(!isExpanded)}
             style={styles.header}
@@ -239,6 +251,18 @@ export function GlassAccordion({
         enableShadow={enableShadow}
         shadowLevel={shadowLevel}
       >
+        {/* Subtle glow tint overlay - always present */}
+        <View
+          style={[
+            StyleSheet.absoluteFill,
+            {
+              borderRadius,
+              backgroundColor: `${electricColor}${scheme === 'dark' ? '0D' : '0A'}`, // 5% / 4% opacity
+            },
+          ]}
+          pointerEvents="none"
+        />
+
         {/* Wave effect layers - only when expanded */}
         {enableWaves && isExpanded && (
           <>

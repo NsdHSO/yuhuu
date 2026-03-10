@@ -1,8 +1,5 @@
 import { UserSearch } from "@/components/admin/user-search";
-import { FamilyAccordion } from "@/components/profile/family-accordion";
-import { MembershipAccordion } from "@/components/profile/membership-accordion";
-import { MilestonesAccordion } from "@/components/profile/milestones-accordion";
-import { SkillsAccordion } from "@/components/profile/skills-accordion";
+import { ChurchInformationAccordion } from "@/components/profile/church-information-accordion";
 import {
     useDinnerStatsQuery,
     useUserAttendanceQuery,
@@ -159,11 +156,8 @@ export default function AdminScreen() {
 
           {/* User Profile Accordions - Shown when a user is searched */}
           {searchedUser && (
-            <View style={{ marginTop: 16, gap: 12 }}>
-              <FamilyAccordion userId={searchedUser.id} />
-              <MilestonesAccordion userId={searchedUser.id} />
-              <MembershipAccordion userId={searchedUser.id} />
-              <SkillsAccordion userId={searchedUser.id} />
+            <View style={{ marginTop: 16 }}>
+              <ChurchInformationAccordion userId={searchedUser.id} />
             </View>
           )}
 

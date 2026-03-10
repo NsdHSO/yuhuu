@@ -63,7 +63,7 @@ export function GlassView({
           overflow: 'hidden',
           backgroundColor: GLASS_COLORS[scheme][variant],
           borderWidth: enableBorder ? 1 : 0,
-          borderColor: scheme === 'dark' ? 'rgba(255, 255, 255, 0.18)' : 'rgba(0, 0, 0, 0.1)',
+          borderColor: scheme === 'dark' ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.1)',
         },
         enableShadow && GLASS_SHADOWS[shadowLevel],
         style,

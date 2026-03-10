@@ -1,11 +1,12 @@
 import React from 'react';
-import {Platform, Pressable, View} from 'react-native';
-import {Picker} from '@react-native-picker/picker';
+import {Pressable, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {useLanguage} from '../hooks/useLanguage';
 import {ThemedText} from '../themed-text';
 import {useColorScheme} from '../hooks/use-color-scheme';
 import {Colors} from '../constants/theme';
+import {useGlowVariant} from '../hooks/useGlowVariant';
+import {getGlowColor} from '../constants/glowColors';
 
 type Language = 'en' | 'ro';
 
@@ -14,19 +15,18 @@ const LANGUAGES = [
     {value: 'ro' as Language, label: 'Română', flag: '🇷🇴'},
 ];
 
-export default function LanguagePicker() {
+export function LanguagePicker() {
     const {t} = useTranslation();
     const {language, changeLanguage} = useLanguage();
     const scheme = useColorScheme() ?? 'light';
+    const {glowVariant} = useGlowVariant();
+    const activeColor = getGlowColor(glowVariant, scheme);
 
     const handleLanguageChange = async (value: Language) => {
         if (value !== language) {
             await changeLanguage(value);
         }
     };
-
-    // Use custom buttons for web, native Picker for mobile
-    const isWeb = Platform.OS === 'web';
 
     return (
         <View
@@ -47,81 +47,57 @@ export default function LanguagePicker() {
                 {t('profile.language')}
             </ThemedText>
 
-            {isWeb ? (
-                // Custom button-based selector for web
-                <View
-                    style={{
-                        flexDirection: 'row',
-                        gap: 12,
-                    }}
-                >
-                    {LANGUAGES.map((lang) => (
-                        <Pressable
-                            key={lang.value}
-                            testID={`language-button-${lang.value}`}
-                            onPress={() => handleLanguageChange(lang.value)}
-                            style={({pressed}) => ({
-                                flex: 1,
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: 8,
-                                paddingVertical: 12,
-                                paddingHorizontal: 16,
-                                borderRadius: 8,
-                                borderWidth: 2,
-                                borderColor: language === lang.value ? '#1e90ff' : (scheme === 'dark' ? '#2A2A2A' : '#ccc'),
-                                backgroundColor: language === lang.value
-                                    ? (scheme === 'dark' ? '#1e3a5f' : '#e3f2fd')
-                                    : (scheme === 'dark' ? '#1F2937' : '#fff'),
-                                opacity: pressed ? 0.7 : 1,
-                            })}
-                        >
-                            <ThemedText style={{fontSize: 20}}>{lang.flag}</ThemedText>
-                            <ThemedText
-                                style={{
-                                    fontWeight: language === lang.value ? '600' : '400',
-                                    color: language === lang.value ? '#1e90ff' : Colors[scheme].text,
-                                }}
-                            >
-                                {lang.label}
-                            </ThemedText>
-                        </Pressable>
-                    ))}
-                </View>
-            ) : (
-                // Native Picker for mobile
-                <View
-                    style={{
-                        borderWidth: 1,
-                        borderColor: scheme === 'dark' ? '#2A2A2A' : '#ccc',
-                        borderRadius: 8,
-                        backgroundColor: scheme === 'dark' ? '#1F2937' : '#fff',
-                        overflow: 'hidden',
-                    }}
-                >
-                    <Picker
-                        testID="language-picker"
-                        selectedValue={language}
-                        onValueChange={handleLanguageChange}
-                        style={{
-                            color: Colors[scheme].text,
-                        }}
-                        dropdownIconColor={Colors[scheme].text}
+            <View
+                style={{
+                    flexDirection: 'row',
+                    gap: 12,
+                }}
+            >
+                {LANGUAGES.map((lang) => (
+                    <Pressable
+                        key={lang.value}
+                        testID={`language-button-${lang.value}`}
+                        onPress={() => handleLanguageChange(lang.value)}
+                        style={({pressed}) => ({
+                            flex: 1,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: 8,
+                            paddingHorizontal: 18,
+                            paddingVertical: 12,
+                            borderRadius: 24,
+                            borderWidth: 2.5,
+                            borderColor: language === lang.value
+                                ? activeColor
+                                : (scheme === 'dark' ? '#6B7280' : '#9CA3AF'),
+                            backgroundColor: language === lang.value
+                                ? `${activeColor}${scheme === 'dark' ? '4D' : '33'}`
+                                : (scheme === 'dark' ? 'rgba(75, 85, 99, 0.5)' : 'rgba(255, 255, 255, 0.9)'),
+                            shadowColor: language === lang.value ? activeColor : '#000',
+                            shadowOffset: {width: 0, height: 3},
+                            shadowOpacity: language === lang.value ? 0.4 : 0.15,
+                            shadowRadius: language === lang.value ? 6 : 3,
+                            elevation: language === lang.value ? 6 : 3,
+                            transform: [{scale: pressed ? 0.92 : 1}],
+                            opacity: pressed ? 0.7 : 1,
+                        })}
                     >
-                        <Picker.Item
-                            label={t('language.english')}
-                            value="en"
-                            color={Platform.OS === 'ios' ? Colors[scheme].text : undefined}
-                        />
-                        <Picker.Item
-                            label={t('language.romanian')}
-                            value="ro"
-                            color={Platform.OS === 'ios' ? Colors[scheme].text : undefined}
-                        />
-                    </Picker>
-                </View>
-            )}
+                        <ThemedText style={{fontSize: 20}}>{lang.flag}</ThemedText>
+                        <ThemedText
+                            style={{
+                                fontWeight: language === lang.value ? '700' : '600',
+                                letterSpacing: 0.3,
+                                color: language === lang.value
+                                    ? (scheme === 'dark' ? '#FFFFFF' : activeColor)
+                                    : Colors[scheme].text,
+                            }}
+                        >
+                            {lang.label}
+                        </ThemedText>
+                    </Pressable>
+                ))}
+            </View>
         </View>
     );
 }

@@ -18,7 +18,6 @@ import {
 } from "@yuhuu/auth";
 import {
     GlassBackground,
-    GlowVariantProvider,
     TabScreenWrapper,
     ThemedText,
     ThemedView,
@@ -26,12 +25,7 @@ import {
 import { Stack } from "expo-router";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-    ActivityIndicator,
-    Alert,
-    Pressable,
-    View,
-} from "react-native";
+import { ActivityIndicator, Alert, View } from "react-native";
 
 export default function ProfileScreen() {
   const { t } = useTranslation();
@@ -161,73 +155,52 @@ export default function ProfileScreen() {
   }
 
   return (
-    <GlowVariantProvider initialVariant="vibrant">
-      <GlassBackground>
-        <Stack.Screen options={{ title: t("profile.title") }} />
-        <TabScreenWrapper contentContainerStyle={{ padding: 16 }}>
-          <ProfileHeader
+    <GlassBackground>
+      <Stack.Screen options={{ title: t("profile.title") }} />
+      <TabScreenWrapper
+        contentContainerStyle={{ padding: 0, paddingHorizontal: 16 }}
+      >
+        <ProfileHeader
+          firstName={firstName}
+          lastName={lastName}
+          email={user?.email ?? ""}
+          testID="profile-header"
+        />
+
+        {!profile && (
+          <View style={{ marginBottom: 12 }}>
+            <ThemedText type="subtitle" className="mb-2">
+              {t("profile.createProfile")}
+            </ThemedText>
+            <ThemedText lightColor="#6B7280" darkColor="#9CA3AF">
+              {t("profile.noProfile")}
+            </ThemedText>
+          </View>
+        )}
+
+        <View>
+          <PersonalInfoAccordion
             firstName={firstName}
             lastName={lastName}
-            email={user?.email ?? ""}
-            testID="profile-header"
+            phone={phone}
+            onFirstNameChange={setfirstName}
+            onLastNameChange={setLastName}
+            onPhoneChange={setPhone}
+            onSave={onSave}
+            isSaving={saveMutation.isPending}
+            testID="personal-info"
           />
 
-          {!profile && (
-            <View style={{ marginBottom: 12 }}>
-              <ThemedText type="subtitle" className="mb-2">
-                {t("profile.createProfile")}
-              </ThemedText>
-              <ThemedText lightColor="#6B7280" darkColor="#9CA3AF">
-                {t("profile.noProfile")}
-              </ThemedText>
-            </View>
-          )}
+          <ChurchInformationAccordion />
 
-          <View style={{ gap: 4 }}>
-            <PersonalInfoAccordion
-              firstName={firstName}
-              lastName={lastName}
-              phone={phone}
-              onFirstNameChange={setfirstName}
-              onLastNameChange={setLastName}
-              onPhoneChange={setPhone}
-              testID="personal-info"
-            />
-
-            <Pressable
-              onPress={onSave}
-              disabled={saveMutation.isPending}
-              style={({ pressed }) => ({
-                opacity: pressed || saveMutation.isPending ? 0.7 : 1,
-                backgroundColor: "#1e90ff",
-                borderRadius: 8,
-                paddingVertical: 12,
-                alignItems: "center",
-                marginTop: 8,
-                marginBottom: 12,
-              })}
-            >
-              <ThemedText
-                style={{
-                  color: "white",
-                  fontWeight: "600",
-                }}
-              >
-                {saveMutation.isPending ? t("profile.saving") : t("profile.save")}
-              </ThemedText>
-            </Pressable>
-
-            <ChurchInformationAccordion />
-
-            <SettingsAccordion
-              biometricAvailable={biometricAvailable}
-              biometricEnabled={biometricEnabled}
-              onBiometricToggle={handleBiometricToggle}
-              testID="settings"
-            />
-          </View>
-        </TabScreenWrapper>
-      </GlassBackground>
-    </GlowVariantProvider>
+          <SettingsAccordion
+            biometricAvailable={biometricAvailable}
+            biometricEnabled={biometricEnabled}
+            onBiometricToggle={handleBiometricToggle}
+            testID="settings"
+          />
+        </View>
+      </TabScreenWrapper>
+    </GlassBackground>
   );
 }

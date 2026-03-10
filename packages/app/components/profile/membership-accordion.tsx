@@ -1,7 +1,7 @@
 import React, {useMemo, useState} from 'react';
 import {ActivityIndicator, Alert, Pressable, Switch, TextInput, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {GlassAccordion, GlassCard, ThemedText, useColorScheme, Colors} from '@yuhuu/components';
+import {GlassAccordion, GlassCard, ThemedText, useColorScheme, Colors, getGlowColor, useGlowVariant} from '@yuhuu/components';
 import {
     useCreateMyMembershipHistoryMutation,
     useDeleteMyMembershipHistoryMutation,
@@ -49,6 +49,8 @@ interface MembershipAccordionProps {
 export function MembershipAccordion({userId}: MembershipAccordionProps) {
     const {t} = useTranslation();
     const scheme = useColorScheme() ?? 'light';
+    const {glowVariant} = useGlowVariant();
+    const activeColor = getGlowColor(glowVariant, scheme);
     const isAdminView = userId !== undefined;
     const myQuery = useMyMembershipHistoryQuery();
     const userQuery = useUserMembershipHistoryQuery(userId ?? 0);
@@ -208,7 +210,7 @@ export function MembershipAccordion({userId}: MembershipAccordionProps) {
             <ThemedText style={{fontSize: 14, fontWeight: '600'}}>
                 {t('membership.fields.transferType')}
             </ThemedText>
-            <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>
+            <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 4}}>
                 {TRANSFER_TYPES.map(type => (
                     <Pressable
                         key={type}
@@ -216,20 +218,34 @@ export function MembershipAccordion({userId}: MembershipAccordionProps) {
                             ...prev,
                             transfer_type: prev.transfer_type === type ? '' : type,
                         }))}
-                        style={{
-                            paddingHorizontal: 12,
-                            paddingVertical: 6,
-                            borderRadius: 16,
-                            borderWidth: 1,
+                        style={({pressed}) => ({
+                            paddingHorizontal: 18,
+                            paddingVertical: 12,
+                            borderRadius: 24,
+                            borderWidth: 2.5,
                             borderColor: formData.transfer_type === type
-                                ? (scheme === 'dark' ? '#3B82F6' : '#2563EB')
-                                : (scheme === 'dark' ? '#374151' : '#D1D5DB'),
+                                ? activeColor
+                                : (scheme === 'dark' ? '#6B7280' : '#9CA3AF'),
                             backgroundColor: formData.transfer_type === type
-                                ? (scheme === 'dark' ? '#1E3A5F' : '#DBEAFE')
-                                : 'transparent',
-                        }}
+                                ? `${activeColor}${scheme === 'dark' ? '4D' : '33'}`
+                                : (scheme === 'dark' ? 'rgba(75, 85, 99, 0.5)' : 'rgba(255, 255, 255, 0.9)'),
+                            shadowColor: formData.transfer_type === type ? activeColor : '#000',
+                            shadowOffset: {width: 0, height: 3},
+                            shadowOpacity: formData.transfer_type === type ? 0.4 : 0.15,
+                            shadowRadius: formData.transfer_type === type ? 6 : 3,
+                            elevation: formData.transfer_type === type ? 6 : 3,
+                            transform: [{scale: pressed ? 0.92 : 1}],
+                            opacity: pressed ? 0.7 : 1,
+                        })}
                     >
-                        <ThemedText style={{fontSize: 13}}>
+                        <ThemedText style={{
+                            fontSize: 15,
+                            fontWeight: formData.transfer_type === type ? '700' : '600',
+                            letterSpacing: 0.3,
+                            color: formData.transfer_type === type
+                                ? (scheme === 'dark' ? '#FFFFFF' : activeColor)
+                                : (scheme === 'dark' ? '#D1D5DB' : '#374151')
+                        }}>
                             {t(`membership.transferTypes.${type}`)}
                         </ThemedText>
                     </Pressable>
@@ -311,7 +327,7 @@ export function MembershipAccordion({userId}: MembershipAccordionProps) {
                         alignItems: 'center',
                         backgroundColor: isSubmitting
                             ? (scheme === 'dark' ? '#374151' : '#D1D5DB')
-                            : (scheme === 'dark' ? '#3B82F6' : '#2563EB'),
+                            : (activeColor),
                         opacity: isSubmitting ? 0.7 : 1,
                     }}
                 >
@@ -376,7 +392,7 @@ export function MembershipAccordion({userId}: MembershipAccordionProps) {
                                                 style={{padding: 4}}
                                             >
                                                 <ThemedText style={{
-                                                    color: scheme === 'dark' ? '#3B82F6' : '#2563EB',
+                                                    color: activeColor,
                                                     fontSize: 14
                                                 }}>{t('common.edit')}</ThemedText>
                                             </Pressable>
@@ -436,7 +452,7 @@ export function MembershipAccordion({userId}: MembershipAccordionProps) {
                     }}
                 >
                     <ThemedText style={{
-                        color: scheme === 'dark' ? '#3B82F6' : '#2563EB',
+                        color: activeColor,
                         fontWeight: '600'
                     }}>
                         {t('membership.addButton')}

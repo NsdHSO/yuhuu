@@ -1,5 +1,8 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { GlowVariant } from '../constants/glowColors';
+import { getItem, setItem } from '@yuhuu/storage';
+
+const STORAGE_KEY = 'glow-variant';
 
 type GlowVariantContextType = {
   glowVariant: GlowVariant;
@@ -22,7 +25,30 @@ export function GlowVariantProvider({
   children,
   initialVariant = 'cool',
 }: GlowVariantProviderProps) {
-  const [glowVariant, setGlowVariant] = useState<GlowVariant>(initialVariant);
+  const [glowVariant, setGlowVariantState] = useState<GlowVariant>(initialVariant);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Load persisted variant on mount
+  useEffect(() => {
+    getItem(STORAGE_KEY)
+      .then((stored) => {
+        if (stored && ['subtle', 'vibrant', 'warm', 'cool'].includes(stored)) {
+          setGlowVariantState(stored as GlowVariant);
+        }
+      })
+      .finally(() => setIsLoaded(true));
+  }, []);
+
+  // Persist variant changes
+  const setGlowVariant = (variant: GlowVariant) => {
+    setGlowVariantState(variant);
+    setItem(STORAGE_KEY, variant);
+  };
+
+  // Don't render children until we've loaded the persisted value
+  if (!isLoaded) {
+    return null;
+  }
 
   return (
     <GlowVariantContext.Provider value={{ glowVariant, setGlowVariant }}>

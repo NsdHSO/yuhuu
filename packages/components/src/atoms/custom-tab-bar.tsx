@@ -9,6 +9,8 @@ import Animated, {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 // import { BlurView } from 'expo-blur'; // TEMPORARILY DISABLED - expo-blur broken
 import { useColorScheme } from "../hooks/use-color-scheme";
+import { useGlowVariant } from "../hooks/useGlowVariant";
+import { getGlowColor } from "../constants/glowColors";
 
 export function CustomTabBar({
   state,
@@ -17,6 +19,9 @@ export function CustomTabBar({
 }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
   const scheme = useColorScheme() ?? "light";
+  const { glowVariant } = useGlowVariant();
+  const activeColor = getGlowColor(glowVariant, scheme);
+  const inactiveColor = scheme === "dark" ? "#9CA3AF" : "#6B7280";
 
   // Filter visible routes (exclude href: null)
   const visibleRoutes = state.routes.filter((route) => {
@@ -135,13 +140,7 @@ export function CustomTabBar({
               {options.tabBarIcon
                 ? options.tabBarIcon({
                     focused: isFocused,
-                    color: isFocused
-                      ? scheme === "dark"
-                        ? "#60A5FA"
-                        : "#3B82F6"
-                      : scheme === "dark"
-                        ? "#9CA3AF"
-                        : "#6B7280",
+                    color: isFocused ? activeColor : inactiveColor,
                     size: 28,
                   })
                 : null}
@@ -151,13 +150,7 @@ export function CustomTabBar({
                     style={[
                       styles.label,
                       {
-                        color: isFocused
-                          ? scheme === "dark"
-                            ? "#60A5FA"
-                            : "#3B82F6"
-                          : scheme === "dark"
-                            ? "#9CA3AF"
-                            : "#6B7280",
+                        color: isFocused ? activeColor : inactiveColor,
                       },
                     ]}
                   >
