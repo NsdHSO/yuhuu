@@ -5,10 +5,13 @@
  * based on biometric availability on Samsung A52s 5G and all devices.
  *
  * REQUIREMENT: If biometrics are NOT available, the Security section must NOT appear.
+ *
+ * NOTE: Biometric controls now live inside SettingsAccordion (collapsed by default).
+ * Tests that check visibility must expand the accordion first.
  */
 
 import React from 'react';
-import {render, waitFor} from '@testing-library/react-native';
+import {act, fireEvent, render, waitFor} from '@testing-library/react-native';
 import {Alert, Platform} from 'react-native';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 
@@ -22,6 +25,7 @@ const translations: Record<string, string> = {
     'profile.firstNamePlaceholder': 'First name',
     'profile.lastNamePlaceholder': 'Last name',
     'profile.phonePlaceholder': 'Phone',
+    'profile.settings': 'Settings',
     'profile.security': 'Security',
     'profile.biometricLabel': 'Face ID / Touch ID',
     'profile.biometricLabelAndroid': 'Biometric Login',
@@ -42,6 +46,9 @@ const translations: Record<string, string> = {
     'profile.saveSuccess': 'Profile saved.',
     'profile.saveError': 'Failed to save profile.',
     'profile.loadError': 'Failed to load profile.',
+    'profile.personalInfo': 'Personal Info',
+    'profile.glowTheme': 'Glow Theme',
+    'profile.noName': 'No Name',
     'common.success': 'Success',
     'common.error': 'Error',
     'common.cancel': 'Cancel',
@@ -153,6 +160,17 @@ jest.mock('@/providers/AuthProvider', () => ({
     useAuth: () => mockUseAuth(),
 }));
 
+/**
+ * Helper to expand the Settings accordion (collapsed by default)
+ * so biometric controls become visible.
+ */
+async function expandSettingsAccordion(utils: ReturnType<typeof render>) {
+    const header = utils.getByTestId('settings-header');
+    await act(async () => {
+        fireEvent.press(header);
+    });
+}
+
 describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
     const originalPlatform = Platform.OS;
     let queryClient: QueryClient;
@@ -210,90 +228,84 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
     });
 
     // ================================================================
-    // CRITICAL: Security section visibility control
+    // CRITICAL: Biometric toggle hidden when biometrics unavailable
     // ================================================================
 
-    describe('CRITICAL: Security section must hide when biometrics unavailable', () => {
-        it('should NOT show Security section when isBiometricAvailable returns false', async () => {
+    describe('CRITICAL: Biometric toggle must hide when biometrics unavailable', () => {
+        it('should NOT show biometric toggle when isBiometricAvailable returns false', async () => {
             mockIsBiometricAvailable.mockResolvedValue(false);
 
-            const {queryByTestId} = renderWithQueryClient(<ProfileScreen/>);
+            const utils = renderWithQueryClient(<ProfileScreen/>);
+            await expandSettingsAccordion(utils);
 
             await waitFor(() => {
-                expect(queryByTestId('biometric-section')).toBeNull();
+                expect(utils.queryByTestId('settings-biometric-toggle')).toBeNull();
             });
         });
 
-        it('should NOT show biometric toggle when unavailable', async () => {
+        it('should NOT show biometric label text when unavailable', async () => {
             mockIsBiometricAvailable.mockResolvedValue(false);
 
-            const {queryByTestId} = renderWithQueryClient(<ProfileScreen/>);
+            const utils = renderWithQueryClient(<ProfileScreen/>);
+            await expandSettingsAccordion(utils);
 
             await waitFor(() => {
-                expect(queryByTestId('biometric-toggle')).toBeNull();
+                expect(utils.queryByText('Biometric Login')).toBeNull();
+                expect(utils.queryByText('Face ID / Touch ID')).toBeNull();
             });
         });
 
-        it('should NOT show biometric label when unavailable', async () => {
+        it('should NOT show biometric description text when unavailable', async () => {
             mockIsBiometricAvailable.mockResolvedValue(false);
 
-            const {queryByTestId} = renderWithQueryClient(<ProfileScreen/>);
+            const utils = renderWithQueryClient(<ProfileScreen/>);
+            await expandSettingsAccordion(utils);
 
             await waitFor(() => {
-                expect(queryByTestId('biometric-label')).toBeNull();
-            });
-        });
-
-        it('should NOT show biometric description when unavailable', async () => {
-            mockIsBiometricAvailable.mockResolvedValue(false);
-
-            const {queryByTestId} = renderWithQueryClient(<ProfileScreen/>);
-
-            await waitFor(() => {
-                expect(queryByTestId('biometric-description')).toBeNull();
+                expect(utils.queryByText('Use biometrics to sign in quickly')).toBeNull();
+                expect(utils.queryByText('Use Face ID or Touch ID to sign in quickly')).toBeNull();
             });
         });
     });
 
     // ================================================================
-    // CRITICAL: Security section must show when biometrics available
+    // CRITICAL: Biometric toggle must show when biometrics available
     // ================================================================
 
-    describe('CRITICAL: Security section must show when biometrics available', () => {
-        it('should SHOW Security section when isBiometricAvailable returns true', async () => {
+    describe('CRITICAL: Biometric toggle must show when biometrics available', () => {
+        it('should SHOW biometric toggle when isBiometricAvailable returns true', async () => {
             mockIsBiometricAvailable.mockResolvedValue(true);
 
-            const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
+            const utils = renderWithQueryClient(<ProfileScreen/>);
+            await expandSettingsAccordion(utils);
 
-            const section = await findByTestId('biometric-section');
-            expect(section).toBeTruthy();
+            await waitFor(() => {
+                expect(utils.getByTestId('settings-biometric-toggle')).toBeTruthy();
+            });
         });
 
-        it('should SHOW biometric toggle when available', async () => {
+        it('should SHOW biometric label when available on Android', async () => {
+            Object.defineProperty(Platform, 'OS', {value: 'android'});
             mockIsBiometricAvailable.mockResolvedValue(true);
 
-            const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
+            const utils = renderWithQueryClient(<ProfileScreen/>);
+            await expandSettingsAccordion(utils);
 
-            const toggle = await findByTestId('biometric-toggle');
-            expect(toggle).toBeTruthy();
+            await waitFor(() => {
+                expect(utils.getByText('Biometric Login')).toBeTruthy();
+            });
         });
 
-        it('should SHOW biometric label when available', async () => {
+        it('should SHOW biometric description when available on Android', async () => {
+            Object.defineProperty(Platform, 'OS', {value: 'android'});
             mockIsBiometricAvailable.mockResolvedValue(true);
 
-            const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
+            const utils = renderWithQueryClient(<ProfileScreen/>);
+            await expandSettingsAccordion(utils);
 
-            const label = await findByTestId('biometric-label');
-            expect(label).toBeTruthy();
-        });
-
-        it('should SHOW biometric description when available', async () => {
-            mockIsBiometricAvailable.mockResolvedValue(true);
-
-            const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
-
-            const desc = await findByTestId('biometric-description');
-            expect(desc).toBeTruthy();
+            await waitFor(() => {
+                expect(utils.getByText('Use biometrics to sign in quickly')).toBeTruthy();
+            });
         });
     });
 
@@ -301,44 +313,48 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
     // Samsung A52s 5G: Biometric unavailable scenarios
     // ================================================================
 
-    describe('Samsung A52s 5G: Security section hidden when biometrics unavailable', () => {
-        it('should hide Security section when biometric hardware absent', async () => {
+    describe('Samsung A52s 5G: Biometric toggle hidden when biometrics unavailable', () => {
+        it('should hide biometric toggle when biometric hardware absent', async () => {
             mockIsBiometricAvailable.mockResolvedValue(false);
 
-            const {queryByTestId} = renderWithQueryClient(<ProfileScreen/>);
+            const utils = renderWithQueryClient(<ProfileScreen/>);
+            await expandSettingsAccordion(utils);
 
             await waitFor(() => {
-                expect(queryByTestId('biometric-section')).toBeNull();
+                expect(utils.queryByTestId('settings-biometric-toggle')).toBeNull();
             });
         });
 
-        it('should hide Security section when nothing enrolled', async () => {
+        it('should hide biometric toggle when nothing enrolled', async () => {
             mockIsBiometricAvailable.mockResolvedValue(false);
 
-            const {queryByTestId} = renderWithQueryClient(<ProfileScreen/>);
+            const utils = renderWithQueryClient(<ProfileScreen/>);
+            await expandSettingsAccordion(utils);
 
             await waitFor(() => {
-                expect(queryByTestId('biometric-section')).toBeNull();
+                expect(utils.queryByTestId('settings-biometric-toggle')).toBeNull();
             });
         });
 
-        it('should hide Security section during biometric initialization delay', async () => {
+        it('should hide biometric toggle during biometric initialization delay', async () => {
             mockIsBiometricAvailable.mockResolvedValue(false);
 
-            const {queryByTestId} = renderWithQueryClient(<ProfileScreen/>);
+            const utils = renderWithQueryClient(<ProfileScreen/>);
+            await expandSettingsAccordion(utils);
 
             await waitFor(() => {
-                expect(queryByTestId('biometric-section')).toBeNull();
+                expect(utils.queryByTestId('settings-biometric-toggle')).toBeNull();
             });
         });
 
-        it('should hide Security section when availability check throws', async () => {
+        it('should hide biometric toggle when availability check throws', async () => {
             mockIsBiometricAvailable.mockRejectedValue(new Error('Availability check failed'));
 
-            const {queryByTestId} = renderWithQueryClient(<ProfileScreen/>);
+            const utils = renderWithQueryClient(<ProfileScreen/>);
+            await expandSettingsAccordion(utils);
 
             await waitFor(() => {
-                expect(queryByTestId('biometric-section')).toBeNull();
+                expect(utils.queryByTestId('settings-biometric-toggle')).toBeNull();
             });
         });
     });
@@ -347,82 +363,89 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
     // Platform-specific labels
     // ================================================================
 
-    describe('Platform-specific labels in Security section', () => {
+    describe('Platform-specific labels in Settings accordion', () => {
         it('should show "Face ID / Touch ID" label on iOS when available', async () => {
             Object.defineProperty(Platform, 'OS', {value: 'ios'});
             mockIsBiometricAvailable.mockResolvedValue(true);
 
-            const {findByText} = renderWithQueryClient(<ProfileScreen/>);
+            const utils = renderWithQueryClient(<ProfileScreen/>);
+            await expandSettingsAccordion(utils);
 
-            const label = await findByText('Face ID / Touch ID');
-            expect(label).toBeTruthy();
+            await waitFor(() => {
+                expect(utils.getByText('Face ID / Touch ID')).toBeTruthy();
+            });
         });
 
         it('should show "Biometric Login" label on Android when available', async () => {
             Object.defineProperty(Platform, 'OS', {value: 'android'});
             mockIsBiometricAvailable.mockResolvedValue(true);
 
-            const {findByText} = renderWithQueryClient(<ProfileScreen/>);
+            const utils = renderWithQueryClient(<ProfileScreen/>);
+            await expandSettingsAccordion(utils);
 
-            const label = await findByText('Biometric Login');
-            expect(label).toBeTruthy();
+            await waitFor(() => {
+                expect(utils.getByText('Biometric Login')).toBeTruthy();
+            });
         });
 
         it('should show iOS-specific description on iOS', async () => {
             Object.defineProperty(Platform, 'OS', {value: 'ios'});
             mockIsBiometricAvailable.mockResolvedValue(true);
 
-            const {findByText} = renderWithQueryClient(<ProfileScreen/>);
+            const utils = renderWithQueryClient(<ProfileScreen/>);
+            await expandSettingsAccordion(utils);
 
-            const desc = await findByText('Use Face ID or Touch ID to sign in quickly');
-            expect(desc).toBeTruthy();
+            await waitFor(() => {
+                expect(utils.getByText('Use Face ID or Touch ID to sign in quickly')).toBeTruthy();
+            });
         });
 
         it('should show Android-specific description on Android', async () => {
             Object.defineProperty(Platform, 'OS', {value: 'android'});
             mockIsBiometricAvailable.mockResolvedValue(true);
 
-            const {findByText} = renderWithQueryClient(<ProfileScreen/>);
+            const utils = renderWithQueryClient(<ProfileScreen/>);
+            await expandSettingsAccordion(utils);
 
-            const desc = await findByText('Use biometrics to sign in quickly');
-            expect(desc).toBeTruthy();
+            await waitFor(() => {
+                expect(utils.getByText('Use biometrics to sign in quickly')).toBeTruthy();
+            });
         });
     });
 
     // ================================================================
-    // Integration: Profile + Security section coexistence
+    // Integration: Profile + Biometric toggle coexistence
     // ================================================================
 
-    describe('Integration: Profile fields visible, Security section conditional', () => {
-        it('should show profile fields but NOT Security when biometrics unavailable', async () => {
+    describe('Integration: Profile fields visible, biometric toggle conditional', () => {
+        it('should show profile fields but NOT biometric toggle when biometrics unavailable', async () => {
             mockIsBiometricAvailable.mockResolvedValue(false);
 
-            const {
-                queryByTestId,
-                getByText
-            } = renderWithQueryClient(<ProfileScreen/>);
+            const utils = renderWithQueryClient(<ProfileScreen/>);
 
-            const saveButton = getByText('Save');
+            const saveButton = utils.getByText('Save');
             expect(saveButton).toBeTruthy();
 
+            await expandSettingsAccordion(utils);
+
             await waitFor(() => {
-                expect(queryByTestId('biometric-section')).toBeNull();
+                expect(utils.queryByTestId('settings-biometric-toggle')).toBeNull();
             });
         });
 
-        it('should show both profile fields AND Security when biometrics available', async () => {
+        it('should show both profile fields AND biometric toggle when biometrics available', async () => {
             mockIsBiometricAvailable.mockResolvedValue(true);
 
-            const {
-                findByTestId,
-                getByText
-            } = renderWithQueryClient(<ProfileScreen/>);
+            const utils = renderWithQueryClient(<ProfileScreen/>);
 
-            const saveButton = getByText('Save');
+            const saveButton = utils.getByText('Save');
             expect(saveButton).toBeTruthy();
 
-            const section = await findByTestId('biometric-section');
-            expect(section).toBeTruthy();
+            await expandSettingsAccordion(utils);
+
+            await waitFor(() => {
+                expect(utils.getByTestId('settings-biometric-toggle')).toBeTruthy();
+            });
         });
 
         it('should not skip preference check when available', async () => {
@@ -453,8 +476,8 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
     // Loading and error states
     // ================================================================
 
-    describe('Loading and error states should not show Security section', () => {
-        it('should not show Security section during profile loading', async () => {
+    describe('Loading and error states should not show biometric toggle', () => {
+        it('should not show biometric toggle during profile loading', async () => {
             mockUseMyProfileQuery.mockReturnValue({
                 data: undefined,
                 isLoading: true,
@@ -463,10 +486,10 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
 
             const {queryByTestId} = renderWithQueryClient(<ProfileScreen/>);
 
-            expect(queryByTestId('biometric-section')).toBeNull();
+            expect(queryByTestId('settings-biometric-toggle')).toBeNull();
         });
 
-        it('should not show Security section on profile error', async () => {
+        it('should not show biometric toggle on profile error', async () => {
             mockUseMyProfileQuery.mockReturnValue({
                 data: undefined,
                 isLoading: false,
@@ -475,7 +498,7 @@ describe('ProfileScreen - Security Section Visibility (CRITICAL)', () => {
 
             const {queryByTestId} = renderWithQueryClient(<ProfileScreen/>);
 
-            expect(queryByTestId('biometric-section')).toBeNull();
+            expect(queryByTestId('settings-biometric-toggle')).toBeNull();
         });
     });
 });
