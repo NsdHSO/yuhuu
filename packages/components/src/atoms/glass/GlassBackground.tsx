@@ -1,5 +1,6 @@
 import { Dimensions, StyleSheet, View } from "react-native";
 import { useColorScheme } from "../../hooks/use-color-scheme";
+import { useGlowVariant } from "../../hooks/useGlowVariant";
 import { glowColors } from "../../constants/glowColors";
 import type { GlowVariant } from "../../constants/glowColors";
 
@@ -9,9 +10,11 @@ type GlassBackgroundProps = {
 };
 
 export function GlassBackground({
-  variant = "subtle",
+  variant,
   children,
 }: GlassBackgroundProps) {
+  const { glowVariant } = useGlowVariant();
+  const resolvedVariant = variant ?? glowVariant;
   const scheme = useColorScheme() ?? "light";
   const { width, height } = Dimensions.get("window");
 
@@ -21,7 +24,7 @@ export function GlassBackground({
     dark: "#0F172A",  // Deep navy for dark mode
   };
 
-  const colors = glowColors[variant][scheme];
+  const colors = glowColors[resolvedVariant][scheme];
   const backgroundColor = backgroundColors[scheme];
 
   return (
