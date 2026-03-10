@@ -327,7 +327,6 @@ export function MembershipAccordion({userId}: MembershipAccordionProps) {
         <GlassAccordion
             title={t('membership.title')}
             variant="frosted"
-            glowVariant="vibrant"
             enableElectric={true}
             enableWaves={false}
             testID="membership-accordion"
