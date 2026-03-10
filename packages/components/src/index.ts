@@ -16,6 +16,7 @@ export * from './hooks/useLanguage';
 export * from './hooks/use-color-scheme';
 export * from './hooks/use-theme-color';
 export * from './hooks/useElectricBorder';
+export * from './hooks/useGlowVariant';
 
 // Atoms
 export * from './atoms/accordion';
