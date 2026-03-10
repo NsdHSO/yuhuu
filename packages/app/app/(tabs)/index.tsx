@@ -17,7 +17,7 @@ export default function HomeScreen() {
   const isMember = hasRole("Member");
   if (isMember) return <Redirect href="/profile" />;
   return (
-    <GlassBackground variant="vibrant">
+    <GlassBackground>
       <TabScreenWrapper contentContainerStyle={styles.container}>
         <ThemedText type="title" className="mb-2">
           {t("home.welcome", { name: user?.name ?? user?.email ?? "" })}{" "}

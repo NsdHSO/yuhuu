@@ -75,7 +75,7 @@ export default function AdminScreen() {
   };
 
   return (
-    <GlassBackground variant="vibrant">
+    <GlassBackground>
       <TabScreenWrapper testID="admin-container" contentContainerStyle={styles.container}>
           {/* Dinner Graph Section - Expandable */}
           <View testID="dinner-graph-section" style={styles.section}>

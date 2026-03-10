@@ -81,7 +81,7 @@ export default function SupperScreen() {
     };
 
     return (
-        <GlassBackground variant="vibrant">
+        <GlassBackground>
             <TabScreenWrapper contentContainerStyle={styles.scrollContent}>
                     {/* Calendar for date selection */}
                     <View style={styles.section}>
