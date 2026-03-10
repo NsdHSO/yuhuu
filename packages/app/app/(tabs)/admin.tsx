@@ -82,7 +82,6 @@ export default function AdminScreen() {
             <GlassAccordion
               title={t("admin.dinnerParticipation")}
               variant="frosted"
-              glowVariant="vibrant"
               defaultExpanded={true}
               enableElectric={true}
               enableWaves={false}
@@ -113,7 +112,6 @@ export default function AdminScreen() {
             <GlassAccordion
               title={t("admin.searchUser")}
               variant="frosted"
-              glowVariant="vibrant"
               defaultExpanded={true}
               enableElectric={true}
               enableWaves={false}
@@ -174,7 +172,6 @@ export default function AdminScreen() {
             <GlassAccordion
               title={t("admin.viewParticipants")}
               variant="frosted"
-              glowVariant="vibrant"
               defaultExpanded={false}
               enableElectric={true}
               enableWaves={false}
