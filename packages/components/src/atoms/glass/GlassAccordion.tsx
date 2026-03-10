@@ -164,7 +164,7 @@ export function GlassAccordion({
         {
           borderRadius: borderRadius,
           borderWidth: 1,
-          borderColor: scheme === 'dark' ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.1)',
+          borderColor: `${electricColor}${scheme === 'dark' ? '40' : '33'}`, // 25%/20% opacity
           backgroundColor: scheme === 'dark' ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.4)',
           overflow: 'hidden',
         }
