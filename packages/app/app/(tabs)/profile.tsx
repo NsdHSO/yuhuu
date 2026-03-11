@@ -23,7 +23,7 @@ import {
     ThemedView,
 } from "@yuhuu/components";
 import { Stack } from "expo-router";
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Alert, View } from "react-native";
 
@@ -39,6 +39,7 @@ export default function ProfileScreen() {
   const [firstName, setfirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
+  const [gender, setGender] = useState<'male' | 'female' | null>(null);
   const [biometricAvailable, setBiometricAvailable] = useState(false);
   const [biometricEnabled, setBiometricEnabled] = useState(false);
   const { user } = useAuth();
@@ -48,6 +49,7 @@ export default function ProfileScreen() {
       setfirstName(profile.middle_name ?? "");
       setLastName(profile.last_name ?? "");
       setPhone(profile.phone ?? "");
+      setGender(profile.gender as 'male' | 'female' | null || null);
     }
   }, [profile]);
 
@@ -66,11 +68,16 @@ export default function ProfileScreen() {
     })();
   }, []);
 
+  const handleGenderChange = useCallback((value: 'male' | 'female') => {
+    setGender(value);
+  }, []);
+
   function onSave() {
     const payload = {
       middle_name: firstName || null,
       last_name: lastName || null,
       phone: phone || null,
+      gender: gender || null,
     } as any;
     saveMutation.mutate(
       {
@@ -183,9 +190,11 @@ export default function ProfileScreen() {
             firstName={firstName}
             lastName={lastName}
             phone={phone}
+            gender={gender}
             onFirstNameChange={setfirstName}
             onLastNameChange={setLastName}
             onPhoneChange={setPhone}
+            onGenderChange={handleGenderChange}
             onSave={onSave}
             isSaving={saveMutation.isPending}
             testID="personal-info"
