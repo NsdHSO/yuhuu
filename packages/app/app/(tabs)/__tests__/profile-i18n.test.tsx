@@ -219,7 +219,7 @@ describe('ProfileScreen - i18n Migration', () => {
     });
 
     it('should use t("profile.settings") for settings section title', async () => {
-        const utils = renderWithQueryClient(<ProfileScreen/>);
+        const _utils = renderWithQueryClient(<ProfileScreen/>);
         expect(mockT).toHaveBeenCalledWith('profile.settings');
     });
 
