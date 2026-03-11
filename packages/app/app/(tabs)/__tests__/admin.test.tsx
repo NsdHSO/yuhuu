@@ -28,6 +28,28 @@ jest.mock('react-native-safe-area-context', () => ({
     },
 }));
 
+// Mock roles hooks
+const mockUseMyRolesQuery = jest.fn();
+jest.mock('@/features/roles/meRoles', () => ({
+    useMyRolesQuery: (options: any) => mockUseMyRolesQuery(options),
+}));
+
+// Mock bootstrap gate
+const mockUseBootstrapGate = jest.fn();
+jest.mock('@/features/bootstrap/api', () => ({
+    useBootstrapGate: () => mockUseBootstrapGate(),
+}));
+
+// Mock expo-router redirect
+const mockRedirect = jest.fn();
+jest.mock('expo-router', () => ({
+    Redirect: ({href}: any) => {
+        mockRedirect(href);
+        const {Text} = require('react-native');
+        return require('react').createElement(Text, {testID: 'redirect'}, `Redirecting to ${href}`);
+    },
+}));
+
 // Mock react-i18next - return English values from translation keys
 const translations: Record<string, string> = {
     'admin.dinnerParticipation': 'Dinner Participation Graph',
@@ -249,6 +271,10 @@ function renderWithQueryClient(component: React.ReactElement) {
 describe('AdminScreen', () => {
     beforeEach(() => {
         jest.clearAllMocks();
+        mockUseBootstrapGate.mockReturnValue(true);
+        mockUseMyRolesQuery.mockReturnValue({
+            data: [{role_name: 'Admin', role_id: 1}],
+        });
         mockUseDinnerStatsQuery.mockReturnValue({
             data: undefined,
             isLoading: false,
@@ -263,6 +289,99 @@ describe('AdminScreen', () => {
             data: undefined,
             isLoading: false,
             error: null,
+        });
+    });
+
+    describe('Route Protection - Admin Role Required', () => {
+        it('should redirect non-admin users to profile', () => {
+            // Given: User has only Member role (NOT Admin)
+            mockUseMyRolesQuery.mockReturnValue({
+                data: [{role_name: 'Member', role_id: 2}],
+            });
+
+            // When: Admin screen renders
+            const {getByTestId} = renderWithQueryClient(<AdminScreen/>);
+
+            // Then: User should be redirected to profile
+            expect(mockRedirect).toHaveBeenCalledWith('/profile');
+            expect(getByTestId('redirect')).toBeTruthy();
+        });
+
+        it('should redirect Leader users without Admin role to profile', () => {
+            // Given: User has Leader role but NOT Admin
+            mockUseMyRolesQuery.mockReturnValue({
+                data: [
+                    {role_name: 'Leader', role_id: 3},
+                    {role_name: 'Member', role_id: 2},
+                ],
+            });
+
+            // When: Admin screen renders
+            const {getByTestID} = renderWithQueryClient(<AdminScreen/>);
+
+            // Then: User should be redirected to profile
+            expect(mockRedirect).toHaveBeenCalledWith('/profile');
+        });
+
+        it('should redirect when roles are loading', () => {
+            // Given: Roles are still loading
+            mockUseMyRolesQuery.mockReturnValue({
+                data: undefined,
+            });
+
+            // When: Admin screen renders
+            renderWithQueryClient(<AdminScreen/>);
+
+            // Then: User should be redirected (avoid unauthorized access during loading)
+            expect(mockRedirect).toHaveBeenCalledWith('/profile');
+        });
+
+        it('should redirect when user has no roles', () => {
+            // Given: User has empty roles array
+            mockUseMyRolesQuery.mockReturnValue({
+                data: [],
+            });
+
+            // When: Admin screen renders
+            renderWithQueryClient(<AdminScreen/>);
+
+            // Then: User should be redirected
+            expect(mockRedirect).toHaveBeenCalledWith('/profile');
+        });
+
+        it('should allow Admin users to access the screen', () => {
+            // Given: User has Admin role
+            mockUseMyRolesQuery.mockReturnValue({
+                data: [{role_name: 'Admin', role_id: 1}],
+            });
+
+            // When: Admin screen renders
+            const {getByTestId, queryByTestId} = renderWithQueryClient(<AdminScreen/>);
+
+            // Then: No redirect should occur
+            expect(mockRedirect).not.toHaveBeenCalled();
+            expect(queryByTestId('redirect')).toBeNull();
+            // And: Admin content should be rendered
+            expect(getByTestId('admin-container')).toBeTruthy();
+        });
+
+        it('should allow users with Admin role among multiple roles', () => {
+            // Given: User has Admin role plus other roles
+            mockUseMyRolesQuery.mockReturnValue({
+                data: [
+                    {role_name: 'Admin', role_id: 1},
+                    {role_name: 'Leader', role_id: 3},
+                    {role_name: 'Member', role_id: 2},
+                ],
+            });
+
+            // When: Admin screen renders
+            const {getByTestId} = renderWithQueryClient(<AdminScreen/>);
+
+            // Then: No redirect should occur
+            expect(mockRedirect).not.toHaveBeenCalled();
+            // And: Admin content should be rendered
+            expect(getByTestId('admin-container')).toBeTruthy();
         });
     });
 
