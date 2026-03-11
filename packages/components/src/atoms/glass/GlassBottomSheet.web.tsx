@@ -1,10 +1,5 @@
-import React, {forwardRef, useEffect} from 'react';
-import {View, StyleSheet} from 'react-native';
-import {
-  BottomSheetModal,
-  BottomSheetBackdropProps,
-  BottomSheetView,
-} from '@gorhom/bottom-sheet';
+import React, {forwardRef, useImperativeHandle, useState, useCallback, useEffect} from 'react';
+import {Modal, View, Pressable, StyleSheet, Animated as RNAnimated} from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -12,8 +7,6 @@ import Animated, {
   withSequence,
   withTiming,
   Easing,
-  interpolate,
-  Extrapolate,
 } from 'react-native-reanimated';
 import {useColorScheme} from '../../hooks/use-color-scheme';
 import {useGlowVariant} from '../../hooks/useGlowVariant';
@@ -30,7 +23,8 @@ export type GlassBottomSheetProps = {
   testID?: string;
 };
 
-export const GlassBottomSheet = forwardRef<BottomSheetModal, GlassBottomSheetProps>(
+// Web version uses Modal instead of BottomSheetModal
+export const GlassBottomSheet = forwardRef<any, GlassBottomSheetProps>(
   (
     {
       children,
@@ -42,79 +36,95 @@ export const GlassBottomSheet = forwardRef<BottomSheetModal, GlassBottomSheetPro
     },
     ref
   ) => {
+    const [visible, setVisible] = useState(false);
+    const slideAnim = useState(() => new RNAnimated.Value(0))[0];
+
+    // Expose present/dismiss methods to match native BottomSheetModal API
+    useImperativeHandle(ref, () => ({
+      present: () => {
+        setVisible(true);
+        RNAnimated.spring(slideAnim, {
+          toValue: 1,
+          useNativeDriver: true,
+          tension: 50,
+          friction: 8,
+        }).start();
+      },
+      dismiss: () => {
+        RNAnimated.timing(slideAnim, {
+          toValue: 0,
+          duration: 250,
+          useNativeDriver: true,
+        }).start(() => setVisible(false));
+      },
+    }));
+
+    const handleBackdropPress = useCallback(() => {
+      if (enableBackdropDismiss) {
+        RNAnimated.timing(slideAnim, {
+          toValue: 0,
+          duration: 250,
+          useNativeDriver: true,
+        }).start(() => setVisible(false));
+      }
+    }, [enableBackdropDismiss, slideAnim]);
+
     return (
-      <BottomSheetModal
-        ref={ref}
-        snapPoints={snapPoints}
-        enableDismissOnClose={true}
-        backdropComponent={(props) => (
-          <GlassBackdrop
-            {...props}
-            enableDismiss={enableBackdropDismiss}
-            testID={testID ? `${testID}-backdrop` : undefined}
-          />
-        )}
-        backgroundComponent={(props) => (
-          <GlassBackground
-            {...props}
-            variant={variant}
-            enableWaves={enableWaves}
-            testID={testID ? `${testID}-background` : undefined}
-          />
-        )}
-        handleComponent={GlassHandle}
-        enablePanDownToClose={true}
-        enableOverDrag={false}
-        keyboardBehavior="interactive"
-        android_keyboardInputMode="adjustResize"
+      <Modal
+        visible={visible}
+        transparent
+        animationType="none"
+        onRequestClose={handleBackdropPress}
       >
-        <BottomSheetView>
-          {children}
-        </BottomSheetView>
-      </BottomSheetModal>
+        <Pressable
+          style={styles.backdrop}
+          onPress={handleBackdropPress}
+          testID={testID ? `${testID}-backdrop` : undefined}
+        >
+          <RNAnimated.View
+            style={[
+              styles.bottomSheet,
+              {
+                transform: [
+                  {
+                    translateY: slideAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [600, 0],
+                    }),
+                  },
+                ],
+              },
+            ]}
+            onStartShouldSetResponder={() => true}
+          >
+            <GlassBackground
+              variant={variant}
+              enableWaves={enableWaves}
+              testID={testID ? `${testID}-background` : undefined}
+            >
+              <GlassHandle />
+              {children}
+            </GlassBackground>
+          </RNAnimated.View>
+        </Pressable>
+      </Modal>
     );
   }
 );
 
 GlassBottomSheet.displayName = 'GlassBottomSheet';
 
-const GlassBackdrop: React.FC<BottomSheetBackdropProps & {enableDismiss: boolean; testID?: string}> = ({
-  animatedIndex,
-  style,
-  testID,
-}) => {
-  const backdropStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(
-      animatedIndex.value,
-      [-1, 0],
-      [0, 0.4],
-      Extrapolate.CLAMP
-    ),
-  }));
-
-  return (
-    <Animated.View
-      testID={testID}
-      style={[
-        StyleSheet.absoluteFill,
-        {backgroundColor: 'rgba(0, 0, 0, 1)'},
-        backdropStyle,
-        style,
-      ]}
-      pointerEvents="auto"
-    />
-  );
-};
-
-const GlassBackground: React.FC<{variant: GlassVariant; enableWaves: boolean; testID?: string}> = ({
-  variant,
-  enableWaves,
-  testID,
-}) => {
+const GlassBackground: React.FC<{
+  variant: GlassVariant;
+  enableWaves: boolean;
+  testID?: string;
+  children: React.ReactNode;
+}> = ({variant, enableWaves, testID, children}) => {
   const scheme = useColorScheme() ?? 'light';
   const {glowVariant} = useGlowVariant();
   const activeColor = getGlowColor(glowVariant, scheme);
 
+  // Wave animations
   const wave1 = useSharedValue(0);
   const wave2 = useSharedValue(0);
   const wave3 = useSharedValue(0);
@@ -170,55 +180,65 @@ const GlassBackground: React.FC<{variant: GlassVariant; enableWaves: boolean; te
   });
 
   return (
-    <Animated.View
-      testID={testID}
+    <View
       style={[
-        StyleSheet.absoluteFill,
+        styles.glassContainer,
         {
-          borderTopLeftRadius: 24,
-          borderTopRightRadius: 24,
-          backgroundColor: GLASS_COLORS[scheme][variant],
-          overflow: 'hidden',
+          backgroundColor: scheme === 'dark'
+            ? `${activeColor}1A` // 10% opacity for dark mode
+            : `${activeColor}14`, // 8% opacity for light mode
         },
       ]}
+      testID={testID}
     >
-      {/* Subtle glow tint overlay */}
+      {/* Glass frosted layer */}
       <View
         style={[
           StyleSheet.absoluteFill,
-          {
-            backgroundColor: `${activeColor}${scheme === 'dark' ? '0A' : '08'}`, // 4%/3% opacity - very subtle
-          },
+          {backgroundColor: GLASS_COLORS[scheme][variant]},
         ]}
         pointerEvents="none"
       />
 
+      {/* Glow tint overlay */}
+      <View
+        style={[
+          StyleSheet.absoluteFill,
+          {backgroundColor: `${activeColor}${scheme === 'dark' ? '14' : '0F'}`},
+        ]}
+        pointerEvents="none"
+      />
+
+      {/* Wave animations */}
       {enableWaves && (
         <>
           <Animated.View
             style={[
               StyleSheet.absoluteFill,
-              {backgroundColor: `${activeColor}1A`}, // 10% opacity
+              {backgroundColor: `${activeColor}35`},
               wave1Style,
             ]}
           />
           <Animated.View
             style={[
               StyleSheet.absoluteFill,
-              {backgroundColor: `${activeColor}14`}, // 8% opacity
+              {backgroundColor: `${activeColor}28`},
               wave2Style,
             ]}
           />
           <Animated.View
             style={[
               StyleSheet.absoluteFill,
-              {backgroundColor: `${activeColor}18`}, // 9% opacity
+              {backgroundColor: `${activeColor}2D`},
               wave3Style,
             ]}
           />
         </>
       )}
-    </Animated.View>
+
+      {/* Content */}
+      {children}
+    </View>
   );
 };
 
@@ -243,6 +263,21 @@ const GlassHandle: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  backdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    justifyContent: 'flex-end',
+  },
+  bottomSheet: {
+    maxHeight: '80%',
+  },
+  glassContainer: {
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    overflow: 'hidden',
+    paddingHorizontal: 24,
+    paddingBottom: 32,
+  },
   handleContainer: {
     alignItems: 'center',
     paddingVertical: 12,

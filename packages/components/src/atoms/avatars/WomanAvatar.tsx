@@ -1,7 +1,14 @@
 import React from 'react';
 import Svg, { Circle, Path, SvgProps } from 'react-native-svg';
+import { useColorScheme } from '../../hooks/use-color-scheme';
+import { useGlowVariant } from '../../hooks/useGlowVariant';
+import { getGlowColor } from '../../constants/glowColors';
 
 export default function WomanAvatar(props: SvgProps) {
+  const scheme = useColorScheme() ?? 'light';
+  const { glowVariant } = useGlowVariant();
+  const activeColor = getGlowColor(glowVariant, scheme);
+
   return (
     <Svg
       viewBox="0 0 532 532"
@@ -17,7 +24,7 @@ export default function WomanAvatar(props: SvgProps) {
         d="m221.19 360.05-3.901-39.434 77.901-14.566 46 112-80 92-57-112z"
       />
       <Path
-        fill="#6c63ff"
+        fill={activeColor}
         d="M457.04 451.09a266.818 266.818 0 0 1-12.56 12.15C395.48 507.68 332.61 532 266 532c-61.41 0-119.64-20.67-166.75-58.72a.5.5 0 0 1-.08-.07c-1.43-1.15-2.84-2.32-4.25-3.51.25-.72.52-1.43.79-2.13 15.15-39.47 45.07-58.78 63.23-67.23 9-4.19 15.11-5.72 15.11-5.72l21.32-38.4 15.01 28 11.06 20.64 45.38 84.67 39.15-97.48 12.13-30.22 3.11-7.74L336 365.6l14 10.89 28.19 6.22 22.87 5.05 31.06 6.86c12.56 10.23 20.2 29.69 24.47 53.87.16.86.31 1.73.45 2.6"
       />
       <Path
