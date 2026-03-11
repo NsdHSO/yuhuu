@@ -1,15 +1,17 @@
 import React from 'react';
 import {View, Pressable} from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {GlassAccordion, GlassInput, useColorScheme, Colors, ThemedText, getGlowColor, useGlowVariant} from '@yuhuu/components';
+import {GlassAccordion, GlassInput, useColorScheme, Colors, ThemedText, getGlowColor, useGlowVariant, GenderPicker} from '@yuhuu/components';
 
 type PersonalInfoAccordionProps = {
     firstName: string;
     lastName: string;
     phone: string;
+    gender: 'male' | 'female' | null;
     onFirstNameChange: (value: string) => void;
     onLastNameChange: (value: string) => void;
     onPhoneChange: (value: string) => void;
+    onGenderChange: (value: 'male' | 'female') => void;
     onSave: () => void;
     isSaving: boolean;
     testID?: string;
@@ -19,9 +21,11 @@ export function PersonalInfoAccordion({
     firstName,
     lastName,
     phone,
+    gender,
     onFirstNameChange,
     onLastNameChange,
     onPhoneChange,
+    onGenderChange,
     onSave,
     isSaving,
     testID,
@@ -65,6 +69,12 @@ export function PersonalInfoAccordion({
                     keyboardType="phone-pad"
                     selectionColor={Colors[scheme].tint}
                     variant="tinted"
+                />
+
+                <GenderPicker
+                    testID={testID ? `${testID}-gender-picker` : undefined}
+                    value={gender}
+                    onChange={onGenderChange}
                 />
 
                 <Pressable
