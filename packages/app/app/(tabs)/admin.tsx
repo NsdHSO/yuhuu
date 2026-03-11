@@ -5,6 +5,8 @@ import {
     useUserAttendanceQuery,
 } from "@/features/admin/hooks";
 import { useParticipantsByDinnerQuery } from "@/features/dinners/hooks";
+import { useMyRolesQuery } from "@/features/roles/meRoles";
+import { useBootstrapGate } from "@/features/bootstrap/api";
 import {
     Colors,
     DinnerAttendance,
@@ -16,6 +18,7 @@ import {
     TabScreenWrapper,
     useColorScheme,
 } from "@yuhuu/components";
+import { Redirect } from "expo-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -36,11 +39,19 @@ import {
 export default function AdminScreen() {
   const { t } = useTranslation();
   const scheme = useColorScheme();
+  const ready = useBootstrapGate();
+  const { data: myRoles } = useMyRolesQuery({ enabled: ready });
   const [searchedUser, setSearchedUser] = useState<{
     id: number;
     username: string;
   } | null>(null);
   const [selectedDinnerId, setSelectedDinnerId] = useState<number | null>(null);
+
+  // Route protection: Only Admin role can access this screen
+  const isAdmin = myRoles ? myRoles.some((r) => r.role_name === 'Admin') : false;
+  if (!isAdmin) {
+    return <Redirect href="/profile" />;
+  }
 
   // Fetch dinner stats for the graph
   const {
