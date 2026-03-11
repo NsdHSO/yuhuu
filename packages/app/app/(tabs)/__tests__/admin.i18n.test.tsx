@@ -1,5 +1,6 @@
 import React from 'react';
 import {fireEvent, render} from '@testing-library/react-native';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 // Mock react-native-safe-area-context
@@ -42,6 +43,36 @@ const mockUseTranslation = jest.fn(() => ({
 
 jest.mock('react-i18next', () => ({
     useTranslation: (...args: any[]) => mockUseTranslation(...args),
+}));
+
+// --- Mock bootstrap gate ---
+const mockUseBootstrapGate = jest.fn(() => true);
+jest.mock('@/features/bootstrap/api', () => ({
+    useBootstrapGate: () => mockUseBootstrapGate(),
+}));
+
+// --- Mock roles hooks ---
+const mockUseMyRolesQuery = jest.fn(() => ({
+    data: [],
+    isLoading: false,
+    error: null,
+}));
+jest.mock('@/features/roles/meRoles', () => ({
+    useMyRolesQuery: (options: any) => mockUseMyRolesQuery(options),
+}));
+
+// --- Mock expo-router ---
+const mockRedirect = jest.fn();
+jest.mock('expo-router', () => ({
+    Redirect: ({href}: any) => {
+        mockRedirect(href);
+        const React = require('react');
+        const {Text} = require('react-native');
+        return React.createElement(Text, {testID: 'redirect'}, `Redirecting to ${href}`);
+    },
+    Stack: {
+        Screen: () => null,
+    },
 }));
 
 // --- Mock admin hooks ---
@@ -172,8 +203,18 @@ jest.mock('@/features/skills/api', () => ({
 }));
 
 describe('AdminScreen - i18n Migration', () => {
+    let queryClient: QueryClient;
+
     beforeEach(() => {
         jest.clearAllMocks();
+
+        // Create a new QueryClient for each test
+        queryClient = new QueryClient({
+            defaultOptions: {
+                queries: {retry: false},
+                mutations: {retry: false},
+            },
+        });
 
         // Re-initialize mock return values after clearing
         mockUseTranslation.mockReturnValue({
@@ -181,6 +222,14 @@ describe('AdminScreen - i18n Migration', () => {
             i18n: {language: 'en', changeLanguage: jest.fn()},
         });
         mockT.mockImplementation((key: string) => key);
+        mockUseBootstrapGate.mockReturnValue(true);
+
+        // Mock user as admin to avoid redirect
+        mockUseMyRolesQuery.mockReturnValue({
+            data: [{role_name: 'Admin', id: 1}],
+            isLoading: false,
+            error: null,
+        });
 
         mockUseDinnerStatsQuery.mockReturnValue({
             data: null,
@@ -199,49 +248,40 @@ describe('AdminScreen - i18n Migration', () => {
         });
     });
 
-    describe('useTranslation hook integration', () => {
-        it('should call useTranslation to get the t function', () => {
-            const AdminScreen = require('../admin').default;
-            render(
+    // Helper function to render AdminScreen with all providers
+    const renderAdminScreen = () => {
+        const AdminScreen = require('../admin').default;
+        return render(
+            <QueryClientProvider client={queryClient}>
                 <SafeAreaProvider>
                     <AdminScreen/>
                 </SafeAreaProvider>
-            );
+            </QueryClientProvider>
+        );
+    };
 
+    describe('useTranslation hook integration', () => {
+        it('should call useTranslation to get the t function', () => {
+            renderAdminScreen();
             expect(mockUseTranslation).toHaveBeenCalled();
         });
     });
 
     describe('Accordion title strings', () => {
         it('should use t() for "Dinner Participation Graph" accordion title', () => {
-            const AdminScreen = require('../admin').default;
-            render(
-                <SafeAreaProvider>
-                    <AdminScreen/>
-                </SafeAreaProvider>
-            );
+            renderAdminScreen();
 
             expect(mockT).toHaveBeenCalledWith('admin.dinnerParticipation');
         });
 
         it('should use t() for "Search User Attendance" accordion title', () => {
-            const AdminScreen = require('../admin').default;
-            render(
-                <SafeAreaProvider>
-                    <AdminScreen/>
-                </SafeAreaProvider>
-            );
+            renderAdminScreen();
 
             expect(mockT).toHaveBeenCalledWith('admin.searchUser');
         });
 
         it('should use t() for "View Dinner Participants" accordion title', () => {
-            const AdminScreen = require('../admin').default;
-            render(
-                <SafeAreaProvider>
-                    <AdminScreen/>
-                </SafeAreaProvider>
-            );
+            renderAdminScreen();
 
             expect(mockT).toHaveBeenCalledWith('admin.viewParticipants');
         });
@@ -255,12 +295,7 @@ describe('AdminScreen - i18n Migration', () => {
                 error: new Error('Failed'),
             });
 
-            const AdminScreen = require('../admin').default;
-            render(
-                <SafeAreaProvider>
-                    <AdminScreen/>
-                </SafeAreaProvider>
-            );
+            renderAdminScreen();
 
             expect(mockT).toHaveBeenCalledWith('admin.loadError');
         });
