@@ -33,7 +33,7 @@ export default function TabLayout() {
                     options={{
                         tabBarLabel: t('tabs.home'),
                         tabBarIcon: ({color}) => <IconSymbol size={28} name="house.fill" color={color}/>,
-                        href: isMemberOnly ? null : undefined,
+                        tabBarButton: isMemberOnly ? () => null : undefined,
                     }}
                 />
 
@@ -43,7 +43,7 @@ export default function TabLayout() {
                     options={{
                         tabBarLabel: t('tabs.admin'),
                         tabBarIcon: ({color}) => <IconSymbol size={28} name="shield.fill" color={color}/>,
-                        href: isAdmin ? undefined : null,
+                        tabBarButton: isAdmin ? undefined : () => null,
                     }}
                 />
 
