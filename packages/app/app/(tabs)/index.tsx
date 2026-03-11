@@ -1,6 +1,6 @@
 import { Redirect } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { Pressable, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet } from "react-native";
 
 import { useAuth } from "@/providers/AuthProvider";
 import { hasRole } from "@yuhuu/auth";
