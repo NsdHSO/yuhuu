@@ -117,7 +117,7 @@ export default function LoginScreen() {
     }
 
     return (
-        <ThemedView className="flex-1">
+        <ThemedView style={{flex: 1}}>
             <Stack.Screen options={{title: t('auth.login.title')}}/>
             <SafeAreaView style={{flex: 1}} edges={['top', 'left', 'right']}>
                 <ScrollView
