@@ -47,6 +47,8 @@ export function TabScreenWrapper({
         <ScrollView
           contentContainerStyle={mergedStyle}
           scrollEnabled={scrollEnabled}
+          nestedScrollEnabled={true}
+          keyboardShouldPersistTaps="handled"
           testID={testID ? `${testID}-scroll` : undefined}
         >
           {children}
