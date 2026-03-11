@@ -1,7 +1,7 @@
 import React from 'react';
 import {View} from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {GlassCard, ThemedText, useColorScheme, Colors} from '@yuhuu/components';
+import {ThemedText, useColorScheme, Colors} from '@yuhuu/components';
 
 type ProfileHeaderProps = {
     firstName: string;
