@@ -23,10 +23,13 @@ export function CustomTabBar({
   const activeColor = getGlowColor(glowVariant, scheme);
   const inactiveColor = scheme === "dark" ? "#9CA3AF" : "#6B7280";
 
-  // Filter visible routes (exclude href: null)
+  // Filter visible routes (exclude tabBarButton: () => null)
   const visibleRoutes = state.routes.filter((route) => {
     const { options } = descriptors[route.key];
-    return (options as any).href !== null;
+    const tabBarButton = (options as any).tabBarButton;
+
+    // Hide if tabBarButton is a function (returns null to hide)
+    return typeof tabBarButton !== 'function';
   });
 
   // Find active tab index in visible routes
