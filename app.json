@@ -1,4 +1,7 @@
 {
+  "ios": {
+    "bundleIdentifier": "com.anonymous.yuhuu"
+  },
   "android": {
     "package": "com.anonymous.yuhuu"
   }
