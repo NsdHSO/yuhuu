@@ -82,7 +82,7 @@ describe('SettingsAccordion', () => {
 
     describe('Biometric Toggle', () => {
         it('should show biometric section when biometric is available', () => {
-            const {getByTestId, getByText} = render(
+            const {getByTestId, getByText: _getByText} = render(
                 <SettingsAccordion {...defaultProps} testID="settings" />
             );
 
