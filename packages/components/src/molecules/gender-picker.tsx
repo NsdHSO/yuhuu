@@ -1,8 +1,10 @@
-import React, {useState, useCallback} from 'react';
-import {View, Pressable, Modal, StyleSheet} from 'react-native';
+import React, {useRef, useCallback} from 'react';
+import {View, Pressable, StyleSheet} from 'react-native';
 import {useTranslation} from 'react-i18next';
+import type {BottomSheetModal} from '@gorhom/bottom-sheet';
 import {ThemedText} from '../themed-text';
 import {GenderAvatar} from '../atoms/gender-avatar';
+import {GlassBottomSheet} from '../atoms/glass/GlassBottomSheet';
 import {useColorScheme} from '../hooks/use-color-scheme';
 import {useGlowVariant} from '../hooks/useGlowVariant';
 import {getGlowColor} from '../constants/glowColors';
@@ -24,18 +26,18 @@ export type GenderPickerProps = {
 
 export function GenderPicker({value, onChange, testID}: GenderPickerProps) {
   const {t} = useTranslation();
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
   const scheme = useColorScheme() ?? 'light';
   const {glowVariant} = useGlowVariant();
   const activeColor = getGlowColor(glowVariant, scheme);
   const neutralGray = scheme === 'dark' ? '#6B7280' : '#9CA3AF';
 
   const handleOpenModal = useCallback(() => {
-    setIsModalVisible(true);
+    bottomSheetRef.current?.present();
   }, []);
 
   const handleCloseModal = useCallback(() => {
-    setIsModalVisible(false);
+    bottomSheetRef.current?.dismiss();
   }, []);
 
   const handleSelect = useCallback(
@@ -95,96 +97,78 @@ export function GenderPicker({value, onChange, testID}: GenderPickerProps) {
         />
       </Pressable>
 
-      <Modal
-        testID={testID ? `${testID}-modal` : undefined}
-        visible={isModalVisible}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={handleCloseModal}
+      <GlassBottomSheet
+        ref={bottomSheetRef}
+        snapPoints={['60%']}
+        enableWaves={true}
+        testID={testID ? `${testID}-bottom-sheet` : undefined}
       >
-        <Pressable
-          testID={testID ? `${testID}-modal-backdrop` : undefined}
-          style={styles.modalBackdrop}
-          onPress={handleCloseModal}
-        >
-          <View
-            style={[
-              styles.modalContent,
-              {
-                backgroundColor:
-                  scheme === 'dark'
-                    ? 'rgba(30, 30, 30, 0.95)'
-                    : 'rgba(255, 255, 255, 0.95)',
-              },
-            ]}
-            onStartShouldSetResponder={() => true}
-          >
-            <ThemedText style={styles.modalTitle}>
-              {t('genderPicker.modalTitle')}
-            </ThemedText>
+        <View style={styles.bottomSheetContent}>
+          <ThemedText style={styles.modalTitle}>
+            {t('genderPicker.modalTitle')}
+          </ThemedText>
 
-            <View style={styles.avatarGrid}>
-              <Pressable
-                testID={testID ? `${testID}-modal-male-button` : undefined}
-                onPress={() => handleSelect('male')}
-                style={({pressed}) => [
-                  styles.avatarButton,
-                  {
-                    opacity: pressed ? 0.7 : 1,
-                  },
-                ]}
-                accessible={true}
-                accessibilityRole="radio"
-                accessibilityLabel={t('genderPicker.male')}
-                accessibilityState={{
-                  selected: value === 'male',
-                  checked: value === 'male',
-                }}
-                accessibilityHint="Select male gender"
-              >
-                <GenderAvatar
-                  testID={testID ? `${testID}-modal-male` : undefined}
-                  gender="male"
-                  size={120}
-                  isSelected={value === 'male'}
-                />
-                <ThemedText style={styles.avatarLabel}>
-                  {t('genderPicker.male')}
-                </ThemedText>
-              </Pressable>
+          <View style={styles.avatarGrid}>
+            <Pressable
+              testID={testID ? `${testID}-bottom-sheet-male-button` : undefined}
+              onPress={() => handleSelect('male')}
+              style={({pressed}) => [
+                styles.avatarButton,
+                {
+                  opacity: pressed ? 0.7 : 1,
+                },
+              ]}
+              accessible={true}
+              accessibilityRole="radio"
+              accessibilityLabel={t('genderPicker.male')}
+              accessibilityState={{
+                selected: value === 'male',
+                checked: value === 'male',
+              }}
+              accessibilityHint="Select male gender"
+            >
+              <GenderAvatar
+                testID={testID ? `${testID}-bottom-sheet-male` : undefined}
+                gender="male"
+                size={120}
+                isSelected={value === 'male'}
+              />
+              <ThemedText style={styles.avatarLabel}>
+                {t('genderPicker.male')}
+              </ThemedText>
+            </Pressable>
 
-              <Pressable
-                testID={testID ? `${testID}-modal-female-button` : undefined}
-                onPress={() => handleSelect('female')}
-                style={({pressed}) => [
-                  styles.avatarButton,
-                  {
-                    opacity: pressed ? 0.7 : 1,
-                  },
-                ]}
-                accessible={true}
-                accessibilityRole="radio"
-                accessibilityLabel={t('genderPicker.female')}
-                accessibilityState={{
-                  selected: value === 'female',
-                  checked: value === 'female',
-                }}
-                accessibilityHint="Select female gender"
-              >
-                <GenderAvatar
-                  testID={testID ? `${testID}-modal-female` : undefined}
-                  gender="female"
-                  size={120}
-                  isSelected={value === 'female'}
-                />
-                <ThemedText style={styles.avatarLabel}>
-                  {t('genderPicker.female')}
-                </ThemedText>
-              </Pressable>
-            </View>
+            <Pressable
+              testID={testID ? `${testID}-bottom-sheet-female-button` : undefined}
+              onPress={() => handleSelect('female')}
+              style={({pressed}) => [
+                styles.avatarButton,
+                {
+                  opacity: pressed ? 0.7 : 1,
+                },
+              ]}
+              accessible={true}
+              accessibilityRole="radio"
+              accessibilityLabel={t('genderPicker.female')}
+              accessibilityState={{
+                selected: value === 'female',
+                checked: value === 'female',
+              }}
+              accessibilityHint="Select female gender"
+            >
+              <GenderAvatar
+                testID={testID ? `${testID}-bottom-sheet-female` : undefined}
+                gender="female"
+                size={120}
+                isSelected={value === 'female'}
+              />
+              <ThemedText style={styles.avatarLabel}>
+                {t('genderPicker.female')}
+              </ThemedText>
+            </Pressable>
           </View>
-        </Pressable>
-      </Modal>
+        </View>
+      </GlassBottomSheet>
     </View>
   );
 }
@@ -207,31 +191,20 @@ const styles = StyleSheet.create({
   chevron: {
     marginLeft: 'auto',
   },
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    borderRadius: 24,
-    padding: 32,
-    minWidth: 320,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 10},
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 10,
+  bottomSheetContent: {
+    paddingHorizontal: 24,
+    paddingTop: 8,
+    paddingBottom: 32,
   },
   modalTitle: {
     fontSize: 20,
     fontWeight: '700',
     textAlign: 'center',
-    marginBottom: 24,
+    marginBottom: 32,
   },
   avatarGrid: {
     flexDirection: 'row',
-    gap: 24,
+    gap: 32,
     justifyContent: 'center',
   },
   avatarButton: {

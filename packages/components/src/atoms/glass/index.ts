@@ -6,5 +6,7 @@ export { GlassAccordion } from './GlassAccordion';
 export { GlassBackground } from './GlassBackground';
 export { GlassText } from './GlassText';
 export { GlassInput } from './GlassInput';
+export { GlassBottomSheet } from './GlassBottomSheet';
 export type { GlassViewProps } from '../../types/glass';
 export type { GlassVariant } from '../../types/glass';
+export type { GlassBottomSheetProps } from '../../types/glass';

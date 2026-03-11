@@ -10,3 +10,12 @@ export type GlassViewProps = ViewProps & {
   shadowLevel?: 'subtle' | 'medium' | 'elevated';
   enableBorder?: boolean;
 };
+
+export type GlassBottomSheetProps = {
+  children?: React.ReactNode;
+  variant?: GlassVariant;
+  enableWaves?: boolean;
+  snapPoints?: (string | number)[];
+  enableBackdropDismiss?: boolean;
+  testID?: string;
+};

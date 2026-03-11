@@ -13,6 +13,10 @@ module.exports = function (api) {
             // `_ReactNativeCSSInterop` being injected into jest.mock factories.
             // Jest forbids out-of-scope captures in mock factories.
             !isTest && 'nativewind/babel'
-        ].filter(Boolean)
+        ].filter(Boolean),
+        plugins: [
+            // react-native-reanimated/plugin must be listed last
+            'react-native-reanimated/plugin'
+        ]
     };
 };

@@ -2,6 +2,32 @@ import React from 'react';
 import {render, fireEvent, waitFor} from '@testing-library/react-native';
 import {GenderPicker} from '../gender-picker';
 
+jest.mock('@gorhom/bottom-sheet', () => {
+  const React = require('react');
+  const RN = require('react-native');
+  return {
+    BottomSheetModal: React.forwardRef(
+      ({children, testID}: any, ref: any) => {
+        const [isVisible, setIsVisible] = React.useState(false);
+
+        React.useImperativeHandle(ref, () => ({
+          present: () => setIsVisible(true),
+          dismiss: () => setIsVisible(false),
+        }));
+
+        if (!isVisible) return null;
+
+        return React.createElement(
+          RN.View,
+          {testID},
+          children
+        );
+      }
+    ),
+    BottomSheetModalProvider: ({children}: any) => children,
+  };
+});
+
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => {
@@ -80,8 +106,8 @@ describe('GenderPicker', () => {
     });
   });
 
-  describe('Modal Interaction', () => {
-    it('opens modal on trigger press', async () => {
+  describe('Bottom Sheet Interaction', () => {
+    it('opens bottom sheet on trigger press', async () => {
       const {getByTestId, getByText} = render(
         <GenderPicker
           value={null}
@@ -98,7 +124,7 @@ describe('GenderPicker', () => {
       });
     });
 
-    it('shows both avatars in modal', async () => {
+    it('shows both avatars in bottom sheet', async () => {
       const {getByTestId} = render(
         <GenderPicker
           value={null}
@@ -110,12 +136,12 @@ describe('GenderPicker', () => {
       fireEvent.press(getByTestId('gender-picker-trigger'));
 
       await waitFor(() => {
-        expect(getByTestId('gender-picker-modal-male')).toBeTruthy();
-        expect(getByTestId('gender-picker-modal-female')).toBeTruthy();
+        expect(getByTestId('gender-picker-bottom-sheet-male')).toBeTruthy();
+        expect(getByTestId('gender-picker-bottom-sheet-female')).toBeTruthy();
       });
     });
 
-    it('highlights selected avatar in modal', async () => {
+    it('highlights selected avatar in bottom sheet', async () => {
       const {getByTestId} = render(
         <GenderPicker
           value="male"
@@ -127,7 +153,7 @@ describe('GenderPicker', () => {
       fireEvent.press(getByTestId('gender-picker-trigger'));
 
       await waitFor(() => {
-        const maleAvatar = getByTestId('gender-picker-modal-male');
+        const maleAvatar = getByTestId('gender-picker-bottom-sheet-male');
         expect(maleAvatar.props.isSelected).toBe(true);
       });
     });
@@ -145,15 +171,15 @@ describe('GenderPicker', () => {
       fireEvent.press(getByTestId('gender-picker-trigger'));
 
       await waitFor(() => {
-        expect(getByTestId('gender-picker-modal-male')).toBeTruthy();
+        expect(getByTestId('gender-picker-bottom-sheet-male')).toBeTruthy();
       });
 
-      fireEvent.press(getByTestId('gender-picker-modal-male-button'));
+      fireEvent.press(getByTestId('gender-picker-bottom-sheet-male-button'));
 
       expect(onChange).toHaveBeenCalledWith('male');
     });
 
-    it('closes modal after selection', async () => {
+    it('closes bottom sheet after selection', async () => {
       const {getByTestId, queryByText} = render(
         <GenderPicker
           value={null}
@@ -165,32 +191,10 @@ describe('GenderPicker', () => {
       fireEvent.press(getByTestId('gender-picker-trigger'));
 
       await waitFor(() => {
-        expect(getByTestId('gender-picker-modal-male-button')).toBeTruthy();
+        expect(getByTestId('gender-picker-bottom-sheet-male-button')).toBeTruthy();
       });
 
-      fireEvent.press(getByTestId('gender-picker-modal-male-button'));
-
-      await waitFor(() => {
-        expect(queryByText('Select Your Gender')).toBeNull();
-      });
-    });
-
-    it('closes modal on backdrop press', async () => {
-      const {getByTestId, queryByText} = render(
-        <GenderPicker
-          value={null}
-          onChange={jest.fn()}
-          testID="gender-picker"
-        />
-      );
-
-      fireEvent.press(getByTestId('gender-picker-trigger'));
-
-      await waitFor(() => {
-        expect(getByTestId('gender-picker-modal')).toBeTruthy();
-      });
-
-      fireEvent.press(getByTestId('gender-picker-modal-backdrop'));
+      fireEvent.press(getByTestId('gender-picker-bottom-sheet-male-button'));
 
       await waitFor(() => {
         expect(queryByText('Select Your Gender')).toBeNull();
@@ -210,10 +214,10 @@ describe('GenderPicker', () => {
       fireEvent.press(getByTestId('gender-picker-trigger'));
 
       await waitFor(() => {
-        expect(getByTestId('gender-picker-modal-male-button')).toBeTruthy();
+        expect(getByTestId('gender-picker-bottom-sheet-male-button')).toBeTruthy();
       });
 
-      fireEvent.press(getByTestId('gender-picker-modal-male-button'));
+      fireEvent.press(getByTestId('gender-picker-bottom-sheet-male-button'));
 
       expect(onChange).not.toHaveBeenCalled();
     });
@@ -261,7 +265,7 @@ describe('GenderPicker', () => {
       expect(trigger.props.accessibilityLabel).toContain('Tap to select');
     });
 
-    it('modal avatar buttons have radio role', async () => {
+    it('bottom sheet avatar buttons have radio role', async () => {
       const {getByTestId} = render(
         <GenderPicker
           value={null}
@@ -273,7 +277,7 @@ describe('GenderPicker', () => {
       fireEvent.press(getByTestId('gender-picker-trigger'));
 
       await waitFor(() => {
-        const maleButton = getByTestId('gender-picker-modal-male-button');
+        const maleButton = getByTestId('gender-picker-bottom-sheet-male-button');
         expect(maleButton.props.accessibilityRole).toBe('radio');
       });
     });
