@@ -12,9 +12,19 @@ const config = getDefaultConfig(projectRoot);
 // Configure for monorepo
 config.watchFolders = [monorepoRoot];
 
+// Configure SVG transformer
+config.transformer = {
+    ...config.transformer,
+    babelTransformerPath: require.resolve('react-native-svg-transformer'),
+};
+
 // Configure path aliases for Metro bundler
 config.resolver = {
     ...config.resolver,
+
+    // Add SVG support
+    assetExts: config.resolver.assetExts.filter((ext) => ext !== 'svg'),
+    sourceExts: [...config.resolver.sourceExts, 'svg'],
 
     // Alias @ to the app package root
     extraNodeModules: {
