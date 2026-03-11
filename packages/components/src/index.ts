@@ -33,6 +33,7 @@ export * from './atoms/glass';
 export * from './atoms/tab-liquid-blob';
 export * from './atoms/custom-tab-bar';
 export * from './atoms/tab-screen-wrapper';
+export * from './atoms/gender-avatar';
 
 // Molecules
 export * from './molecules/category-badge';
@@ -41,6 +42,7 @@ export * from './molecules/dinner-details-card';
 export * from './molecules/language-picker';
 export * from './molecules/dinner-graph';
 export * from './molecules/user-search';
+export * from './molecules/gender-picker';
 
 // Organisms
 export * from './organisms/dinner-attendance';
