@@ -47,12 +47,6 @@ export default function AdminScreen() {
   } | null>(null);
   const [selectedDinnerId, setSelectedDinnerId] = useState<number | null>(null);
 
-  // Route protection: Only Admin role can access this screen
-  const isAdmin = myRoles ? myRoles.some((r) => r.role_name === 'Admin') : false;
-  if (!isAdmin) {
-    return <Redirect href="/profile" />;
-  }
-
   // Fetch dinner stats for the graph
   const {
     data: dinnerStats,
@@ -73,6 +67,12 @@ export default function AdminScreen() {
     isLoading: isLoadingParticipants,
     error: participantsError,
   } = useParticipantsByDinnerQuery(selectedDinnerId);
+
+  // Route protection: Only Admin role can access this screen
+  const isAdmin = myRoles ? myRoles.some((r) => r.role_name === 'Admin') : false;
+  if (!isAdmin) {
+    return <Redirect href="/profile" />;
+  }
 
   const handleSearch = (user: { id: number; username: string }) => {
     setSearchedUser(user);
