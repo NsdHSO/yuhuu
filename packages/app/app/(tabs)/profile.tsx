@@ -165,7 +165,7 @@ export default function ProfileScreen() {
     <GlassBackground>
       <Stack.Screen options={{ title: t("profile.title") }} />
       <TabScreenWrapper
-        contentContainerStyle={{ padding: 0, paddingHorizontal: 16 }}
+        contentContainerStyle={{ paddingHorizontal: 16 }}
       >
         <ProfileHeader
           firstName={firstName}
@@ -185,30 +185,28 @@ export default function ProfileScreen() {
           </View>
         )}
 
-        <View>
-          <PersonalInfoAccordion
-            firstName={firstName}
-            lastName={lastName}
-            phone={phone}
-            gender={gender}
-            onFirstNameChange={setfirstName}
-            onLastNameChange={setLastName}
-            onPhoneChange={setPhone}
-            onGenderChange={handleGenderChange}
-            onSave={onSave}
-            isSaving={saveMutation.isPending}
-            testID="personal-info"
-          />
+        <PersonalInfoAccordion
+          firstName={firstName}
+          lastName={lastName}
+          phone={phone}
+          gender={gender}
+          onFirstNameChange={setfirstName}
+          onLastNameChange={setLastName}
+          onPhoneChange={setPhone}
+          onGenderChange={handleGenderChange}
+          onSave={onSave}
+          isSaving={saveMutation.isPending}
+          testID="personal-info"
+        />
 
-          <ChurchInformationAccordion />
+        <ChurchInformationAccordion />
 
-          <SettingsAccordion
-            biometricAvailable={biometricAvailable}
-            biometricEnabled={biometricEnabled}
-            onBiometricToggle={handleBiometricToggle}
-            testID="settings"
-          />
-        </View>
+        <SettingsAccordion
+          biometricAvailable={biometricAvailable}
+          biometricEnabled={biometricEnabled}
+          onBiometricToggle={handleBiometricToggle}
+          testID="settings"
+        />
       </TabScreenWrapper>
     </GlassBackground>
   );

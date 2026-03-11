@@ -12,7 +12,7 @@ export default function RegisterScreen() {
   const {email, setEmail, password, setPassword, confirm, setConfirm, firstName, setFirstName, lastName, setLastName, accept, setAccept, submitting, onSubmit} = useRegisterForm();
 
   return (
-    <ThemedView className="flex-1">
+    <ThemedView style={{flex:1}}>
       <Stack.Screen options={{title: t('auth.register.title')}} />
       <SafeAreaView style={{flex: 1}} edges={['top', 'left', 'right']}>
         <ScrollView style={{flex: 1}} contentContainerStyle={{padding: 16, paddingBottom: 40}} keyboardShouldPersistTaps="handled">

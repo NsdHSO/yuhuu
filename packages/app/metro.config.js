@@ -6,16 +6,19 @@ const {withNativeWind} = require('nativewind/metro');
 // Find the monorepo root (parent of packages)
 const projectRoot = __dirname;
 const monorepoRoot = path.resolve(projectRoot, '../..');
+const componentsPackage = path.resolve(projectRoot, '../components');
 
 const config = getDefaultConfig(projectRoot);
 
 // Configure for monorepo
-config.watchFolders = [monorepoRoot];
+config.watchFolders = [monorepoRoot, componentsPackage];
 
 // Configure SVG transformer
 config.transformer = {
     ...config.transformer,
     babelTransformerPath: require.resolve('react-native-svg-transformer'),
+    // Enable asset plugins for SVG from workspace packages
+    unstable_allowRequireContext: true,
 };
 
 // Configure path aliases for Metro bundler
@@ -36,6 +39,15 @@ config.resolver = {
         path.resolve(projectRoot, 'node_modules'),
         path.resolve(monorepoRoot, 'node_modules'),
     ],
+
+    // Resolve assets from workspace packages
+    resolveRequest: (context, moduleName, platform) => {
+        // Let Metro resolve SVG files from @yuhuu/* packages
+        if (moduleName.endsWith('.svg') && context.originModulePath.includes('@yuhuu')) {
+            return context.resolveRequest(context, moduleName, platform);
+        }
+        return context.resolveRequest(context, moduleName, platform);
+    },
 };
 
 module.exports = withNativeWind(config, {input: './app/global.css'});

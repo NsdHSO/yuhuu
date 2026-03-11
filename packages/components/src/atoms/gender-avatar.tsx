@@ -3,8 +3,8 @@ import {View, StyleSheet} from 'react-native';
 import {useColorScheme} from '../hooks/use-color-scheme';
 import {useGlowVariant} from '../hooks/useGlowVariant';
 import {getGlowColor} from '../constants/glowColors';
-import ManAvatar from '../../assets/avatars/man-avatar.svg';
-import WomanAvatar from '../../assets/avatars/woman-avatar.svg';
+import ManAvatar from './avatars/ManAvatar';
+import WomanAvatar from './avatars/WomanAvatar';
 
 /**
  * Circular avatar component displaying gender-specific SVG illustration.

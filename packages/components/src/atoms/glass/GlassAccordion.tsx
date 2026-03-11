@@ -149,7 +149,7 @@ export function GlassAccordion({
 
   const contentStyle = useAnimatedStyle(() => ({
     opacity: contentHeight.value,
-    transform: [{ scaleY: contentHeight.value }],
+    // Android fix: scaleY transform blocks touch events, use opacity-only animation
   }));
 
   // Get electric color from shared glow colors
@@ -166,7 +166,7 @@ export function GlassAccordion({
           borderWidth: 1,
           borderColor: `${electricColor}${scheme === 'dark' ? '40' : '33'}`, // 25%/20% opacity
           backgroundColor: scheme === 'dark' ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.4)',
-          overflow: 'hidden',
+          overflow: 'visible', // Android fix: 'hidden' blocks scroll touch events
         }
       ]}>
         <Pressable
@@ -369,7 +369,7 @@ export function GlassAccordion({
 const styles = StyleSheet.create({
   container: {
     marginVertical: 8,
-    overflow: 'hidden',
+    overflow: 'visible', // Android fix: 'hidden' blocks touch events on ScrollView
   },
   header: {
     flexDirection: 'row',
