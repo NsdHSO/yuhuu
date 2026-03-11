@@ -68,9 +68,9 @@ describe('Authentication Flow - Integration Tests', () => {
 
     // Use the mocked functions directly from the module
     const mockPost = authApi.post as jest.Mock;
-    const mockGetValidAccessToken = tokenManager.getValidAccessToken as jest.Mock;
+    const _mockGetValidAccessToken = tokenManager.getValidAccessToken as jest.Mock;
     const mockSetTokensFromLogin = tokenManager.setTokensFromLogin as jest.Mock;
-    const mockClearTokens = tokenManager.clearTokens as jest.Mock;
+    const _mockClearTokens = tokenManager.clearTokens as jest.Mock;
 
     const renderLoginWithAuth = () => {
         return render(
