@@ -21,33 +21,30 @@ export type GenderAvatarProps = {
   testID?: string;
 };
 
-export const GenderAvatar = React.memo(
-  ({gender, size, isSelected, testID}: GenderAvatarProps) => {
-    const scheme = useColorScheme() ?? 'light';
-    const {glowVariant} = useGlowVariant();
+export const GenderAvatar = ({gender, size, isSelected, testID}: GenderAvatarProps) => {
+  const scheme = useColorScheme() ?? 'light';
+  const {glowVariant} = useGlowVariant();
 
-    const activeColor = useMemo(
-      () => getGlowColor(glowVariant, scheme),
-      [glowVariant, scheme]
-    );
+  const activeColor = useMemo(
+    () => getGlowColor(glowVariant, scheme),
+    [glowVariant, scheme]
+  );
 
-    const neutralGray = useMemo(
-      () => (scheme === 'dark' ? '#6B7280' : '#9CA3AF'),
-      [scheme]
-    );
+  const neutralGray = useMemo(
+    () => (scheme === 'dark' ? '#6B7280' : '#9CA3AF'),
+    [scheme]
+  );
 
-    const SvgComponent = gender === 'male' ? ManAvatar : WomanAvatar;
+  const SvgComponent = gender === 'male' ? ManAvatar : WomanAvatar;
 
     const borderWidth = isSelected ? 3 : 2;
     const borderColor = isSelected ? activeColor : neutralGray;
     const backgroundColor = isSelected
-      ? `${activeColor}1A`
-      : scheme === 'dark'
-      ? 'rgba(255,255,255,0.05)'
-      : 'rgba(0,0,0,0.02)';
+      ? `${activeColor}33` // 20% opacity - more vibrant for selected
+      : `${activeColor}14`; // 8% opacity - subtle glow for unselected
 
     const tintOverlayColor = isSelected
-      ? `${activeColor}15`
+      ? `${activeColor}1A` // 10% overlay tint when selected
       : 'rgba(0,0,0,0)';
 
     const containerStyle = {
@@ -91,15 +88,7 @@ export const GenderAvatar = React.memo(
         </View>
       </View>
     );
-  },
-  (prevProps, nextProps) => {
-    return (
-      prevProps.gender === nextProps.gender &&
-      prevProps.size === nextProps.size &&
-      prevProps.isSelected === nextProps.isSelected
-    );
-  }
-);
+};
 
 const styles = StyleSheet.create({
   container: {

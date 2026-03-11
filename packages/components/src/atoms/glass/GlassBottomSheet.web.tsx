@@ -1,4 +1,4 @@
-import React, {forwardRef, useImperativeHandle, useState, useCallback, useEffect} from 'react';
+import React, {forwardRef, useImperativeHandle, useState, useCallback, useEffect, useMemo} from 'react';
 import {Modal, View, Pressable, StyleSheet, Animated as RNAnimated} from 'react-native';
 import Animated, {
   useSharedValue,
@@ -38,6 +38,12 @@ export const GlassBottomSheet = forwardRef<any, GlassBottomSheetProps>(
   ) => {
     const [visible, setVisible] = useState(false);
     const slideAnim = useState(() => new RNAnimated.Value(0))[0];
+    const {glowVariant} = useGlowVariant();
+    const scheme = useColorScheme() ?? 'light';
+    const activeColor = useMemo(
+      () => getGlowColor(glowVariant, scheme),
+      [glowVariant, scheme]
+    );
 
     // Expose present/dismiss methods to match native BottomSheetModal API
     useImperativeHandle(ref, () => ({
@@ -100,6 +106,8 @@ export const GlassBottomSheet = forwardRef<any, GlassBottomSheetProps>(
             <GlassBackground
               variant={variant}
               enableWaves={enableWaves}
+              activeColor={activeColor}
+              colorScheme={scheme}
               testID={testID ? `${testID}-background` : undefined}
             >
               <GlassHandle />
@@ -117,12 +125,12 @@ GlassBottomSheet.displayName = 'GlassBottomSheet';
 const GlassBackground: React.FC<{
   variant: GlassVariant;
   enableWaves: boolean;
+  activeColor: string;
+  colorScheme: 'light' | 'dark';
   testID?: string;
   children: React.ReactNode;
-}> = ({variant, enableWaves, testID, children}) => {
-  const scheme = useColorScheme() ?? 'light';
-  const {glowVariant} = useGlowVariant();
-  const activeColor = getGlowColor(glowVariant, scheme);
+}> = ({variant, enableWaves, activeColor, colorScheme, testID, children}) => {
+  const scheme = colorScheme;
 
   // Wave animations
   const wave1 = useSharedValue(0);
@@ -183,28 +191,17 @@ const GlassBackground: React.FC<{
     <View
       style={[
         styles.glassContainer,
-        {
-          backgroundColor: scheme === 'dark'
-            ? `${activeColor}1A` // 10% opacity for dark mode
-            : `${activeColor}14`, // 8% opacity for light mode
-        },
+        {backgroundColor: GLASS_COLORS[scheme][variant]},
       ]}
       testID={testID}
     >
-      {/* Glass frosted layer */}
+      {/* Subtle glow tint overlay - matches GlassAccordion */}
       <View
         style={[
           StyleSheet.absoluteFill,
-          {backgroundColor: GLASS_COLORS[scheme][variant]},
-        ]}
-        pointerEvents="none"
-      />
-
-      {/* Glow tint overlay */}
-      <View
-        style={[
-          StyleSheet.absoluteFill,
-          {backgroundColor: `${activeColor}${scheme === 'dark' ? '14' : '0F'}`},
+          {
+            backgroundColor: `${activeColor}${scheme === 'dark' ? '0D' : '0A'}`, // 5%/4% opacity - matches accordion
+          },
         ]}
         pointerEvents="none"
       />
@@ -215,21 +212,21 @@ const GlassBackground: React.FC<{
           <Animated.View
             style={[
               StyleSheet.absoluteFill,
-              {backgroundColor: `${activeColor}35`},
+              {backgroundColor: `${activeColor}${scheme === 'dark' ? '59' : '40'}`}, // 35%/25% opacity - matches accordion wave1
               wave1Style,
             ]}
           />
           <Animated.View
             style={[
               StyleSheet.absoluteFill,
-              {backgroundColor: `${activeColor}28`},
+              {backgroundColor: `${activeColor}${scheme === 'dark' ? '4D' : '38'}`}, // 30%/22% opacity - matches accordion wave2
               wave2Style,
             ]}
           />
           <Animated.View
             style={[
               StyleSheet.absoluteFill,
-              {backgroundColor: `${activeColor}2D`},
+              {backgroundColor: `${activeColor}${scheme === 'dark' ? '52' : '3B'}`}, // 32%/23% opacity - matches accordion wave3
               wave3Style,
             ]}
           />
