@@ -34,6 +34,7 @@ module.exports = {
         '^@yuhuu/i18n$': '<rootDir>/../i18n/src/index.ts',
         '^@yuhuu/http$': '<rootDir>/../http/src/index.ts',
         '^@yuhuu/storage$': '<rootDir>/../storage/src/index.ts',
-        '\\.css$': '<rootDir>/__mocks__/styleMock.js'
+        '\\.css$': '<rootDir>/__mocks__/styleMock.js',
+        '\\.svg$': '<rootDir>/__mocks__/svgMock.js'
     }
 };
