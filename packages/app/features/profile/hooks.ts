@@ -72,6 +72,7 @@ export function useSaveMyProfileMutation(
     return useMutation({
         mutationFn: async (payload: ProfileInput & { mode?: 'create' | 'update' }) => {
             const {mode, ...data} = payload;
+            console.log(payload)
             if (mode === 'create') {
                 return await repo.createMyProfile(data);
             }
