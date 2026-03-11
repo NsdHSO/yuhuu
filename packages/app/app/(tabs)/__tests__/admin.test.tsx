@@ -317,7 +317,7 @@ describe('AdminScreen', () => {
             });
 
             // When: Admin screen renders
-            const {getByTestID} = renderWithQueryClient(<AdminScreen/>);
+            const {getByTestID: _getByTestID} = renderWithQueryClient(<AdminScreen/>);
 
             // Then: User should be redirected to profile
             expect(mockRedirect).toHaveBeenCalledWith('/profile');
