@@ -329,5 +329,11 @@
     "english": "English",
     "romanian": "Rom\u00e2n\u0103",
     "select": "Selecteaz\u0103 limba"
+  },
+  "genderPicker": {
+    "placeholder": "Selectează Genul",
+    "male": "Bărbat",
+    "female": "Femeie",
+    "modalTitle": "Selectează Genul Tău"
   }
 }
