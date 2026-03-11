@@ -1,10 +1,17 @@
 import React from 'react';
-import {render, fireEvent} from '@testing-library/react-native';
+import {render, fireEvent, waitFor} from '@testing-library/react-native';
 import {PersonalInfoAccordion} from '../personal-info-accordion';
 
 jest.mock('react-i18next', () => ({
     useTranslation: () => ({
-        t: (key: string) => key,
+        t: (key: string) => {
+            const translations: Record<string, string> = {
+                'genderPicker.male': 'Male',
+                'genderPicker.female': 'Female',
+                'genderPicker.placeholder': 'Select Gender',
+            };
+            return translations[key] || key;
+        },
         i18n: {language: 'en', changeLanguage: jest.fn()},
     }),
 }));
@@ -137,6 +144,77 @@ describe('PersonalInfoAccordion', () => {
             expect(getByTestId('personal-info-first-name').props.value).toBe('');
             expect(getByTestId('personal-info-last-name').props.value).toBe('');
             expect(getByTestId('personal-info-phone').props.value).toBe('');
+        });
+    });
+
+    describe('Gender Selection', () => {
+        it('renders GenderPicker component', () => {
+            const {getByTestId} = render(
+                <PersonalInfoAccordion
+                    firstName="John"
+                    lastName="Doe"
+                    phone="1234567890"
+                    gender={null}
+                    onFirstNameChange={jest.fn()}
+                    onLastNameChange={jest.fn()}
+                    onPhoneChange={jest.fn()}
+                    onGenderChange={jest.fn()}
+                    onSave={jest.fn()}
+                    isSaving={false}
+                    testID="personal-info"
+                />
+            );
+
+            expect(getByTestId('personal-info-gender-picker')).toBeTruthy();
+        });
+
+        it('calls onGenderChange when gender selected', async () => {
+            const onGenderChange = jest.fn();
+            const {getByTestId} = render(
+                <PersonalInfoAccordion
+                    firstName="John"
+                    lastName="Doe"
+                    phone="1234567890"
+                    gender={null}
+                    onFirstNameChange={jest.fn()}
+                    onLastNameChange={jest.fn()}
+                    onPhoneChange={jest.fn()}
+                    onGenderChange={onGenderChange}
+                    onSave={jest.fn()}
+                    isSaving={false}
+                    testID="personal-info"
+                />
+            );
+
+            fireEvent.press(getByTestId('personal-info-gender-picker-trigger'));
+
+            await waitFor(() => {
+                expect(getByTestId('personal-info-gender-picker-modal-male-button')).toBeTruthy();
+            });
+
+            fireEvent.press(getByTestId('personal-info-gender-picker-modal-male-button'));
+
+            expect(onGenderChange).toHaveBeenCalledWith('male');
+        });
+
+        it('displays selected gender in picker', () => {
+            const {getByText} = render(
+                <PersonalInfoAccordion
+                    firstName="John"
+                    lastName="Doe"
+                    phone="1234567890"
+                    gender="male"
+                    onFirstNameChange={jest.fn()}
+                    onLastNameChange={jest.fn()}
+                    onPhoneChange={jest.fn()}
+                    onGenderChange={jest.fn()}
+                    onSave={jest.fn()}
+                    isSaving={false}
+                    testID="personal-info"
+                />
+            );
+
+            expect(getByText('Male')).toBeTruthy();
         });
     });
 });
