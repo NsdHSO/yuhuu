@@ -35,6 +35,7 @@ exports[`TabScreenWrapper Snapshots matches snapshot with custom contentContaine
           "paddingBottom": 105,
         }
       }
+      keyboardShouldPersistTaps="handled"
       scrollEnabled={true}
     >
       <View />
@@ -77,6 +78,7 @@ exports[`TabScreenWrapper Snapshots matches snapshot with default props 1`] = `
           "paddingBottom": 105,
         }
       }
+      keyboardShouldPersistTaps="handled"
       scrollEnabled={true}
     >
       <View />
@@ -119,6 +121,7 @@ exports[`TabScreenWrapper Snapshots matches snapshot with scrollEnabled=false 1`
           "paddingBottom": 105,
         }
       }
+      keyboardShouldPersistTaps="handled"
       scrollEnabled={false}
     >
       <View />
