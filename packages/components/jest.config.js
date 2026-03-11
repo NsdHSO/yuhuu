@@ -20,6 +20,7 @@ module.exports = {
         '^@yuhuu/i18n$': '<rootDir>/../i18n/src/index.ts',
         '^@yuhuu/auth$': '<rootDir>/../auth/src/index.ts',
         '^@yuhuu/types$': '<rootDir>/../types/src/index.ts',
-        '^@yuhuu/storage$': '<rootDir>/../storage/src/index.ts'
+        '^@yuhuu/storage$': '<rootDir>/../storage/src/index.ts',
+        '\\.svg$': '<rootDir>/__mocks__/svgMock.js'
     }
 };
