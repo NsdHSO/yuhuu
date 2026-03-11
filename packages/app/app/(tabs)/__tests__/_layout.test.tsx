@@ -7,6 +7,19 @@ import TabLayout from '../_layout';
  * SOLID Principles:
  * - Single Responsibility: Each test validates one specific role-based behavior
  * - Open/Closed: Tests ensure tabs can be extended without modifying existing logic
+ *
+ * ⚠️ KNOWN LIMITATION:
+ * These unit tests mock Expo Router and test the EXPECTED behavior.
+ * They do NOT catch integration issues between Expo Router and CustomTabBar.
+ *
+ * Example bug this missed:
+ * - Expo Router normalized `href: null` → `href: undefined`
+ * - CustomTabBar filtered on `href !== null` (which is true for undefined)
+ * - Tabs showed up even though we wanted them hidden
+ * - Unit tests passed because the mock correctly filtered tabBarButton
+ *
+ * TODO: Add E2E/integration tests that render the REAL CustomTabBar
+ * to catch these integration bugs.
  */
 
 // Mock react-i18next to return English values
@@ -37,7 +50,18 @@ jest.mock('@/features/bootstrap/api', () => ({
     useBootstrapGate: () => mockUseBootstrapGate(),
 }));
 
-// Mock expo-router Tabs
+/**
+ * Mock expo-router Tabs
+ *
+ * LIMITATION: This mock tests the EXPECTED behavior (tabBarButton: () => null hides tabs)
+ * but doesn't test the ACTUAL Expo Router + CustomTabBar integration.
+ *
+ * Known issue this mock can't catch:
+ * - If Expo Router normalizes href: null → href: undefined
+ * - If CustomTabBar filters on href instead of tabBarButton
+ *
+ * For full integration testing, use E2E tests with the real CustomTabBar.
+ */
 jest.mock('expo-router', () => {
     const MockTabsScreen = ({
                                 name,
@@ -47,6 +71,13 @@ jest.mock('expo-router', () => {
             View,
             Text
         } = jest.requireActual('react-native');
+
+        // Mimic expected behavior: tabBarButton: () => null should hide the tab
+        // NOTE: This doesn't catch if Expo Router breaks this contract
+        if (typeof options?.tabBarButton === 'function') {
+            return null;
+        }
+
         return (
             <View testID={`tab-${name}`}>
                 <Text>{options?.tabBarLabel || name}</Text>
@@ -115,10 +146,19 @@ describe('TabLayout - Role-Based Access Control', () => {
             });
 
             // When: TabLayout renders
-            render(<TabLayout/>);
+            const {queryByText, queryAllByTestId} = render(<TabLayout/>);
 
-            // Then: Admin tab should be hidden (href should be null)
+            // Then: Admin tab should be hidden (tabBarButton returns null)
             expect(mockUseMyRolesQuery).toHaveBeenCalledWith({enabled: true});
+            // CRITICAL: Verify Admin tab is NOT in the DOM
+            // Note: With CustomTabBar filtering, tabs with tabBarButton: () => null won't render
+            expect(queryByText('Admin')).toBeNull();
+
+            // CRITICAL: Count total tabs rendered in DOM
+            // Member-only user: Home hidden (tabBarButton), Admin hidden (tabBarButton)
+            // Visible: Supper, Profile = 2 tabs
+            const allTabs = queryAllByTestId(/^tab-/);
+            expect(allTabs).toHaveLength(2); // Only Supper and Profile visible
         });
 
         it('should NOT show Admin tab when user has Leader role but not Admin', () => {
@@ -137,10 +177,17 @@ describe('TabLayout - Role-Based Access Control', () => {
             });
 
             // When: TabLayout renders
-            render(<TabLayout/>);
+            const {queryByText, queryAllByTestId} = render(<TabLayout/>);
 
             // Then: Admin tab should be hidden
             expect(mockUseMyRolesQuery).toHaveBeenCalledWith({enabled: true});
+            // CRITICAL: Verify Admin tab is NOT in the DOM
+            expect(queryByText('Admin')).toBeNull();
+
+            // CRITICAL: Leader user should see exactly 3 tabs (Home, Supper, Profile)
+            // Admin tab should NOT be present
+            const allTabs = queryAllByTestId(/^tab-/);
+            expect(allTabs).toHaveLength(3); // Home, Supper, Profile (no Admin)
         });
 
         it('should show Admin tab when user has Admin role among multiple roles', () => {
@@ -176,10 +223,12 @@ describe('TabLayout - Role-Based Access Control', () => {
             });
 
             // When: TabLayout renders
-            render(<TabLayout/>);
+            const {queryByText} = render(<TabLayout/>);
 
             // Then: Admin tab should be hidden (to avoid flicker)
             expect(mockUseMyRolesQuery).toHaveBeenCalledWith({enabled: true});
+            // CRITICAL: Verify Admin tab is NOT in the DOM during loading
+            expect(queryByText('Admin')).toBeNull();
         });
 
         it('should hide Admin tab when user has no roles', () => {
@@ -189,10 +238,12 @@ describe('TabLayout - Role-Based Access Control', () => {
             });
 
             // When: TabLayout renders
-            render(<TabLayout/>);
+            const {queryByText} = render(<TabLayout/>);
 
             // Then: Admin tab should be hidden
             expect(mockUseMyRolesQuery).toHaveBeenCalledWith({enabled: true});
+            // CRITICAL: Verify Admin tab is NOT in the DOM when no roles
+            expect(queryByText('Admin')).toBeNull();
         });
     });
 
