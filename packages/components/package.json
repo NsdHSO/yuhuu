@@ -35,7 +35,8 @@
     "@yuhuu/auth": "workspace:*",
     "@yuhuu/i18n": "workspace:*",
     "@yuhuu/storage": "workspace:*",
-    "@yuhuu/types": "workspace:*"
+    "@yuhuu/types": "workspace:*",
+    "react-native-svg": "^15.15.3"
   },
   "devDependencies": {
     "@testing-library/jest-native": "^5.4.3",
