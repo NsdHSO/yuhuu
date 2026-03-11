@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Alert, StyleSheet, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {ThemedView, ThemedText, DatePicker, DinnerSelector, LoadingState, ErrorState, EmptyState, ParticipantForm, DinnerDetailsCard, GlassBackground, TabScreenWrapper} from '@yuhuu/components';
+import {ThemedText, DatePicker, DinnerSelector, LoadingState, ErrorState, EmptyState, ParticipantForm, DinnerDetailsCard, GlassBackground, TabScreenWrapper} from '@yuhuu/components';
 import {useAddParticipantMutation, useDinnersByDateQuery} from '@/features/dinners/hooks';
 
 /**
