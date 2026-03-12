@@ -1,5 +1,5 @@
 import {Badge} from '../atoms/badge';
-import {GlassView} from '../atoms/glass';
+import {GlassView} from './glass-layout';
 
 export interface CategoryBadgeProps {
     category: string;
