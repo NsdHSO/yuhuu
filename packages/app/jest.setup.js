@@ -76,15 +76,65 @@ jest.mock('expo-local-authentication', () => ({
 
 // Mock react-native-reanimated
 jest.mock('react-native-reanimated', () => {
-    const Reanimated = require('react-native-reanimated/mock');
-    Reanimated.default.call = () => {
-    };
-    return {
-        ...Reanimated,
+    const React = require('react');
+    const {View, Text, Image, ScrollView} = require('react-native');
+
+    const Reanimated = {
+        default: {
+            call: () => {},
+        },
+        // Animated components
+        View,
+        Text,
+        Image,
+        ScrollView,
+        // Hooks
         useAnimatedRef: jest.fn(() => ({current: null})),
         useScrollOffset: jest.fn(() => ({value: 0})),
-        useAnimatedStyle: jest.fn((callback) => callback())
+        useAnimatedStyle: jest.fn((callback) => callback()),
+        useSharedValue: jest.fn((initialValue) => ({value: initialValue})),
+        useDerivedValue: jest.fn((callback) => ({value: callback()})),
+        useAnimatedScrollHandler: jest.fn(() => () => {}),
+        useAnimatedGestureHandler: jest.fn(() => () => {}),
+        useAnimatedReaction: jest.fn(() => {}),
+        // Animation functions
+        withTiming: jest.fn((value) => value),
+        withSpring: jest.fn((value) => value),
+        withRepeat: jest.fn((value) => value),
+        withSequence: jest.fn((...values) => values[0]),
+        withDelay: jest.fn((_, value) => value),
+        withDecay: jest.fn((value) => value),
+        cancelAnimation: jest.fn(),
+        // Easing
+        Easing: {
+            linear: (x) => x,
+            ease: (x) => x,
+            quad: (x) => x,
+            cubic: (x) => x,
+            poly: (n) => (x) => x,
+            sin: (x) => x,
+            circle: (x) => x,
+            exp: (x) => x,
+            elastic: (bounciness = 1) => (x) => x,
+            back: (s = 1.70158) => (x) => x,
+            bounce: (x) => x,
+            bezier: (x1, y1, x2, y2) => (x) => x,
+            in: (easing) => (x) => x,
+            out: (easing) => (x) => x,
+            inOut: (easing) => (x) => x,
+        },
+        // Utilities
+        interpolate: jest.fn((value, inputRange, outputRange) => outputRange[0]),
+        Extrapolate: {
+            EXTEND: 'extend',
+            CLAMP: 'clamp',
+            IDENTITY: 'identity',
+        },
+        runOnJS: jest.fn((fn) => fn),
+        runOnUI: jest.fn((fn) => fn),
     };
+
+    return Reanimated;
 });
 
 // Mock @react-navigation/elements
