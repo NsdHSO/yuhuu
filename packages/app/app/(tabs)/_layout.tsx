@@ -5,6 +5,7 @@ import {useTranslation} from 'react-i18next';
 import {IconSymbol, Colors, useColorScheme, CustomTabBar} from '@yuhuu/components';
 import {useMyRolesQuery} from '@/features/roles/meRoles';
 import {useBootstrapGate} from '@/features/bootstrap/api';
+import {useMyAssignmentsQuery} from '@/features/visits/hooks';
 
 export default function TabLayout() {
     const {t} = useTranslation();
@@ -16,6 +17,9 @@ export default function TabLayout() {
     const isMemberOnly = myRoles ? myRoles.every((r) => r.role_name === 'Member') : true; // default hide to avoid flicker
     // Show Admin tab only for Admin role
     const isAdmin = myRoles ? myRoles.some((r) => r.role_name === 'Admin') : false;
+    // Show Visits tab only if user has assignments
+    const {data: myAssignments} = useMyAssignmentsQuery();
+    const hasVisits = (myAssignments?.length ?? 0) > 0;
 
     return (
         <>
@@ -44,6 +48,16 @@ export default function TabLayout() {
                         tabBarLabel: t('tabs.admin'),
                         tabBarIcon: ({color}) => <IconSymbol size={28} name="shield.fill" color={color}/>,
                         tabBarButton: isAdmin ? undefined : () => null,
+                    }}
+                />
+
+                {/* Visits tab - only visible if user has assignments */}
+                <Tabs.Screen
+                    name="visits"
+                    options={{
+                        tabBarLabel: t('tabs.visits'),
+                        tabBarIcon: ({color}) => <IconSymbol size={28} name="map.fill" color={color}/>,
+                        tabBarButton: hasVisits ? undefined : () => null,
                     }}
                 />
 
