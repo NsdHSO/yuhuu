@@ -13,12 +13,13 @@ import type {BottomSheetBackgroundProps} from '@gorhom/bottom-sheet';
 import {GLASS_COLORS} from '../../constants/glass';
 import type {GlassVariant} from '../../types/glass';
 
-type GlassBottomSheetBackgroundProps = BottomSheetBackgroundProps & {
+type GlassBottomSheetBackgroundProps = Partial<BottomSheetBackgroundProps> & {
   variant: GlassVariant;
   enableWaves: boolean;
   activeColor: string;
   colorScheme: 'light' | 'dark';
   testID?: string;
+  children?: React.ReactNode;
 };
 
 export const GlassBottomSheetBackground: React.FC<GlassBottomSheetBackgroundProps> = ({
@@ -29,6 +30,7 @@ export const GlassBottomSheetBackground: React.FC<GlassBottomSheetBackgroundProp
   activeColor,
   colorScheme,
   testID,
+  children,
 }) => {
   const scheme = colorScheme;
 
@@ -198,6 +200,9 @@ export const GlassBottomSheetBackground: React.FC<GlassBottomSheetBackgroundProp
           ]}
           pointerEvents="none"
         />
+
+        {/* Render children on top of all effects */}
+        {children}
       </Animated.View>
     );
   }
@@ -295,6 +300,9 @@ export const GlassBottomSheetBackground: React.FC<GlassBottomSheetBackgroundProp
         ]}
         pointerEvents="none"
       />
+
+      {/* Render children on top of all effects */}
+      {children}
     </Animated.View>
   );
 };
