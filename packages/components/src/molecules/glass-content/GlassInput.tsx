@@ -1,5 +1,5 @@
 import { TextInput, TextInputProps, StyleSheet, View } from 'react-native';
-import { GlassView } from './GlassView';
+import { GlassView } from '../glass-layout/GlassView';
 import { useColorScheme } from '../../hooks/use-color-scheme';
 import { Colors } from '../../constants/theme';
 import type { GlassVariant } from '../../types/glass';
