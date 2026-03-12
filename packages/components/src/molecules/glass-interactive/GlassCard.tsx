@@ -8,7 +8,7 @@ import Animated, {
   withSequence,
   Easing,
 } from 'react-native-reanimated';
-import { GlassView } from './GlassView';
+import { GlassView } from '../glass-layout/GlassView';
 import type { GlassViewProps } from '../../types/glass';
 import { useColorScheme } from '../../hooks/use-color-scheme';
 import { useElectricBorder } from '../../hooks/useElectricBorder';
