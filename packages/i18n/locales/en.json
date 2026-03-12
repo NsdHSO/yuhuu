@@ -103,6 +103,7 @@
   },
   "admin": {
     "title": "Admin",
+    "dinnerManagement": "Dinner Management",
     "dinnerParticipation": "Dinner Participation Graph",
     "searchUser": "Search User Attendance",
     "viewParticipants": "View Dinner Participants",
