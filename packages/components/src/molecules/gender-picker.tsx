@@ -4,7 +4,7 @@ import {useTranslation} from 'react-i18next';
 import type {BottomSheetModal} from '@gorhom/bottom-sheet';
 import {ThemedText} from '../themed-text';
 import {GenderAvatar} from '../atoms/gender-avatar';
-import {GlassBottomSheet} from '../atoms/glass/GlassBottomSheet';
+import {GlassBottomSheet} from './glass-interactive/GlassBottomSheet';
 import {useColorScheme} from '../hooks/use-color-scheme';
 import {useGlowVariant} from '../hooks/useGlowVariant';
 import {getGlowColor} from '../constants/glowColors';
