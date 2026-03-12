@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet} from 'react-native';
 import {ThemedText} from '../themed-text';
-import {GlassCard} from '../atoms/glass';
+import {GlassCard} from './glass-interactive';
 import type {Dinner} from '@yuhuu/types';
 import {useTranslation} from 'react-i18next';
 
