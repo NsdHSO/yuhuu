@@ -2,7 +2,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {useColorScheme} from '../hooks/use-color-scheme';
 import {Colors} from '../constants/theme';
-import {GlassCard} from '../atoms/glass/GlassCard';
+import {GlassCard} from '../molecules/glass-interactive/GlassCard';
 
 /**
  * DinnerAttendance component - Displays user's dinner attendance history
