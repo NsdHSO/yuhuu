@@ -2,7 +2,7 @@ import {StyleSheet, TextInput} from 'react-native';
 import {useState} from 'react';
 import {useColorScheme} from '../hooks/use-color-scheme';
 import {Colors} from '../constants/theme';
-import {GlassView} from './glass';
+import {GlassView} from '../molecules/glass-layout';
 
 type SearchInputProps = {
     type: 'text' | 'numeric';
