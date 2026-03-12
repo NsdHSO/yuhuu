@@ -7,6 +7,7 @@ import {
 import { useParticipantsByDinnerQuery } from "@/features/dinners/hooks";
 import { useMyRolesQuery } from "@/features/roles/meRoles";
 import { useBootstrapGate } from "@/features/bootstrap/api";
+import { ItineraryManagement } from "@/components/visits/ItineraryManagement";
 import {
     Colors,
     DinnerAttendance,
@@ -217,6 +218,19 @@ export default function AdminScreen() {
                   )}
                 </GlassAccordion>
               </View>
+            </GlassAccordion>
+          </View>
+
+          {/* Itinerary Management Section */}
+          <View testID="itinerary-section" style={styles.section}>
+            <GlassAccordion
+              title={t("admin.itineraryManagement")}
+              variant="frosted"
+              defaultExpanded={false}
+              enableElectric={true}
+              enableWaves={false}
+            >
+              <ItineraryManagement />
             </GlassAccordion>
           </View>
 
