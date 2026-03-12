@@ -20,7 +20,7 @@ export function GlassBackground({
 
   // Background colors that respect dark/light mode
   const backgroundColors = {
-    light: "#FFFFFF", // Pure white for light mode
+        light: "#FFFFFF", // Pure white for light mode
     dark: "#0F172A",  // Deep navy for dark mode
   };
 

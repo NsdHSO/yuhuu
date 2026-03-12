@@ -1,17 +1,9 @@
-import React, {forwardRef, useImperativeHandle, useState, useCallback, useEffect, useMemo} from 'react';
+import React, {forwardRef, useImperativeHandle, useState, useCallback, useMemo} from 'react';
 import {Modal, View, Pressable, StyleSheet, Animated as RNAnimated} from 'react-native';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withRepeat,
-  withSequence,
-  withTiming,
-  Easing,
-} from 'react-native-reanimated';
 import {useColorScheme} from '../../hooks/use-color-scheme';
 import {useGlowVariant} from '../../hooks/useGlowVariant';
 import {getGlowColor} from '../../constants/glowColors';
-import {GLASS_COLORS} from '../../constants/glass';
+import {GlassBottomSheetBackground} from './GlassBottomSheetBackground';
 import type {GlassVariant} from '../../types/glass';
 
 export type GlassBottomSheetProps = {
@@ -29,7 +21,7 @@ export const GlassBottomSheet = forwardRef<any, GlassBottomSheetProps>(
     {
       children,
       variant = 'frosted',
-      enableWaves = true,
+      enableWaves = false,
       snapPoints = ['60%'],
       enableBackdropDismiss = true,
       testID,
@@ -103,7 +95,7 @@ export const GlassBottomSheet = forwardRef<any, GlassBottomSheetProps>(
             ]}
             onStartShouldSetResponder={() => true}
           >
-            <GlassBackground
+            <GlassBottomSheetBackground
               variant={variant}
               enableWaves={enableWaves}
               activeColor={activeColor}
@@ -112,7 +104,7 @@ export const GlassBottomSheet = forwardRef<any, GlassBottomSheetProps>(
             >
               <GlassHandle />
               {children}
-            </GlassBackground>
+            </GlassBottomSheetBackground>
           </RNAnimated.View>
         </Pressable>
       </Modal>
@@ -121,123 +113,6 @@ export const GlassBottomSheet = forwardRef<any, GlassBottomSheetProps>(
 );
 
 GlassBottomSheet.displayName = 'GlassBottomSheet';
-
-const GlassBackground: React.FC<{
-  variant: GlassVariant;
-  enableWaves: boolean;
-  activeColor: string;
-  colorScheme: 'light' | 'dark';
-  testID?: string;
-  children: React.ReactNode;
-}> = ({variant, enableWaves, activeColor, colorScheme, testID, children}) => {
-  const scheme = colorScheme;
-
-  // Wave animations
-  const wave1 = useSharedValue(0);
-  const wave2 = useSharedValue(0);
-  const wave3 = useSharedValue(0);
-
-  useEffect(() => {
-    if (enableWaves) {
-      wave1.value = withRepeat(
-        withSequence(
-          withTiming(1, {duration: 2000, easing: Easing.inOut(Easing.sin)}),
-          withTiming(0, {duration: 2000, easing: Easing.inOut(Easing.sin)})
-        ),
-        -1,
-        true
-      );
-      wave2.value = withRepeat(
-        withSequence(
-          withTiming(1, {duration: 2500, easing: Easing.inOut(Easing.sin)}),
-          withTiming(0, {duration: 2500, easing: Easing.inOut(Easing.sin)})
-        ),
-        -1,
-        true
-      );
-      wave3.value = withRepeat(
-        withSequence(
-          withTiming(1, {duration: 3000, easing: Easing.inOut(Easing.sin)}),
-          withTiming(0, {duration: 3000, easing: Easing.inOut(Easing.sin)})
-        ),
-        -1,
-        true
-      );
-    }
-  }, [enableWaves, wave1, wave2, wave3]);
-
-  const wave1Style = useAnimatedStyle(() => {
-    if (!enableWaves) return {};
-    const scale = 1 + wave1.value * 0.08;
-    const opacity = 0.4 + wave1.value * 0.4;
-    return {transform: [{scale}], opacity};
-  });
-
-  const wave2Style = useAnimatedStyle(() => {
-    if (!enableWaves) return {};
-    const scale = 1 + wave2.value * 0.06;
-    const opacity = 0.3 + wave2.value * 0.4;
-    return {transform: [{scale}], opacity};
-  });
-
-  const wave3Style = useAnimatedStyle(() => {
-    if (!enableWaves) return {};
-    const scale = 1 + wave3.value * 0.1;
-    const opacity = 0.35 + wave3.value * 0.45;
-    return {transform: [{scale}], opacity};
-  });
-
-  return (
-    <View
-      style={[
-        styles.glassContainer,
-        {backgroundColor: GLASS_COLORS[scheme][variant]},
-      ]}
-      testID={testID}
-    >
-      {/* Subtle glow tint overlay - matches GlassAccordion */}
-      <View
-        style={[
-          StyleSheet.absoluteFill,
-          {
-            backgroundColor: `${activeColor}${scheme === 'dark' ? '0D' : '0A'}`, // 5%/4% opacity - matches accordion
-          },
-        ]}
-        pointerEvents="none"
-      />
-
-      {/* Wave animations */}
-      {enableWaves && (
-        <>
-          <Animated.View
-            style={[
-              StyleSheet.absoluteFill,
-              {backgroundColor: `${activeColor}${scheme === 'dark' ? '59' : '40'}`}, // 35%/25% opacity - matches accordion wave1
-              wave1Style,
-            ]}
-          />
-          <Animated.View
-            style={[
-              StyleSheet.absoluteFill,
-              {backgroundColor: `${activeColor}${scheme === 'dark' ? '4D' : '38'}`}, // 30%/22% opacity - matches accordion wave2
-              wave2Style,
-            ]}
-          />
-          <Animated.View
-            style={[
-              StyleSheet.absoluteFill,
-              {backgroundColor: `${activeColor}${scheme === 'dark' ? '52' : '3B'}`}, // 32%/23% opacity - matches accordion wave3
-              wave3Style,
-            ]}
-          />
-        </>
-      )}
-
-      {/* Content */}
-      {children}
-    </View>
-  );
-};
 
 const GlassHandle: React.FC = () => {
   const scheme = useColorScheme() ?? 'light';
@@ -262,7 +137,7 @@ const GlassHandle: React.FC = () => {
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    backgroundColor: 'rgba(0, 0, 0, 0.2)', // Reduced from 0.4 to 0.2 for lighter backdrop
     justifyContent: 'flex-end',
   },
   bottomSheet: {

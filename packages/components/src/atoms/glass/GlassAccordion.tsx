@@ -155,35 +155,58 @@ export function GlassAccordion({
   // Get electric color from shared glow colors
   const electricColor = getGlowColor(glowVariant, scheme);
 
-  // Header-only mode for nested accordions (no background)
+  // Header-only mode for nested accordions - uses glass styling like regular mode
   if (headerOnly) {
     return (
-      <View style={[
-        styles.container,
-        style,
-        {
-          borderRadius: borderRadius,
-          borderWidth: 1,
-          borderColor: `${electricColor}${scheme === 'dark' ? '40' : '33'}`, // 25%/20% opacity
-          backgroundColor: scheme === 'dark' ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.4)',
-          overflow: 'visible', // Android fix: 'hidden' blocks scroll touch events
-        }
-      ]}>
-        <Pressable
-          onPress={() => setIsExpanded(!isExpanded)}
-          style={styles.header}
-          testID={testID ? `${testID}-header` : undefined}
+      <View style={[{ borderRadius, overflow: 'visible' }, styles.container, style]}>
+        <GlassView
+          variant={variant}
+          borderRadius={borderRadius}
+          enableShadow={enableShadow}
+          shadowLevel={shadowLevel}
+          testID={testID}
         >
-          <Text style={[styles.title, { color: textColor }]}>{title}</Text>
-          <Text style={[styles.chevron, { color: iconColor }]}>
-            {isExpanded ? '▼' : '▶'}
-          </Text>
-        </Pressable>
-        {isExpanded && children && (
-          <Animated.View style={[styles.content, contentStyle]}>
-            {children}
-          </Animated.View>
-        )}
+          {/* Subtle glow tint overlay - matches regular accordion */}
+          <View
+            style={[
+              StyleSheet.absoluteFill,
+              {
+                borderRadius,
+                backgroundColor: `${electricColor}${scheme === 'dark' ? '0D' : '0A'}`, // 5% / 4% opacity - matches regular
+              },
+            ]}
+            pointerEvents="none"
+          />
+
+          <Pressable
+            onPress={() => setIsExpanded(!isExpanded)}
+            style={styles.header}
+            testID={testID ? `${testID}-header` : undefined}
+          >
+            <Text style={[styles.title, { color: textColor }]}>{title}</Text>
+            <Text style={[styles.chevron, { color: iconColor }]}>
+              {isExpanded ? '▼' : '▶'}
+            </Text>
+          </Pressable>
+          {isExpanded && children && (
+            <Animated.View style={[styles.content, contentStyle]}>
+              {children}
+            </Animated.View>
+          )}
+        </GlassView>
+
+        {/* Border - matches regular accordion */}
+        <Animated.View
+          style={[
+            StyleSheet.absoluteFill,
+            {
+              borderRadius,
+              borderColor: `${electricColor}${scheme === 'dark' ? '66' : '59'}`, // 40% / 35% opacity - matches regular
+              borderWidth: borderWidth.value,
+            },
+          ]}
+          pointerEvents="none"
+        />
       </View>
     );
   }

@@ -1,4 +1,4 @@
-import React, {useRef, useCallback} from 'react';
+import React, {useRef, useCallback, useEffect} from 'react';
 import {View, Pressable, StyleSheet} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import type {BottomSheetModal} from '@gorhom/bottom-sheet';
@@ -31,6 +31,11 @@ export function GenderPicker({value, onChange, testID}: GenderPickerProps) {
   const {glowVariant} = useGlowVariant();
   const activeColor = getGlowColor(glowVariant, scheme);
   const neutralGray = scheme === 'dark' ? '#6B7280' : '#9CA3AF';
+
+  // Dismiss bottom sheet when glow variant changes to force re-render with new colors
+  useEffect(() => {
+    bottomSheetRef.current?.dismiss();
+  }, [glowVariant, scheme]);
 
   const handleOpenModal = useCallback(() => {
     bottomSheetRef.current?.present();
@@ -98,9 +103,9 @@ export function GenderPicker({value, onChange, testID}: GenderPickerProps) {
       </Pressable>
 
       <GlassBottomSheet
+        key={`${glowVariant}-${scheme}`}
         ref={bottomSheetRef}
         snapPoints={['60%']}
-        enableWaves={true}
         testID={testID ? `${testID}-bottom-sheet` : undefined}
       >
         <View style={styles.bottomSheetContent}>
@@ -192,9 +197,7 @@ const styles = StyleSheet.create({
     marginLeft: 'auto',
   },
   bottomSheetContent: {
-    paddingHorizontal: 24,
     paddingTop: 8,
-    paddingBottom: 32,
   },
   modalTitle: {
     fontSize: 20,

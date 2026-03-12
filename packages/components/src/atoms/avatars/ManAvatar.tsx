@@ -1,5 +1,5 @@
 import React from 'react';
-import Svg, { Circle, Path, SvgProps, Defs, LinearGradient, Stop } from 'react-native-svg';
+import Svg, { Circle, Path, SvgProps } from 'react-native-svg';
 import { useColorScheme } from '../../hooks/use-color-scheme';
 import { useGlowVariant } from '../../hooks/useGlowVariant';
 import { getGlowColor } from '../../constants/glowColors';
@@ -9,23 +9,11 @@ export default function ManAvatar(props: SvgProps) {
   const { glowVariant } = useGlowVariant();
   const activeColor = getGlowColor(glowVariant, scheme);
 
-  // Generate unique gradient ID that changes when color changes to force SVG update
-  const gradientId = React.useMemo(
-    () => `shirtGradient-${glowVariant}-${scheme}-${Math.random().toString(36).substr(2, 9)}`,
-    [glowVariant, scheme]
-  );
-
   return (
     <Svg
       viewBox="0 0 532 532"
       {...props}
     >
-      <Defs>
-        <LinearGradient id={gradientId} x1="0%" y1="0%" x2="0%" y2="100%">
-          <Stop offset="0%" stopColor={activeColor} stopOpacity="1" />
-          <Stop offset="100%" stopColor={activeColor} stopOpacity="0.8" />
-        </LinearGradient>
-      </Defs>
       <Circle cx="270.76" cy="260.934" r="86.349" fill="#ffb6b6" />
       <Path
         fill="#ffb6b6"
@@ -36,7 +24,7 @@ export default function ManAvatar(props: SvgProps) {
         d="m216.037 340.357 17.032 3.848s-13.389-42.454-8.844-46.507c4.544-4.053 15.68 2.333 15.68 2.333l11.702 13.12 14.254-14.512s15.475-19.243 21.534-24.647-3.674-25.463-3.674-25.463 89.892-24.24 56.443-67.84c0 0-19.61-34.185-25.997-23.049-6.386 11.136-14.002-6.55-14.002-6.55l-23.253 4.422s-45.895-27.06-89.454 30.83 28.58 154.015 28.58 154.015"
       />
       <Path
-        fill={`url(#${gradientId})`}
+        fill={activeColor}
         d="M433.16 472.95C385.97 511.21 327.59 532 266 532c-56.24 0-109.81-17.34-154.62-49.48.08-.84.16-1.67.23-2.5 1.19-13 2.25-25.64 2.95-36.12 2.71-40.69 97.64-67.81 97.64-67.81s.43.43 1.29 1.18c5.24 4.6 26.51 21.28 63.81 25.94 33.26 4.16 44.21-15.57 47.52-25.02 1-2.88 1.3-4.81 1.3-4.81l97.64 46.11c6.37 9.1 8.86 28.7 9.35 50.73.02.91.04 1.81.05 2.73"
       />
       <Path
