@@ -3,7 +3,7 @@ import {Alert, Pressable, StyleSheet, Text, View} from 'react-native';
 import {useColorScheme} from '../hooks/use-color-scheme';
 import {Colors} from '../constants/theme';
 import {useTranslation} from 'react-i18next';
-import {GlassInput} from '../atoms/glass/GlassInput';
+import {GlassInput} from './glass-content/GlassInput';
 
 /**
  * Props for the ParticipantForm component
