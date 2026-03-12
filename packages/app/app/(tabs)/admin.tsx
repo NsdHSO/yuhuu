@@ -85,54 +85,29 @@ export default function AdminScreen() {
   return (
     <GlassBackground>
       <TabScreenWrapper testID="admin-container" contentContainerStyle={styles.container}>
-          {/* Dinner Graph Section - Expandable */}
-          <View testID="dinner-graph-section" style={styles.section}>
+          {/* Parent Dinner Management Accordion */}
+          <View style={styles.section}>
             <GlassAccordion
-              title={t("admin.dinnerParticipation")}
+              title={t("admin.dinnerManagement")}
               variant="frosted"
               defaultExpanded={true}
               enableElectric={true}
               enableWaves={false}
-              testID="dinner-graph-accordion"
+              testID="dinner-management-accordion"
             >
-              {isLoadingStats ? (
-                <View
-                  testID="dinner-graph-loading"
-                  style={styles.loadingContainer}
+              {/* Dinner Graph Section - Expandable */}
+              <View testID="dinner-graph-section" style={styles.section}>
+                <GlassAccordion
+                  title={t("admin.dinnerParticipation")}
+                  variant="frosted"
+                  defaultExpanded={true}
+                  enableElectric={true}
+                  enableWaves={false}
+                  testID="dinner-graph-accordion"
                 >
-                  <ActivityIndicator
-                    size="large"
-                    color={Colors[scheme ?? "light"].tint}
-                  />
-                </View>
-              ) : statsError ? (
-                <Text style={[styles.errorText, { color: "#EF4444" }]}>
-                  {t("admin.loadError")}
-                </Text>
-              ) : (
-                <DinnerGraph testID="dinner-graph" data={dinnerStats} />
-              )}
-            </GlassAccordion>
-          </View>
-
-          {/* User Search Section - Expandable */}
-          <View testID="user-search-section" style={styles.section}>
-            <GlassAccordion
-              title={t("admin.searchUser")}
-              variant="frosted"
-              defaultExpanded={true}
-              enableElectric={true}
-              enableWaves={false}
-              testID="user-search-accordion"
-            >
-              <UserSearch testID="user-search" onSearch={handleSearch} />
-
-              {/* Attendance Results */}
-              {searchedUser && (
-                <View style={styles.attendanceContainer}>
-                  {isLoadingAttendance ? (
+                  {isLoadingStats ? (
                     <View
-                      testID="attendance-loading"
+                      testID="dinner-graph-loading"
                       style={styles.loadingContainer}
                     >
                       <ActivityIndicator
@@ -140,28 +115,108 @@ export default function AdminScreen() {
                         color={Colors[scheme ?? "light"].tint}
                       />
                     </View>
-                  ) : attendanceError ? (
+                  ) : statsError ? (
                     <Text style={[styles.errorText, { color: "#EF4444" }]}>
-                      {t("admin.userNotFound")}
-                    </Text>
-                  ) : userAttendance && userAttendance.length === 0 ? (
-                    <Text
-                      style={[
-                        styles.emptyText,
-                        { color: Colors[scheme ?? "light"].icon },
-                      ]}
-                    >
-                      {t("admin.noAttendanceRecords")}
+                      {t("admin.loadError")}
                     </Text>
                   ) : (
-                    <DinnerAttendance
-                      testID="dinner-attendance"
-                      username={searchedUser.username}
-                      data={userAttendance}
-                    />
+                    <DinnerGraph testID="dinner-graph" data={dinnerStats} />
                   )}
-                </View>
-              )}
+                </GlassAccordion>
+              </View>
+
+              {/* User Search Section - Expandable */}
+              <View testID="user-search-section" style={styles.section}>
+                <GlassAccordion
+                  title={t("admin.searchUser")}
+                  variant="frosted"
+                  defaultExpanded={true}
+                  enableElectric={true}
+                  enableWaves={false}
+                  testID="user-search-accordion"
+                >
+                  <UserSearch testID="user-search" onSearch={handleSearch} />
+
+                  {/* Attendance Results */}
+                  {searchedUser && (
+                    <View style={styles.attendanceContainer}>
+                      {isLoadingAttendance ? (
+                        <View
+                          testID="attendance-loading"
+                          style={styles.loadingContainer}
+                        >
+                          <ActivityIndicator
+                            size="large"
+                            color={Colors[scheme ?? "light"].tint}
+                          />
+                        </View>
+                      ) : attendanceError ? (
+                        <Text style={[styles.errorText, { color: "#EF4444" }]}>
+                          {t("admin.userNotFound")}
+                        </Text>
+                      ) : userAttendance && userAttendance.length === 0 ? (
+                        <Text
+                          style={[
+                            styles.emptyText,
+                            { color: Colors[scheme ?? "light"].icon },
+                          ]}
+                        >
+                          {t("admin.noAttendanceRecords")}
+                        </Text>
+                      ) : (
+                        <DinnerAttendance
+                          testID="dinner-attendance"
+                          username={searchedUser.username}
+                          data={userAttendance}
+                        />
+                      )}
+                    </View>
+                  )}
+                </GlassAccordion>
+              </View>
+
+              {/* Dinner Participants Section - Expandable */}
+              <View testID="dinner-participants-section" style={styles.section}>
+                <GlassAccordion
+                  title={t("admin.viewParticipants")}
+                  variant="frosted"
+                  defaultExpanded={false}
+                  enableElectric={true}
+                  enableWaves={false}
+                  testID="dinner-participants-accordion"
+                >
+                  <DinnerIdSearch
+                    testID="dinner-id-search"
+                    onDinnerIdChange={handleDinnerIdChange}
+                  />
+
+                  {/* Participants Results */}
+                  {selectedDinnerId && (
+                    <View style={styles.participantsContainer}>
+                      {isLoadingParticipants ? (
+                        <View
+                          testID="participants-loading"
+                          style={styles.loadingContainer}
+                        >
+                          <ActivityIndicator
+                            size="large"
+                            color={Colors[scheme ?? "light"].tint}
+                          />
+                        </View>
+                      ) : participantsError ? (
+                        <Text style={[styles.errorText, { color: "#EF4444" }]}>
+                          {t("admin.participantsLoadError")}
+                        </Text>
+                      ) : participants ? (
+                        <ParticipantsList
+                          testID="participants-list"
+                          participants={participants}
+                        />
+                      ) : null}
+                    </View>
+                  )}
+                </GlassAccordion>
+              </View>
             </GlassAccordion>
           </View>
 
@@ -171,49 +226,6 @@ export default function AdminScreen() {
               <ChurchInformationAccordion userId={searchedUser.id} />
             </View>
           )}
-
-          {/* Dinner Participants Section - Expandable */}
-          <View testID="dinner-participants-section" style={styles.section}>
-            <GlassAccordion
-              title={t("admin.viewParticipants")}
-              variant="frosted"
-              defaultExpanded={false}
-              enableElectric={true}
-              enableWaves={false}
-              testID="dinner-participants-accordion"
-            >
-              <DinnerIdSearch
-                testID="dinner-id-search"
-                onDinnerIdChange={handleDinnerIdChange}
-              />
-
-              {/* Participants Results */}
-              {selectedDinnerId && (
-                <View style={styles.participantsContainer}>
-                  {isLoadingParticipants ? (
-                    <View
-                      testID="participants-loading"
-                      style={styles.loadingContainer}
-                    >
-                      <ActivityIndicator
-                        size="large"
-                        color={Colors[scheme ?? "light"].tint}
-                      />
-                    </View>
-                  ) : participantsError ? (
-                    <Text style={[styles.errorText, { color: "#EF4444" }]}>
-                      {t("admin.participantsLoadError")}
-                    </Text>
-                  ) : participants ? (
-                    <ParticipantsList
-                      testID="participants-list"
-                      participants={participants}
-                    />
-                  ) : null}
-                </View>
-              )}
-            </GlassAccordion>
-          </View>
       </TabScreenWrapper>
     </GlassBackground>
   );
