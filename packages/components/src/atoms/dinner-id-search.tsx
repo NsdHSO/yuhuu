@@ -3,7 +3,7 @@ import {useState} from 'react';
 import {useColorScheme} from '../hooks/use-color-scheme';
 import {Colors} from '../constants/theme';
 import {useTranslation} from 'react-i18next';
-import {GlassInput} from './glass/GlassInput';
+import {GlassInput} from '../molecules/glass-content/GlassInput';
 
 /**
  * DinnerIdSearch component - Search for dinner by ID
