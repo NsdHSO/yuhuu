@@ -3,8 +3,8 @@ import {useState} from 'react';
 import {useColorScheme} from '../hooks/use-color-scheme';
 import {Colors} from '../constants/theme';
 import {useTranslation} from 'react-i18next';
-import {GlassInput} from '../atoms/glass/GlassInput';
-import {GlassView} from '../atoms/glass/GlassView';
+import {GlassInput} from './glass-content/GlassInput';
+import {GlassView} from './glass-layout/GlassView';
 
 /**
  * UserSearch component - Search for users by username
