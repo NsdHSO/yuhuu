@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet} from 'react-native';
 import {Calendar} from 'react-native-calendars';
 import {useColorScheme} from '../hooks/use-color-scheme';
-import {GlassCard} from './glass/GlassCard';
+import {GlassCard} from '../molecules/glass-interactive/GlassCard';
 
 /**
  * Props for the DatePicker component
