@@ -80,6 +80,7 @@ jest.mock('expo-router', () => ({
 
 // Mock react-i18next - return English values from translation keys
 const translations: Record<string, string> = {
+    'admin.dinnerManagement': 'Dinner Management',
     'admin.dinnerParticipation': 'Dinner Participation Graph',
     'admin.searchUser': 'Search User Attendance',
     'admin.viewParticipants': 'View Dinner Participants',
@@ -431,6 +432,28 @@ describe('AdminScreen', () => {
             // Then: Section titles should be visible
             expect(getByText('Dinner Participation Graph')).toBeTruthy();
             expect(getByText('Search User Attendance')).toBeTruthy();
+        });
+
+        it('should render parent Dinner Management accordion', () => {
+            // Given: Admin screen is rendered
+            const {getByTestId, getByText} = renderWithQueryClient(<AdminScreen/>);
+
+            // Then: Parent accordion header should be present with correct title
+            expect(getByTestId('dinner-management-accordion-header')).toBeTruthy();
+            expect(getByText('Dinner Management')).toBeTruthy();
+        });
+
+        it('should nest dinner sections inside parent accordion', () => {
+            // Given: Admin screen is rendered
+            const {getByTestId} = renderWithQueryClient(<AdminScreen/>);
+
+            // Then: Parent accordion header should be present
+            expect(getByTestId('dinner-management-accordion-header')).toBeTruthy();
+
+            // And: All three nested accordions should be present
+            expect(getByTestId('dinner-graph-accordion-header')).toBeTruthy();
+            expect(getByTestId('user-search-accordion-header')).toBeTruthy();
+            expect(getByTestId('dinner-participants-accordion-header')).toBeTruthy();
         });
     });
 

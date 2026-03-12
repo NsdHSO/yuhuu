@@ -103,6 +103,8 @@
   },
   "admin": {
     "title": "Administrator",
+    "dinnerManagement": "Gestionare Cine",
+    "itineraryManagement": "Gestionare Itinerar",
     "dinnerParticipation": "Grafic participare la cin\u0103",
     "searchUser": "Caut\u0103 prezen\u021ba utilizatorului",
     "viewParticipants": "Vezi participan\u021bii la cin\u0103",
@@ -317,8 +319,22 @@
   "tabs": {
     "home": "Acas\u0103",
     "admin": "Admin",
+    "visits": "Vizite",
     "supper": "Cin\u0103",
     "profile": "Profil"
+  },
+  "visits": {
+    "title": "Vizite",
+    "myVisits": "Vizitele Mele",
+    "noAssignments": "Nu ave\u021bi vizite alocate",
+    "navigate": "Naviga\u021bie",
+    "markComplete": "Marcheaz\u0103 Complet",
+    "pending": "\u00cen a\u0219teptare",
+    "timeRemaining": "Timp r\u0103mas: {{time}}",
+    "familyName": "Numele Familiei",
+    "address": "Adres\u0103",
+    "phone": "Telefon",
+    "notes": "Note"
   },
   "errors": {
     "boundaryTitle": "Ceva nu a func\u021bionat",

@@ -91,6 +91,18 @@ jest.mock('@/features/dinners/hooks', () => ({
     useParticipantsByDinnerQuery: (dinnerId: number | null) => mockUseParticipantsByDinnerQuery(dinnerId),
 }));
 
+// --- Mock visits hooks ---
+jest.mock('@/features/visits/hooks', () => ({
+    useFamiliesQuery: () => ({ data: [], isLoading: false, error: null }),
+    useMyAssignmentsQuery: () => ({ data: [], isLoading: false, error: null }),
+    useAllAssignmentsQuery: () => ({ data: [], isLoading: false, error: null }),
+    useCreateFamilyMutation: () => ({ mutate: jest.fn(), isPending: false }),
+    useUpdateFamilyMutation: () => ({ mutate: jest.fn(), isPending: false }),
+    useDeleteFamilyMutation: () => ({ mutate: jest.fn(), isPending: false }),
+    useCreateAssignmentMutation: () => ({ mutate: jest.fn(), isPending: false }),
+    useDeleteAssignmentMutation: () => ({ mutate: jest.fn(), isPending: false }),
+}));
+
 // --- Mock shared components ---
 jest.mock('@yuhuu/components', () => ({
     ...jest.requireActual('@yuhuu/components'),
@@ -309,9 +321,11 @@ describe('AdminScreen - i18n Migration', () => {
 
             const AdminScreen = require('../admin').default;
             const {getByTestId} = render(
-                <SafeAreaProvider>
-                    <AdminScreen/>
-                </SafeAreaProvider>
+                <QueryClientProvider client={queryClient}>
+                    <SafeAreaProvider>
+                        <AdminScreen/>
+                    </SafeAreaProvider>
+                </QueryClientProvider>
             );
 
             // Trigger a search to set searchedUsername state, which shows the error branch
@@ -329,9 +343,11 @@ describe('AdminScreen - i18n Migration', () => {
 
             const AdminScreen = require('../admin').default;
             const {getByTestId} = render(
-                <SafeAreaProvider>
-                    <AdminScreen/>
-                </SafeAreaProvider>
+                <QueryClientProvider client={queryClient}>
+                    <SafeAreaProvider>
+                        <AdminScreen/>
+                    </SafeAreaProvider>
+                </QueryClientProvider>
             );
 
             // Trigger dinner ID selection to set selectedDinnerId state, which shows the error branch
@@ -351,9 +367,11 @@ describe('AdminScreen - i18n Migration', () => {
 
             const AdminScreen = require('../admin').default;
             const {getByTestId} = render(
-                <SafeAreaProvider>
-                    <AdminScreen/>
-                </SafeAreaProvider>
+                <QueryClientProvider client={queryClient}>
+                    <SafeAreaProvider>
+                        <AdminScreen/>
+                    </SafeAreaProvider>
+                </QueryClientProvider>
             );
 
             // Trigger a search to set searchedUsername state, which shows the empty state branch
@@ -377,9 +395,11 @@ describe('AdminScreen - i18n Migration', () => {
 
             const AdminScreen = require('../admin').default;
             const {queryByText} = render(
-                <SafeAreaProvider>
-                    <AdminScreen/>
-                </SafeAreaProvider>
+                <QueryClientProvider client={queryClient}>
+                    <SafeAreaProvider>
+                        <AdminScreen/>
+                    </SafeAreaProvider>
+                </QueryClientProvider>
             );
 
             const hardcodedStrings = [
