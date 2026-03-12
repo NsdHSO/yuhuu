@@ -42,6 +42,21 @@ config.resolver = {
 
     // Resolve assets from workspace packages
     resolveRequest: (context, moduleName, platform) => {
+        // Force @yuhuu/* packages to use source (react-native field) instead of dist
+        if (moduleName.startsWith('@yuhuu/')) {
+            const packageName = moduleName.split('/')[1];
+            const packagePath = path.resolve(monorepoRoot, 'packages', packageName);
+            const packageJson = require(path.join(packagePath, 'package.json'));
+
+            // Use react-native field if available
+            if (packageJson['react-native']) {
+                return {
+                    filePath: path.resolve(packagePath, packageJson['react-native']),
+                    type: 'sourceFile',
+                };
+            }
+        }
+
         // Let Metro resolve SVG files from @yuhuu/* packages
         if (moduleName.endsWith('.svg') && context.originModulePath.includes('@yuhuu')) {
             return context.resolveRequest(context, moduleName, platform);

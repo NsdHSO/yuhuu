@@ -157,7 +157,53 @@ jest.mock('@react-navigation/elements', () => {
     };
 });
 
-// Mock Linking module will be done per-test as needed
+// Mock expo-location
+jest.mock('expo-location', () => ({
+    requestForegroundPermissionsAsync: jest.fn(() => Promise.resolve({status: 'granted'})),
+    requestBackgroundPermissionsAsync: jest.fn(() => Promise.resolve({status: 'granted'})),
+    getCurrentPositionAsync: jest.fn(() => Promise.resolve({
+        coords: {
+            latitude: 37.7749,
+            longitude: -122.4194,
+            accuracy: 10,
+            altitude: 0,
+            altitudeAccuracy: 0,
+            heading: 0,
+            speed: 0,
+        },
+        timestamp: Date.now(),
+    })),
+    watchPositionAsync: jest.fn(() => Promise.resolve({
+        remove: jest.fn(),
+    })),
+    Accuracy: {
+        Lowest: 1,
+        Low: 2,
+        Balanced: 3,
+        High: 4,
+        Highest: 5,
+        BestForNavigation: 6,
+    },
+    PermissionStatus: {
+        GRANTED: 'granted',
+        DENIED: 'denied',
+        UNDETERMINED: 'undetermined',
+    },
+}));
+
+// Mock @react-native-async-storage/async-storage
+jest.mock('@react-native-async-storage/async-storage', () => ({
+    default: {
+        getItem: jest.fn(() => Promise.resolve(null)),
+        setItem: jest.fn(() => Promise.resolve()),
+        removeItem: jest.fn(() => Promise.resolve()),
+        clear: jest.fn(() => Promise.resolve()),
+        getAllKeys: jest.fn(() => Promise.resolve([])),
+        multiGet: jest.fn(() => Promise.resolve([])),
+        multiSet: jest.fn(() => Promise.resolve()),
+        multiRemove: jest.fn(() => Promise.resolve()),
+    },
+}));
 
 // Mock lib/http/url for tokenManager tests
 jest.mock('@/lib/http/url', () => ({
