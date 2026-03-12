@@ -31,6 +31,7 @@ jest.mock('react-i18next', () => ({
                 'tabs.admin': 'Admin',
                 'tabs.supper': 'Supper',
                 'tabs.profile': 'Profile',
+                'tabs.visits': 'Visits',
             };
             return translations[key] ?? key;
         },
@@ -41,6 +42,7 @@ jest.mock('react-i18next', () => ({
 // Mock hooks
 const mockUseMyRolesQuery = jest.fn();
 const mockUseBootstrapGate = jest.fn();
+const mockUseMyAssignmentsQuery = jest.fn();
 
 jest.mock('@/features/roles/meRoles', () => ({
     useMyRolesQuery: (options: any) => mockUseMyRolesQuery(options),
@@ -48,6 +50,10 @@ jest.mock('@/features/roles/meRoles', () => ({
 
 jest.mock('@/features/bootstrap/api', () => ({
     useBootstrapGate: () => mockUseBootstrapGate(),
+}));
+
+jest.mock('@/features/visits/hooks', () => ({
+    useMyAssignmentsQuery: () => mockUseMyAssignmentsQuery(),
 }));
 
 /**
@@ -108,6 +114,10 @@ describe('TabLayout - Role-Based Access Control', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         mockUseBootstrapGate.mockReturnValue(true);
+        // Default: No visits assigned
+        mockUseMyAssignmentsQuery.mockReturnValue({
+            data: [],
+        });
     });
 
     describe('Admin Tab - Only visible for Admin role', () => {
