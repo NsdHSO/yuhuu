@@ -104,6 +104,7 @@
   "admin": {
     "title": "Admin",
     "dinnerManagement": "Dinner Management",
+    "itineraryManagement": "Itinerary Management",
     "dinnerParticipation": "Dinner Participation Graph",
     "searchUser": "Search User Attendance",
     "viewParticipants": "View Dinner Participants",
@@ -318,8 +319,22 @@
   "tabs": {
     "home": "Home",
     "admin": "Admin",
+    "visits": "Visits",
     "supper": "Supper",
     "profile": "Profile"
+  },
+  "visits": {
+    "title": "Visits",
+    "myVisits": "My Visits",
+    "noAssignments": "You have no assigned visits",
+    "navigate": "Navigate",
+    "markComplete": "Mark Complete",
+    "pending": "Pending",
+    "timeRemaining": "Time remaining: {{time}}",
+    "familyName": "Family Name",
+    "address": "Address",
+    "phone": "Phone",
+    "notes": "Notes"
   },
   "errors": {
     "boundaryTitle": "Something went wrong",
