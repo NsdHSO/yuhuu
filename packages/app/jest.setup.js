@@ -82,7 +82,14 @@ jest.mock('react-native-reanimated', () => {
     const Reanimated = {
         default: {
             call: () => {},
+            createAnimatedComponent: (Component) => Component,
+            addWhitelistedUIProps: jest.fn(),
+            addWhitelistedNativeProps: jest.fn(),
         },
+        // Create animated component
+        createAnimatedComponent: (Component) => Component,
+        addWhitelistedUIProps: jest.fn(),
+        addWhitelistedNativeProps: jest.fn(),
         // Animated components
         View,
         Text,
