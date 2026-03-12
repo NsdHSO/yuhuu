@@ -20,6 +20,34 @@ jest.mock('react-native-safe-area-context', () => ({
     useSafeAreaInsets: () => ({top: 0, bottom: 34, left: 0, right: 0}),
 }));
 
+jest.mock('@gorhom/bottom-sheet', () => {
+    const React = require('react');
+    const RN = require('react-native');
+    return {
+        BottomSheetModal: React.forwardRef(
+            ({children, testID}: any, ref: any) => {
+                const [isVisible, setIsVisible] = React.useState(false);
+
+                React.useImperativeHandle(ref, () => ({
+                    present: () => setIsVisible(true),
+                    dismiss: () => setIsVisible(false),
+                }));
+
+                if (!isVisible) return null;
+
+                return React.createElement(
+                    RN.View,
+                    {testID},
+                    children
+                );
+            }
+        ),
+        BottomSheetView: ({children, style}: any) =>
+            React.createElement(RN.View, {style}, children),
+        BottomSheetModalProvider: ({children}: any) => children,
+    };
+});
+
 describe('PersonalInfoAccordion', () => {
     const defaultProps = {
         firstName: 'John',
@@ -189,10 +217,10 @@ describe('PersonalInfoAccordion', () => {
             fireEvent.press(getByTestId('personal-info-gender-picker-trigger'));
 
             await waitFor(() => {
-                expect(getByTestId('personal-info-gender-picker-modal-male-button')).toBeTruthy();
+                expect(getByTestId('personal-info-gender-picker-bottom-sheet-male-button')).toBeTruthy();
             });
 
-            fireEvent.press(getByTestId('personal-info-gender-picker-modal-male-button'));
+            fireEvent.press(getByTestId('personal-info-gender-picker-bottom-sheet-male-button'));
 
             expect(onGenderChange).toHaveBeenCalledWith('male');
         });
