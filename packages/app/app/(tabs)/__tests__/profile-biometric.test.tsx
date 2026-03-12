@@ -47,6 +47,34 @@ jest.mock('react-i18next', () => ({
     }),
 }));
 
+jest.mock('@gorhom/bottom-sheet', () => {
+    const React = require('react');
+    const RN = require('react-native');
+    return {
+        BottomSheetModal: React.forwardRef(
+            ({children, testID}: any, ref: any) => {
+                const [isVisible, setIsVisible] = React.useState(false);
+
+                React.useImperativeHandle(ref, () => ({
+                    present: () => setIsVisible(true),
+                    dismiss: () => setIsVisible(false),
+                }));
+
+                if (!isVisible) return null;
+
+                return React.createElement(
+                    RN.View,
+                    {testID},
+                    children
+                );
+            }
+        ),
+        BottomSheetView: ({children, style}: any) =>
+            React.createElement(RN.View, {style}, children),
+        BottomSheetModalProvider: ({children}: any) => children,
+    };
+});
+
 jest.mock('@yuhuu/components', () => ({
     ...jest.requireActual('@yuhuu/components'),
     LanguagePicker: () => {
