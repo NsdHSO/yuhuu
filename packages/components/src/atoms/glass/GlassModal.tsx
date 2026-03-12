@@ -1,5 +1,5 @@
 import { Modal, ModalProps, StyleSheet } from 'react-native';
-import { GlassView } from './GlassView';
+import { GlassView } from '../../molecules/glass-layout/GlassView';
 import type { GlassVariant } from '../../types/glass';
 
 type GlassModalProps = ModalProps & {
