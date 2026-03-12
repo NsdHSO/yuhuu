@@ -48,6 +48,8 @@ jest.mock('@gorhom/bottom-sheet', () => {
         );
       }
     ),
+    BottomSheetView: ({children, style}: any) =>
+      React.createElement(RN.View, {style}, children),
     BottomSheetBackdrop: () => null,
   };
 });
