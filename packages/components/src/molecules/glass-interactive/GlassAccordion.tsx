@@ -202,8 +202,8 @@ export function GlassAccordion({
             {
               borderRadius,
               borderColor: `${electricColor}${scheme === 'dark' ? '66' : '59'}`, // 40% / 35% opacity - matches regular
-              borderWidth: borderWidth.value,
             },
+            borderStyle,
           ]}
           pointerEvents="none"
         />
