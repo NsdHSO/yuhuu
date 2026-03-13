@@ -36,6 +36,7 @@ exports[`TabScreenWrapper Snapshots matches snapshot with custom contentContaine
         }
       }
       keyboardShouldPersistTaps="handled"
+      nestedScrollEnabled={true}
       scrollEnabled={true}
     >
       <View />
@@ -79,6 +80,7 @@ exports[`TabScreenWrapper Snapshots matches snapshot with default props 1`] = `
         }
       }
       keyboardShouldPersistTaps="handled"
+      nestedScrollEnabled={true}
       scrollEnabled={true}
     >
       <View />
@@ -122,6 +124,7 @@ exports[`TabScreenWrapper Snapshots matches snapshot with scrollEnabled=false 1`
         }
       }
       keyboardShouldPersistTaps="handled"
+      nestedScrollEnabled={true}
       scrollEnabled={false}
     >
       <View />
