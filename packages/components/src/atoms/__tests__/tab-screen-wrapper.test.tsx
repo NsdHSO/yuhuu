@@ -135,6 +135,17 @@ describe('TabScreenWrapper', () => {
       expect(scrollView.props.scrollEnabled).toBe(true);
     });
 
+    it('enables nested scrolling for Android compatibility', () => {
+      const { getByTestId } = render(
+        <TabScreenWrapper testID="wrapper">
+          <></>
+        </TabScreenWrapper>
+      );
+
+      const scrollView = getByTestId('wrapper-scroll');
+      expect(scrollView.props.nestedScrollEnabled).toBe(true);
+    });
+
     it('merges contentContainerStyle with bottom padding', () => {
       const customStyle = { padding: 16, backgroundColor: 'red' };
 
