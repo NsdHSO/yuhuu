@@ -219,20 +219,50 @@ jest.mock('@/lib/http/envelope', () => ({
     unwrap: jest.fn(async (p) => (await p).data)
 }));
 
-// Mock platform-specific SubmitButton to always use native version in tests
+// Mock @yuhuu/components with minimal overrides for global tests
 jest.mock('@yuhuu/components', () => {
-    const actualComponents = jest.requireActual('@yuhuu/components');
     const React = require('react');
     const {Text, TouchableOpacity} = require('react-native');
 
+    // Try to load actual components
+    let actual = {};
+    try {
+        actual = jest.requireActual('@yuhuu/components');
+    } catch (error) {
+        // Ignore - some tests have their own mocks
+    }
+
+    // Mock useGlassColors hook
+    const useGlassColors = () => ({
+        activeColor: '#A78BFA',
+        glowVariant: 'vibrant',
+        scheme: 'light',
+        text: '#000',
+        subtext: '#64748B',
+        glassBackground: 'rgba(200, 210, 230, 0.85)',
+        glowOverlay: (borderRadius = 12) => ({
+            borderRadius,
+            backgroundColor: '#A78BFA0A',
+        }),
+        glowBorder: (borderRadius = 12, borderWidth = 1) => ({
+            borderRadius,
+            borderWidth,
+            borderColor: '#A78BFA59',
+        }),
+    });
+
+    // Mock SubmitButton to use native version
+    const SubmitButton = ({onPress, disabled, style, textStyle, children, activeOpacity = 0.7}) => {
+        return React.createElement(
+            TouchableOpacity,
+            {onPress, disabled, activeOpacity, style, testID: 'submit-button'},
+            React.createElement(Text, {style: textStyle}, children)
+        );
+    };
+
     return {
-        ...actualComponents,
-        SubmitButton: ({onPress, disabled, style, textStyle, children, activeOpacity = 0.7}) => {
-            return React.createElement(
-                TouchableOpacity,
-                {onPress, disabled, activeOpacity, style, testID: 'submit-button'},
-                React.createElement(Text, {style: textStyle}, children)
-            );
-        }
+        ...actual,
+        useGlassColors,
+        SubmitButton,
     };
 });
