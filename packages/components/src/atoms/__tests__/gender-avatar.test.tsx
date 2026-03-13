@@ -111,6 +111,22 @@ describe('GenderAvatar', () => {
   });
 
   describe('Accessibility', () => {
+    it('does not pass invalid isSelected prop to View component', () => {
+      const {getByTestId} = render(
+        <GenderAvatar
+          gender="male"
+          size={120}
+          isSelected={true}
+          testID="avatar"
+        />
+      );
+
+      const container = getByTestId('avatar');
+      // View components should NOT have custom isSelected prop
+      // This was causing Android crashes
+      expect(container.props.isSelected).toBeUndefined();
+    });
+
     it('has correct accessibility role', () => {
       const {getByTestId} = render(
         <GenderAvatar
