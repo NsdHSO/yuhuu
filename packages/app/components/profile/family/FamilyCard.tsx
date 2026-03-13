@@ -1,7 +1,7 @@
 import React from 'react';
 import {Pressable, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {GlassCard, ThemedText, useColorScheme, Colors, getGlowColor, useGlowVariant} from '@yuhuu/components';
+import {GlassContentCard, ThemedText, useColorScheme, Colors, useGlassColors} from '@yuhuu/components';
 
 interface FamilyMember {
     id: number;
@@ -32,18 +32,10 @@ const getRelationshipLabel = (type: string) => {
 export function FamilyCard({member, onEdit, onDelete, showActions}: FamilyCardProps) {
     const {t} = useTranslation();
     const scheme = useColorScheme() ?? 'light';
-    const {glowVariant} = useGlowVariant();
-    const activeColor = getGlowColor(glowVariant, scheme);
+    const colors = useGlassColors();
 
     return (
-        <GlassCard
-            variant="tinted"
-            borderRadius={8}
-            style={{
-                padding: 12,
-                marginBottom: 8,
-            }}
-        >
+        <GlassContentCard borderRadius={8} padding={12} style={{marginBottom: 8}}>
             <View style={{flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4}}>
                 <ThemedText style={{fontSize: 16, fontWeight: '600'}}>
                     {member.related_person_name || `User #${member.related_user_id}`}
@@ -51,7 +43,7 @@ export function FamilyCard({member, onEdit, onDelete, showActions}: FamilyCardPr
                 {showActions && (
                     <View style={{flexDirection: 'row', gap: 8}}>
                         <Pressable onPress={onEdit} style={{padding: 4}}>
-                            <ThemedText style={{color: activeColor, fontSize: 14}}>
+                            <ThemedText style={{color: colors.activeColor, fontSize: 14}}>
                                 {t('common.edit')}
                             </ThemedText>
                         </Pressable>
@@ -76,6 +68,6 @@ export function FamilyCard({member, onEdit, onDelete, showActions}: FamilyCardPr
                     ✉️ {member.related_person_email}
                 </ThemedText>
             )}
-        </GlassCard>
+        </GlassContentCard>
     );
 }
