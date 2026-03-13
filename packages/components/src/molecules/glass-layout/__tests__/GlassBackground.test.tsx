@@ -207,9 +207,9 @@ describe('GlassBackground Component', () => {
         : [container.props.style];
       const backgroundColor = containerStyles.find((s: any) => s?.backgroundColor)?.backgroundColor;
 
-      // Should have a light background color (white or light gray)
+      // Should have a light background color (frosted glass rgba)
       expect(backgroundColor).toBeDefined();
-      expect(backgroundColor).toMatch(/^#[EFef]/); // Starts with E or F (light colors)
+      expect(backgroundColor).toContain('rgba(200, 210, 230'); // Light frosted glass
     });
 
     it('should render in dark mode with dark background', () => {
@@ -229,9 +229,9 @@ describe('GlassBackground Component', () => {
         : [container.props.style];
       const backgroundColor = containerStyles.find((s: any) => s?.backgroundColor)?.backgroundColor;
 
-      // Should have a dark background color
+      // Should have a dark background color (frosted glass rgba)
       expect(backgroundColor).toBeDefined();
-      expect(backgroundColor).toMatch(/^#[0-4]/); // Starts with 0-4 (dark colors)
+      expect(backgroundColor).toContain('rgba(40, 40, 50'); // Dark frosted glass
     });
 
     it('should default to light mode if color scheme is null', () => {
