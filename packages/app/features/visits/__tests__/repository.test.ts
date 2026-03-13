@@ -1,4 +1,6 @@
 import {HttpVisitsRepository} from '../repository';
+import {appApi} from '@yuhuu/auth';
+import MockAdapter from 'axios-mock-adapter';
 import type {
   VisitableFamily,
   VisitAssignment,
@@ -9,7 +11,7 @@ import type {
 } from '@yuhuu/types';
 
 /**
- * Unit tests for HttpVisitsRepository
+ * Unit tests for HttpVisitsRepository with HTTP mocking
  * SOLID Principles Applied:
  * - Single Responsibility: Each test validates one specific behavior
  * - Dependency Inversion: Tests use repository interface
@@ -17,24 +19,87 @@ import type {
 
 describe('visits/repository', () => {
   let repository: HttpVisitsRepository;
+  let mockApi: MockAdapter;
+
+  // Mock data
+  const mockFamilies: VisitableFamily[] = [
+    {
+      id: 1,
+      family_name: 'Smith Family',
+      address_street: '123 Oak Street',
+      address_city: 'Springfield',
+      address_postal: '12345',
+      latitude: 40.7128,
+      longitude: -74.006,
+      phone: '+1234567890',
+      notes: 'Prefer afternoon visits',
+      created_at: '2026-03-12T10:00:00Z',
+      updated_at: '2026-03-12T10:00:00Z',
+    },
+    {
+      id: 2,
+      family_name: 'Johnson Family',
+      address_street: '456 Maple Avenue',
+      address_city: 'Springfield',
+      address_postal: '12346',
+      latitude: 40.7589,
+      longitude: -73.9851,
+      phone: '+1234567891',
+      notes: null,
+      created_at: '2026-03-12T11:00:00Z',
+      updated_at: '2026-03-12T11:00:00Z',
+    },
+  ];
+
+  const mockAssignments: VisitAssignment[] = [
+    {
+      id: 1,
+      family_id: 1,
+      assigned_to_user_id: 1,
+      scheduled_date: '2026-03-15',
+      status: 'pending',
+      arrived_at: null,
+      completed_at: null,
+      notes: 'First visit',
+      created_at: '2026-03-12T12:00:00Z',
+      updated_at: '2026-03-12T12:00:00Z',
+    },
+  ];
 
   beforeEach(() => {
     repository = new HttpVisitsRepository();
+    mockApi = new MockAdapter(appApi);
+  });
+
+  afterEach(() => {
+    mockApi.restore();
   });
 
   describe('Family CRUD operations', () => {
     describe('listFamilies', () => {
       it('should return array of families', async () => {
+        mockApi.onGet('/admin/visits/families').reply(200, {
+          code: 200,
+          data: mockFamilies,
+          message: 'Success',
+        });
+
         const families = await repository.listFamilies();
 
         expect(Array.isArray(families)).toBe(true);
-        expect(families.length).toBeGreaterThan(0);
+        expect(families.length).toBe(2);
         expect(families[0]).toHaveProperty('id');
         expect(families[0]).toHaveProperty('family_name');
         expect(families[0]).toHaveProperty('address_street');
       });
 
       it('should return families with all required fields', async () => {
+        mockApi.onGet('/admin/visits/families').reply(200, {
+          code: 200,
+          data: mockFamilies,
+          message: 'Success',
+        });
+
         const families = await repository.listFamilies();
         const family = families[0];
 
@@ -48,6 +113,12 @@ describe('visits/repository', () => {
       });
 
       it('should handle families with null optional fields', async () => {
+        mockApi.onGet('/admin/visits/families').reply(200, {
+          code: 200,
+          data: mockFamilies,
+          message: 'Success',
+        });
+
         const families = await repository.listFamilies();
         const familyWithNullNotes = families.find((f) => f.notes === null);
 
@@ -58,22 +129,38 @@ describe('visits/repository', () => {
 
     describe('getFamily', () => {
       it('should return family by id', async () => {
-        const families = await repository.listFamilies();
-        const targetId = families[0].id;
+        const targetFamily = mockFamilies[0];
+        mockApi.onGet(`/admin/visits/families/${targetFamily.id}`).reply(200, {
+          code: 200,
+          data: targetFamily,
+          message: 'Success',
+        });
 
-        const family = await repository.getFamily(targetId);
+        const family = await repository.getFamily(targetFamily.id);
 
-        expect(family.id).toBe(targetId);
-        expect(family.family_name).toBeDefined();
+        expect(family.id).toBe(targetFamily.id);
+        expect(family.family_name).toBe(targetFamily.family_name);
       });
 
       it('should throw error when family not found', async () => {
-        await expect(repository.getFamily(999)).rejects.toThrow('Family with id 999 not found');
+        mockApi.onGet('/admin/visits/families/999').reply(404, {
+          code: 404,
+          data: {error: 'Not found'},
+          message: 'Family with id 999 not found',
+        });
+
+        await expect(repository.getFamily(999)).rejects.toThrow();
       });
 
       it('should return family with coordinates', async () => {
-        const families = await repository.listFamilies();
-        const family = await repository.getFamily(families[0].id);
+        const targetFamily = mockFamilies[0];
+        mockApi.onGet(`/admin/visits/families/${targetFamily.id}`).reply(200, {
+          code: 200,
+          data: targetFamily,
+          message: 'Success',
+        });
+
+        const family = await repository.getFamily(targetFamily.id);
 
         expect(typeof family.latitude).toBe('number');
         expect(typeof family.longitude).toBe('number');
@@ -97,9 +184,22 @@ describe('visits/repository', () => {
           notes: 'Evening visits preferred',
         };
 
+        const createdFamily: VisitableFamily = {
+          id: 3,
+          ...input,
+          created_at: '2026-03-13T10:00:00Z',
+          updated_at: '2026-03-13T10:00:00Z',
+        };
+
+        mockApi.onPost('/admin/visits/families').reply(201, {
+          code: 201,
+          data: createdFamily,
+          message: 'Family created successfully',
+        });
+
         const created = await repository.createFamily(input);
 
-        expect(created.id).toBeDefined();
+        expect(created.id).toBe(3);
         expect(created.family_name).toBe(input.family_name);
         expect(created.address_street).toBe(input.address_street);
         expect(created.latitude).toBe(input.latitude);
@@ -118,6 +218,21 @@ describe('visits/repository', () => {
           latitude: 40.7489,
           longitude: -73.9680,
         };
+
+        const createdFamily: VisitableFamily = {
+          id: 4,
+          ...input,
+          phone: null,
+          notes: null,
+          created_at: '2026-03-13T11:00:00Z',
+          updated_at: '2026-03-13T11:00:00Z',
+        };
+
+        mockApi.onPost('/admin/visits/families').reply(201, {
+          code: 201,
+          data: createdFamily,
+          message: 'Family created successfully',
+        });
 
         const created = await repository.createFamily(input);
 
@@ -146,6 +261,18 @@ describe('visits/repository', () => {
           longitude: -75.0,
         };
 
+        mockApi.onPost('/admin/visits/families').replyOnce(201, {
+          code: 201,
+          data: {id: 5, ...input1, phone: null, notes: null, created_at: '2026-03-13T12:00:00Z', updated_at: '2026-03-13T12:00:00Z'},
+          message: 'Family created successfully',
+        });
+
+        mockApi.onPost('/admin/visits/families').replyOnce(201, {
+          code: 201,
+          data: {id: 6, ...input2, phone: null, notes: null, created_at: '2026-03-13T12:01:00Z', updated_at: '2026-03-13T12:01:00Z'},
+          message: 'Family created successfully',
+        });
+
         const created1 = await repository.createFamily(input1);
         const created2 = await repository.createFamily(input2);
 
@@ -153,8 +280,6 @@ describe('visits/repository', () => {
       });
 
       it('should add created family to list', async () => {
-        const beforeCount = (await repository.listFamilies()).length;
-
         const input: CreateVisitableFamilyInput = {
           family_name: 'Test Family',
           address_street: 'Test Street',
@@ -164,45 +289,97 @@ describe('visits/repository', () => {
           longitude: -76.0,
         };
 
+        // First list call
+        mockApi.onGet('/admin/visits/families').replyOnce(200, {
+          code: 200,
+          data: mockFamilies,
+          message: 'Success',
+        });
+
+        const beforeCount = (await repository.listFamilies()).length;
+
+        // Create call
+        mockApi.onPost('/admin/visits/families').replyOnce(201, {
+          code: 201,
+          data: {id: 7, ...input, phone: null, notes: null, created_at: '2026-03-13T13:00:00Z', updated_at: '2026-03-13T13:00:00Z'},
+          message: 'Family created successfully',
+        });
+
         await repository.createFamily(input);
+
+        // Second list call
+        const updatedFamilies = [...mockFamilies, {id: 7, ...input, phone: null, notes: null, created_at: '2026-03-13T13:00:00Z', updated_at: '2026-03-13T13:00:00Z'}];
+        mockApi.onGet('/admin/visits/families').replyOnce(200, {
+          code: 200,
+          data: updatedFamilies,
+          message: 'Success',
+        });
 
         const afterCount = (await repository.listFamilies()).length;
         expect(afterCount).toBe(beforeCount + 1);
+      });
+
+      it('should throw error when GPS coordinates are missing', async () => {
+        const input = {
+          family_name: 'No GPS Family',
+          address_street: 'Test Street',
+          address_city: 'Test City',
+          address_postal: '00000',
+        } as CreateVisitableFamilyInput;
+
+        await expect(repository.createFamily(input)).rejects.toThrow('GPS coordinates are required');
       });
     });
 
     describe('updateFamily', () => {
       it('should update family fields', async () => {
-        const families = await repository.listFamilies();
-        const targetId = families[0].id;
-        const originalName = families[0].family_name;
-
+        const targetFamily = mockFamilies[0];
         const update: UpdateVisitableFamilyInput = {
           family_name: 'Updated Family Name',
           notes: 'Updated notes',
         };
 
-        const updated = await repository.updateFamily(targetId, update);
+        const updatedFamily: VisitableFamily = {
+          ...targetFamily,
+          ...update,
+          updated_at: '2026-03-13T14:00:00Z',
+        };
 
-        expect(updated.id).toBe(targetId);
+        mockApi.onPut(`/admin/visits/families/${targetFamily.id}`).reply(200, {
+          code: 200,
+          data: updatedFamily,
+          message: 'Family updated successfully',
+        });
+
+        const updated = await repository.updateFamily(targetFamily.id, update);
+
+        expect(updated.id).toBe(targetFamily.id);
         expect(updated.family_name).toBe(update.family_name);
-        expect(updated.family_name).not.toBe(originalName);
         expect(updated.notes).toBe(update.notes);
         expect(updated.updated_at).toBeDefined();
       });
 
       it('should preserve unchanged fields', async () => {
-        const families = await repository.listFamilies();
-        const targetId = families[0].id;
-        const originalStreet = families[0].address_street;
-
+        const targetFamily = mockFamilies[0];
         const update: UpdateVisitableFamilyInput = {
           family_name: 'Only Name Changed',
         };
 
-        const updated = await repository.updateFamily(targetId, update);
+        const updatedFamily: VisitableFamily = {
+          ...targetFamily,
+          ...update,
+          updated_at: '2026-03-13T15:00:00Z',
+        };
 
-        expect(updated.address_street).toBe(originalStreet);
+        mockApi.onPut(`/admin/visits/families/${targetFamily.id}`).reply(200, {
+          code: 200,
+          data: updatedFamily,
+          message: 'Family updated successfully',
+        });
+
+        const updated = await repository.updateFamily(targetFamily.id, update);
+
+        expect(updated.address_street).toBe(targetFamily.address_street);
       });
 
       it('should throw error when family not found', async () => {
@@ -210,21 +387,35 @@ describe('visits/repository', () => {
           family_name: 'Should Fail',
         };
 
-        await expect(repository.updateFamily(999, update)).rejects.toThrow(
-          'Family with id 999 not found'
-        );
+        mockApi.onPut('/admin/visits/families/999').reply(404, {
+          code: 404,
+          data: {error: 'Not found'},
+          message: 'Family with id 999 not found',
+        });
+
+        await expect(repository.updateFamily(999, update)).rejects.toThrow();
       });
 
       it('should update coordinates', async () => {
-        const families = await repository.listFamilies();
-        const targetId = families[0].id;
-
+        const targetFamily = mockFamilies[0];
         const update: UpdateVisitableFamilyInput = {
           latitude: 45.5231,
           longitude: -122.6765,
         };
 
-        const updated = await repository.updateFamily(targetId, update);
+        const updatedFamily: VisitableFamily = {
+          ...targetFamily,
+          ...update,
+          updated_at: '2026-03-13T16:00:00Z',
+        };
+
+        mockApi.onPut(`/admin/visits/families/${targetFamily.id}`).reply(200, {
+          code: 200,
+          data: updatedFamily,
+          message: 'Family updated successfully',
+        });
+
+        const updated = await repository.updateFamily(targetFamily.id, update);
 
         expect(updated.latitude).toBe(update.latitude);
         expect(updated.longitude).toBe(update.longitude);
@@ -242,19 +433,58 @@ describe('visits/repository', () => {
           longitude: -74.0,
         };
 
+        const createdFamily: VisitableFamily = {
+          id: 8,
+          ...input,
+          phone: null,
+          notes: null,
+          created_at: '2026-03-13T17:00:00Z',
+          updated_at: '2026-03-13T17:00:00Z',
+        };
+
+        mockApi.onPost('/admin/visits/families').replyOnce(201, {
+          code: 201,
+          data: createdFamily,
+          message: 'Family created successfully',
+        });
+
         const created = await repository.createFamily(input);
+
+        mockApi.onGet('/admin/visits/families').replyOnce(200, {
+          code: 200,
+          data: [...mockFamilies, createdFamily],
+          message: 'Success',
+        });
+
         const beforeCount = (await repository.listFamilies()).length;
 
+        // Backend returns 200 with message, not 204
+        mockApi.onDelete(`/admin/visits/families/${created.id}`).reply(200, {
+          code: 200,
+          data: {message: 'Family deleted successfully'},
+          message: 'Family deleted successfully',
+        });
+
         await repository.deleteFamily(created.id);
+
+        mockApi.onGet('/admin/visits/families').replyOnce(200, {
+          code: 200,
+          data: mockFamilies,
+          message: 'Success',
+        });
 
         const afterCount = (await repository.listFamilies()).length;
         expect(afterCount).toBe(beforeCount - 1);
       });
 
       it('should throw error when family not found', async () => {
-        await expect(repository.deleteFamily(999)).rejects.toThrow(
-          'Family with id 999 not found'
-        );
+        mockApi.onDelete('/admin/visits/families/999').reply(404, {
+          code: 404,
+          data: {error: 'Not found'},
+          message: 'Family with id 999 not found',
+        });
+
+        await expect(repository.deleteFamily(999)).rejects.toThrow();
       });
 
       it('should not return deleted family in list', async () => {
@@ -267,8 +497,36 @@ describe('visits/repository', () => {
           longitude: -74.0,
         };
 
+        const createdFamily: VisitableFamily = {
+          id: 9,
+          ...input,
+          phone: null,
+          notes: null,
+          created_at: '2026-03-13T18:00:00Z',
+          updated_at: '2026-03-13T18:00:00Z',
+        };
+
+        mockApi.onPost('/admin/visits/families').replyOnce(201, {
+          code: 201,
+          data: createdFamily,
+          message: 'Family created successfully',
+        });
+
         const created = await repository.createFamily(input);
+
+        mockApi.onDelete(`/admin/visits/families/${created.id}`).reply(200, {
+          code: 200,
+          data: {message: 'Family deleted successfully'},
+          message: 'Family deleted successfully',
+        });
+
         await repository.deleteFamily(created.id);
+
+        mockApi.onGet('/admin/visits/families').replyOnce(200, {
+          code: 200,
+          data: mockFamilies,
+          message: 'Success',
+        });
 
         const families = await repository.listFamilies();
         const deleted = families.find((f) => f.id === created.id);
@@ -281,6 +539,12 @@ describe('visits/repository', () => {
   describe('Assignment CRUD operations', () => {
     describe('listAllAssignments', () => {
       it('should return array of assignments', async () => {
+        mockApi.onGet('/admin/visits/assignments').reply(200, {
+          code: 200,
+          data: mockAssignments,
+          message: 'Success',
+        });
+
         const assignments = await repository.listAllAssignments();
 
         expect(Array.isArray(assignments)).toBe(true);
@@ -288,6 +552,12 @@ describe('visits/repository', () => {
       });
 
       it('should return assignments with all required fields', async () => {
+        mockApi.onGet('/admin/visits/assignments').reply(200, {
+          code: 200,
+          data: mockAssignments,
+          message: 'Success',
+        });
+
         const assignments = await repository.listAllAssignments();
         const assignment = assignments[0];
 
@@ -301,6 +571,13 @@ describe('visits/repository', () => {
 
     describe('listMyAssignments', () => {
       it('should return non-cancelled assignments', async () => {
+        const myAssignments = mockAssignments.filter((a) => a.status !== 'cancelled');
+        mockApi.onGet('/visits/my-assignments').reply(200, {
+          code: 200,
+          data: myAssignments,
+          message: 'Success',
+        });
+
         const assignments = await repository.listMyAssignments();
 
         expect(Array.isArray(assignments)).toBe(true);
@@ -318,6 +595,22 @@ describe('visits/repository', () => {
           scheduled_date: '2026-03-15',
           notes: 'First-time visit',
         };
+
+        const createdAssignment: VisitAssignment = {
+          id: 2,
+          ...input,
+          status: 'pending',
+          arrived_at: null,
+          completed_at: null,
+          created_at: '2026-03-13T19:00:00Z',
+          updated_at: '2026-03-13T19:00:00Z',
+        };
+
+        mockApi.onPost('/admin/visits/assignments').reply(201, {
+          code: 201,
+          data: createdAssignment,
+          message: 'Assignment created successfully',
+        });
 
         const created = await repository.createAssignment(input);
 
@@ -338,6 +631,23 @@ describe('visits/repository', () => {
           scheduled_date: '2026-03-16',
         };
 
+        const createdAssignment: VisitAssignment = {
+          id: 3,
+          ...input,
+          status: 'pending',
+          arrived_at: null,
+          completed_at: null,
+          notes: null,
+          created_at: '2026-03-13T20:00:00Z',
+          updated_at: '2026-03-13T20:00:00Z',
+        };
+
+        mockApi.onPost('/admin/visits/assignments').reply(201, {
+          code: 201,
+          data: createdAssignment,
+          message: 'Assignment created successfully',
+        });
+
         const created = await repository.createAssignment(input);
 
         expect(created.notes).toBeNull();
@@ -356,6 +666,18 @@ describe('visits/repository', () => {
           scheduled_date: '2026-03-18',
         };
 
+        mockApi.onPost('/admin/visits/assignments').replyOnce(201, {
+          code: 201,
+          data: {id: 4, ...input1, status: 'pending', arrived_at: null, completed_at: null, notes: null, created_at: '2026-03-13T21:00:00Z', updated_at: '2026-03-13T21:00:00Z'},
+          message: 'Assignment created successfully',
+        });
+
+        mockApi.onPost('/admin/visits/assignments').replyOnce(201, {
+          code: 201,
+          data: {id: 5, ...input2, status: 'pending', arrived_at: null, completed_at: null, notes: null, created_at: '2026-03-13T21:01:00Z', updated_at: '2026-03-13T21:01:00Z'},
+          message: 'Assignment created successfully',
+        });
+
         const created1 = await repository.createAssignment(input1);
         const created2 = await repository.createAssignment(input2);
 
@@ -371,12 +693,41 @@ describe('visits/repository', () => {
           scheduled_date: '2026-03-19',
         };
 
+        const createdAssignment: VisitAssignment = {
+          id: 6,
+          ...input,
+          status: 'pending',
+          arrived_at: null,
+          completed_at: null,
+          notes: null,
+          created_at: '2026-03-13T22:00:00Z',
+          updated_at: '2026-03-13T22:00:00Z',
+        };
+
+        mockApi.onPost('/admin/visits/assignments').replyOnce(201, {
+          code: 201,
+          data: createdAssignment,
+          message: 'Assignment created successfully',
+        });
+
         const created = await repository.createAssignment(input);
 
         const update: UpdateVisitAssignmentInput = {
           scheduled_date: '2026-03-20',
           notes: 'Rescheduled',
         };
+
+        const updatedAssignment: VisitAssignment = {
+          ...createdAssignment,
+          ...update,
+          updated_at: '2026-03-13T23:00:00Z',
+        };
+
+        mockApi.onPut(`/visits/assignments/${created.id}`).reply(200, {
+          code: 200,
+          data: updatedAssignment,
+          message: 'Assignment updated successfully',
+        });
 
         const updated = await repository.updateAssignment(created.id, update);
 
@@ -389,9 +740,13 @@ describe('visits/repository', () => {
           scheduled_date: '2026-03-21',
         };
 
-        await expect(repository.updateAssignment(999, update)).rejects.toThrow(
-          'Assignment with id 999 not found'
-        );
+        mockApi.onPut('/visits/assignments/999').reply(404, {
+          code: 404,
+          data: {error: 'Not found'},
+          message: 'Assignment with id 999 not found',
+        });
+
+        await expect(repository.updateAssignment(999, update)).rejects.toThrow();
       });
     });
 
@@ -403,19 +758,60 @@ describe('visits/repository', () => {
           scheduled_date: '2026-03-22',
         };
 
+        const createdAssignment: VisitAssignment = {
+          id: 7,
+          ...input,
+          status: 'pending',
+          arrived_at: null,
+          completed_at: null,
+          notes: null,
+          created_at: '2026-03-14T00:00:00Z',
+          updated_at: '2026-03-14T00:00:00Z',
+        };
+
+        mockApi.onPost('/admin/visits/assignments').replyOnce(201, {
+          code: 201,
+          data: createdAssignment,
+          message: 'Assignment created successfully',
+        });
+
         const created = await repository.createAssignment(input);
+
+        mockApi.onGet('/admin/visits/assignments').replyOnce(200, {
+          code: 200,
+          data: [...mockAssignments, createdAssignment],
+          message: 'Success',
+        });
+
         const beforeCount = (await repository.listAllAssignments()).length;
 
+        // Backend returns 200 with message, not 204
+        mockApi.onDelete(`/admin/visits/assignments/${created.id}`).reply(200, {
+          code: 200,
+          data: {message: 'Assignment deleted successfully'},
+          message: 'Assignment deleted successfully',
+        });
+
         await repository.deleteAssignment(created.id);
+
+        mockApi.onGet('/admin/visits/assignments').replyOnce(200, {
+          code: 200,
+          data: mockAssignments,
+          message: 'Success',
+        });
 
         const afterCount = (await repository.listAllAssignments()).length;
         expect(afterCount).toBe(beforeCount - 1);
       });
 
       it('should throw error when assignment not found', async () => {
-        await expect(repository.deleteAssignment(999)).rejects.toThrow(
-          'Assignment with id 999 not found'
-        );
+        mockApi.onDelete('/admin/visits/assignments/999').reply(404, {
+          code: 404,
+          data: {error: 'Not found'},
+          message: 'Assignment with id 999 not found',
+        });
+
+        await expect(repository.deleteAssignment(999)).rejects.toThrow();
       });
     });
   });
@@ -429,22 +825,88 @@ describe('visits/repository', () => {
           scheduled_date: '2026-03-23',
         };
 
+        const createdAssignment: VisitAssignment = {
+          id: 8,
+          ...input,
+          status: 'pending',
+          arrived_at: null,
+          completed_at: null,
+          notes: null,
+          created_at: '2026-03-14T01:00:00Z',
+          updated_at: '2026-03-14T01:00:00Z',
+        };
+
+        mockApi.onPost('/admin/visits/assignments').replyOnce(201, {
+          code: 201,
+          data: createdAssignment,
+          message: 'Assignment created successfully',
+        });
+
         const created = await repository.createAssignment(input);
         const latitude = 40.7128;
         const longitude = -74.006;
+
+        const arrivedAssignment: VisitAssignment = {
+          ...createdAssignment,
+          status: 'in_progress',
+          arrived_at: '2026-03-14T02:00:00Z',
+          arrived_latitude: latitude,
+          arrived_longitude: longitude,
+          updated_at: '2026-03-14T02:00:00Z',
+        };
+
+        mockApi.onPost(`/visits/assignments/${created.id}/arrive`).reply(200, {
+          code: 200,
+          data: arrivedAssignment,
+          message: 'Arrival recorded',
+        });
 
         const arrived = await repository.markArrived(created.id, latitude, longitude);
 
         expect(arrived.status).toBe('in_progress');
         expect(arrived.arrived_at).toBeDefined();
         expect(arrived.arrived_at).not.toBeNull();
-        expect(new Date(arrived.arrived_at!).getTime()).toBeLessThanOrEqual(Date.now());
+      });
+
+      it('should store GPS coordinates on arrival', async () => {
+        const latitude = 40.7128;
+        const longitude = -74.006;
+
+        const arrivedAssignment: VisitAssignment = {
+          id: 9,
+          family_id: 1,
+          assigned_to_user_id: 1,
+          scheduled_date: '2026-03-24',
+          status: 'in_progress',
+          arrived_at: '2026-03-14T03:00:00Z',
+          arrived_latitude: latitude,
+          arrived_longitude: longitude,
+          completed_at: null,
+          notes: null,
+          created_at: '2026-03-14T03:00:00Z',
+          updated_at: '2026-03-14T03:00:00Z',
+        };
+
+        mockApi.onPost('/visits/assignments/9/arrive').reply(200, {
+          code: 200,
+          data: arrivedAssignment,
+          message: 'Arrival recorded',
+        });
+
+        const result = await repository.markArrived(9, latitude, longitude);
+
+        expect(result.arrived_latitude).toBe(latitude);
+        expect(result.arrived_longitude).toBe(longitude);
       });
 
       it('should throw error when assignment not found', async () => {
-        await expect(repository.markArrived(999, 40.0, -74.0)).rejects.toThrow(
-          'Assignment with id 999 not found'
-        );
+        mockApi.onPost('/visits/assignments/999/arrive').reply(404, {
+          code: 404,
+          data: {error: 'Not found'},
+          message: 'Assignment with id 999 not found',
+        });
+
+        await expect(repository.markArrived(999, 40.0, -74.0)).rejects.toThrow();
       });
 
       it('should preserve other assignment fields', async () => {
@@ -455,7 +917,39 @@ describe('visits/repository', () => {
           notes: 'Test notes',
         };
 
+        const createdAssignment: VisitAssignment = {
+          id: 10,
+          ...input,
+          status: 'pending',
+          arrived_at: null,
+          completed_at: null,
+          created_at: '2026-03-14T04:00:00Z',
+          updated_at: '2026-03-14T04:00:00Z',
+        };
+
+        mockApi.onPost('/admin/visits/assignments').replyOnce(201, {
+          code: 201,
+          data: createdAssignment,
+          message: 'Assignment created successfully',
+        });
+
         const created = await repository.createAssignment(input);
+
+        const arrivedAssignment: VisitAssignment = {
+          ...createdAssignment,
+          status: 'in_progress',
+          arrived_at: '2026-03-14T05:00:00Z',
+          arrived_latitude: 40.0,
+          arrived_longitude: -74.0,
+          updated_at: '2026-03-14T05:00:00Z',
+        };
+
+        mockApi.onPost(`/visits/assignments/${created.id}/arrive`).reply(200, {
+          code: 200,
+          data: arrivedAssignment,
+          message: 'Arrival recorded',
+        });
+
         const arrived = await repository.markArrived(created.id, 40.0, -74.0);
 
         expect(arrived.family_id).toBe(created.family_id);
@@ -472,22 +966,75 @@ describe('visits/repository', () => {
           scheduled_date: '2026-03-25',
         };
 
+        const createdAssignment: VisitAssignment = {
+          id: 11,
+          ...input,
+          status: 'pending',
+          arrived_at: null,
+          completed_at: null,
+          notes: null,
+          created_at: '2026-03-14T06:00:00Z',
+          updated_at: '2026-03-14T06:00:00Z',
+        };
+
+        mockApi.onPost('/admin/visits/assignments').replyOnce(201, {
+          code: 201,
+          data: createdAssignment,
+          message: 'Assignment created successfully',
+        });
+
         const created = await repository.createAssignment(input);
+
+        const completedAssignment: VisitAssignment = {
+          ...createdAssignment,
+          status: 'completed',
+          completed_at: '2026-03-14T07:00:00Z',
+          updated_at: '2026-03-14T07:00:00Z',
+        };
+
+        mockApi.onPost(`/visits/assignments/${created.id}/complete`).reply(200, {
+          code: 200,
+          data: completedAssignment,
+          message: 'Visit completed',
+        });
+
         const completed = await repository.markCompleted(created.id);
 
         expect(completed.status).toBe('completed');
         expect(completed.completed_at).toBeDefined();
         expect(completed.completed_at).not.toBeNull();
-        expect(new Date(completed.completed_at!).getTime()).toBeLessThanOrEqual(Date.now());
       });
 
       it('should throw error when assignment not found', async () => {
-        await expect(repository.markCompleted(999)).rejects.toThrow(
-          'Assignment with id 999 not found'
-        );
+        mockApi.onPost('/visits/assignments/999/complete').reply(404, {
+          code: 404,
+          data: {error: 'Not found'},
+          message: 'Assignment with id 999 not found',
+        });
+
+        await expect(repository.markCompleted(999)).rejects.toThrow();
       });
 
       it('should complete assignment regardless of current status', async () => {
+        const pendingAssignment: VisitAssignment = {
+          id: 12,
+          family_id: 1,
+          assigned_to_user_id: 1,
+          scheduled_date: '2026-03-26',
+          status: 'pending',
+          arrived_at: null,
+          completed_at: null,
+          notes: null,
+          created_at: '2026-03-14T08:00:00Z',
+          updated_at: '2026-03-14T08:00:00Z',
+        };
+
+        mockApi.onPost('/admin/visits/assignments').replyOnce(201, {
+          code: 201,
+          data: pendingAssignment,
+          message: 'Assignment created successfully',
+        });
+
         const input: CreateVisitAssignmentInput = {
           family_id: 1,
           assigned_to_user_id: 1,
@@ -496,6 +1043,19 @@ describe('visits/repository', () => {
 
         const created = await repository.createAssignment(input);
         expect(created.status).toBe('pending');
+
+        const completedAssignment: VisitAssignment = {
+          ...pendingAssignment,
+          status: 'completed',
+          completed_at: '2026-03-14T09:00:00Z',
+          updated_at: '2026-03-14T09:00:00Z',
+        };
+
+        mockApi.onPost(`/visits/assignments/${created.id}/complete`).reply(200, {
+          code: 200,
+          data: completedAssignment,
+          message: 'Visit completed',
+        });
 
         const completed = await repository.markCompleted(created.id);
         expect(completed.status).toBe('completed');
