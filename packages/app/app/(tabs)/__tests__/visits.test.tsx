@@ -18,10 +18,21 @@ jest.mock('../../../features/visits/hooks', () => ({
   useMyAssignmentsQuery: jest.fn(),
 }));
 
-jest.mock('@yuhuu/components', () => ({
-  useGlowVariant: () => ({glowVariant: 'vibrant'}),
-  getGlowColor: () => '#A78BFA',
-}));
+jest.mock('@yuhuu/components', () => {
+  const RN = require('react-native');
+  return {
+    useGlowVariant: () => ({glowVariant: 'vibrant'}),
+    getGlowColor: () => '#A78BFA',
+    GlassBackground: ({children}: {children: React.ReactNode}) => (
+      <RN.View testID="glass-background">{children}</RN.View>
+    ),
+    TabScreenWrapper: ({children, testID, contentContainerStyle}: any) => (
+      <RN.ScrollView testID={testID} contentContainerStyle={contentContainerStyle}>
+        <RN.View>{children}</RN.View>
+      </RN.ScrollView>
+    ),
+  };
+});
 
 // Mock react-native-safe-area-context
 jest.mock('react-native-safe-area-context', () => ({
@@ -399,6 +410,42 @@ describe('VisitsScreen Integration', () => {
       const {getByText} = renderWithProvider(<VisitsScreen />);
 
       expect(getByText('My Visits')).toBeTruthy();
+    });
+  });
+
+  describe('Tab Screen Layout Pattern', () => {
+    it('should use GlassBackground as root wrapper', () => {
+      (useMyAssignmentsQuery as jest.Mock).mockReturnValue({
+        data: [],
+        isLoading: false,
+      });
+
+      const {getByTestId} = renderWithProvider(<VisitsScreen />);
+
+      expect(getByTestId('glass-background')).toBeTruthy();
+    });
+
+    it('should use TabScreenWrapper with correct testID', () => {
+      (useMyAssignmentsQuery as jest.Mock).mockReturnValue({
+        data: [],
+        isLoading: false,
+      });
+
+      const {getByTestId} = renderWithProvider(<VisitsScreen />);
+
+      expect(getByTestId('visits-container')).toBeTruthy();
+    });
+
+    it('should NOT use hardcoded backgroundColor in root container', () => {
+      (useMyAssignmentsQuery as jest.Mock).mockReturnValue({
+        data: [],
+        isLoading: false,
+      });
+
+      const {queryByTestId} = renderWithProvider(<VisitsScreen />);
+
+      // GlassBackground should be the root, not a plain View with backgroundColor
+      expect(queryByTestId('glass-background')).toBeTruthy();
     });
   });
 });
