@@ -62,8 +62,6 @@ export const GenderAvatar = ({gender, size, isSelected, testID}: GenderAvatarPro
     return (
       <View
         testID={testID}
-        // @ts-ignore - Custom prop for testing
-        isSelected={isSelected}
         style={containerStyle}
         accessible={true}
         accessibilityRole="image"
