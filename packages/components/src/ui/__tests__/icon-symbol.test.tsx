@@ -244,6 +244,13 @@ describe('IconSymbol Component', () => {
             );
             expect(root).toBeTruthy();
         });
+
+        it('should map map.fill to map', () => {
+            const {root} = render(
+                <IconSymbol name="map.fill" color="#000000"/>
+            );
+            expect(root).toBeTruthy();
+        });
     });
 
     describe('Edge Cases', () => {
