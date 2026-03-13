@@ -1,7 +1,7 @@
 import React from 'react';
 import {Pressable, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {GlassCard, ThemedText, useColorScheme, Colors, getGlowColor, useGlowVariant} from '@yuhuu/components';
+import {GlassContentCard, ThemedText, useColorScheme, Colors, useGlassColors} from '@yuhuu/components';
 import {getProficiencyColor, getProficiencyLabel, getCategoryIcon} from './skillsHelpers';
 
 interface Skill {
@@ -23,11 +23,10 @@ interface SkillCardProps {
 export function SkillCard({skill, onEdit, onDelete, showActions}: SkillCardProps) {
     const {t} = useTranslation();
     const scheme = useColorScheme() ?? 'light';
-    const {glowVariant} = useGlowVariant();
-    const activeColor = getGlowColor(glowVariant, scheme);
+    const colors = useGlassColors();
 
     return (
-        <GlassCard variant="tinted" borderRadius={8} style={{padding: 12}}>
+        <GlassContentCard borderRadius={8} padding={12}>
             <View style={{flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4}}>
                 <View style={{flex: 1}}>
                     <ThemedText style={{fontSize: 16, fontWeight: '600'}}>
@@ -51,7 +50,7 @@ export function SkillCard({skill, onEdit, onDelete, showActions}: SkillCardProps
                 {showActions && (
                     <View style={{flexDirection: 'row', gap: 8}}>
                         <Pressable onPress={onEdit} style={{padding: 4}}>
-                            <ThemedText style={{color: activeColor, fontSize: 14}}>
+                            <ThemedText style={{color: colors.activeColor, fontSize: 14}}>
                                 {t('common.edit')}
                             </ThemedText>
                         </Pressable>
@@ -78,6 +77,6 @@ export function SkillCard({skill, onEdit, onDelete, showActions}: SkillCardProps
                     {t('skills.willingToServe')}
                 </ThemedText>
             )}
-        </GlassCard>
+        </GlassContentCard>
     );
 }
