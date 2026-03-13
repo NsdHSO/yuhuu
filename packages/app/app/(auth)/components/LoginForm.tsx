@@ -1,7 +1,7 @@
 import React, {useRef} from 'react';
-import {Dimensions, Pressable, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {Dimensions, Platform, Pressable, ScrollView, View} from 'react-native';
 import {useRouter} from 'expo-router';
-import {ThemedText} from '@yuhuu/components';
+import {ThemedText, SubmitButton} from '@yuhuu/components';
 import {useTranslation} from 'react-i18next';
 import {AuthInput} from './AuthInput';
 import {BiometricButton} from './BiometricButton';
@@ -29,6 +29,10 @@ export function LoginForm({email, setEmail, password, setPassword, submitting, s
   const passwordInputRef = useRef<View>(null);
 
   const scrollToInput = (inputRef: React.RefObject<View | null>) => {
+    // Skip scroll-to-input on web - browsers handle this automatically
+    // and measureLayout doesn't work properly on web (causes Safari Touch ID errors)
+    if (Platform.OS === 'web') return;
+
     if (inputRef.current && scrollViewRef.current) {
       inputRef.current.measureLayout(scrollViewRef.current as any, (x, y, width, height) => {
         const inputCenterY = y + height / 2;
@@ -46,9 +50,9 @@ export function LoginForm({email, setEmail, password, setPassword, submitting, s
       <View style={{height: 12}} />
       <AuthInput inputRef={passwordInputRef} value={password} onChangeText={setPassword} placeholder={t('auth.login.passwordPlaceholder')} secureTextEntry textContentType="password" autoComplete="password" importantForAutofill="yes" onFocusCallback={() => scrollToInput(passwordInputRef)} />
       <View style={{height: 16}} />
-      <TouchableOpacity onPress={onSubmit} disabled={submitting || status === 'loading'} activeOpacity={0.7} style={buttonStyles.primary}>
-        <Text style={buttonStyles.text}>{submitting ? t('auth.login.submitting') : t('auth.login.submit')}</Text>
-      </TouchableOpacity>
+      <SubmitButton onPress={onSubmit} disabled={submitting || status === 'loading'} style={buttonStyles.primary} textStyle={buttonStyles.text}>
+        {submitting ? t('auth.login.submitting') : t('auth.login.submit')}
+      </SubmitButton>
       {biometricAvailable && <BiometricButton onPress={handleBiometricLogin} disabled={submitting || status === 'loading'} />}
       <View style={{height: 16}} />
       <Pressable onPress={() => router.push('/(auth)/register')} style={({pressed}) => ({opacity: pressed ? 0.7 : 1, alignItems: 'center', paddingVertical: 8})}>

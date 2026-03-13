@@ -34,6 +34,7 @@ export * from './atoms/tab-liquid-blob';
 export * from './atoms/custom-tab-bar';
 export * from './atoms/tab-screen-wrapper';
 export * from './atoms/gender-avatar';
+export * from './atoms/SubmitButton';
 
 // Molecules
 export * from './molecules/category-badge';

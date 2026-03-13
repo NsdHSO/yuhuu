@@ -218,3 +218,21 @@ jest.mock('@/lib/http/envelope', () => ({
     isEnvelope: jest.fn(),
     unwrap: jest.fn(async (p) => (await p).data)
 }));
+
+// Mock platform-specific SubmitButton to always use native version in tests
+jest.mock('@yuhuu/components', () => {
+    const actualComponents = jest.requireActual('@yuhuu/components');
+    const React = require('react');
+    const {Text, TouchableOpacity} = require('react-native');
+
+    return {
+        ...actualComponents,
+        SubmitButton: ({onPress, disabled, style, textStyle, children, activeOpacity = 0.7}) => {
+            return React.createElement(
+                TouchableOpacity,
+                {onPress, disabled, activeOpacity, style, testID: 'submit-button'},
+                React.createElement(Text, {style: textStyle}, children)
+            );
+        }
+    };
+});

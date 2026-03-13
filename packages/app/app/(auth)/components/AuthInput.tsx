@@ -4,7 +4,7 @@ import {useColorScheme} from '@yuhuu/components';
 import {getInputStyles} from '../styles/input-styles';
 
 interface AuthInputProps extends TextInputProps {
-  inputRef?: React.RefObject<View>;
+  inputRef?: React.RefObject<View | null>;
   onFocusCallback?: () => void;
 }
 
