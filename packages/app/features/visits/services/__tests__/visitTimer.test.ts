@@ -1,4 +1,17 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+/**
+ * Unit tests for Visit Timer Service
+ * SOLID Principles:
+ * - Single Responsibility: Each test validates one specific timer behavior
+ * - Dependency Inversion: Mock @yuhuu/storage dependency
+ */
+
+// Mock @yuhuu/storage BEFORE imports
+jest.mock('@yuhuu/storage', () => ({
+  setItem: jest.fn(),
+  getItem: jest.fn(),
+  removeItem: jest.fn(),
+}));
+
 import {
   startTimer,
   loadTimerState,
@@ -9,21 +22,13 @@ import {
   TIMER_DURATION,
   STORAGE_KEY,
 } from '../visitTimer';
+import * as storage from '@yuhuu/storage';
 import type {VisitTimerState} from '@yuhuu/types';
 
-/**
- * Unit tests for Visit Timer Service
- * SOLID Principles:
- * - Single Responsibility: Each test validates one specific timer behavior
- * - Dependency Inversion: Mock AsyncStorage dependency
- */
-
-// Mock AsyncStorage
-jest.mock('@react-native-async-storage/async-storage', () => ({
-  setItem: jest.fn(),
-  getItem: jest.fn(),
-  removeItem: jest.fn(),
-}));
+// Get references to mocked functions
+const mockSetItem = storage.setItem as jest.Mock;
+const mockGetItem = storage.getItem as jest.Mock;
+const mockRemoveItem = storage.removeItem as jest.Mock;
 
 describe('visits/services/visitTimer', () => {
   beforeEach(() => {
@@ -43,13 +48,13 @@ describe('visits/services/visitTimer', () => {
     });
 
     it('should have correct STORAGE_KEY', () => {
-      expect(STORAGE_KEY).toBe('@yuhuu/visit_timer');
+      expect(STORAGE_KEY).toBe('yuhuu.visit-timer');
     });
   });
 
   describe('startTimer', () => {
     it('should create timer state with visit id', async () => {
-      (AsyncStorage.setItem as jest.Mock).mockResolvedValue(undefined);
+      mockSetItem.mockResolvedValue(undefined);
 
       const visitId = 42;
       const state = await startTimer(visitId);
@@ -60,7 +65,7 @@ describe('visits/services/visitTimer', () => {
     });
 
     it('should set duration to 600000ms (10 minutes)', async () => {
-      (AsyncStorage.setItem as jest.Mock).mockResolvedValue(undefined);
+      mockSetItem.mockResolvedValue(undefined);
 
       const state = await startTimer(1);
 
@@ -68,18 +73,18 @@ describe('visits/services/visitTimer', () => {
     });
 
     it('should persist timer state to AsyncStorage', async () => {
-      (AsyncStorage.setItem as jest.Mock).mockResolvedValue(undefined);
+      mockSetItem.mockResolvedValue(undefined);
 
       const state = await startTimer(5);
 
-      expect(AsyncStorage.setItem).toHaveBeenCalledWith(
+      expect(mockSetItem).toHaveBeenCalledWith(
         STORAGE_KEY,
         JSON.stringify(state)
       );
     });
 
     it('should use current timestamp for startedAt', async () => {
-      (AsyncStorage.setItem as jest.Mock).mockResolvedValue(undefined);
+      mockSetItem.mockResolvedValue(undefined);
 
       // Mock Date constructor to return fixed timestamp
       const mockDate = new Date(1678886400000);
@@ -97,7 +102,7 @@ describe('visits/services/visitTimer', () => {
     });
 
     it('should return valid ISO 8601 timestamp', async () => {
-      (AsyncStorage.setItem as jest.Mock).mockResolvedValue(undefined);
+      mockSetItem.mockResolvedValue(undefined);
 
       const state = await startTimer(1);
 
@@ -115,16 +120,16 @@ describe('visits/services/visitTimer', () => {
         duration: TIMER_DURATION,
       };
 
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(mockState));
+      mockGetItem.mockResolvedValue(JSON.stringify(mockState));
 
       const state = await loadTimerState();
 
       expect(state).toEqual(mockState);
-      expect(AsyncStorage.getItem).toHaveBeenCalledWith(STORAGE_KEY);
+      expect(mockGetItem).toHaveBeenCalledWith(STORAGE_KEY);
     });
 
     it('should return null when no timer exists', async () => {
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
+      mockGetItem.mockResolvedValue(null);
 
       const state = await loadTimerState();
 
@@ -132,7 +137,7 @@ describe('visits/services/visitTimer', () => {
     });
 
     it('should return null when AsyncStorage returns empty string', async () => {
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValue('');
+      mockGetItem.mockResolvedValue('');
 
       const state = await loadTimerState();
 
@@ -140,7 +145,7 @@ describe('visits/services/visitTimer', () => {
     });
 
     it('should handle JSON parse errors', async () => {
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValue('invalid json{');
+      mockGetItem.mockResolvedValue('invalid json{');
 
       const state = await loadTimerState();
 
@@ -152,7 +157,7 @@ describe('visits/services/visitTimer', () => {
     });
 
     it('should handle AsyncStorage errors', async () => {
-      (AsyncStorage.getItem as jest.Mock).mockRejectedValue(new Error('Storage error'));
+      mockGetItem.mockRejectedValue(new Error('Storage error'));
 
       const state = await loadTimerState();
 
@@ -317,12 +322,12 @@ describe('visits/services/visitTimer', () => {
         duration: TIMER_DURATION,
       };
 
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(mockState));
-      (AsyncStorage.removeItem as jest.Mock).mockResolvedValue(undefined);
+      mockGetItem.mockResolvedValue(JSON.stringify(mockState));
+      mockRemoveItem.mockResolvedValue(undefined);
 
       await completeTimer(10);
 
-      expect(AsyncStorage.removeItem).toHaveBeenCalledWith(STORAGE_KEY);
+      expect(mockRemoveItem).toHaveBeenCalledWith(STORAGE_KEY);
     });
 
     it('should not clear timer when visit id does not match', async () => {
@@ -332,21 +337,21 @@ describe('visits/services/visitTimer', () => {
         duration: TIMER_DURATION,
       };
 
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(mockState));
-      (AsyncStorage.removeItem as jest.Mock).mockResolvedValue(undefined);
+      mockGetItem.mockResolvedValue(JSON.stringify(mockState));
+      mockRemoveItem.mockResolvedValue(undefined);
 
       await completeTimer(99); // Different visit id
 
-      expect(AsyncStorage.removeItem).not.toHaveBeenCalled();
+      expect(mockRemoveItem).not.toHaveBeenCalled();
     });
 
     it('should handle case when no timer exists', async () => {
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
-      (AsyncStorage.removeItem as jest.Mock).mockResolvedValue(undefined);
+      mockGetItem.mockResolvedValue(null);
+      mockRemoveItem.mockResolvedValue(undefined);
 
       await completeTimer(5);
 
-      expect(AsyncStorage.removeItem).not.toHaveBeenCalled();
+      expect(mockRemoveItem).not.toHaveBeenCalled();
     });
 
     it('should load timer state from storage', async () => {
@@ -356,26 +361,26 @@ describe('visits/services/visitTimer', () => {
         duration: TIMER_DURATION,
       };
 
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(mockState));
-      (AsyncStorage.removeItem as jest.Mock).mockResolvedValue(undefined);
+      mockGetItem.mockResolvedValue(JSON.stringify(mockState));
+      mockRemoveItem.mockResolvedValue(undefined);
 
       await completeTimer(20);
 
-      expect(AsyncStorage.getItem).toHaveBeenCalledWith(STORAGE_KEY);
+      expect(mockGetItem).toHaveBeenCalledWith(STORAGE_KEY);
     });
   });
 
   describe('clearTimerState', () => {
     it('should remove timer from AsyncStorage', async () => {
-      (AsyncStorage.removeItem as jest.Mock).mockResolvedValue(undefined);
+      mockRemoveItem.mockResolvedValue(undefined);
 
       await clearTimerState();
 
-      expect(AsyncStorage.removeItem).toHaveBeenCalledWith(STORAGE_KEY);
+      expect(mockRemoveItem).toHaveBeenCalledWith(STORAGE_KEY);
     });
 
     it('should handle AsyncStorage errors gracefully', async () => {
-      (AsyncStorage.removeItem as jest.Mock).mockRejectedValue(new Error('Storage error'));
+      mockRemoveItem.mockRejectedValue(new Error('Storage error'));
 
       // Should not throw
       await expect(clearTimerState()).rejects.toThrow('Storage error');
@@ -384,15 +389,15 @@ describe('visits/services/visitTimer', () => {
 
   describe('Timer persistence workflow', () => {
     it('should support full timer lifecycle', async () => {
-      (AsyncStorage.setItem as jest.Mock).mockResolvedValue(undefined);
-      (AsyncStorage.getItem as jest.Mock).mockImplementation(async () => {
-        const calls = (AsyncStorage.setItem as jest.Mock).mock.calls;
+      mockSetItem.mockResolvedValue(undefined);
+      mockGetItem.mockImplementation(async () => {
+        const calls = mockSetItem.mock.calls;
         if (calls.length > 0) {
           return calls[calls.length - 1][1]; // Return last saved state
         }
         return null;
       });
-      (AsyncStorage.removeItem as jest.Mock).mockResolvedValue(undefined);
+      mockRemoveItem.mockResolvedValue(undefined);
 
       // 1. Start timer
       const visitId = 100;
@@ -410,7 +415,7 @@ describe('visits/services/visitTimer', () => {
 
       // 4. Complete timer
       await completeTimer(visitId);
-      expect(AsyncStorage.removeItem).toHaveBeenCalled();
+      expect(mockRemoveItem).toHaveBeenCalled();
     });
 
     it('should handle timer restoration after app restart', async () => {
@@ -422,7 +427,7 @@ describe('visits/services/visitTimer', () => {
         duration: TIMER_DURATION,
       };
 
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(mockState));
+      mockGetItem.mockResolvedValue(JSON.stringify(mockState));
 
       const loaded = await loadTimerState();
       expect(loaded).toBeDefined();
