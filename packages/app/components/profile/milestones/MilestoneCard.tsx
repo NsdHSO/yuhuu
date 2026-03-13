@@ -1,7 +1,7 @@
 import React from 'react';
 import {Pressable, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {Colors, GlassCard, ThemedText, useColorScheme, getGlowColor, useGlowVariant} from '@yuhuu/components';
+import {Colors, GlassContentCard, ThemedText, useColorScheme, useGlassColors} from '@yuhuu/components';
 import {formatDateForDisplay} from '@/lib/dates';
 import {getMilestoneIcon, getMilestoneLabel} from './milestonesHelpers';
 
@@ -24,11 +24,10 @@ interface MilestoneCardProps {
 export function MilestoneCard({milestone, onEdit, onDelete, showActions}: MilestoneCardProps) {
     const {t} = useTranslation();
     const scheme = useColorScheme() ?? 'light';
-    const {glowVariant} = useGlowVariant();
-    const activeColor = getGlowColor(glowVariant, scheme);
+    const colors = useGlassColors();
 
     return (
-        <GlassCard variant="tinted" borderRadius={8} style={{padding: 12}}>
+        <GlassContentCard borderRadius={8} padding={12}>
             <View style={{flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4}}>
                 <ThemedText style={{fontSize: 16, fontWeight: '600'}}>
                     {getMilestoneIcon(milestone.milestone_type)} {getMilestoneLabel(milestone.milestone_type)}
@@ -36,7 +35,7 @@ export function MilestoneCard({milestone, onEdit, onDelete, showActions}: Milest
                 {showActions && (
                     <View style={{flexDirection: 'row', gap: 8}}>
                         <Pressable onPress={onEdit} style={{padding: 4}}>
-                            <ThemedText style={{color: activeColor, fontSize: 14}}>
+                            <ThemedText style={{color: colors.activeColor, fontSize: 14}}>
                                 {t('common.edit')}
                             </ThemedText>
                         </Pressable>
@@ -68,6 +67,6 @@ export function MilestoneCard({milestone, onEdit, onDelete, showActions}: Milest
                     {milestone.notes}
                 </ThemedText>
             )}
-        </GlassCard>
+        </GlassContentCard>
     );
 }
