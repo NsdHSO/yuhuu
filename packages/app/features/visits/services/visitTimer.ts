@@ -1,11 +1,4 @@
-// Make AsyncStorage optional for Expo Go compatibility
-let AsyncStorage: any = null;
-try {
-  AsyncStorage = require('@react-native-async-storage/async-storage').default;
-} catch (e) {
-  console.warn('@react-native-async-storage/async-storage not available - timer persistence disabled');
-}
-
+import {getItem, setItem, removeItem} from '@yuhuu/storage';
 import type {VisitTimerState} from '@yuhuu/types';
 
 /**
@@ -14,9 +7,10 @@ import type {VisitTimerState} from '@yuhuu/types';
 export const TIMER_DURATION = 600000;
 
 /**
- * AsyncStorage key for timer persistence
+ * Storage key for timer persistence
+ * Must follow format: alphanumeric, ".", "-", "_" only
  */
-export const STORAGE_KEY = '@yuhuu/visit_timer';
+export const STORAGE_KEY = 'yuhuu.visit-timer';
 
 /**
  * Start a new timer for a visit
@@ -32,9 +26,7 @@ export async function startTimer(visitId: number): Promise<VisitTimerState> {
     duration: TIMER_DURATION,
   };
 
-  if (AsyncStorage) {
-    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }
+  await setItem(STORAGE_KEY, JSON.stringify(state));
   return state;
 }
 
@@ -45,12 +37,8 @@ export async function startTimer(visitId: number): Promise<VisitTimerState> {
  * @returns Timer state or null if no active timer
  */
 export async function loadTimerState(): Promise<VisitTimerState | null> {
-  if (!AsyncStorage) {
-    return null;
-  }
-
   try {
-    const json = await AsyncStorage.getItem(STORAGE_KEY);
+    const json = await getItem(STORAGE_KEY);
     if (!json) return null;
 
     const state = JSON.parse(json) as VisitTimerState;
@@ -100,7 +88,5 @@ export async function completeTimer(visitId: number): Promise<void> {
  * Called after visit completion or cancellation
  */
 export async function clearTimerState(): Promise<void> {
-  if (AsyncStorage) {
-    await AsyncStorage.removeItem(STORAGE_KEY);
-  }
+  await removeItem(STORAGE_KEY);
 }
