@@ -18,11 +18,47 @@ jest.mock('../../../features/visits/hooks', () => ({
   useMyAssignmentsQuery: jest.fn(),
 }));
 
+// Mock i18n
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        'visits.myVisits': 'My Visits',
+        'common.loading': 'Loading...',
+        'visits.noAssignments': 'You have no assigned visits',
+      };
+      return translations[key] || key;
+    },
+  }),
+}));
+
 jest.mock('@yuhuu/components', () => {
   const RN = require('react-native');
+  const React = require('react');
+
   return {
     useGlowVariant: () => ({glowVariant: 'vibrant'}),
     getGlowColor: () => '#A78BFA',
+    useGlassColors: () => ({
+      activeColor: '#A78BFA',
+      glowVariant: 'vibrant',
+      scheme: 'light',
+      text: '#000',
+      subtext: '#64748B',
+      glassBackground: 'rgba(200, 210, 230, 0.85)',
+      glowOverlay: (borderRadius = 12) => ({
+        borderRadius,
+        backgroundColor: '#A78BFA0A',
+      }),
+      glowBorder: (borderRadius = 12, borderWidth = 1) => ({
+        borderRadius,
+        borderWidth,
+        borderColor: '#A78BFA59',
+      }),
+    }),
+    ThemedText: ({children, style}: any) => (
+      <RN.Text style={style}>{children}</RN.Text>
+    ),
     GlassBackground: ({children}: {children: React.ReactNode}) => (
       <RN.View testID="glass-background">{children}</RN.View>
     ),
@@ -30,6 +66,13 @@ jest.mock('@yuhuu/components', () => {
       <RN.ScrollView testID={testID} contentContainerStyle={contentContainerStyle}>
         <RN.View>{children}</RN.View>
       </RN.ScrollView>
+    ),
+    GlassContentCard: ({children, testID}: any) => (
+      <RN.View testID={testID} style={{marginBottom: 12}}>
+        <RN.View style={{borderRadius: 12, overflow: 'hidden', padding: 16}}>
+          {children}
+        </RN.View>
+      </RN.View>
     ),
   };
 });
