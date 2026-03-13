@@ -1,14 +1,15 @@
-import React, {useEffect} from 'react';
-import {Text, StyleSheet} from 'react-native';
-import {requestLocationPermissions} from '../../features/visits/services/geolocation';
-import {useMyAssignmentsQuery} from '../../features/visits/hooks';
-import {useVisitTracking} from '../../features/visits/hooks/useVisitTracking';
-import {VisitCard} from '../../components/visits/VisitCard';
-import type {VisitAssignment} from '@yuhuu/types';
-import {GlassBackground, TabScreenWrapper} from '@yuhuu/components';
+import { GlassBackground, TabScreenWrapper, ThemedText } from "@yuhuu/components";
+import type { VisitAssignment } from "@yuhuu/types";
+import { useEffect } from "react";
+import { StyleSheet } from "react-native";
+import { useTranslation } from "react-i18next";
+import { VisitCard } from "../../components/visits/VisitCard";
+import { useMyAssignmentsQuery } from "../../features/visits/hooks";
+import { useVisitTracking } from "../../features/visits/hooks/useVisitTracking";
+import { requestLocationPermissions } from "../../features/visits/services/geolocation";
 
-function VisitTrackingCard({visit}: {visit: VisitAssignment}) {
-  const {remainingMs, canComplete, completeVisit} = useVisitTracking(visit);
+function VisitTrackingCard({ visit }: { visit: VisitAssignment }) {
+  const { remainingMs, canComplete, completeVisit } = useVisitTracking(visit);
 
   return (
     <VisitCard
@@ -23,14 +24,15 @@ function VisitTrackingCard({visit}: {visit: VisitAssignment}) {
 }
 
 export default function VisitsScreen() {
-  const {data: assignments, isLoading} = useMyAssignmentsQuery();
+  const { t } = useTranslation();
+  const { data: assignments, isLoading } = useMyAssignmentsQuery();
 
   useEffect(() => {
     requestLocationPermissions();
   }, []);
 
   const pendingOrInProgress = assignments?.filter(
-    (a) => a.status === 'pending' || a.status === 'in_progress'
+    (a) => a.status === "pending" || a.status === "in_progress",
   );
 
   return (
@@ -39,15 +41,15 @@ export default function VisitsScreen() {
         testID="visits-container"
         contentContainerStyle={styles.container}
       >
-        <Text style={styles.title}>My Visits</Text>
+        <ThemedText style={styles.title}>{t('visits.myVisits')}</ThemedText>
 
-        {isLoading && <Text style={styles.loadingText}>Loading...</Text>}
+        {isLoading && <ThemedText style={styles.loadingText}>{t('common.loading')}</ThemedText>}
 
-        {!isLoading && pendingOrInProgress && pendingOrInProgress.length === 0 && (
-          <Text style={styles.emptyText}>
-            You have no assigned visits
-          </Text>
-        )}
+        {!isLoading &&
+          pendingOrInProgress &&
+          pendingOrInProgress.length === 0 && (
+            <ThemedText style={styles.emptyText}>{t('visits.noAssignments')}</ThemedText>
+          )}
 
         {pendingOrInProgress?.map((visit) => (
           <VisitTrackingCard key={visit.id} visit={visit} />
@@ -64,16 +66,16 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    fontWeight: '700',
+    fontWeight: "700",
     marginBottom: 20,
   },
   loadingText: {
-    color: '#888',
-    textAlign: 'center',
+    opacity: 0.6,
+    textAlign: "center",
   },
   emptyText: {
-    color: '#888',
-    textAlign: 'center',
+    opacity: 0.6,
+    textAlign: "center",
     marginTop: 24,
   },
 });
