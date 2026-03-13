@@ -1,11 +1,11 @@
 import React, {useEffect} from 'react';
-import {View, Text, ScrollView, StyleSheet} from 'react-native';
-import {useColorScheme} from 'react-native';
+import {Text, StyleSheet} from 'react-native';
 import {requestLocationPermissions} from '../../features/visits/services/geolocation';
 import {useMyAssignmentsQuery} from '../../features/visits/hooks';
 import {useVisitTracking} from '../../features/visits/hooks/useVisitTracking';
 import {VisitCard} from '../../components/visits/VisitCard';
 import type {VisitAssignment} from '@yuhuu/types';
+import {GlassBackground, TabScreenWrapper} from '@yuhuu/components';
 
 function VisitTrackingCard({visit}: {visit: VisitAssignment}) {
   const {remainingMs, canComplete, completeVisit} = useVisitTracking(visit);
@@ -23,7 +23,6 @@ function VisitTrackingCard({visit}: {visit: VisitAssignment}) {
 }
 
 export default function VisitsScreen() {
-  const scheme = useColorScheme() ?? 'light';
   const {data: assignments, isLoading} = useMyAssignmentsQuery();
 
   useEffect(() => {
@@ -35,16 +34,17 @@ export default function VisitsScreen() {
   );
 
   return (
-    <View style={[styles.container, {backgroundColor: scheme === 'dark' ? '#000' : '#fff'}]}>
-      <Text style={[styles.title, {color: scheme === 'dark' ? '#fff' : '#000'}]}>
-        My Visits
-      </Text>
+    <GlassBackground>
+      <TabScreenWrapper
+        testID="visits-container"
+        contentContainerStyle={styles.container}
+      >
+        <Text style={styles.title}>My Visits</Text>
 
-      <ScrollView style={styles.list}>
-        {isLoading && <Text style={{color: '#888', textAlign: 'center'}}>Loading...</Text>}
+        {isLoading && <Text style={styles.loadingText}>Loading...</Text>}
 
         {!isLoading && pendingOrInProgress && pendingOrInProgress.length === 0 && (
-          <Text style={{color: '#888', textAlign: 'center', marginTop: 24}}>
+          <Text style={styles.emptyText}>
             You have no assigned visits
           </Text>
         )}
@@ -52,24 +52,28 @@ export default function VisitsScreen() {
         {pendingOrInProgress?.map((visit) => (
           <VisitTrackingCard key={visit.id} visit={visit} />
         ))}
-      </ScrollView>
-    </View>
+      </TabScreenWrapper>
+    </GlassBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    padding: 20,
     paddingTop: 60,
   },
   title: {
     fontSize: 28,
     fontWeight: '700',
-    paddingHorizontal: 20,
     marginBottom: 20,
   },
-  list: {
-    flex: 1,
-    paddingHorizontal: 20,
+  loadingText: {
+    color: '#888',
+    textAlign: 'center',
+  },
+  emptyText: {
+    color: '#888',
+    textAlign: 'center',
+    marginTop: 24,
   },
 });
