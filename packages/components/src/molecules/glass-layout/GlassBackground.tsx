@@ -18,14 +18,12 @@ export function GlassBackground({
   const scheme = useColorScheme() ?? "light";
   const { width, height } = Dimensions.get("window");
 
-  // Background colors that respect dark/light mode
-  const backgroundColors = {
-        light: "#FFFFFF", // Pure white for light mode
-    dark: "#0F172A",  // Deep navy for dark mode
-  };
+  // Neutral background colors (like GlassView frosted variant)
+  const backgroundColor = scheme === 'dark'
+    ? 'rgba(40, 40, 50, 0.60)'  // Dark frosted glass
+    : 'rgba(200, 210, 230, 0.85)'; // Light frosted glass
 
   const colors = glowColors[resolvedVariant][scheme];
-  const backgroundColor = backgroundColors[scheme];
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
