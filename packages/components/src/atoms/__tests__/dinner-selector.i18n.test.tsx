@@ -4,6 +4,9 @@ import {DinnerSelector} from '../dinner-selector';
 import type {Dinner} from '@yuhuu/types';
 import i18n from '@yuhuu/i18n';
 
+// Unmock react-i18next for i18n integration tests
+jest.unmock('react-i18next');
+
 jest.mock('expo-localization');
 jest.mock('expo-secure-store');
 
