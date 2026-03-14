@@ -17,10 +17,42 @@ jest.spyOn(Linking, 'openURL').mockImplementation(() => Promise.resolve(true));
 import {VisitCard} from '../VisitCard';
 
 // Mock dependencies
-jest.mock('@yuhuu/components', () => ({
-  useGlowVariant: () => ({glowVariant: 'vibrant'}),
-  getGlowColor: () => '#A78BFA',
-}));
+jest.mock('@yuhuu/components', () => {
+  const RN = require('react-native');
+  const React = require('react');
+
+  return {
+    useGlowVariant: () => ({glowVariant: 'vibrant'}),
+    getGlowColor: () => '#A78BFA',
+    useGlassColors: () => ({
+      activeColor: '#A78BFA',
+      glowVariant: 'vibrant',
+      scheme: 'dark',
+      text: '#fff',
+      subtext: '#CBD5E1',
+      glassBackground: 'rgba(40, 40, 50, 0.60)',
+      glowOverlay: (borderRadius: number = 12) => ({
+        borderRadius,
+        backgroundColor: '#A78BFA0D',
+      }),
+      glowBorder: (borderRadius: number = 12, borderWidth: number = 1) => ({
+        borderRadius,
+        borderWidth,
+        borderColor: '#A78BFA66',
+      }),
+    }),
+    ThemedText: ({children, style}: any) => (
+      <RN.Text style={style}>{children}</RN.Text>
+    ),
+    GlassContentCard: ({children, testID}: any) => (
+      <RN.View testID={testID} style={{marginBottom: 12}}>
+        <RN.View style={{borderRadius: 12, overflow: 'hidden', padding: 16}}>
+          {children}
+        </RN.View>
+      </RN.View>
+    ),
+  };
+});
 
 describe('VisitCard', () => {
   const mockVisit: VisitAssignment = {

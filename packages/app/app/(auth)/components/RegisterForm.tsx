@@ -4,6 +4,7 @@ import {useRouter} from 'expo-router';
 import {ThemedText} from '@yuhuu/components';
 import {useTranslation} from 'react-i18next';
 import {AuthInput} from './AuthInput';
+import {PasswordInput} from './PasswordInput';
 import {buttonStyles} from '../styles/input-styles';
 
 interface RegisterFormProps {
@@ -32,9 +33,9 @@ export function RegisterForm(props: RegisterFormProps) {
       <ThemedText type="title" style={{marginBottom: 24}}>{t('auth.register.createAccount')}</ThemedText>
       <AuthInput value={props.email} onChangeText={props.setEmail} placeholder={t('auth.register.emailPlaceholder')} autoCapitalize="none" keyboardType="email-address" textContentType="username" autoComplete="username-new" importantForAutofill="yes" autoCorrect={false} />
       <View style={{height: 12}} />
-      <AuthInput value={props.password} onChangeText={props.setPassword} placeholder={t('auth.register.passwordPlaceholder')} secureTextEntry autoCapitalize="none" autoCorrect={false} textContentType="newPassword" autoComplete="password-new" importantForAutofill="yes" />
+      <PasswordInput value={props.password} onChangeText={props.setPassword} placeholder={t('auth.register.passwordPlaceholder')} autoCapitalize="none" autoCorrect={false} textContentType="newPassword" autoComplete="password-new" importantForAutofill="yes" />
       <View style={{height: 12}} />
-      <AuthInput value={props.confirm} onChangeText={props.setConfirm} placeholder={t('auth.register.confirmPassword')} secureTextEntry autoCapitalize="none" autoCorrect={false} textContentType="newPassword" autoComplete="password-new" importantForAutofill="yes" />
+      <PasswordInput value={props.confirm} onChangeText={props.setConfirm} placeholder={t('auth.register.confirmPassword')} autoCapitalize="none" autoCorrect={false} textContentType="newPassword" autoComplete="password-new" importantForAutofill="yes" />
       <View style={{height: 12}} />
       <AuthInput value={props.firstName} onChangeText={props.setFirstName} placeholder={t('auth.register.firstNamePlaceholder')} autoCapitalize="words" textContentType="givenName" autoComplete="name-given" />
       <View style={{height: 12}} />
