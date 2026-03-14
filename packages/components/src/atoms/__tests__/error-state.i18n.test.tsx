@@ -3,6 +3,9 @@ import {act, render, screen} from '@testing-library/react-native';
 import i18n from '@yuhuu/i18n';
 import {ErrorState} from '../error-state';
 
+// Unmock react-i18next for i18n integration tests
+jest.unmock('react-i18next');
+
 jest.mock('expo-localization');
 jest.mock('expo-secure-store');
 
