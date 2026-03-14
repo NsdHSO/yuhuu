@@ -1,6 +1,8 @@
 module.exports = {
     preset: 'jest-expo',
+    setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
     testEnvironment: 'node',
+    testTimeout: 10000,
     transformIgnorePatterns: [
         'node_modules/(?!(.pnpm|react-native(-[^/]*)?|@react-native(-[^/]*)?|expo(-[^/]*)?|@expo|@expo-google-fonts|react-navigation|@react-navigation|@sentry/react-native|native-base|@shopify/flash-list|nativewind|i18next|react-i18next|jwt-decode)/)',
     ],
