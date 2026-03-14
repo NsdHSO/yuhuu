@@ -3,6 +3,9 @@ import {fireEvent, render, waitFor} from '@testing-library/react-native';
 import {I18nextProvider, initReactI18next} from 'react-i18next';
 import i18n from 'i18next';
 
+// Unmock react-i18next for i18n integration tests
+jest.unmock('react-i18next');
+
 // Mock the useLanguage hook
 jest.mock('@/hooks/useLanguage', () => ({
     useLanguage: jest.fn(() => ({
