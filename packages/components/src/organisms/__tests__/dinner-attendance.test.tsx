@@ -1,6 +1,7 @@
 import React from 'react';
-import {render, screen} from '@testing-library/react-native';
+import {render, screen, cleanup} from '@testing-library/react-native';
 import {DinnerAttendance} from '../dinner-attendance';
+import {useTranslation} from 'react-i18next';
 
 const mockT = jest.fn((key: string, opts?: Record<string, unknown>) => {
     if (opts) {
@@ -12,15 +13,12 @@ const mockT = jest.fn((key: string, opts?: Record<string, unknown>) => {
     return key;
 });
 
+// Override the global mock for this test
 jest.mock('react-i18next', () => ({
     useTranslation: () => ({
         t: mockT,
         i18n: {language: 'en', changeLanguage: jest.fn()},
     }),
-}));
-
-jest.mock('@/hooks/use-color-scheme', () => ({
-    useColorScheme: () => 'light',
 }));
 
 const mockAttendanceData = [
@@ -39,6 +37,7 @@ const mockAttendanceData = [
 
 describe('DinnerAttendance Organism Component', () => {
     beforeEach(() => jest.clearAllMocks());
+    afterEach(() => cleanup());
 
     describe('Empty State', () => {
         it('should render empty message when data is undefined', () => {
