@@ -1,5 +1,5 @@
 import React from 'react';
-import {render} from '@testing-library/react-native';
+import {render, cleanup} from '@testing-library/react-native';
 import {DinnerDetailsCard} from '../dinner-details-card';
 
 const mockT = jest.fn((key: string) => key);
@@ -9,10 +9,6 @@ jest.mock('react-i18next', () => ({
         t: mockT,
         i18n: {language: 'en', changeLanguage: jest.fn()},
     }),
-}));
-
-jest.mock('@/hooks/use-color-scheme', () => ({
-    useColorScheme: () => 'light',
 }));
 
 const fullDinner = {
@@ -39,6 +35,7 @@ const minimalDinner = {
 
 describe('DinnerDetailsCard Molecule Component', () => {
     beforeEach(() => jest.clearAllMocks());
+    afterEach(() => cleanup());
 
     describe('Glass Card Integration', () => {
         it('should render with glass card background', () => {
