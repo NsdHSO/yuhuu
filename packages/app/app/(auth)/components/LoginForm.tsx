@@ -48,7 +48,7 @@ export function LoginForm({email, setEmail, password, setPassword, submitting, s
       <ThemedText type="title" style={{marginBottom: 24}}>{t('auth.login.welcome')}</ThemedText>
       <AuthInput inputRef={emailInputRef} value={email} onChangeText={setEmail} placeholder={t('auth.login.emailPlaceholder')} autoCapitalize="none" keyboardType="email-address" textContentType="username" autoComplete="username" importantForAutofill="yes" autoCorrect={false} onFocusCallback={() => scrollToInput(emailInputRef)} />
       <View style={{height: 12}} />
-      <AuthInput inputRef={passwordInputRef} value={password} onChangeText={setPassword} placeholder={t('auth.login.passwordPlaceholder')} secureTextEntry textContentType="password" autoComplete="password" importantForAutofill="yes" onFocusCallback={() => scrollToInput(passwordInputRef)} />
+      <AuthInput inputRef={passwordInputRef} value={password} onChangeText={setPassword} placeholder={t('auth.login.passwordPlaceholder')} secureTextEntry autoCapitalize="none" autoCorrect={false} textContentType="password" autoComplete="password" importantForAutofill="yes" onFocusCallback={() => scrollToInput(passwordInputRef)} />
       <View style={{height: 16}} />
       <SubmitButton onPress={onSubmit} disabled={submitting || status === 'loading'} style={buttonStyles.primary} textStyle={buttonStyles.text}>
         {submitting ? t('auth.login.submitting') : t('auth.login.submit')}

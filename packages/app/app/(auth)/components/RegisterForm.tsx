@@ -32,13 +32,13 @@ export function RegisterForm(props: RegisterFormProps) {
       <ThemedText type="title" style={{marginBottom: 24}}>{t('auth.register.createAccount')}</ThemedText>
       <AuthInput value={props.email} onChangeText={props.setEmail} placeholder={t('auth.register.emailPlaceholder')} autoCapitalize="none" keyboardType="email-address" textContentType="username" autoComplete="username-new" importantForAutofill="yes" autoCorrect={false} />
       <View style={{height: 12}} />
-      <AuthInput value={props.password} onChangeText={props.setPassword} placeholder={t('auth.register.passwordPlaceholder')} secureTextEntry textContentType="newPassword" autoComplete="password-new" importantForAutofill="yes" />
+      <AuthInput value={props.password} onChangeText={props.setPassword} placeholder={t('auth.register.passwordPlaceholder')} secureTextEntry autoCapitalize="none" autoCorrect={false} textContentType="newPassword" autoComplete="password-new" importantForAutofill="yes" />
       <View style={{height: 12}} />
-      <AuthInput value={props.confirm} onChangeText={props.setConfirm} placeholder={t('auth.register.confirmPassword')} secureTextEntry textContentType="newPassword" autoComplete="password-new" importantForAutofill="yes" />
+      <AuthInput value={props.confirm} onChangeText={props.setConfirm} placeholder={t('auth.register.confirmPassword')} secureTextEntry autoCapitalize="none" autoCorrect={false} textContentType="newPassword" autoComplete="password-new" importantForAutofill="yes" />
       <View style={{height: 12}} />
-      <AuthInput value={props.firstName} onChangeText={props.setFirstName} placeholder={t('auth.register.firstNamePlaceholder')} />
+      <AuthInput value={props.firstName} onChangeText={props.setFirstName} placeholder={t('auth.register.firstNamePlaceholder')} autoCapitalize="words" textContentType="givenName" autoComplete="name-given" />
       <View style={{height: 12}} />
-      <AuthInput value={props.lastName} onChangeText={props.setLastName} placeholder={t('auth.register.lastNamePlaceholder')} />
+      <AuthInput value={props.lastName} onChangeText={props.setLastName} placeholder={t('auth.register.lastNamePlaceholder')} autoCapitalize="words" textContentType="familyName" autoComplete="name-family" />
       <View style={{height: 16}} />
       <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
         <Switch value={props.accept} onValueChange={props.setAccept} />
