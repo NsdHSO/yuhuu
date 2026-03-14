@@ -1,9 +1,10 @@
 import React from 'react';
-import {render, screen} from '@testing-library/react-native';
+import {render, screen, cleanup} from '@testing-library/react-native';
 import {Text, View} from 'react-native';
 import ParallaxScrollView from '../parallax-scroll-view';
 
 describe('ParallaxScrollView Component', () => {
+    afterEach(() => cleanup());
     const defaultProps = {
         headerImage: <View testID="header-image"/>,
         headerBackgroundColor: {
