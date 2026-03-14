@@ -1,50 +1,9 @@
 import React from 'react';
-import {render, fireEvent, waitFor} from '@testing-library/react-native';
+import {render, fireEvent, waitFor, cleanup} from '@testing-library/react-native';
 import {GenderPicker} from '../gender-picker';
 
-jest.mock('@gorhom/bottom-sheet', () => {
-  const React = require('react');
-  const RN = require('react-native');
-  return {
-    BottomSheetModal: React.forwardRef(
-      ({children, testID}: any, ref: any) => {
-        const [isVisible, setIsVisible] = React.useState(false);
-
-        React.useImperativeHandle(ref, () => ({
-          present: () => setIsVisible(true),
-          dismiss: () => setIsVisible(false),
-        }));
-
-        if (!isVisible) return null;
-
-        return React.createElement(
-          RN.View,
-          {testID},
-          children
-        );
-      }
-    ),
-    BottomSheetView: ({children, style}: any) =>
-      React.createElement(RN.View, {style}, children),
-    BottomSheetModalProvider: ({children}: any) => children,
-  };
-});
-
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => {
-      const translations: Record<string, string> = {
-        'genderPicker.placeholder': 'Select Gender',
-        'genderPicker.male': 'Male',
-        'genderPicker.female': 'Female',
-        'genderPicker.modalTitle': 'Select Your Gender',
-      };
-      return translations[key] || key;
-    },
-  }),
-}));
-
 describe('GenderPicker', () => {
+  afterEach(() => cleanup());
   describe('Rendering', () => {
     it('renders trigger button with selected value', () => {
       const {getByTestId, getByText} = render(
@@ -156,7 +115,7 @@ describe('GenderPicker', () => {
 
       await waitFor(() => {
         const maleAvatar = getByTestId('gender-picker-bottom-sheet-male');
-        expect(maleAvatar.props.isSelected).toBe(true);
+        expect(maleAvatar.props.accessibilityState.selected).toBe(true);
       });
     });
 
