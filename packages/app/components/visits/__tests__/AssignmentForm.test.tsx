@@ -1,7 +1,9 @@
 import React from 'react';
-import {render, fireEvent, waitFor} from '@testing-library/react-native';
+import {render, fireEvent} from '@testing-library/react-native';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {AssignmentForm} from '../AssignmentForm';
+
+import {useFamiliesQuery} from '../../../features/visits/hooks';
 
 /**
  * Unit tests for AssignmentForm Component
@@ -19,8 +21,6 @@ jest.mock('@yuhuu/components', () => ({
 jest.mock('../../../features/visits/hooks', () => ({
   useFamiliesQuery: jest.fn(),
 }));
-
-import {useFamiliesQuery} from '../../../features/visits/hooks';
 
 describe('AssignmentForm', () => {
   let queryClient: QueryClient;
@@ -209,7 +209,7 @@ describe('AssignmentForm', () => {
     });
 
     it('should submit when family is selected and date is set', () => {
-      const {getByText, getByPlaceholderText} = renderWithProvider(
+      const {getByText} = renderWithProvider(
         <AssignmentForm {...defaultProps} />
       );
 
