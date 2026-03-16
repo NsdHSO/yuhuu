@@ -1,7 +1,15 @@
 import React from 'react';
-import {render, fireEvent, waitFor} from '@testing-library/react-native';
+import {render, fireEvent} from '@testing-library/react-native';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {ItineraryManagement} from '../ItineraryManagement';
+
+import {
+  useFamiliesQuery,
+  useAllAssignmentsQuery,
+  useCreateFamilyMutation,
+  useDeleteFamilyMutation,
+  useCreateAssignmentMutation,
+} from '../../../features/visits/hooks';
 
 /**
  * Unit tests for ItineraryManagement Component
@@ -23,14 +31,6 @@ jest.mock('../../../features/visits/hooks', () => ({
   useDeleteFamilyMutation: jest.fn(),
   useCreateAssignmentMutation: jest.fn(),
 }));
-
-import {
-  useFamiliesQuery,
-  useAllAssignmentsQuery,
-  useCreateFamilyMutation,
-  useDeleteFamilyMutation,
-  useCreateAssignmentMutation,
-} from '../../../features/visits/hooks';
 
 describe('ItineraryManagement', () => {
   let queryClient: QueryClient;
@@ -323,7 +323,7 @@ describe('ItineraryManagement', () => {
 
   describe('Integration behavior', () => {
     it('should not show both forms simultaneously', () => {
-      const {getByText, queryByText, queryByPlaceholderText} = renderWithProvider(
+      const {getByText, queryByPlaceholderText} = renderWithProvider(
         <ItineraryManagement />
       );
 
