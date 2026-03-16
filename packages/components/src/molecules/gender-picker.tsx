@@ -1,5 +1,5 @@
 import React, {useRef, useCallback, useEffect} from 'react';
-import {View, Pressable, StyleSheet} from 'react-native';
+import {View, Pressable, StyleSheet, Platform, InteractionManager} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import type {BottomSheetModal} from '@gorhom/bottom-sheet';
 import {ThemedText} from '../themed-text';
@@ -38,7 +38,17 @@ export function GenderPicker({value, onChange, testID}: GenderPickerProps) {
   }, [glowVariant, scheme]);
 
   const handleOpenModal = useCallback(() => {
-    bottomSheetRef.current?.present();
+    // Android New Architecture fix: Wait for interaction to complete before presenting
+    // This ensures view is fully mounted in Fabric renderer
+    if (Platform.OS === 'android') {
+      InteractionManager.runAfterInteractions(() => {
+        requestAnimationFrame(() => {
+          bottomSheetRef.current?.present();
+        });
+      });
+    } else {
+      bottomSheetRef.current?.present();
+    }
   }, []);
 
   const handleCloseModal = useCallback(() => {
