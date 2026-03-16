@@ -31,6 +31,7 @@ export function GlassBackground({
 
       {/* Top wave - large circles */}
       <View
+        pointerEvents="none"
         style={[
           styles.gradientLayer,
           {
@@ -52,6 +53,7 @@ export function GlassBackground({
         ]}
       />
       <View
+        pointerEvents="none"
         style={[
           styles.gradientLayer,
           {
@@ -75,6 +77,7 @@ export function GlassBackground({
 
       {/* Middle wave - overlapping for depth */}
       <View
+        pointerEvents="none"
         style={[
           styles.gradientLayer,
           {
@@ -96,6 +99,7 @@ export function GlassBackground({
         ]}
       />
       <View
+        pointerEvents="none"
         style={[
           styles.gradientLayer,
           {
@@ -119,6 +123,7 @@ export function GlassBackground({
 
       {/* Bottom wave - flowing layers */}
       <View
+        pointerEvents="none"
         style={[
           styles.gradientLayer,
           {
@@ -140,6 +145,7 @@ export function GlassBackground({
         ]}
       />
       <View
+        pointerEvents="none"
         style={[
           styles.gradientLayer,
           {
@@ -163,6 +169,7 @@ export function GlassBackground({
 
       {/* Small accent waves for ripple effect */}
       <View
+        pointerEvents="none"
         style={[
           styles.gradientLayer,
           {
@@ -184,6 +191,7 @@ export function GlassBackground({
         ]}
       />
       <View
+        pointerEvents="none"
         style={[
           styles.gradientLayer,
           {
