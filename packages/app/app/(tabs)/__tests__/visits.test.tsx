@@ -4,6 +4,9 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import VisitsScreen from '../visits';
 import * as geolocation from '../../../features/visits/services/geolocation';
 
+import {useMyAssignmentsQuery} from '../../../features/visits/hooks';
+import {useVisitTracking} from '../../../features/visits/hooks/useVisitTracking';
+
 /**
  * Integration tests for Visits Screen
  * SOLID Principles:
@@ -81,9 +84,6 @@ jest.mock('@yuhuu/components', () => {
 jest.mock('react-native-safe-area-context', () => ({
   useSafeAreaInsets: () => ({top: 0, bottom: 0, left: 0, right: 0}),
 }));
-
-import {useMyAssignmentsQuery} from '../../../features/visits/hooks';
-import {useVisitTracking} from '../../../features/visits/hooks/useVisitTracking';
 
 describe('VisitsScreen Integration', () => {
   let queryClient: QueryClient;
