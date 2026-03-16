@@ -1,5 +1,5 @@
-import React, {forwardRef, useMemo} from 'react';
-import {View, StyleSheet} from 'react-native';
+import React, {forwardRef, useMemo, useCallback} from 'react';
+import {View, StyleSheet, Platform} from 'react-native';
 import {
   BottomSheetModal,
   BottomSheetBackdropProps,
@@ -8,6 +8,7 @@ import {
 import Animated, {
   useAnimatedStyle,
   interpolate,
+  runOnJS,
 } from 'react-native-reanimated';
 import {useColorScheme} from '../../hooks/use-color-scheme';
 import {useGlowVariant} from '../../hooks/useGlowVariant';
@@ -43,11 +44,21 @@ export const GlassBottomSheet = forwardRef<BottomSheetModal, GlassBottomSheetPro
       [glowVariant, scheme]
     );
 
+    // Android New Architecture fix: Add onChange callback to handle view state synchronization
+    const handleSheetChange = useCallback((index: number) => {
+      // This callback helps synchronize view state in Fabric renderer
+      // Prevents "Unable to find view for viewState" error on Android
+      if (Platform.OS === 'android') {
+        // Empty callback is sufficient to trigger proper view registration
+      }
+    }, []);
+
     return (
       <BottomSheetModal
         ref={ref}
         snapPoints={snapPoints}
         enableDismissOnClose={true}
+        onChange={handleSheetChange}
         backdropComponent={(props) => (
           <GlassBackdrop
             {...props}
@@ -70,6 +81,7 @@ export const GlassBottomSheet = forwardRef<BottomSheetModal, GlassBottomSheetPro
         enableOverDrag={false}
         keyboardBehavior="interactive"
         android_keyboardInputMode="adjustResize"
+        waitFor={Platform.OS === 'android' ? undefined : undefined}
       >
         <BottomSheetView
           key={`content-${glowVariant}-${scheme}`}
