@@ -3,6 +3,9 @@ import {render, fireEvent} from '@testing-library/react-native';
 import {Platform, Linking} from 'react-native';
 import type {VisitAssignment} from '@yuhuu/types';
 
+// Import component after mock
+import {VisitCard} from '../VisitCard';
+
 /**
  * Unit tests for VisitCard Component
  * SOLID Principles:
@@ -12,9 +15,6 @@ import type {VisitAssignment} from '@yuhuu/types';
 
 // Mock Linking before component import
 jest.spyOn(Linking, 'openURL').mockImplementation(() => Promise.resolve(true));
-
-// Import component after mock
-import {VisitCard} from '../VisitCard';
 
 // Mock dependencies
 jest.mock('@yuhuu/components', () => {
