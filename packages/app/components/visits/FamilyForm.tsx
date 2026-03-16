@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
-import {View, TextInput, Pressable, Text} from 'react-native';
+import {View, TextInput, Pressable, Text,useColorScheme} from 'react-native';
 import {useGlowVariant, getGlowColor} from '@yuhuu/components';
-import {useColorScheme} from 'react-native';
 import type {CreateVisitableFamilyInput, UpdateVisitableFamilyInput} from '@yuhuu/types';
 
 type Props = {
