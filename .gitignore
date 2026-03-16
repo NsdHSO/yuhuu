@@ -23,8 +23,9 @@ expo-env.d.ts
 
 # Metro
 .metro-health-check*
-coverage/*
-packages/app/coverage
+
+# Test coverage (ignore all coverage directories)
+**/coverage/
 
 # debug
 npm-debug.*
