@@ -3,6 +3,14 @@ import {render, fireEvent, waitFor} from '@testing-library/react-native';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import AdminScreen from '../admin';
 
+import {
+  useFamiliesQuery,
+  useAllAssignmentsQuery,
+  useCreateFamilyMutation,
+  useDeleteFamilyMutation,
+  useCreateAssignmentMutation,
+} from '../../../features/visits/hooks';
+
 /**
  * Integration tests for Admin Itinerary Management
  * SOLID Principles:
@@ -62,10 +70,12 @@ jest.mock('@gorhom/bottom-sheet', () => ({
   __esModule: true,
   BottomSheetModal: (() => {
     const React = require('react');
-    return React.forwardRef(({children}: any, ref: any) => {
+    const MockBottomSheetModal = React.forwardRef(({children}: any, _ref: any) => {
       const {View} = require('react-native');
       return React.createElement(View, {}, children);
     });
+    MockBottomSheetModal.displayName = 'BottomSheetModal';
+    return MockBottomSheetModal;
   })(),
   BottomSheetView: ({children}: any) => {
     const React = require('react');
@@ -171,14 +181,6 @@ jest.mock('@yuhuu/auth', () => ({
   }),
 }));
 
-import {
-  useFamiliesQuery,
-  useAllAssignmentsQuery,
-  useCreateFamilyMutation,
-  useDeleteFamilyMutation,
-  useCreateAssignmentMutation,
-} from '../../../features/visits/hooks';
-
 describe('Admin Itinerary Integration', () => {
   let queryClient: QueryClient;
   const mockCreateFamily = jest.fn();
@@ -260,7 +262,7 @@ describe('Admin Itinerary Integration', () => {
     });
 
     it('should render Itinerary Management in collapsed accordion', () => {
-      const {getByText, queryByText} = renderWithProvider(<AdminScreen />);
+      const {getByText} = renderWithProvider(<AdminScreen />);
 
       expect(getByText('Itinerary Management')).toBeTruthy();
       // Content should be collapsed initially (defaultExpanded=false)
@@ -383,7 +385,7 @@ describe('Admin Itinerary Integration', () => {
     });
 
     it('should be collapsed by default (defaultExpanded=false)', () => {
-      const {getByText, queryByText} = renderWithProvider(<AdminScreen />);
+      const {getByText} = renderWithProvider(<AdminScreen />);
 
       // Accordion title should be visible
       expect(getByText('Itinerary Management')).toBeTruthy();
