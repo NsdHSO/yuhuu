@@ -24,8 +24,12 @@ export function TabScreenWrapper({
   // Calculate bottom padding: safe area + tab bar height + breathing room
   const bottomPadding = insets.bottom + TAB_BAR_HEIGHT + BREATHING_ROOM;
 
-  // Merge user styles with required bottom padding
+  // Calculate top padding: safe area for notch/status bar
+  const topPadding = insets.top;
+
+  // Merge user styles with required safe area padding
   const mergedStyle: ViewStyle = {
+    paddingTop: topPadding,
     ...contentContainerStyle,
     paddingBottom: bottomPadding,
   };
@@ -39,7 +43,7 @@ export function TabScreenWrapper({
       <KeyboardAvoidingView
         behavior={Platform.select({
           ios: 'padding',
-          android: undefined,
+          android: 'padding',
           web: undefined,
         })}
         style={{ flex: 1 }}
