@@ -29,7 +29,7 @@ export default function TabLayout() {
   const isAdmin = rolesArray.some((r) => r.role_name === "Admin");
   // Show Visits tab only if user has assignments
   const { data: myAssignments } = useMyAssignmentsQuery();
-  const hasVisits = myAssignments && myAssignments.length > 0;
+  const hasVisits = (myAssignments?.length ?? 0) > 0;
 
   return (
     <>
