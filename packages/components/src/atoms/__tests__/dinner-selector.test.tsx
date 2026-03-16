@@ -1,11 +1,11 @@
 import React from 'react';
 import {fireEvent, render} from '@testing-library/react-native';
-import {DinnerSelector} from '@/components/atoms/dinner-selector';
+import {DinnerSelector} from '../dinner-selector';
 import type {Dinner} from '@yuhuu/types';
-import * as useColorSchemeModule from '@/hooks/use-color-scheme';
+import * as useColorSchemeModule from '../../hooks/use-color-scheme';
 
 // Mock useColorScheme hook
-jest.mock('@/hooks/use-color-scheme', () => ({
+jest.mock('../../hooks/use-color-scheme', () => ({
     useColorScheme: jest.fn(() => 'light'),
 }));
 

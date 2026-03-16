@@ -1,14 +1,17 @@
 import React from 'react';
 import {act, render, screen} from '@testing-library/react-native';
-import {DinnerSelector} from '@/components/atoms/dinner-selector';
+import {DinnerSelector} from '../dinner-selector';
 import type {Dinner} from '@yuhuu/types';
 import i18n from '@yuhuu/i18n';
+
+// Unmock react-i18next for i18n integration tests
+jest.unmock('react-i18next');
 
 jest.mock('expo-localization');
 jest.mock('expo-secure-store');
 
 // Mock useColorScheme hook
-jest.mock('@/hooks/use-color-scheme', () => ({
+jest.mock('../../hooks/use-color-scheme', () => ({
     useColorScheme: jest.fn(() => 'light'),
 }));
 

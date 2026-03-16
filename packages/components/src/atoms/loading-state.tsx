@@ -1,7 +1,7 @@
 import React from 'react';
 import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {ThemedText} from '@/components/themed-text';
+import {ThemedText} from '../themed-text';
 
 /**
  * Loading state component for dinner queries

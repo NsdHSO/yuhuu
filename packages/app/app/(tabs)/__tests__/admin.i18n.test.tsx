@@ -1,5 +1,22 @@
 import React from 'react';
 import {fireEvent, render} from '@testing-library/react-native';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+
+// Mock react-native-safe-area-context
+jest.mock('react-native-safe-area-context', () => ({
+    useSafeAreaInsets: jest.fn(() => ({ top: 0, bottom: 0, left: 0, right: 0 })),
+    SafeAreaView: ({ children, ...props }: any) => {
+        const R = require('react');
+        const { View } = require('react-native');
+        return R.createElement(View, props, children);
+    },
+    SafeAreaProvider: ({ children, ...props }: any) => {
+        const R = require('react');
+        const { View } = require('react-native');
+        return R.createElement(View, props, children);
+    },
+}));
 
 /**
  * TDD tests for Admin Screen i18n Migration
@@ -28,6 +45,36 @@ jest.mock('react-i18next', () => ({
     useTranslation: (...args: any[]) => mockUseTranslation(...args),
 }));
 
+// --- Mock bootstrap gate ---
+const mockUseBootstrapGate = jest.fn(() => true);
+jest.mock('@/features/bootstrap/api', () => ({
+    useBootstrapGate: () => mockUseBootstrapGate(),
+}));
+
+// --- Mock roles hooks ---
+const mockUseMyRolesQuery = jest.fn(() => ({
+    data: [],
+    isLoading: false,
+    error: null,
+}));
+jest.mock('@/features/roles/meRoles', () => ({
+    useMyRolesQuery: (options: any) => mockUseMyRolesQuery(options),
+}));
+
+// --- Mock expo-router ---
+const mockRedirect = jest.fn();
+jest.mock('expo-router', () => ({
+    Redirect: ({href}: any) => {
+        mockRedirect(href);
+        const React = require('react');
+        const {Text} = require('react-native');
+        return React.createElement(Text, {testID: 'redirect'}, `Redirecting to ${href}`);
+    },
+    Stack: {
+        Screen: () => null,
+    },
+}));
+
 // --- Mock admin hooks ---
 const mockUseDinnerStatsQuery = jest.fn();
 const mockUseUserAttendanceQuery = jest.fn();
@@ -44,12 +91,24 @@ jest.mock('@/features/dinners/hooks', () => ({
     useParticipantsByDinnerQuery: (dinnerId: number | null) => mockUseParticipantsByDinnerQuery(dinnerId),
 }));
 
+// --- Mock visits hooks ---
+jest.mock('@/features/visits/hooks', () => ({
+    useFamiliesQuery: () => ({ data: [], isLoading: false, error: null }),
+    useMyAssignmentsQuery: () => ({ data: [], isLoading: false, error: null }),
+    useAllAssignmentsQuery: () => ({ data: [], isLoading: false, error: null }),
+    useCreateFamilyMutation: () => ({ mutate: jest.fn(), isPending: false }),
+    useUpdateFamilyMutation: () => ({ mutate: jest.fn(), isPending: false }),
+    useDeleteFamilyMutation: () => ({ mutate: jest.fn(), isPending: false }),
+    useCreateAssignmentMutation: () => ({ mutate: jest.fn(), isPending: false }),
+    useDeleteAssignmentMutation: () => ({ mutate: jest.fn(), isPending: false }),
+}));
+
 // --- Mock shared components ---
 jest.mock('@yuhuu/components', () => ({
     ...jest.requireActual('@yuhuu/components'),
     DinnerGraph: () => null,
     DinnerAttendance: () => null,
-    Accordion: ({title, children}: any) => {
+    GlassAccordion: ({title, children}: any) => {
         const React = require('react');
         const {View, Text} = require('react-native');
         return React.createElement(View, null,
@@ -66,6 +125,11 @@ jest.mock('@yuhuu/components', () => ({
         });
     },
     ParticipantsList: () => null,
+    TabScreenWrapper: ({children, testID}: any) => {
+        const React = require('react');
+        const {ScrollView} = require('react-native');
+        return React.createElement(ScrollView, {testID: testID ? `${testID}-scroll` : undefined}, children);
+    },
 }));
 
 // --- Mock app-specific admin components ---
@@ -151,8 +215,33 @@ jest.mock('@/features/skills/api', () => ({
 }));
 
 describe('AdminScreen - i18n Migration', () => {
+    let queryClient: QueryClient;
+
     beforeEach(() => {
         jest.clearAllMocks();
+
+        // Create a new QueryClient for each test
+        queryClient = new QueryClient({
+            defaultOptions: {
+                queries: {retry: false},
+                mutations: {retry: false},
+            },
+        });
+
+        // Re-initialize mock return values after clearing
+        mockUseTranslation.mockReturnValue({
+            t: mockT,
+            i18n: {language: 'en', changeLanguage: jest.fn()},
+        });
+        mockT.mockImplementation((key: string) => key);
+        mockUseBootstrapGate.mockReturnValue(true);
+
+        // Mock user as admin to avoid redirect
+        mockUseMyRolesQuery.mockReturnValue({
+            data: [{role_name: 'Admin', id: 1}],
+            isLoading: false,
+            error: null,
+        });
 
         mockUseDinnerStatsQuery.mockReturnValue({
             data: null,
@@ -171,33 +260,40 @@ describe('AdminScreen - i18n Migration', () => {
         });
     });
 
+    // Helper function to render AdminScreen with all providers
+    const renderAdminScreen = () => {
+        const AdminScreen = require('../admin').default;
+        return render(
+            <QueryClientProvider client={queryClient}>
+                <SafeAreaProvider>
+                    <AdminScreen/>
+                </SafeAreaProvider>
+            </QueryClientProvider>
+        );
+    };
+
     describe('useTranslation hook integration', () => {
         it('should call useTranslation to get the t function', () => {
-            const AdminScreen = require('../admin').default;
-            render(<AdminScreen/>);
-
+            renderAdminScreen();
             expect(mockUseTranslation).toHaveBeenCalled();
         });
     });
 
     describe('Accordion title strings', () => {
         it('should use t() for "Dinner Participation Graph" accordion title', () => {
-            const AdminScreen = require('../admin').default;
-            render(<AdminScreen/>);
+            renderAdminScreen();
 
             expect(mockT).toHaveBeenCalledWith('admin.dinnerParticipation');
         });
 
         it('should use t() for "Search User Attendance" accordion title', () => {
-            const AdminScreen = require('../admin').default;
-            render(<AdminScreen/>);
+            renderAdminScreen();
 
             expect(mockT).toHaveBeenCalledWith('admin.searchUser');
         });
 
         it('should use t() for "View Dinner Participants" accordion title', () => {
-            const AdminScreen = require('../admin').default;
-            render(<AdminScreen/>);
+            renderAdminScreen();
 
             expect(mockT).toHaveBeenCalledWith('admin.viewParticipants');
         });
@@ -211,8 +307,7 @@ describe('AdminScreen - i18n Migration', () => {
                 error: new Error('Failed'),
             });
 
-            const AdminScreen = require('../admin').default;
-            render(<AdminScreen/>);
+            renderAdminScreen();
 
             expect(mockT).toHaveBeenCalledWith('admin.loadError');
         });
@@ -225,7 +320,13 @@ describe('AdminScreen - i18n Migration', () => {
             });
 
             const AdminScreen = require('../admin').default;
-            const {getByTestId} = render(<AdminScreen/>);
+            const {getByTestId} = render(
+                <QueryClientProvider client={queryClient}>
+                    <SafeAreaProvider>
+                        <AdminScreen/>
+                    </SafeAreaProvider>
+                </QueryClientProvider>
+            );
 
             // Trigger a search to set searchedUsername state, which shows the error branch
             fireEvent.press(getByTestId('user-search-trigger'));
@@ -241,7 +342,13 @@ describe('AdminScreen - i18n Migration', () => {
             });
 
             const AdminScreen = require('../admin').default;
-            const {getByTestId} = render(<AdminScreen/>);
+            const {getByTestId} = render(
+                <QueryClientProvider client={queryClient}>
+                    <SafeAreaProvider>
+                        <AdminScreen/>
+                    </SafeAreaProvider>
+                </QueryClientProvider>
+            );
 
             // Trigger dinner ID selection to set selectedDinnerId state, which shows the error branch
             fireEvent.press(getByTestId('dinner-id-trigger'));
@@ -259,7 +366,13 @@ describe('AdminScreen - i18n Migration', () => {
             });
 
             const AdminScreen = require('../admin').default;
-            const {getByTestId} = render(<AdminScreen/>);
+            const {getByTestId} = render(
+                <QueryClientProvider client={queryClient}>
+                    <SafeAreaProvider>
+                        <AdminScreen/>
+                    </SafeAreaProvider>
+                </QueryClientProvider>
+            );
 
             // Trigger a search to set searchedUsername state, which shows the empty state branch
             fireEvent.press(getByTestId('user-search-trigger'));
@@ -281,7 +394,13 @@ describe('AdminScreen - i18n Migration', () => {
             });
 
             const AdminScreen = require('../admin').default;
-            const {queryByText} = render(<AdminScreen/>);
+            const {queryByText} = render(
+                <QueryClientProvider client={queryClient}>
+                    <SafeAreaProvider>
+                        <AdminScreen/>
+                    </SafeAreaProvider>
+                </QueryClientProvider>
+            );
 
             const hardcodedStrings = [
                 'Dinner Participation Graph',

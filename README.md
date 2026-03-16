@@ -3,15 +3,34 @@
 A production-ready, fully-tested boilerplate for building cross-platform mobile and web applications with React Native
 and Expo. Features complete authentication flow, comprehensive test coverage, and modern development practices.
 
-**[📥 Download Latest FAT APK](https://github.com/NsdHSO/yuhuu/releases/tag/latest-fat)** | *
-*[📱 Download Latest iOS IPA](https://github.com/NsdHSO/yuhuu/releases/tag/latest-fat-ios)**
+## 📥 Download Latest Build
+
+[![Latest FAT Build](https://img.shields.io/github/v/release/NsdHSO/yuhuu?include_prereleases&label=Latest%20FAT%20Build&color=blue&filter=latest-fat-v*)](https://github.com/NsdHSO/yuhuu/releases)
+
+**[📱 Download Latest Android APK](https://github.com/NsdHSO/yuhuu/releases)** • **[🍎 Download Latest iOS IPA](https://github.com/NsdHSO/yuhuu/releases/tag/latest-fat-ios)**
+
+> 💡 **Tip:** Look for releases titled "FAT Build v##" (e.g., v85, v86, v87). Download the **highest version number** for the latest build.
+
+**What this does:**
+
+- Adds a clickable download link to the workflow run summary
+- Uses the GitHub run number for versioned releases (e.g., v81, v82, v83)
+- Makes it easy to share build links with your team
+- Visible immediately after the workflow completes
+
+**To view:**
+
+1. Go to your repository's **Actions** tab
+2. Click on any workflow run
+3. Scroll to the bottom of the run summary
+4. Click the download link to get the APK/IPA
 
 ## ✨ Features
 
 ### Core Features
 
 - 🎯 **Cross-Platform**: iOS, Android, and Web support with unified codebase
-- 🔐 **Complete Authentication**: Login, register, JWT token management with auto-refresh
+- 🔐 **Complete Authentication**: Login, register, JWT token management with auto-refresh®†
 - 🎨 **NativeWind**: Tailwind CSS v4 for React Native styling
 - 📱 **Expo Router**: File-based navigation with type safety
 - ⚡ **TypeScript**: Full type safety across the entire codebase
@@ -65,7 +84,7 @@ Time:        ~4s
 ## 🛠 Tech Stack
 
 | Category             | Technology                                     |
-|----------------------|------------------------------------------------|
+| -------------------- | ---------------------------------------------- |
 | **Framework**        | Expo 54 with React Native 0.81                 |
 | **UI Library**       | NativeWind (Tailwind CSS v4)                   |
 | **Navigation**       | Expo Router (file-based)                       |
@@ -89,12 +108,14 @@ Time:        ~4s
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/NsdHSO/yuhuu.git
    cd yuhuu
    ```
 
 2. **Install dependencies**
+
    ```bash
    pnpm install
    # or
@@ -102,11 +123,13 @@ Time:        ~4s
    ```
 
 3. **Set up environment variables**
+
    ```bash
    cp .env.example .env
    ```
 
    Edit `.env` with your backend URLs:
+
    ```bash
    EXPO_PUBLIC_ENV=local
    EXPO_PUBLIC_AUTH_API_URL=http://localhost:4100
@@ -115,6 +138,7 @@ Time:        ~4s
    ```
 
 4. **Start the development server**
+
    ```bash
    pnpm start
    # or
@@ -258,25 +282,25 @@ it('should sign in successfully', async () => {
 ### How Authentication Works
 
 1. **Login/Register**
-    - User enters credentials
-    - API returns `access_token` and `refresh_token`
-    - Tokens are stored securely (SecureStore/localStorage)
+   - User enters credentials
+   - API returns `access_token` and `refresh_token`
+   - Tokens are stored securely (SecureStore/localStorage)
 
 2. **Token Management**
-    - Access token kept in memory for API calls
-    - Persisted to secure storage for app reloads
-    - Automatic refresh when token expires (30s buffer)
-    - HTTP-only refresh token cookie for web
+   - Access token kept in memory for API calls
+   - Persisted to secure storage for app reloads
+   - Automatic refresh when token expires (30s buffer)
+   - HTTP-only refresh token cookie for web
 
 3. **Protected Routes**
-    - Token checked on app load
-    - Auto-redirect to login if invalid/expired
-    - Role-based access control via `hasRole()` helper
+   - Token checked on app load
+   - Auto-redirect to login if invalid/expired
+   - Role-based access control via `hasRole()` helper
 
 4. **API Calls**
-    - All requests via `appApi` include `Authorization: Bearer <token>`
-    - Automatic token refresh on 401 responses
-    - Request retry after successful refresh
+   - All requests via `appApi` include `Authorization: Bearer <token>`
+   - Automatic token refresh on 401 responses
+   - Request retry after successful refresh
 
 ### Backend Requirements
 
@@ -341,11 +365,11 @@ Cors::default()
 
 This boilerplate includes three deployment environments:
 
-| Environment | Trigger                     | Description                 |
-|-------------|-----------------------------|-----------------------------|
-| **FAT**     | Push to `master`            | Automatic build and release |
-| **UAT**     | PR with `deploy-uat` label  | User acceptance testing     |
-| **PROD**    | PR with `deploy-prod` label | Production release          |
+| Environment | Trigger                    | Description                 |
+| ----------- | -------------------------- | --------------------------- |
+| **FAT**     | Push to`master`            | Automatic build and release |
+| **UAT**     | PR with`deploy-uat` label  | User acceptance testing     |
+| **PROD**    | PR with`deploy-prod` label | Production release          |
 
 ### Android Build
 
@@ -399,10 +423,10 @@ Edit `app.config.js`:
 // app.config.js
 module.exports = {
   expo: {
-    name: 'Your App Name',
-    slug: 'your-app-slug',
-  }
-}
+    name: "Your App Name",
+    slug: "your-app-slug",
+  },
+};
 ```
 
 **Update Bundle Identifiers:**
@@ -425,15 +449,15 @@ android: {
 // constants/theme.ts
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: '#1e90ff',
+    text: "#11181C",
+    background: "#fff",
+    tint: "#1e90ff",
     // ... other colors
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: '#1e90ff',
+    text: "#ECEDEE",
+    background: "#151718",
+    tint: "#1e90ff",
     // ... other colors
   },
 };
@@ -448,10 +472,10 @@ module.exports = {
     extend: {
       colors: {
         // Your custom colors
-      }
-    }
-  }
-}
+      },
+    },
+  },
+};
 ```
 
 ### 3. App Icon & Splash Screen
@@ -476,7 +500,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 ```typescript
 if (password !== confirm) {
-  return Alert.alert('Password mismatch', 'Passwords do not match.');
+  return Alert.alert("Password mismatch", "Passwords do not match.");
 }
 ```
 
@@ -491,7 +515,7 @@ const scrollToInput = (inputRef) => {
       const screenCenterY = SCREEN_HEIGHT / 2;
       const scrollToY = inputCenterY - screenCenterY + 100;
       scrollViewRef.current.scrollTo({ y: scrollToY, animated: true });
-    }
+    },
   );
 };
 ```

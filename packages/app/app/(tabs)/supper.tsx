@@ -1,8 +1,7 @@
 import React, {useState} from 'react';
-import {Alert, ScrollView, StyleSheet, View} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {Alert, StyleSheet, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {ThemedView, ThemedText, DatePicker, DinnerSelector, LoadingState, ErrorState, EmptyState, ParticipantForm, DinnerDetailsCard} from '@yuhuu/components';
+import {ThemedText, DatePicker, DinnerSelector, LoadingState, ErrorState, EmptyState, ParticipantForm, DinnerDetailsCard, GlassBackground, TabScreenWrapper} from '@yuhuu/components';
 import {useAddParticipantMutation, useDinnersByDateQuery} from '@/features/dinners/hooks';
 
 /**
@@ -82,9 +81,8 @@ export default function SupperScreen() {
     };
 
     return (
-        <ThemedView style={styles.container}>
-            <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
-                <ScrollView contentContainerStyle={styles.scrollContent}>
+        <GlassBackground>
+            <TabScreenWrapper contentContainerStyle={styles.scrollContent}>
                     {/* Calendar for date selection */}
                     <View style={styles.section}>
                         <ThemedText type="subtitle" style={styles.sectionTitle}>
@@ -133,22 +131,14 @@ export default function SupperScreen() {
 
                     {/* Prompt to select a date */}
                     {!selectedDate && !isLoading && <EmptyState/>}
-                </ScrollView>
-            </SafeAreaView>
-        </ThemedView>
+            </TabScreenWrapper>
+        </GlassBackground>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    safeArea: {
-        flex: 1,
-    },
     scrollContent: {
         padding: 16,
-        paddingBottom: 40,
     },
     section: {
         marginTop: 24,

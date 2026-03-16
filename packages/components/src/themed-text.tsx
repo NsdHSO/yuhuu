@@ -1,6 +1,6 @@
 import {Text, type TextProps} from 'react-native';
 
-import {useThemeColor} from '@/hooks/use-theme-color';
+import {useThemeColor} from './hooks/use-theme-color';
 
 export type ThemedTextProps = TextProps & {
     lightColor?: string;
@@ -33,6 +33,9 @@ export type ThemedTextProps = TextProps & {
     uppercase?: boolean;
     lowercase?: boolean;
     capitalize?: boolean;
+
+    // Glass mode - adds text shadow for readability on glass backgrounds
+    glass?: boolean;
 };
 
 export function ThemedText({
@@ -51,6 +54,7 @@ export function ThemedText({
                                uppercase,
                                lowercase,
                                capitalize,
+                               glass,
                                className,
                                ...rest
                            }: ThemedTextProps) {
@@ -58,6 +62,9 @@ export function ThemedText({
         light: lightColor,
         dark: darkColor
     }, 'text');
+
+    // Glass mode - no shadow, keep text crisp
+    const glassStyle = {};
 
     // Build className from props
     const classes = [
@@ -106,7 +113,7 @@ export function ThemedText({
 
     return (
         <Text
-            style={[{color}, style]}
+            style={[{color}, glassStyle, style]}
             className={classes}
             {...rest}
         />

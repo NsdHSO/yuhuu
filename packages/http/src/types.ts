@@ -12,7 +12,7 @@ export type TokenProvider = {
     clearTokens: () => Promise<void>;
 };
 
-export type ApiEnvelope<T> = { message: T; code: unknown };
+export type ApiEnvelope<T> = { code: number; data: T; message: string };
 
 export interface IHttpClient extends AxiosInstance {
 }

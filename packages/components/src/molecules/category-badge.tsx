@@ -1,8 +1,10 @@
-import {Badge} from '@/components/atoms/badge';
+import {Badge} from '../atoms/badge';
+import {GlassView} from './glass-layout';
 
 export interface CategoryBadgeProps {
     category: string;
     size?: 'xs' | 'sm' | 'md';
+    testID?: string;
 }
 
 /**
@@ -15,7 +17,8 @@ export interface CategoryBadgeProps {
  */
 export function CategoryBadge({
                                   category,
-                                  size = 'xs'
+                                  size = 'xs',
+                                  testID
                               }: CategoryBadgeProps) {
     const getCategoryClass = (cat: string): string => {
         const normalizedCategory = cat.toLowerCase();
@@ -35,8 +38,17 @@ export function CategoryBadge({
     };
 
     return (
-        <Badge size={size} className={getCategoryClass(category)}>
-            {category}
-        </Badge>
+        <GlassView
+            variant="ultra-thin"
+            intensity={15}
+            borderRadius={6}
+            enableShadow={false}
+            testID={testID}
+            style={{alignSelf: 'flex-start'}}
+        >
+            <Badge size={size} className={getCategoryClass(category)}>
+                {category}
+            </Badge>
+        </GlassView>
     );
 }

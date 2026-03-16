@@ -1,8 +1,9 @@
 import React, {useMemo, useState} from 'react';
-import {Alert, Pressable, StyleSheet, Text, TextInput, View} from 'react-native';
-import {useColorScheme} from '@/hooks/use-color-scheme';
-import {Colors} from '@/constants/theme';
+import {Alert, Pressable, StyleSheet, Text, View} from 'react-native';
+import {useColorScheme} from '../hooks/use-color-scheme';
+import {Colors} from '../constants/theme';
 import {useTranslation} from 'react-i18next';
+import {GlassInput} from './glass-content/GlassInput';
 
 /**
  * Props for the ParticipantForm component
@@ -63,26 +64,25 @@ export function ParticipantForm({
 
     return (
         <View style={styles.container}>
-            <TextInput
+            <GlassInput
                 value={username}
                 onChangeText={setUsername}
                 placeholder={t('common.usernamePlaceholder')}
-                style={inputStyles.container}
-                placeholderTextColor={inputStyles.placeholderColor}
                 editable={!isSubmitting}
                 autoCapitalize="none"
                 autoCorrect={false}
+                variant="tinted"
             />
 
-            <TextInput
+            <GlassInput
                 value={notes}
                 onChangeText={setNotes}
                 placeholder={t('common.notesPlaceholder')}
                 multiline
                 numberOfLines={4}
-                style={[inputStyles.container, styles.multilineInput]}
-                placeholderTextColor={inputStyles.placeholderColor}
+                style={styles.multilineInput}
                 editable={!isSubmitting}
+                variant="tinted"
             />
 
             <Pressable

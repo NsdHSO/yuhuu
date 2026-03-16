@@ -22,7 +22,8 @@
     "dev": "tsc --build --watch",
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "typecheck": "tsc --noEmit",
-    "test": "jest --passWithNoTests"
+    "test": "jest --passWithNoTests",
+    "test:coverage": "jest --coverage --passWithNoTests"
   },
   "devDependencies": {
     "@yuhuu/tsconfig": "workspace:*",

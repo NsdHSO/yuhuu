@@ -2,18 +2,18 @@ import {Link} from 'expo-router';
 import {StyleSheet} from 'react-native';
 import {useTranslation} from 'react-i18next';
 
-import {ThemedText, ThemedView} from '@yuhuu/components';
+import {ThemedText, GlassView} from '@yuhuu/components';
 
 export default function ModalScreen() {
     const {t} = useTranslation();
 
     return (
-        <ThemedView style={styles.container}>
+        <GlassView variant="prominent" style={styles.container}>
             <ThemedText type="title">{t('modal.title')}</ThemedText>
             <Link href="/" dismissTo style={styles.link}>
                 <ThemedText type="link">{t('modal.goHome')}</ThemedText>
             </Link>
-        </ThemedView>
+        </GlassView>
     );
 }
 

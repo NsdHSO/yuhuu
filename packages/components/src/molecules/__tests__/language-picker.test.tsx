@@ -3,6 +3,9 @@ import {fireEvent, render, waitFor} from '@testing-library/react-native';
 import {I18nextProvider, initReactI18next} from 'react-i18next';
 import i18n from 'i18next';
 
+// Unmock react-i18next for i18n integration tests
+jest.unmock('react-i18next');
+
 // Mock the useLanguage hook
 jest.mock('@/hooks/useLanguage', () => ({
     useLanguage: jest.fn(() => ({
@@ -11,15 +14,13 @@ jest.mock('@/hooks/useLanguage', () => ({
     })),
 }));
 
-// Mock @react-native-picker/picker
-jest.mock('@react-native-picker/picker', () => {
-    const React = require('react');
-    const Picker = (props: any) =>
-        React.createElement('View', {testID: props.testID, ...props}, props.children);
-    Picker.Item = (props: any) =>
-        React.createElement('View', props);
-    return {Picker};
-});
+// Mock the useGlowVariant hook
+jest.mock('../../hooks/useGlowVariant', () => ({
+    useGlowVariant: jest.fn(() => ({
+        glowVariant: 'cool',
+        setGlowVariant: jest.fn(),
+    })),
+}));
 
 describe('LanguagePicker', () => {
     beforeAll(async () => {
@@ -67,7 +68,7 @@ describe('LanguagePicker', () => {
             changeLanguage: jest.fn(),
         });
 
-        const LanguagePicker = require('../language-picker').default;
+        const { LanguagePicker } = require('../language-picker');
 
         const {getByText} = render(
             <I18nextProvider i18n={i18n}>
@@ -78,7 +79,7 @@ describe('LanguagePicker', () => {
         expect(getByText('Language')).toBeTruthy();
     });
 
-    it('should call changeLanguage when selection changes', async () => {
+    it('should call changeLanguage when language button is pressed', async () => {
         const mockChangeLanguage = jest.fn();
         const {useLanguage} = require('@/hooks/useLanguage');
         useLanguage.mockReturnValue({
@@ -86,7 +87,7 @@ describe('LanguagePicker', () => {
             changeLanguage: mockChangeLanguage,
         });
 
-        const LanguagePicker = require('../language-picker').default;
+        const { LanguagePicker } = require('../language-picker');
 
         const {getByTestId} = render(
             <I18nextProvider i18n={i18n}>
@@ -94,8 +95,8 @@ describe('LanguagePicker', () => {
             </I18nextProvider>
         );
 
-        const picker = getByTestId('language-picker');
-        fireEvent(picker, 'onValueChange', 'ro');
+        const roButton = getByTestId('language-button-ro');
+        fireEvent.press(roButton);
 
         await waitFor(() => {
             expect(mockChangeLanguage).toHaveBeenCalledWith('ro');

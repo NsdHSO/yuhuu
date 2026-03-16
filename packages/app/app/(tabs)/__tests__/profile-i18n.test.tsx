@@ -31,6 +31,43 @@ jest.mock('@yuhuu/components', () => ({
     },
 }));
 
+jest.mock('react-native-safe-area-context', () => ({
+    useSafeAreaInsets: jest.fn(() => ({ top: 0, bottom: 34, left: 0, right: 0 })),
+    SafeAreaView: ({ children, ...props }: any) => {
+        const React = require('react');
+        const { View } = require('react-native');
+        return React.createElement(View, props, children);
+    },
+}));
+
+jest.mock('@gorhom/bottom-sheet', () => {
+    const React = require('react');
+    const RN = require('react-native');
+    return {
+        BottomSheetModal: React.forwardRef(
+            ({children, testID}: any, ref: any) => {
+                const [isVisible, setIsVisible] = React.useState(false);
+
+                React.useImperativeHandle(ref, () => ({
+                    present: () => setIsVisible(true),
+                    dismiss: () => setIsVisible(false),
+                }));
+
+                if (!isVisible) return null;
+
+                return React.createElement(
+                    RN.View,
+                    {testID},
+                    children
+                );
+            }
+        ),
+        BottomSheetView: ({children, style}: any) =>
+            React.createElement(RN.View, {style}, children),
+        BottomSheetModalProvider: ({children}: any) => children,
+    };
+});
+
 const mockIsBiometricAvailable = jest.fn();
 const mockAuthenticateWithBiometrics = jest.fn();
 const mockSaveBiometricPreference = jest.fn();
@@ -110,6 +147,17 @@ jest.mock('@/features/skills/api', () => ({
 
 const mockUseAuth = jest.fn();
 jest.mock('@/providers/AuthProvider', () => ({useAuth: () => mockUseAuth()}));
+
+/**
+ * Helper to expand the Settings accordion (collapsed by default)
+ * so biometric controls become visible.
+ */
+async function expandSettingsAccordion(utils: ReturnType<typeof render>) {
+    const header = utils.getByTestId('settings-header');
+    await act(async () => {
+        fireEvent.press(header);
+    });
+}
 
 describe('ProfileScreen - i18n Migration', () => {
     const originalPlatform = Platform.OS;
@@ -198,58 +246,63 @@ describe('ProfileScreen - i18n Migration', () => {
         expect(mockT).toHaveBeenCalledWith('profile.phonePlaceholder');
     });
 
-    it('should use t("profile.security") for section title', async () => {
-        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
-        await findByTestId('biometric-section');
-        expect(mockT).toHaveBeenCalledWith('profile.security');
+    it('should use t("profile.settings") for settings section title', async () => {
+        const _utils = renderWithQueryClient(<ProfileScreen/>);
+        expect(mockT).toHaveBeenCalledWith('profile.settings');
     });
 
     it('should use t("profile.biometricLabel") on iOS', async () => {
         Object.defineProperty(Platform, 'OS', {value: 'ios', configurable: true});
-        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
-        await findByTestId('biometric-label');
-        expect(mockT).toHaveBeenCalledWith('profile.biometricLabel');
+        const utils = renderWithQueryClient(<ProfileScreen/>);
+        await expandSettingsAccordion(utils);
+        await waitFor(() => {
+            expect(mockT).toHaveBeenCalledWith('profile.biometricLabel');
+        });
     });
 
     it('should use t("profile.biometricLabelAndroid") on Android', async () => {
         Object.defineProperty(Platform, 'OS', {value: 'android', configurable: true});
-        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
-        await findByTestId('biometric-label');
-        expect(mockT).toHaveBeenCalledWith('profile.biometricLabelAndroid');
+        const utils = renderWithQueryClient(<ProfileScreen/>);
+        await expandSettingsAccordion(utils);
+        await waitFor(() => {
+            expect(mockT).toHaveBeenCalledWith('profile.biometricLabelAndroid');
+        });
     });
 
     it('should use t("profile.biometricDescription") on iOS', async () => {
         Object.defineProperty(Platform, 'OS', {value: 'ios', configurable: true});
-        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
-        await findByTestId('biometric-description');
-        expect(mockT).toHaveBeenCalledWith('profile.biometricDescription');
+        const utils = renderWithQueryClient(<ProfileScreen/>);
+        await expandSettingsAccordion(utils);
+        await waitFor(() => {
+            expect(mockT).toHaveBeenCalledWith('profile.biometricDescription');
+        });
     });
 
     it('should use t("profile.biometricDescriptionAndroid") on Android', async () => {
         Object.defineProperty(Platform, 'OS', {value: 'android', configurable: true});
-        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
-        await findByTestId('biometric-description');
-        expect(mockT).toHaveBeenCalledWith('profile.biometricDescriptionAndroid');
+        const utils = renderWithQueryClient(<ProfileScreen/>);
+        await expandSettingsAccordion(utils);
+        await waitFor(() => {
+            expect(mockT).toHaveBeenCalledWith('profile.biometricDescriptionAndroid');
+        });
     });
 
-    it('should use t("profile.biometricAccessibilityLabel") on iOS', async () => {
+    it('should show biometric toggle in settings accordion on iOS', async () => {
         Object.defineProperty(Platform, 'OS', {value: 'ios', configurable: true});
-        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
-        await findByTestId('biometric-toggle');
-        expect(mockT).toHaveBeenCalledWith('profile.biometricAccessibilityLabel');
+        const utils = renderWithQueryClient(<ProfileScreen/>);
+        await expandSettingsAccordion(utils);
+        await waitFor(() => {
+            expect(utils.getByTestId('settings-biometric-toggle')).toBeTruthy();
+        });
     });
 
-    it('should use t("profile.biometricAccessibilityLabelAndroid") on Android', async () => {
+    it('should show biometric toggle in settings accordion on Android', async () => {
         Object.defineProperty(Platform, 'OS', {value: 'android', configurable: true});
-        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
-        await findByTestId('biometric-toggle');
-        expect(mockT).toHaveBeenCalledWith('profile.biometricAccessibilityLabelAndroid');
-    });
-
-    it('should use t("profile.biometricAccessibilityHint")', async () => {
-        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
-        await findByTestId('biometric-toggle');
-        expect(mockT).toHaveBeenCalledWith('profile.biometricAccessibilityHint');
+        const utils = renderWithQueryClient(<ProfileScreen/>);
+        await expandSettingsAccordion(utils);
+        await waitFor(() => {
+            expect(utils.getByTestId('settings-biometric-toggle')).toBeTruthy();
+        });
     });
 
     it('should use t("profile.save") when not pending', () => {
@@ -286,8 +339,9 @@ describe('ProfileScreen - i18n Migration', () => {
     });
 
     it('should use t("profile.biometricEnableTitle") for auth prompt', async () => {
-        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
-        const toggle = await findByTestId('biometric-toggle');
+        const utils = renderWithQueryClient(<ProfileScreen/>);
+        await expandSettingsAccordion(utils);
+        const toggle = await utils.findByTestId('settings-biometric-toggle');
         await act(async () => {
             fireEvent(toggle, 'valueChange', true);
         });
@@ -298,8 +352,9 @@ describe('ProfileScreen - i18n Migration', () => {
 
     it('should use t("profile.biometricAuthFailed") for auth failed', async () => {
         mockAuthenticateWithBiometrics.mockResolvedValue(false);
-        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
-        const toggle = await findByTestId('biometric-toggle');
+        const utils = renderWithQueryClient(<ProfileScreen/>);
+        await expandSettingsAccordion(utils);
+        const toggle = await utils.findByTestId('settings-biometric-toggle');
         await act(async () => {
             fireEvent(toggle, 'valueChange', true);
         });
@@ -309,8 +364,9 @@ describe('ProfileScreen - i18n Migration', () => {
     });
 
     it('should use t("profile.biometricEnableSuccess") for enable success', async () => {
-        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
-        const toggle = await findByTestId('biometric-toggle');
+        const utils = renderWithQueryClient(<ProfileScreen/>);
+        await expandSettingsAccordion(utils);
+        const toggle = await utils.findByTestId('settings-biometric-toggle');
         await act(async () => {
             fireEvent(toggle, 'valueChange', true);
         });
@@ -321,8 +377,9 @@ describe('ProfileScreen - i18n Migration', () => {
 
     it('should use t("profile.biometricEnableError") for enable error', async () => {
         mockSaveBiometricPreference.mockRejectedValue(new Error('fail'));
-        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
-        const toggle = await findByTestId('biometric-toggle');
+        const utils = renderWithQueryClient(<ProfileScreen/>);
+        await expandSettingsAccordion(utils);
+        const toggle = await utils.findByTestId('settings-biometric-toggle');
         await act(async () => {
             fireEvent(toggle, 'valueChange', true);
         });
@@ -333,8 +390,9 @@ describe('ProfileScreen - i18n Migration', () => {
 
     it('should use translated keys for disable confirmation dialog', async () => {
         mockGetBiometricPreference.mockResolvedValue(true);
-        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
-        const toggle = await findByTestId('biometric-toggle');
+        const utils = renderWithQueryClient(<ProfileScreen/>);
+        await expandSettingsAccordion(utils);
+        const toggle = await utils.findByTestId('settings-biometric-toggle');
         await waitFor(() => {
             expect(toggle.props.value).toBe(true);
         });
@@ -352,8 +410,9 @@ describe('ProfileScreen - i18n Migration', () => {
     it('should use t("profile.biometricDisableError") for disable error', async () => {
         mockGetBiometricPreference.mockResolvedValue(true);
         mockSaveBiometricPreference.mockRejectedValue(new Error('fail'));
-        const {findByTestId} = renderWithQueryClient(<ProfileScreen/>);
-        const toggle = await findByTestId('biometric-toggle');
+        const utils = renderWithQueryClient(<ProfileScreen/>);
+        await expandSettingsAccordion(utils);
+        const toggle = await utils.findByTestId('settings-biometric-toggle');
         await waitFor(() => {
             expect(toggle.props.value).toBe(true);
         });
@@ -384,8 +443,8 @@ describe('ProfileScreen - i18n Migration', () => {
 
     it('should not contain any original hardcoded English strings', async () => {
         mockT.mockImplementation((key: string) => `__${key}__`);
-        const {queryByText, findByTestId} = renderWithQueryClient(<ProfileScreen/>);
-        await findByTestId('biometric-section');
+        const utils = renderWithQueryClient(<ProfileScreen/>);
+        await expandSettingsAccordion(utils);
         const hardcodedStrings = [
             'Profile', 'Create your profile', 'Security',
             'Face ID / Touch ID', 'Biometric Login',
@@ -394,7 +453,7 @@ describe('ProfileScreen - i18n Migration', () => {
             'Save', 'Saving\u2026', 'Failed to load profile.',
         ];
         for (const str of hardcodedStrings) {
-            expect(queryByText(str)).toBeNull();
+            expect(utils.queryByText(str)).toBeNull();
         }
     });
 });

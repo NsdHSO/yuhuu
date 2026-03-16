@@ -7,7 +7,7 @@ export interface BootstrapRepository {
 
 export class HttpBootstrapRepository implements BootstrapRepository {
     async post(): Promise<BootstrapResponse> {
-        return await unwrap<BootstrapResponse>(appApi.post('/bootstrap', {}));
+        return await unwrap<BootstrapResponse>(appApi.post('/bootstrap', {create_profile_if_missing: true}));
     }
 }
 

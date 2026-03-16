@@ -1,7 +1,7 @@
 import React from 'react';
 import {fireEvent, render} from '@testing-library/react-native';
-import {DatePicker} from '@/components/atoms/date-picker';
-import * as useColorSchemeModule from '@/hooks/use-color-scheme';
+import {DatePicker} from '../date-picker';
+import * as useColorSchemeModule from '../../hooks/use-color-scheme';
 
 // Mock react-native-calendars
 jest.mock('react-native-calendars', () => {
@@ -28,7 +28,7 @@ jest.mock('react-native-calendars', () => {
 });
 
 // Mock useColorScheme hook
-jest.mock('@/hooks/use-color-scheme', () => ({
+jest.mock('../../hooks/use-color-scheme', () => ({
     useColorScheme: jest.fn(() => 'light'),
 }));
 

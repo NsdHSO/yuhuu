@@ -94,8 +94,8 @@ describe('Biometric Login - Edge Cases Integration Tests', () => {
     const mockPost = auth.authApi.post as jest.Mock;
     const mockGet = auth.authApi.get as jest.Mock;
     const mockGetValidAccessToken = auth.getValidAccessToken as jest.Mock;
-    const mockSetTokensFromLogin = auth.setTokensFromLogin as jest.Mock;
-    const mockClearTokens = auth.clearTokens as jest.Mock;
+    const _mockSetTokensFromLogin = auth.setTokensFromLogin as jest.Mock;
+    const _mockClearTokens = auth.clearTokens as jest.Mock;
     const mockRefreshAccessToken = auth.refreshAccessToken as jest.Mock;
 
     beforeEach(() => {

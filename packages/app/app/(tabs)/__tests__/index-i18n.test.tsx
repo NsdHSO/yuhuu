@@ -1,5 +1,8 @@
 import React from 'react';
 import {render} from '@testing-library/react-native';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+
+// Import HomeScreen after all mocks are set up
 import HomeScreen from '../index';
 
 /**
@@ -14,6 +17,41 @@ import HomeScreen from '../index';
  * home.encouragement -> "We're glad you're here..."
  * home.signOut       -> "Sign out"
  */
+
+// --- Mock react-native-safe-area-context ---
+jest.mock('react-native-safe-area-context', () => ({
+    useSafeAreaInsets: jest.fn(() => ({ top: 0, bottom: 0, left: 0, right: 0 })),
+    SafeAreaView: ({ children, ...props }: any) => {
+        const R = require('react');
+        const { View } = require('react-native');
+        return R.createElement(View, props, children);
+    },
+    SafeAreaProvider: ({ children, ...props }: any) => {
+        const R = require('react');
+        const { View } = require('react-native');
+        return R.createElement(View, props, children);
+    },
+}));
+
+// --- Mock expo-router ---
+jest.mock('expo-router', () => ({
+    Redirect: () => null,
+    Stack: {
+        Screen: () => null,
+    },
+}));
+
+// --- Mock GlassBackground from @yuhuu/components ---
+jest.mock('@yuhuu/components', () => {
+    const actual = jest.requireActual('@yuhuu/components');
+    const React = require('react');
+    const { ScrollView } = require('react-native');
+    return {
+        ...actual,
+        GlassBackground: ({children}: any) => React.createElement(React.Fragment, {}, children),
+        TabScreenWrapper: ({children, testID}: any) => React.createElement(ScrollView, { testID: testID ? `${testID}-scroll` : undefined }, children),
+    };
+});
 
 // --- Mock react-i18next ---
 const mockT = jest.fn((key: string) => key);
@@ -41,14 +79,29 @@ jest.mock('@yuhuu/auth', () => ({
     hasRole: jest.fn(() => false),
 }));
 
+// Helper to wrap component with SafeAreaProvider
+function renderWithProvider(component: React.ReactElement) {
+    return render(
+        <SafeAreaProvider>
+            {component}
+        </SafeAreaProvider>
+    );
+}
+
 describe('HomeScreen - i18n Migration', () => {
     beforeEach(() => {
         jest.clearAllMocks();
+        // Re-initialize mock return values after clearing
+        mockUseTranslation.mockReturnValue({
+            t: mockT,
+            i18n: {language: 'en', changeLanguage: jest.fn()},
+        });
+        mockT.mockImplementation((key: string) => key);
     });
 
     describe('useTranslation hook integration', () => {
         it('should call useTranslation to get translation function', () => {
-            render(<HomeScreen/>);
+            renderWithProvider(<HomeScreen/>);
 
             expect(mockUseTranslation).toHaveBeenCalled();
         });
@@ -56,7 +109,7 @@ describe('HomeScreen - i18n Migration', () => {
 
     describe('Welcome strings', () => {
         it('should use t() for welcome greeting with user name interpolation', () => {
-            render(<HomeScreen/>);
+            renderWithProvider(<HomeScreen/>);
 
             // The welcome text should use translation with user name
             expect(mockT).toHaveBeenCalledWith('home.welcome', expect.objectContaining({
@@ -65,13 +118,13 @@ describe('HomeScreen - i18n Migration', () => {
         });
 
         it('should use t("home.welcomeMessage") for subtitle', () => {
-            render(<HomeScreen/>);
+            renderWithProvider(<HomeScreen/>);
 
             expect(mockT).toHaveBeenCalledWith('home.welcomeMessage');
         });
 
         it('should use t("home.encouragement") for the body text', () => {
-            render(<HomeScreen/>);
+            renderWithProvider(<HomeScreen/>);
 
             expect(mockT).toHaveBeenCalledWith('home.encouragement');
         });
@@ -79,7 +132,7 @@ describe('HomeScreen - i18n Migration', () => {
 
     describe('Sign out button', () => {
         it('should use t("home.signOut") for sign out button text', () => {
-            render(<HomeScreen/>);
+            renderWithProvider(<HomeScreen/>);
 
             expect(mockT).toHaveBeenCalledWith('home.signOut');
         });
@@ -90,7 +143,7 @@ describe('HomeScreen - i18n Migration', () => {
             // Make mockT return prefixed keys so we can detect hardcoded text
             mockT.mockImplementation((key: string) => `__${key}__`);
 
-            const {queryByText} = render(<HomeScreen/>);
+            const {queryByText} = renderWithProvider(<HomeScreen/>);
 
             const hardcodedStrings = [
                 'Welcome to our Pentecostal church community',

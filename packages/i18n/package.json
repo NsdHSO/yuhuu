@@ -23,7 +23,8 @@
     "dev": "tsup --watch",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "test:coverage": "jest --coverage --passWithNoTests"
   },
   "dependencies": {
     "@yuhuu/storage": "workspace:*",

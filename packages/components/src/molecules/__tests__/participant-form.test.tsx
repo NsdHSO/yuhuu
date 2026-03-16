@@ -1,8 +1,8 @@
 import React from 'react';
 import {fireEvent, render} from '@testing-library/react-native';
 import {Alert} from 'react-native';
-import {ParticipantForm} from '@/components/molecules/participant-form';
-import * as useColorSchemeModule from '@/hooks/use-color-scheme';
+import {ParticipantForm} from '../participant-form';
+import * as useColorSchemeModule from '../../hooks/use-color-scheme';
 
 // Mock Alert
 jest.spyOn(Alert, 'alert');
@@ -28,7 +28,7 @@ jest.mock('react-i18next', () => ({
 }));
 
 // Mock useColorScheme hook
-jest.mock('@/hooks/use-color-scheme', () => ({
+jest.mock('../../hooks/use-color-scheme', () => ({
     useColorScheme: jest.fn(() => 'light'),
 }));
 

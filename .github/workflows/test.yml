@@ -38,28 +38,58 @@ jobs:
 
       - name: Run tests with coverage
         id: tests
-        run: pnpm test:all
+        run: pnpm test:coverage:all
 
-      - name: Upload coverage report
+      - name: Check if coverage exists
+        id: coverage-check
+        run: |
+          # Check for coverage in workspace packages
+          if find packages -name "coverage" -type d | grep -q .; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "Coverage found in workspace packages:"
+            find packages -name "coverage" -type d
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+        if: always()
+
+      - name: Upload coverage reports
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report-${{ github.sha }}
-          path: coverage/
+          path: packages/*/coverage/
           retention-days: 30
-        if: always()
+        if: always() && steps.coverage-check.outputs.exists == 'true'
 
       - name: Test summary
         if: always()
         run: |
-          echo "## Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "## Test Results 🧪" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           if [ "${{ steps.tests.outcome }}" == "success" ]; then
-            echo "All tests passed!" >> $GITHUB_STEP_SUMMARY
+            echo "✅ All tests passed!" >> $GITHUB_STEP_SUMMARY
           else
-            echo "Tests failed!" >> $GITHUB_STEP_SUMMARY
+            echo "❌ Tests failed!" >> $GITHUB_STEP_SUMMARY
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Coverage report uploaded as artifact" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.coverage-check.outputs.exists }}" == "true" ]; then
+            echo "### Coverage Reports 📊" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Coverage reports uploaded from:" >> $GITHUB_STEP_SUMMARY
+            find packages -name "coverage" -type d | while read dir; do
+              package=$(echo "$dir" | cut -d'/' -f2)
+              echo "- \`$package\` package" >> $GITHUB_STEP_SUMMARY
+            done
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "[Download coverage artifact](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️ No coverage generated. To generate coverage, run:" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+            echo "pnpm test:coverage  # For app package" >> $GITHUB_STEP_SUMMARY
+            echo "# or" >> $GITHUB_STEP_SUMMARY
+            echo "pnpm -r run test:coverage  # For all packages" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          fi
 
   test-complete:
     name: Tests Complete

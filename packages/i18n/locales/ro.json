@@ -67,7 +67,13 @@
     "biometricDisableTitle": "Dezactivezi autentificarea biometric\u0103?",
     "biometricDisableMessage": "Va trebui s\u0103 introduci email \u0219i parola pentru autentificare.",
     "biometricDisableError": "Dezactivarea autentific\u0103rii biometrice a e\u0219uat.",
-    "biometricAuthFailed": "Nu s-a putut verifica identitatea. Te rug\u0103m s\u0103 \u00eencerci din nou."
+    "biometricAuthFailed": "Nu s-a putut verifica identitatea. Te rug\u0103m s\u0103 \u00eencerci din nou.",
+    "personalInfo": "Informa\u021bii personale",
+    "churchDetails": "Detalii biseric\u0103",
+    "noChurchDetails": "Nu exist\u0103 detalii despre biseric\u0103",
+    "settings": "Set\u0103ri",
+    "glowTheme": "Culoare tem\u0103",
+    "noName": "Nume nesetat"
   },
   "supper": {
     "title": "Cin\u0103",
@@ -97,6 +103,8 @@
   },
   "admin": {
     "title": "Administrator",
+    "dinnerManagement": "Gestionare Cine",
+    "itineraryManagement": "Gestionare Itinerar",
     "dinnerParticipation": "Grafic participare la cin\u0103",
     "searchUser": "Caut\u0103 prezen\u021ba utilizatorului",
     "viewParticipants": "Vezi participan\u021bii la cin\u0103",
@@ -299,6 +307,11 @@
       "skillNameRequired": "Numele abilit\u0103\u021bii este obligatoriu"
     }
   },
+  "church": {
+    "information": "Informa\u021bii Biserice\u0219ti",
+    "title": "Detalii Biserice\u0219ti",
+    "placeholder": "Detaliile bisericii vor fi disponibile \u00een cur\u00e2nd"
+  },
   "modal": {
     "title": "Aceasta este o fereastr\u0103 modal\u0103",
     "goHome": "Mergi la ecranul principal"
@@ -306,8 +319,22 @@
   "tabs": {
     "home": "Acas\u0103",
     "admin": "Admin",
+    "visits": "Vizite",
     "supper": "Cin\u0103",
     "profile": "Profil"
+  },
+  "visits": {
+    "title": "Vizite",
+    "myVisits": "Vizitele Mele",
+    "noAssignments": "Nu ave\u021bi vizite alocate",
+    "navigate": "Naviga\u021bie",
+    "markComplete": "Marcheaz\u0103 Complet",
+    "pending": "\u00cen a\u0219teptare",
+    "timeRemaining": "Timp r\u0103mas: {{time}}",
+    "familyName": "Numele Familiei",
+    "address": "Adres\u0103",
+    "phone": "Telefon",
+    "notes": "Note"
   },
   "errors": {
     "boundaryTitle": "Ceva nu a func\u021bionat",
@@ -318,5 +345,11 @@
     "english": "English",
     "romanian": "Rom\u00e2n\u0103",
     "select": "Selecteaz\u0103 limba"
+  },
+  "genderPicker": {
+    "placeholder": "Selectează Genul",
+    "male": "Bărbat",
+    "female": "Femeie",
+    "modalTitle": "Selectează Genul Tău"
   }
 }
