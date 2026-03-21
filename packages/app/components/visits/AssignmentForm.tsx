@@ -5,6 +5,7 @@ import {useFamiliesQuery} from '../../features/visits/hooks';
 import type {CreateVisitAssignmentInput} from '@yuhuu/types';
 import {useQueryClient} from '@tanstack/react-query';
 import type {UserResponse} from '@/features/profile/api';
+import {useTranslation} from 'react-i18next';
 
 type Props = {
   onSubmit: (data: CreateVisitAssignmentInput) => void;
@@ -17,6 +18,7 @@ export function AssignmentForm({onSubmit, onCancel, isSubmitting}: Props) {
   const scheme = useColorScheme() ?? 'light';
   const activeColor = getGlowColor(glowVariant, scheme);
   const {data: families} = useFamiliesQuery();
+  const {t} = useTranslation();
 
   const queryClient = useQueryClient();
   const userData = queryClient.getQueryData<UserResponse>(['me']);
@@ -55,7 +57,7 @@ export function AssignmentForm({onSubmit, onCancel, isSubmitting}: Props) {
 
   return (
     <View style={{padding: 16}}>
-      <Text style={{color: scheme === 'dark' ? '#fff' : '#000', marginBottom: 8}}>Select Family</Text>
+      <Text style={{color: scheme === 'dark' ? '#fff' : '#000', marginBottom: 8}}>{t('visits.selectFamily')}</Text>
       <View style={inputStyle}>
         {families?.map((family) => (
           <Pressable
@@ -68,15 +70,15 @@ export function AssignmentForm({onSubmit, onCancel, isSubmitting}: Props) {
         ))}
       </View>
 
-      <TextInput style={inputStyle} placeholder="Scheduled Date (YYYY-MM-DD)" placeholderTextColor="#888" value={formData.scheduled_date} onChangeText={(text) => setFormData({...formData, scheduled_date: text})} />
-      <TextInput style={inputStyle} placeholder="Notes" placeholderTextColor="#888" value={formData.notes} onChangeText={(text) => setFormData({...formData, notes: text})} multiline />
+      <TextInput style={inputStyle} placeholder={t('visits.scheduledDate')} placeholderTextColor="#888" value={formData.scheduled_date} onChangeText={(text) => setFormData({...formData, scheduled_date: text})} />
+      <TextInput style={inputStyle} placeholder={t('visits.notesPlaceholder')} placeholderTextColor="#888" value={formData.notes} onChangeText={(text) => setFormData({...formData, notes: text})} multiline />
 
       <View style={{flexDirection: 'row', gap: 8, marginTop: 8}}>
         <Pressable onPress={onCancel} style={{flex: 1, backgroundColor: '#ccc', borderRadius: 8, padding: 14, alignItems: 'center'}}>
-          <Text style={{color: '#fff', fontWeight: '600'}}>Cancel</Text>
+          <Text style={{color: '#fff', fontWeight: '600'}}>{t('common.cancel')}</Text>
         </Pressable>
         <Pressable onPress={handleSubmit} disabled={isSubmitting} style={{flex: 1, backgroundColor: activeColor, borderRadius: 8, padding: 14, alignItems: 'center', opacity: isSubmitting ? 0.6 : 1}}>
-          <Text style={{color: '#fff', fontWeight: '600'}}>{isSubmitting ? 'Creating...' : 'Create'}</Text>
+          <Text style={{color: '#fff', fontWeight: '600'}}>{isSubmitting ? t('visits.creating') : t('visits.create')}</Text>
         </Pressable>
       </View>
     </View>
