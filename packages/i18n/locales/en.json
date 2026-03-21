@@ -92,7 +92,18 @@
     "mealTypeLabel": "Meal Type:",
     "locationLabel": "Location:",
     "descriptionLabel": "Description:",
-    "maxParticipantsLabel": "Max Participants:"
+    "maxParticipantsLabel": "Max Participants:",
+    "createDinner": "Create Dinner",
+    "addDinner": "Add Dinner",
+    "dinnerCreated": "Dinner created successfully!",
+    "createError": "Failed to create dinner. Please try again.",
+    "dinnerDateRequired": "Dinner date is required.",
+    "mealTypeRequired": "Meal type is required.",
+    "dinnerDatePlaceholder": "Dinner date (YYYY-MM-DD)",
+    "mealTypePlaceholder": "Meal type (e.g., Lunch, Dinner, Breakfast)",
+    "descriptionPlaceholder": "Description (optional)",
+    "locationPlaceholder": "Location (optional)",
+    "maxParticipantsPlaceholder": "Max participants (optional)"
   },
   "home": {
     "title": "Home",
@@ -156,7 +167,8 @@
     "usernamePlaceholder": "Username",
     "notesPlaceholder": "Notes (optional)",
     "adding": "Adding\u2026",
-    "addParticipant": "Add Participant"
+    "addParticipant": "Add Participant",
+    "creating": "Creating..."
   },
   "family": {
     "title": "👨‍👩‍👧‍👦 Family Relationships",
