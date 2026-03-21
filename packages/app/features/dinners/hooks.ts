@@ -1,7 +1,16 @@
-import {useMutation, useQuery} from '@tanstack/react-query';
-import type {Dinner, Participant, ParticipantInput} from './types';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import type {CreateDinnerInput, Dinner, Participant, ParticipantInput} from './types';
 import type {DinnersRepository} from './repository';
 import {defaultDinnersRepository} from './repository';
+
+/**
+ * Query key factory for dinner queries
+ * Centralized query key management for consistent caching
+ */
+export const dinnerKeys = {
+    all: ['dinners'] as const,
+    byDate: (date: string) => [...dinnerKeys.all, 'by-date', date] as const,
+};
 
 /**
  * React Query hook for fetching dinners by date
@@ -17,7 +26,7 @@ export function useDinnersByDateQuery(
     repo: DinnersRepository = defaultDinnersRepository
 ) {
     return useQuery<Dinner[]>({
-        queryKey: ['dinners', 'by-date', dinnerDate],
+        queryKey: dinnerDate ? dinnerKeys.byDate(dinnerDate) : ['dinners', 'by-date', null],
         queryFn: () => repo.getByDate(dinnerDate!),
         enabled: Boolean(dinnerDate),
     });
@@ -65,5 +74,32 @@ export function useAddParticipantMutation(
     return useMutation<Participant, Error, ParticipantInput>({
         mutationFn: (input) => repo.addParticipant(dinnerId, input),
         // No onSuccess handler needed - no queries to invalidate!
+    });
+}
+
+/**
+ * React Query mutation hook for creating a dinner
+ * Dependency Inversion Principle: Depends on DinnersRepository interface, not concrete implementation
+ * Single Responsibility Principle: Only handles React Query integration for dinner creation
+ *
+ * Cache Invalidation Strategy:
+ * Invalidates ALL dinner queries because:
+ * - New dinner affects getByDate results for that date
+ * - We don't know which dates are currently cached
+ * - Broad invalidation ensures consistency across all cached dates
+ *
+ * @param repo - Repository instance (injectable for testing)
+ * @returns React Query mutation result
+ */
+export function useCreateDinnerMutation(
+    repo: DinnersRepository = defaultDinnersRepository
+) {
+    const queryClient = useQueryClient();
+
+    return useMutation<Dinner, Error, CreateDinnerInput>({
+        mutationFn: (input) => repo.createDinner(input),
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: dinnerKeys.all});
+        },
     });
 }
