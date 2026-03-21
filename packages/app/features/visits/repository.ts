@@ -2,6 +2,7 @@ import {appApi, unwrap} from '@yuhuu/auth';
 import type {
   VisitableFamily,
   VisitAssignment,
+  VisitAssignmentWithFamily,
   CreateVisitableFamilyInput,
   UpdateVisitableFamilyInput,
   CreateVisitAssignmentInput,
@@ -31,7 +32,7 @@ export interface VisitsRepository {
 
   // Assignment CRUD operations
   listAllAssignments(): Promise<VisitAssignment[]>;
-  listMyAssignments(): Promise<VisitAssignment[]>;
+  listMyAssignments(): Promise<VisitAssignmentWithFamily[]>;
   createAssignment(data: CreateVisitAssignmentInput): Promise<VisitAssignment>;
   updateAssignment(id: number, data: UpdateVisitAssignmentInput): Promise<VisitAssignment>;
   deleteAssignment(id: number): Promise<void>;
@@ -96,9 +97,9 @@ export class HttpVisitsRepository implements VisitsRepository {
     );
   }
 
-  async listMyAssignments(): Promise<VisitAssignment[]> {
+  async listMyAssignments(): Promise<VisitAssignmentWithFamily[]> {
     // User endpoint - returns assignments with full family data
-    return await unwrap<VisitAssignment[]>(
+    return await unwrap<VisitAssignmentWithFamily[]>(
       appApi.get('/visits/my-assignments')
     );
   }
