@@ -14,7 +14,7 @@ function VisitTrackingCard({ visit }: { visit: VisitAssignmentWithFamily }) {
   // Extract family data with fallbacks
   const familyName = visit.family?.family_name ?? `Family ${visit.family_id}`;
   const address = visit.family
-    ? `${visit.family.address_street}, ${visit.family.address_city}, ${visit.family.address_postal}`
+    ? `${visit.family.address_street}, ${visit.family.address_city}, ${visit.family.address_postal ?? ''}`
     : 'Address not available';
 
   return (
@@ -22,6 +22,8 @@ function VisitTrackingCard({ visit }: { visit: VisitAssignmentWithFamily }) {
       visit={visit}
       familyName={familyName}
       address={address}
+      latitude={visit.family?.latitude}
+      longitude={visit.family?.longitude}
       remainingMs={remainingMs}
       canComplete={canComplete}
       onComplete={completeVisit}
