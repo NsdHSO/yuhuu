@@ -30,7 +30,7 @@ module.exports = {
       edgeToEdgeEnabled: true,
       predictiveBackGestureEnabled: false,
       package: "ro.yuhuu.app",
-      versionCode: 1,
+      versionCode: 2,
       permissions: [
         "INTERNET",
         "ACCESS_NETWORK_STATE",
