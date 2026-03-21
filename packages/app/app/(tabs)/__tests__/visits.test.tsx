@@ -3,6 +3,7 @@ import {render, waitFor} from '@testing-library/react-native';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import VisitsScreen from '../visits';
 import * as geolocation from '../../../features/visits/services/geolocation';
+import type {VisitAssignmentWithFamily} from '@yuhuu/types';
 
 import {useMyAssignmentsQuery} from '../../../features/visits/hooks';
 import {useVisitTracking} from '../../../features/visits/hooks/useVisitTracking';
@@ -88,7 +89,7 @@ jest.mock('react-native-safe-area-context', () => ({
 describe('VisitsScreen Integration', () => {
   let queryClient: QueryClient;
 
-  const mockAssignments = [
+  const mockAssignmentsWithFamily: VisitAssignmentWithFamily[] = [
     {
       id: 1,
       family_id: 10,
@@ -98,6 +99,16 @@ describe('VisitsScreen Integration', () => {
       arrived_at: null,
       completed_at: null,
       notes: null,
+      // Embedded family data from API
+      family: {
+        id: 10,
+        family_name: 'Smith Family',
+        address_street: '123 Oak Street',
+        address_city: 'Springfield',
+        address_postal: '12345',
+        latitude: 40.7128,
+        longitude: -74.0060,
+      },
     },
     {
       id: 2,
@@ -108,6 +119,16 @@ describe('VisitsScreen Integration', () => {
       arrived_at: '2026-03-16T10:00:00.000Z',
       completed_at: null,
       notes: null,
+      // Embedded family data from API
+      family: {
+        id: 11,
+        family_name: 'Johnson Family',
+        address_street: '456 Maple Avenue',
+        address_city: 'Riverside',
+        address_postal: '67890',
+        latitude: 34.0522,
+        longitude: -118.2437,
+      },
     },
     {
       id: 3,
@@ -118,6 +139,16 @@ describe('VisitsScreen Integration', () => {
       arrived_at: '2026-03-17T10:00:00.000Z',
       completed_at: '2026-03-17T10:15:00.000Z',
       notes: null,
+      // Embedded family data from API
+      family: {
+        id: 12,
+        family_name: 'Williams Family',
+        address_street: '789 Pine Road',
+        address_city: 'Lakewood',
+        address_postal: '54321',
+        latitude: 41.8781,
+        longitude: -87.6298,
+      },
     },
   ];
 
@@ -187,51 +218,132 @@ describe('VisitsScreen Integration', () => {
     });
   });
 
-  describe('Assignment list rendering', () => {
-    it('should display pending assignments', () => {
+  describe('Real family data display', () => {
+    it('should display real family names from embedded data', () => {
       (useMyAssignmentsQuery as jest.Mock).mockReturnValue({
-        data: mockAssignments,
+        data: mockAssignmentsWithFamily,
         isLoading: false,
       });
 
       const {getByText} = renderWithProvider(<VisitsScreen />);
 
-      expect(getByText('Family 10')).toBeTruthy();
+      expect(getByText('Smith Family')).toBeTruthy();
+      expect(getByText('Johnson Family')).toBeTruthy();
+    });
+
+    it('should display real addresses from embedded data', () => {
+      (useMyAssignmentsQuery as jest.Mock).mockReturnValue({
+        data: mockAssignmentsWithFamily,
+        isLoading: false,
+      });
+
+      const {getByText} = renderWithProvider(<VisitsScreen />);
+
+      expect(getByText(/123 Oak Street/)).toBeTruthy();
+      expect(getByText(/Springfield/)).toBeTruthy();
+      expect(getByText(/456 Maple Avenue/)).toBeTruthy();
+      expect(getByText(/Riverside/)).toBeTruthy();
+    });
+
+    it('should fallback gracefully when family data is missing', () => {
+      const assignmentWithoutFamily: VisitAssignmentWithFamily = {
+        id: 999,
+        family_id: 999,
+        assigned_to_user_id: 1,
+        scheduled_date: '2026-03-21',
+        status: 'pending',
+        arrived_at: null,
+        completed_at: null,
+        notes: null,
+        // No family data
+      };
+
+      (useMyAssignmentsQuery as jest.Mock).mockReturnValue({
+        data: [assignmentWithoutFamily],
+        isLoading: false,
+      });
+
+      const {getByText} = renderWithProvider(<VisitsScreen />);
+      expect(getByText('Family 999')).toBeTruthy(); // Fallback
+      expect(getByText('Address not available')).toBeTruthy(); // Fallback
+    });
+
+    it('should fallback to Family ID when family_name is missing', () => {
+      const assignmentWithPartialFamily: VisitAssignmentWithFamily = {
+        id: 888,
+        family_id: 888,
+        assigned_to_user_id: 1,
+        scheduled_date: '2026-03-21',
+        status: 'pending',
+        arrived_at: null,
+        completed_at: null,
+        notes: null,
+        family: {
+          id: 888,
+          // Missing family_name
+          address_street: '999 Test St',
+          address_city: 'Testville',
+          address_postal: '99999',
+          latitude: 0,
+          longitude: 0,
+        } as any,
+      };
+
+      (useMyAssignmentsQuery as jest.Mock).mockReturnValue({
+        data: [assignmentWithPartialFamily],
+        isLoading: false,
+      });
+
+      const {getByText} = renderWithProvider(<VisitsScreen />);
+      expect(getByText('Family 888')).toBeTruthy(); // Fallback to ID
+    });
+  });
+
+  describe('Assignment list rendering', () => {
+    it('should display pending assignments', () => {
+      (useMyAssignmentsQuery as jest.Mock).mockReturnValue({
+        data: mockAssignmentsWithFamily,
+        isLoading: false,
+      });
+
+      const {getByText} = renderWithProvider(<VisitsScreen />);
+
+      expect(getByText('Smith Family')).toBeTruthy();
     });
 
     it('should display in_progress assignments', () => {
       (useMyAssignmentsQuery as jest.Mock).mockReturnValue({
-        data: mockAssignments,
+        data: mockAssignmentsWithFamily,
         isLoading: false,
       });
 
       const {getByText} = renderWithProvider(<VisitsScreen />);
 
-      expect(getByText('Family 11')).toBeTruthy();
+      expect(getByText('Johnson Family')).toBeTruthy();
     });
 
     it('should NOT display completed assignments', () => {
       (useMyAssignmentsQuery as jest.Mock).mockReturnValue({
-        data: mockAssignments,
+        data: mockAssignmentsWithFamily,
         isLoading: false,
       });
 
       const {queryByText} = renderWithProvider(<VisitsScreen />);
 
-      expect(queryByText('Family 12')).toBeNull();
+      expect(queryByText('Williams Family')).toBeNull();
     });
 
     it('should filter to show only pending and in_progress', () => {
       (useMyAssignmentsQuery as jest.Mock).mockReturnValue({
-        data: mockAssignments,
+        data: mockAssignmentsWithFamily,
         isLoading: false,
       });
 
       const {getByText, queryByText} = renderWithProvider(<VisitsScreen />);
 
-      expect(getByText('Family 10')).toBeTruthy(); // pending
-      expect(getByText('Family 11')).toBeTruthy(); // in_progress
-      expect(queryByText('Family 12')).toBeNull(); // completed (hidden)
+      expect(getByText('Smith Family')).toBeTruthy(); // pending
+      expect(getByText('Johnson Family')).toBeTruthy(); // in_progress
+      expect(queryByText('Williams Family')).toBeNull(); // completed (hidden)
     });
   });
 
@@ -249,7 +361,7 @@ describe('VisitsScreen Integration', () => {
 
     it('should show empty state when all assignments completed', () => {
       (useMyAssignmentsQuery as jest.Mock).mockReturnValue({
-        data: [mockAssignments[2]], // Only completed assignment
+        data: [mockAssignmentsWithFamily[2]], // Only completed assignment
         isLoading: false,
       });
 
@@ -260,7 +372,7 @@ describe('VisitsScreen Integration', () => {
 
     it('should not show empty state when assignments exist', () => {
       (useMyAssignmentsQuery as jest.Mock).mockReturnValue({
-        data: [mockAssignments[0]], // Pending assignment
+        data: [mockAssignmentsWithFamily[0]], // Pending assignment
         isLoading: false,
       });
 
@@ -273,44 +385,44 @@ describe('VisitsScreen Integration', () => {
   describe('VisitTrackingCard integration', () => {
     it('should render VisitCard for each assignment', () => {
       (useMyAssignmentsQuery as jest.Mock).mockReturnValue({
-        data: [mockAssignments[0]],
+        data: [mockAssignmentsWithFamily[0]],
         isLoading: false,
       });
 
       const {getByText} = renderWithProvider(<VisitsScreen />);
 
-      expect(getByText('Family 10')).toBeTruthy();
+      expect(getByText('Smith Family')).toBeTruthy();
       expect(getByText('Navigate')).toBeTruthy();
       expect(getByText('Mark Complete')).toBeTruthy();
     });
 
     it('should pass visit data to VisitCard', () => {
       (useMyAssignmentsQuery as jest.Mock).mockReturnValue({
-        data: [mockAssignments[1]],
+        data: [mockAssignmentsWithFamily[1]],
         isLoading: false,
       });
 
       const {getByText} = renderWithProvider(<VisitsScreen />);
 
-      expect(getByText('Family 11')).toBeTruthy();
+      expect(getByText('Johnson Family')).toBeTruthy();
     });
 
     it('should use useVisitTracking hook for each visit', () => {
       (useMyAssignmentsQuery as jest.Mock).mockReturnValue({
-        data: [mockAssignments[0]],
+        data: [mockAssignmentsWithFamily[0]],
         isLoading: false,
       });
 
       renderWithProvider(<VisitsScreen />);
 
-      expect(useVisitTracking).toHaveBeenCalledWith(mockAssignments[0]);
+      expect(useVisitTracking).toHaveBeenCalledWith(mockAssignmentsWithFamily[0]);
     });
   });
 
   describe('Timer integration', () => {
     it('should display timer when visit in progress', () => {
       (useMyAssignmentsQuery as jest.Mock).mockReturnValue({
-        data: [mockAssignments[1]],
+        data: [mockAssignmentsWithFamily[1]],
         isLoading: false,
       });
 
@@ -330,7 +442,7 @@ describe('VisitsScreen Integration', () => {
 
     it('should enable complete button after timer expires', () => {
       (useMyAssignmentsQuery as jest.Mock).mockReturnValue({
-        data: [mockAssignments[1]],
+        data: [mockAssignmentsWithFamily[1]],
         isLoading: false,
       });
 
@@ -420,19 +532,19 @@ describe('VisitsScreen Integration', () => {
 
     it('should handle multiple visits', () => {
       (useMyAssignmentsQuery as jest.Mock).mockReturnValue({
-        data: [mockAssignments[0], mockAssignments[1]],
+        data: [mockAssignmentsWithFamily[0], mockAssignmentsWithFamily[1]],
         isLoading: false,
       });
 
       const {getByText} = renderWithProvider(<VisitsScreen />);
 
-      expect(getByText('Family 10')).toBeTruthy();
-      expect(getByText('Family 11')).toBeTruthy();
+      expect(getByText('Smith Family')).toBeTruthy();
+      expect(getByText('Johnson Family')).toBeTruthy();
     });
 
     it('should render unique keys for each visit card', () => {
       (useMyAssignmentsQuery as jest.Mock).mockReturnValue({
-        data: [mockAssignments[0], mockAssignments[1]],
+        data: [mockAssignmentsWithFamily[0], mockAssignmentsWithFamily[1]],
         isLoading: false,
       });
 
