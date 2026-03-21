@@ -122,7 +122,7 @@ export async function watchLocation(
       timeInterval: LOCATION_UPDATE_INTERVAL,
       distanceInterval: 10, // Update if user moves 10m
     },
-    (location) => {
+    (location: any) => {
       callback({
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
