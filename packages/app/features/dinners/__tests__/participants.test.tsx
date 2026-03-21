@@ -77,6 +77,7 @@ describe('dinners/participants', () => {
             const mockRepo: DinnersRepository = {
                 getByDate: jest.fn(),
                 addParticipant: jest.fn(),
+                createDinner: jest.fn(),
                 getParticipantsByDinner: jest.fn().mockResolvedValue(mockParticipants),
             };
 
@@ -100,6 +101,7 @@ describe('dinners/participants', () => {
             const mockRepo: DinnersRepository = {
                 getByDate: jest.fn(),
                 addParticipant: jest.fn(),
+                createDinner: jest.fn(),
                 getParticipantsByDinner: jest.fn().mockResolvedValue(mockParticipants),
             };
 
@@ -120,6 +122,7 @@ describe('dinners/participants', () => {
             const mockRepo: DinnersRepository = {
                 getByDate: jest.fn(),
                 addParticipant: jest.fn(),
+                createDinner: jest.fn(),
                 getParticipantsByDinner: jest.fn(),
             };
 
@@ -140,6 +143,7 @@ describe('dinners/participants', () => {
             const mockRepo: DinnersRepository = {
                 getByDate: jest.fn(),
                 addParticipant: jest.fn(),
+                createDinner: jest.fn(),
                 getParticipantsByDinner: jest.fn(),
             };
 
@@ -161,6 +165,7 @@ describe('dinners/participants', () => {
             const mockRepo: DinnersRepository = {
                 getByDate: jest.fn(),
                 addParticipant: jest.fn(),
+                createDinner: jest.fn(),
                 getParticipantsByDinner: jest.fn().mockRejectedValue(error),
             };
 
@@ -203,6 +208,7 @@ describe('dinners/participants', () => {
             const mockRepo: DinnersRepository = {
                 getByDate: jest.fn(),
                 addParticipant: jest.fn(),
+                createDinner: jest.fn(),
                 getParticipantsByDinner: jest
                     .fn()
                     .mockImplementation((dinnerId) =>
@@ -240,6 +246,7 @@ describe('dinners/participants', () => {
             const mockRepo: DinnersRepository = {
                 getByDate: jest.fn(),
                 addParticipant: jest.fn(),
+                createDinner: jest.fn(),
                 getParticipantsByDinner: jest.fn().mockReturnValue(promise),
             };
 
@@ -287,6 +294,7 @@ describe('dinners/participants', () => {
             const mockRepo: DinnersRepository = {
                 getByDate: jest.fn(),
                 addParticipant: jest.fn(),
+                createDinner: jest.fn(),
                 getParticipantsByDinner: jest.fn().mockResolvedValue(mockParticipants),
             };
 
@@ -325,6 +333,7 @@ describe('dinners/participants', () => {
             const mockRepo: DinnersRepository = {
                 getByDate: jest.fn(),
                 addParticipant: jest.fn(),
+                createDinner: jest.fn(),
                 getParticipantsByDinner: jest.fn().mockResolvedValue(mockParticipants),
             };
 
@@ -367,6 +376,7 @@ describe('dinners/participants', () => {
             const mockRepo: DinnersRepository = {
                 getByDate: jest.fn(),
                 addParticipant: jest.fn(),
+                createDinner: jest.fn(),
                 getParticipantsByDinner: jest
                     .fn()
                     .mockImplementation((dinnerId) =>
