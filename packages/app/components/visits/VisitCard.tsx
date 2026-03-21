@@ -6,6 +6,8 @@ type Props = {
   visit: VisitAssignment;
   familyName: string;
   address: string;
+  latitude?: number;
+  longitude?: number;
   remainingMs: number;
   canComplete: boolean;
   onComplete: () => void;
@@ -14,6 +16,8 @@ type Props = {
 export function VisitCard({
   familyName,
   address,
+  latitude,
+  longitude,
   remainingMs,
   canComplete,
   onComplete,
@@ -26,10 +30,17 @@ export function VisitCard({
   };
 
   const handleNavigate = () => {
-    const url = Platform.select({
-      ios: `maps:0,0?q=${encodeURIComponent(address)}`,
-      android: `geo:0,0?q=${encodeURIComponent(address)}`,
-    });
+    // Use GPS coordinates if available for accurate navigation
+    // Otherwise fall back to text address
+    const url = latitude && longitude
+      ? Platform.select({
+          ios: `maps:${latitude},${longitude}?q=${encodeURIComponent(address)}`,
+          android: `geo:${latitude},${longitude}?q=${encodeURIComponent(address)}`,
+        })
+      : Platform.select({
+          ios: `maps:0,0?q=${encodeURIComponent(address)}`,
+          android: `geo:0,0?q=${encodeURIComponent(address)}`,
+        });
     if (url) Linking.openURL(url);
   };
 
