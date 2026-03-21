@@ -225,7 +225,6 @@ describe('ProfileScreen - Integration Tests', () => {
                 id: 1,
                 user_id: 1,
                 middle_name: 'Jane',
-                last_name: 'Smith',
                 phone: '555-9876',
                 created_at: '2026-01-01',
                 updated_at: '2026-01-01',
@@ -272,7 +271,7 @@ describe('ProfileScreen - Integration Tests', () => {
 
         it('should show initials in profile header', () => {
             const utils = renderScreen();
-            expect(utils.getByText('JS')).toBeTruthy();
+            expect(utils.getByText('J')).toBeTruthy();
         });
     });
 
