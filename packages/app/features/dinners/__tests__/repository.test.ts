@@ -373,6 +373,94 @@ describe('dinners/repository', () => {
         });
     });
 
+    describe('createDinner', () => {
+        it('should create dinner and return domain model', async () => {
+            const input = {
+                dinner_date: '2026-03-25',
+                meal_type: 'Dinner',
+                description: 'Easter Fellowship Dinner',
+                location: 'Fellowship Hall',
+                max_participants: 50,
+            };
+            const mockDto: DinnerDto = {
+                id: 15,
+                dinner_date: input.dinner_date,
+                meal_type: input.meal_type,
+                description: input.description,
+                location: input.location,
+                max_participants: input.max_participants,
+                uuid: 'uuid-created',
+                recorded_by: null,
+                created_at: '2026-03-21T10:00:00Z',
+                updated_at: '2026-03-21T10:00:00Z',
+            };
+
+            mockUnwrap.mockResolvedValue(mockDto);
+
+            const result = await repository.createDinner(input);
+
+            // Verify API call
+            expect(appApi.post).toHaveBeenCalledWith('/dinners', input);
+            expect(mockUnwrap).toHaveBeenCalled();
+
+            // Verify transformation to domain model
+            expect(result).toEqual({
+                id: 15,
+                dinnerDate: '2026-03-25',
+                mealType: 'Dinner',
+                description: 'Easter Fellowship Dinner',
+                location: 'Fellowship Hall',
+                maxParticipants: 50,
+                uuid: 'uuid-created',
+                recordedBy: null,
+                createdAt: '2026-03-21T10:00:00Z',
+                updatedAt: '2026-03-21T10:00:00Z',
+            });
+        });
+
+        it('should create dinner with only required fields', async () => {
+            const input = {
+                dinner_date: '2026-04-01',
+                meal_type: 'Lunch',
+            };
+            const mockDto: DinnerDto = {
+                id: 20,
+                dinner_date: input.dinner_date,
+                meal_type: input.meal_type,
+                description: null,
+                location: null,
+                max_participants: null,
+                uuid: 'uuid-minimal',
+                recorded_by: null,
+                created_at: '2026-03-21T11:00:00Z',
+                updated_at: '2026-03-21T11:00:00Z',
+            };
+
+            mockUnwrap.mockResolvedValue(mockDto);
+
+            const result = await repository.createDinner(input);
+
+            expect(appApi.post).toHaveBeenCalledWith('/dinners', input);
+            expect(result.description).toBeNull();
+            expect(result.location).toBeNull();
+            expect(result.maxParticipants).toBeNull();
+        });
+
+        it('should propagate API errors', async () => {
+            const input = {
+                dinner_date: '2026-05-01',
+                meal_type: 'Breakfast',
+            };
+            const apiError = new Error('Failed to create dinner');
+
+            mockUnwrap.mockRejectedValue(apiError);
+
+            await expect(repository.createDinner(input)).rejects.toThrow(
+                'Failed to create dinner'
+            );
+        });
+    });
+
     describe('Interface compliance', () => {
         it('should implement DinnersQueryRepository', () => {
             expect(repository.getByDate).toBeDefined();
@@ -382,11 +470,14 @@ describe('dinners/repository', () => {
         it('should implement DinnersMutationRepository', () => {
             expect(repository.addParticipant).toBeDefined();
             expect(typeof repository.addParticipant).toBe('function');
+            expect(repository.createDinner).toBeDefined();
+            expect(typeof repository.createDinner).toBe('function');
         });
 
         it('should implement full DinnersRepository interface', () => {
             expect(repository.getByDate).toBeDefined();
             expect(repository.addParticipant).toBeDefined();
+            expect(repository.createDinner).toBeDefined();
         });
     });
 });
