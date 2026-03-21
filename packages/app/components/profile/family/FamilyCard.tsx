@@ -2,18 +2,10 @@ import React from 'react';
 import {Pressable, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {GlassContentCard, ThemedText, useColorScheme, Colors, useGlassColors} from '@yuhuu/components';
-
-interface FamilyMember {
-    id: number;
-    relationship_type: string;
-    related_person_name: string | null;
-    related_user_id: number | null;
-    related_person_phone: string | null;
-    related_person_email: string | null;
-}
+import type {FamilyRelationship} from '@/features/family/api';
 
 interface FamilyCardProps {
-    member: FamilyMember;
+    member: FamilyRelationship;
     onEdit: () => void;
     onDelete: () => void;
     showActions: boolean;
