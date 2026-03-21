@@ -92,7 +92,18 @@
     "mealTypeLabel": "Tip mas\u0103:",
     "locationLabel": "Loca\u021bie:",
     "descriptionLabel": "Descriere:",
-    "maxParticipantsLabel": "Participan\u021bi maximi:"
+    "maxParticipantsLabel": "Participan\u021bi maximi:",
+    "createDinner": "Creaz\u0103 Cin\u0103",
+    "addDinner": "Adaug\u0103 Cin\u0103",
+    "dinnerCreated": "Cina a fost creat\u0103 cu succes!",
+    "createError": "Crearea cinei a e\u0219uat. V\u0103 rug\u0103m \u00eencerca\u021bi din nou.",
+    "dinnerDateRequired": "Data cinei este obligatorie.",
+    "mealTypeRequired": "Tipul mesei este obligatoriu.",
+    "dinnerDatePlaceholder": "Data cinei (AAAA-LL-ZZ)",
+    "mealTypePlaceholder": "Tipul mesei (ex: Pr\u00e2nz, Cin\u0103, Mic dejun)",
+    "descriptionPlaceholder": "Descriere (op\u021bional)",
+    "locationPlaceholder": "Loca\u021bie (op\u021bional)",
+    "maxParticipantsPlaceholder": "Participan\u021bi maximi (op\u021bional)"
   },
   "home": {
     "title": "Acas\u0103",
@@ -156,7 +167,8 @@
     "usernamePlaceholder": "Nume utilizator",
     "notesPlaceholder": "Note (op\u021bional)",
     "adding": "Se adaug\u0103\u2026",
-    "addParticipant": "Adaug\u0103 participant"
+    "addParticipant": "Adaug\u0103 participant",
+    "creating": "Se creaz\u0103..."
   },
   "family": {
     "title": "👨‍👩‍👧‍👦 Rela\u021bii de Familie",
