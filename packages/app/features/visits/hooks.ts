@@ -2,6 +2,7 @@ import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import type {
   VisitableFamily,
   VisitAssignment,
+  VisitAssignmentWithFamily,
   CreateVisitableFamilyInput,
   UpdateVisitableFamilyInput,
   CreateVisitAssignmentInput,
@@ -36,7 +37,7 @@ export function useFamiliesQuery(repo: VisitsRepository = defaultVisitsRepositor
 }
 
 export function useMyAssignmentsQuery(repo: VisitsRepository = defaultVisitsRepository) {
-  return useQuery<VisitAssignment[]>({
+  return useQuery<VisitAssignmentWithFamily[]>({
     queryKey: visitKeys.myAssignments(),
     queryFn: () => repo.listMyAssignments(),
   });
