@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {View, TextInput, Pressable, Text,useColorScheme} from 'react-native';
 import {useGlowVariant, getGlowColor} from '@yuhuu/components';
 import type {CreateVisitableFamilyInput, UpdateVisitableFamilyInput} from '@yuhuu/types';
+import {useTranslation} from 'react-i18next';
 
 type Props = {
   initialData?: Partial<CreateVisitableFamilyInput>;
@@ -14,6 +15,7 @@ export function FamilyForm({initialData, onSubmit, onCancel, isSubmitting}: Prop
   const {glowVariant} = useGlowVariant();
   const scheme = useColorScheme() ?? 'light';
   const activeColor = getGlowColor(glowVariant, scheme);
+  const {t} = useTranslation();
 
   const [formData, setFormData] = useState({
     family_name: initialData?.family_name || '',
@@ -45,19 +47,19 @@ export function FamilyForm({initialData, onSubmit, onCancel, isSubmitting}: Prop
 
   return (
     <View style={{padding: 16}}>
-      <TextInput style={inputStyle} placeholder="Family Name *" placeholderTextColor="#888" value={formData.family_name} onChangeText={(text) => setFormData({...formData, family_name: text})} />
-      <TextInput style={inputStyle} placeholder="Street Address *" placeholderTextColor="#888" value={formData.address_street} onChangeText={(text) => setFormData({...formData, address_street: text})} />
-      <TextInput style={inputStyle} placeholder="City *" placeholderTextColor="#888" value={formData.address_city} onChangeText={(text) => setFormData({...formData, address_city: text})} />
-      <TextInput style={inputStyle} placeholder="Postal Code *" placeholderTextColor="#888" value={formData.address_postal} onChangeText={(text) => setFormData({...formData, address_postal: text})} />
-      <TextInput style={inputStyle} placeholder="Phone" placeholderTextColor="#888" value={formData.phone} onChangeText={(text) => setFormData({...formData, phone: text})} keyboardType="phone-pad" />
-      <TextInput style={inputStyle} placeholder="Notes" placeholderTextColor="#888" value={formData.notes} onChangeText={(text) => setFormData({...formData, notes: text})} multiline />
+      <TextInput style={inputStyle} placeholder={t('visits.familyNameRequired')} placeholderTextColor="#888" value={formData.family_name} onChangeText={(text) => setFormData({...formData, family_name: text})} />
+      <TextInput style={inputStyle} placeholder={t('visits.streetAddressRequired')} placeholderTextColor="#888" value={formData.address_street} onChangeText={(text) => setFormData({...formData, address_street: text})} />
+      <TextInput style={inputStyle} placeholder={t('visits.cityRequired')} placeholderTextColor="#888" value={formData.address_city} onChangeText={(text) => setFormData({...formData, address_city: text})} />
+      <TextInput style={inputStyle} placeholder={t('visits.postalCodeRequired')} placeholderTextColor="#888" value={formData.address_postal} onChangeText={(text) => setFormData({...formData, address_postal: text})} />
+      <TextInput style={inputStyle} placeholder={t('visits.phoneOptional')} placeholderTextColor="#888" value={formData.phone} onChangeText={(text) => setFormData({...formData, phone: text})} keyboardType="phone-pad" />
+      <TextInput style={inputStyle} placeholder={t('visits.notesPlaceholder')} placeholderTextColor="#888" value={formData.notes} onChangeText={(text) => setFormData({...formData, notes: text})} multiline />
 
       <View style={{flexDirection: 'row', gap: 8, marginTop: 8}}>
         <Pressable onPress={onCancel} style={{flex: 1, backgroundColor: '#ccc', borderRadius: 8, padding: 14, alignItems: 'center'}}>
-          <Text style={{color: '#fff', fontWeight: '600'}}>Cancel</Text>
+          <Text style={{color: '#fff', fontWeight: '600'}}>{t('common.cancel')}</Text>
         </Pressable>
         <Pressable onPress={handleSubmit} disabled={isSubmitting} style={{flex: 1, backgroundColor: activeColor, borderRadius: 8, padding: 14, alignItems: 'center', opacity: isSubmitting ? 0.6 : 1}}>
-          <Text style={{color: '#fff', fontWeight: '600'}}>{isSubmitting ? 'Saving...' : 'Save'}</Text>
+          <Text style={{color: '#fff', fontWeight: '600'}}>{isSubmitting ? t('visits.saving') : t('common.save')}</Text>
         </Pressable>
       </View>
     </View>
