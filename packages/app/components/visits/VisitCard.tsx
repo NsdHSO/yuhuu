@@ -1,6 +1,7 @@
 import { GlassContentCard, ThemedText, useGlassColors } from "@yuhuu/components";
 import type { VisitAssignment } from "@yuhuu/types";
 import { Linking, Platform, Pressable, View } from "react-native";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   visit: VisitAssignment;
@@ -23,6 +24,7 @@ export function VisitCard({
   onComplete,
 }: Props) {
   const colors = useGlassColors();
+  const { t } = useTranslation();
 
   const formatTime = (ms: number) => {
     const s = Math.floor(ms / 1000);
@@ -55,7 +57,7 @@ export function VisitCard({
 
       {remainingMs > 0 && (
         <ThemedText style={{ fontSize: 16, marginTop: 8, color: colors.activeColor }}>
-          Time remaining: {formatTime(remainingMs)}
+          {t('visits.timeRemaining', { time: formatTime(remainingMs) })}
         </ThemedText>
       )}
 
@@ -71,7 +73,7 @@ export function VisitCard({
           }}
         >
           <ThemedText style={{ fontWeight: "600", color: colors.activeColor }}>
-            Navigate
+            {t('visits.navigate')}
           </ThemedText>
         </Pressable>
 
@@ -87,7 +89,7 @@ export function VisitCard({
           }}
         >
           <ThemedText style={{ fontWeight: "600", color: "#fff" }}>
-            Mark Complete
+            {t('visits.markComplete')}
           </ThemedText>
         </Pressable>
       </View>
