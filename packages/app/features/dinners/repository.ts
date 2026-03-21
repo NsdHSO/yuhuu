@@ -1,6 +1,7 @@
 import {appApi} from '@yuhuu/auth';
 import {unwrap} from '@yuhuu/http';
 import type {
+    CreateDinnerInput,
     Dinner,
     DinnerDto,
     PaginatedResponse,
@@ -36,6 +37,7 @@ export interface DinnersQueryRepository {
  */
 export interface DinnersMutationRepository {
     addParticipant(dinnerId: number, input: ParticipantInput): Promise<Participant>;
+    createDinner(input: CreateDinnerInput): Promise<Dinner>;
 }
 
 /**
@@ -92,6 +94,20 @@ export class HttpDinnersRepository implements DinnersRepository {
             appApi.post(`/dinners/${dinnerId}/participants`, toParticipantDtoInput(input))
         );
         return toParticipant(dto);
+    }
+
+    /**
+     * Creates a new dinner
+     * Single Responsibility: Only handles API communication and data transformation
+     *
+     * @param input - Dinner creation data
+     * @returns Created dinner domain model
+     */
+    async createDinner(input: CreateDinnerInput): Promise<Dinner> {
+        const dto = await unwrap<DinnerDto>(
+            appApi.post('/dinners', input)
+        );
+        return toDinner(dto);
     }
 }
 
