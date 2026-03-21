@@ -57,9 +57,13 @@ describe('PersonalInfoAccordion', () => {
         firstName: 'John',
         lastName: 'Doe',
         phone: '555-1234',
+        gender: null as 'male' | 'female' | null,
         onFirstNameChange: jest.fn(),
         onLastNameChange: jest.fn(),
         onPhoneChange: jest.fn(),
+        onGenderChange: jest.fn(),
+        onSave: jest.fn(),
+        isSaving: false,
     };
 
     beforeEach(() => {
@@ -166,9 +170,13 @@ describe('PersonalInfoAccordion', () => {
                     firstName=""
                     lastName=""
                     phone=""
+                    gender={null}
                     onFirstNameChange={jest.fn()}
                     onLastNameChange={jest.fn()}
                     onPhoneChange={jest.fn()}
+                    onGenderChange={jest.fn()}
+                    onSave={jest.fn()}
+                    isSaving={false}
                     testID="personal-info"
                 />
             );
