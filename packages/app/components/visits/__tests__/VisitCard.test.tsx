@@ -152,7 +152,39 @@ describe('VisitCard', () => {
   });
 
   describe('Navigate button interaction', () => {
-    it('should call navigate on button press (iOS)', () => {
+    it('should use GPS coordinates when available (iOS)', () => {
+      const mockSelect = jest.spyOn(Platform, 'select').mockReturnValue('maps:46.1234,21.5678?q=123%20Oak%20Street%2C%20Springfield%2C%2012345');
+      const mockOpenURL = jest.spyOn(Linking, 'openURL');
+      const {getByText} = render(
+        <VisitCard {...defaultProps} latitude={46.1234} longitude={21.5678} />
+      );
+
+      const navigateButton = getByText('Navigate');
+      fireEvent.press(navigateButton);
+
+      expect(mockOpenURL).toHaveBeenCalledWith(
+        'maps:46.1234,21.5678?q=123%20Oak%20Street%2C%20Springfield%2C%2012345'
+      );
+      mockSelect.mockRestore();
+    });
+
+    it('should use GPS coordinates when available (Android)', () => {
+      const mockSelect = jest.spyOn(Platform, 'select').mockReturnValue('geo:46.1234,21.5678?q=123%20Oak%20Street%2C%20Springfield%2C%2012345');
+      const mockOpenURL = jest.spyOn(Linking, 'openURL');
+      const {getByText} = render(
+        <VisitCard {...defaultProps} latitude={46.1234} longitude={21.5678} />
+      );
+
+      const navigateButton = getByText('Navigate');
+      fireEvent.press(navigateButton);
+
+      expect(mockOpenURL).toHaveBeenCalledWith(
+        'geo:46.1234,21.5678?q=123%20Oak%20Street%2C%20Springfield%2C%2012345'
+      );
+      mockSelect.mockRestore();
+    });
+
+    it('should fallback to address search when GPS not available (iOS)', () => {
       const mockSelect = jest.spyOn(Platform, 'select').mockReturnValue('maps:0,0?q=123%20Oak%20Street%2C%20Springfield%2C%2012345');
       const mockOpenURL = jest.spyOn(Linking, 'openURL');
       const {getByText} = render(<VisitCard {...defaultProps} />);
@@ -166,7 +198,7 @@ describe('VisitCard', () => {
       mockSelect.mockRestore();
     });
 
-    it('should call navigate on button press (Android)', () => {
+    it('should fallback to address search when GPS not available (Android)', () => {
       const mockSelect = jest.spyOn(Platform, 'select').mockReturnValue('geo:0,0?q=123%20Oak%20Street%2C%20Springfield%2C%2012345');
       const mockOpenURL = jest.spyOn(Linking, 'openURL');
       const {getByText} = render(<VisitCard {...defaultProps} />);
