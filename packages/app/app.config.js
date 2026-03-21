@@ -4,7 +4,7 @@ module.exports = {
     slug: "Yuhuu",
     version: "1.0.0",
     orientation: "portrait",
-    icon: "./assets/images/app-icon.webp",
+    icon: "./assets/images/app-icon.png",
     scheme: "yuhuu",
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
@@ -23,8 +23,8 @@ module.exports = {
     android: {
       adaptiveIcon: {
         backgroundColor: "#E5E5E5",
-        foregroundImage: "./assets/images/android-icon-foreground.webp",
-        backgroundImage: "./assets/images/android-icon-background.webp",
+        foregroundImage: "./assets/images/android-icon-foreground.png",
+        backgroundImage: "./assets/images/android-icon-background.png",
         monochromeImage: "./assets/images/android-icon-monochrome.png",
       },
       edgeToEdgeEnabled: true,
