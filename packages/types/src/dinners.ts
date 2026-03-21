@@ -81,3 +81,15 @@ export type ParticipantInput = {
     username: string;
     notes: string;
 };
+
+/**
+ * Input type for creating a dinner
+ * Interface Segregation: Separates input from full model
+ */
+export type CreateDinnerInput = {
+    dinner_date: string; // REQUIRED - YYYY-MM-DD format
+    meal_type: string; // REQUIRED - e.g., "Lunch", "Dinner", "Breakfast"
+    description?: string; // OPTIONAL
+    location?: string; // OPTIONAL
+    max_participants?: number; // OPTIONAL
+};
