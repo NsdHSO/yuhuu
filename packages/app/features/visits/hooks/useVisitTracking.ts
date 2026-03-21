@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import type {VisitAssignment, GeoCoordinates} from '@yuhuu/types';
+import type {VisitAssignmentWithFamily, GeoCoordinates, VisitableFamily} from '@yuhuu/types';
 import {
   watchLocation,
   getCurrentLocation,
@@ -26,10 +26,10 @@ import {useMarkArrivedMutation, useMarkCompletedMutation} from '../hooks';
  * 5. Enable completion button after timer expires
  * 6. Mark completed + clear timer state
  *
- * @param visit - Visit assignment to track
+ * @param visit - Visit assignment to track (with family data for GPS)
  * @returns Tracking state and control functions
  */
-export function useVisitTracking(visit: VisitAssignment) {
+export function useVisitTracking(visit: VisitAssignmentWithFamily) {
   const [isTracking, setIsTracking] = useState(false);
   const [hasArrived, setHasArrived] = useState(visit.status === 'in_progress');
   const [remainingMs, setRemainingMs] = useState(0);
@@ -38,11 +38,28 @@ export function useVisitTracking(visit: VisitAssignment) {
   const markArrivedMutation = useMarkArrivedMutation();
   const markCompletedMutation = useMarkCompletedMutation();
 
-  // Target coordinates (family address)
-  const targetLocation: GeoCoordinates = {
-    latitude: 0, // TODO: Get from family data via visit.family_id
-    longitude: 0,
+  // Target coordinates from family data
+  // Defensive coding: Use family GPS if available, fallback to (0, 0)
+  // BriefFamilyData doesn't have GPS coordinates, only full VisitableFamily does
+
+  // Type guard to check if family has GPS coordinates
+  const isFullFamilyData = (family: typeof visit.family): family is VisitableFamily => {
+    return family !== undefined && 'latitude' in family && 'longitude' in family;
   };
+
+  let latitude = 0;
+  let longitude = 0;
+  if (isFullFamilyData(visit.family)) {
+    latitude = visit.family.latitude;
+    longitude = visit.family.longitude;
+  }
+
+  const targetLocation: GeoCoordinates = { latitude, longitude };
+
+  // Warn developer if GPS data is missing (helps debugging)
+  if (!isFullFamilyData(visit.family) || !latitude || !longitude) {
+    console.warn(`Visit ${visit.id}: Family GPS coordinates missing, geofencing disabled`);
+  }
 
   // Start location tracking
   useEffect(() => {
@@ -99,12 +116,20 @@ export function useVisitTracking(visit: VisitAssignment) {
 
   // Complete visit
   const completeVisit = async () => {
-    if (!canComplete) return;
+    if (!canComplete) {
+      console.warn('Cannot complete visit: timer not finished');
+      return;
+    }
 
-    await markCompletedMutation.mutateAsync(visit.id);
-    await clearTimerState();
-    setCanComplete(false);
-    setHasArrived(false);
+    try {
+      await markCompletedMutation.mutateAsync(visit.id);
+      await clearTimerState();
+      setCanComplete(false);
+      setHasArrived(false);
+    } catch (error) {
+      console.error('Failed to complete visit:', error);
+      // Don't clear state on error - allows retry
+    }
   };
 
   return {
