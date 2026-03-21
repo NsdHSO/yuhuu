@@ -40,6 +40,7 @@ export * from './atoms/SubmitButton';
 // Molecules
 export * from './molecules/category-badge';
 export * from './molecules/participant-form';
+export * from './molecules/dinner-form';
 export * from './molecules/dinner-details-card';
 export * from './molecules/language-picker';
 export * from './molecules/dinner-graph';
