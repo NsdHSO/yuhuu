@@ -49,6 +49,10 @@ export async function getBiometricEmail(): Promise<string | null> {
     return getService().getEmail();
 }
 
+export async function clearBiometricEmail(): Promise<void> {
+    return getService().clearEmail();
+}
+
 export async function clearBiometricData(): Promise<void> {
     return getService().clearData();
 }

@@ -3,6 +3,7 @@ import {
     authApi,
     authenticateWithBiometrics,
     clearBiometricData,
+    clearBiometricEmail,
     clearTokens,
     getBiometricEmail,
     getValidAccessToken,
@@ -140,7 +141,8 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
         } catch {
         }
 
-        await clearBiometricData();
+        // Only clear biometric email on logout (security), keep user preference
+        await clearBiometricEmail();
         await clearTokens();
 
         // CRITICAL: Clear React Query cache to prevent cached data from previous user

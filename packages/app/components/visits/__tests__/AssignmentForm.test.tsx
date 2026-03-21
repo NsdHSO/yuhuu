@@ -22,6 +22,13 @@ jest.mock('../../../features/visits/hooks', () => ({
   useFamiliesQuery: jest.fn(),
 }));
 
+const mockUserData = {
+  id: 123,
+  auth_user_id: 'auth-123',
+  created_at: '2026-01-01',
+  updated_at: '2026-01-01',
+};
+
 describe('AssignmentForm', () => {
   let queryClient: QueryClient;
   const mockOnSubmit = jest.fn();
@@ -62,6 +69,9 @@ describe('AssignmentForm', () => {
         mutations: {retry: false},
       },
     });
+
+    // Seed bootstrap user data
+    queryClient.setQueryData(['me'], mockUserData);
 
     (useFamiliesQuery as jest.Mock).mockReturnValue({
       data: mockFamilies,
@@ -223,7 +233,7 @@ describe('AssignmentForm', () => {
       expect(mockOnSubmit).toHaveBeenCalledWith(
         expect.objectContaining({
           family_id: 1,
-          assigned_to_user_id: 1,
+          assigned_to_user_id: 123,
         })
       );
     });
@@ -302,7 +312,7 @@ describe('AssignmentForm', () => {
       expect(notesInput.props.value).toBe(longNotes);
     });
 
-    it('should default assigned_to_user_id to 1', () => {
+    it('should default assigned_to_user_id to bootstrap user ID', () => {
       const {getByText} = renderWithProvider(<AssignmentForm {...defaultProps} />);
 
       fireEvent.press(getByText('Smith Family'));
@@ -310,7 +320,41 @@ describe('AssignmentForm', () => {
 
       expect(mockOnSubmit).toHaveBeenCalledWith(
         expect.objectContaining({
-          assigned_to_user_id: 1,
+          assigned_to_user_id: 123,
+        })
+      );
+    });
+  });
+
+  describe('Bootstrap user ID handling', () => {
+    it('should prevent submission when user data is not in cache', () => {
+      queryClient.setQueryData(['me'], null);
+      const {getByText} = renderWithProvider(<AssignmentForm {...defaultProps} />);
+
+      fireEvent.press(getByText('Smith Family'));
+      fireEvent.press(getByText('Create'));
+
+      // Form validation should prevent submission when user ID is 0
+      expect(mockOnSubmit).not.toHaveBeenCalled();
+    });
+
+    it('should use correct user ID when different user is logged in', () => {
+      const differentUser = {
+        id: 456,
+        auth_user_id: 'auth-456',
+        created_at: '2026-01-01',
+        updated_at: '2026-01-01',
+      };
+      queryClient.setQueryData(['me'], differentUser);
+
+      const {getByText} = renderWithProvider(<AssignmentForm {...defaultProps} />);
+
+      fireEvent.press(getByText('Smith Family'));
+      fireEvent.press(getByText('Create'));
+
+      expect(mockOnSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          assigned_to_user_id: 456,
         })
       );
     });

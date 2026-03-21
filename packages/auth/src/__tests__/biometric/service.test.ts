@@ -104,6 +104,16 @@ describe('BiometricService', () => {
         });
     });
 
+    describe('clearEmail', () => {
+        it('clears only email, keeps preference', async () => {
+            await service.savePreference(true);
+            await service.saveEmail('user@example.com');
+            await service.clearEmail();
+            expect(mockStorage.deleteItem).toHaveBeenCalledWith('biometric_email');
+            expect(mockStorage.deleteItem).not.toHaveBeenCalledWith('biometric_enabled');
+        });
+    });
+
     describe('clearData', () => {
         it('clears both preference and email', async () => {
             await service.savePreference(true);

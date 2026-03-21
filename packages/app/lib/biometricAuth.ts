@@ -9,6 +9,7 @@ export {
     getBiometricPreference,
     saveBiometricEmail,
     getBiometricEmail,
+    clearBiometricEmail,
     clearBiometricData,
     __setServiceForTesting,
     __resetServiceForTesting,

@@ -14,6 +14,7 @@ jest.mock('@yuhuu/auth', () => ({
     refreshAccessToken: jest.fn(),
     authenticateWithBiometrics: jest.fn(),
     clearBiometricData: jest.fn(),
+    clearBiometricEmail: jest.fn(),
     getBiometricEmail: jest.fn(),
 }));
 jest.mock('@/providers/QueryProvider', () => ({

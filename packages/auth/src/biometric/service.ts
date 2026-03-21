@@ -48,6 +48,10 @@ export class BiometricService {
         return this.storage.getItem(BiometricService.EMAIL_KEY);
     }
 
+    async clearEmail(): Promise<void> {
+        await this.storage.deleteItem(BiometricService.EMAIL_KEY);
+    }
+
     async clearData(): Promise<void> {
         await this.storage.deleteItem(BiometricService.ENABLED_KEY);
         await this.storage.deleteItem(BiometricService.EMAIL_KEY);

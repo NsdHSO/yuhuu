@@ -1,8 +1,10 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Pressable, Text, TextInput,useColorScheme} from 'react-native';
 import {useGlowVariant, getGlowColor} from '@yuhuu/components';
 import {useFamiliesQuery} from '../../features/visits/hooks';
 import type {CreateVisitAssignmentInput} from '@yuhuu/types';
+import {useQueryClient} from '@tanstack/react-query';
+import type {UserResponse} from '@/features/profile/api';
 
 type Props = {
   onSubmit: (data: CreateVisitAssignmentInput) => void;
@@ -16,12 +18,23 @@ export function AssignmentForm({onSubmit, onCancel, isSubmitting}: Props) {
   const activeColor = getGlowColor(glowVariant, scheme);
   const {data: families} = useFamiliesQuery();
 
+  const queryClient = useQueryClient();
+  const userData = queryClient.getQueryData<UserResponse>(['me']);
+  const currentUserId = userData?.id ?? 0;
+
   const [formData, setFormData] = useState({
     family_id: 0,
-    assigned_to_user_id: 1,
+    assigned_to_user_id: currentUserId,
     scheduled_date: new Date().toISOString().split('T')[0],
     notes: '',
   });
+
+  // Update assigned_to_user_id if bootstrap user changes
+  useEffect(() => {
+    if (currentUserId && currentUserId !== formData.assigned_to_user_id) {
+      setFormData(prev => ({...prev, assigned_to_user_id: currentUserId}));
+    }
+  }, [currentUserId, formData.assigned_to_user_id]);
 
   const handleSubmit = () => {
     if (!formData.family_id || !formData.assigned_to_user_id || !formData.scheduled_date) {
