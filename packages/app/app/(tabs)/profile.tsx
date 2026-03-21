@@ -34,7 +34,7 @@ export default function ProfileScreen() {
     data: profile,
     isLoading,
     error,
-  } = useMyProfileQuery({ enabled: false });
+  } = useMyProfileQuery();
   const saveMutation = useSaveMyProfileMutation();
   const [firstName, setfirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
@@ -47,7 +47,7 @@ export default function ProfileScreen() {
   React.useEffect(() => {
     if (profile) {
       setfirstName(profile.middle_name ?? "");
-      setLastName(profile.last_name ?? "");
+      setLastName(""); // ProfileResponse doesn't have last_name field
       setPhone(profile.phone ?? "");
       setGender(profile.gender as 'male' | 'female' | null || null);
     }
