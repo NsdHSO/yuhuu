@@ -1,5 +1,5 @@
 import { GlassBackground, TabScreenWrapper, ThemedText } from "@yuhuu/components";
-import type { VisitAssignment } from "@yuhuu/types";
+import type { VisitAssignmentWithFamily } from "@yuhuu/types";
 import { useEffect } from "react";
 import { StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -8,14 +8,20 @@ import { useMyAssignmentsQuery } from "../../features/visits/hooks";
 import { useVisitTracking } from "../../features/visits/hooks/useVisitTracking";
 import { requestLocationPermissions } from "../../features/visits/services/geolocation";
 
-function VisitTrackingCard({ visit }: { visit: VisitAssignment }) {
+function VisitTrackingCard({ visit }: { visit: VisitAssignmentWithFamily }) {
   const { remainingMs, canComplete, completeVisit } = useVisitTracking(visit);
+
+  // Extract family data with fallbacks
+  const familyName = visit.family?.family_name ?? `Family ${visit.family_id}`;
+  const address = visit.family
+    ? `${visit.family.address_street}, ${visit.family.address_city}, ${visit.family.address_postal}`
+    : 'Address not available';
 
   return (
     <VisitCard
       visit={visit}
-      familyName={`Family ${visit.family_id}`}
-      address="123 Main St"
+      familyName={familyName}
+      address={address}
       remainingMs={remainingMs}
       canComplete={canComplete}
       onComplete={completeVisit}
