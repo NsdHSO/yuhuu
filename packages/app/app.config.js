@@ -14,6 +14,10 @@ module.exports = {
       infoPlist: {
         NSFaceIDUsageDescription:
           "Allow Church to use Face ID for quick and secure sign-in.",
+        NSLocationWhenInUseUsageDescription:
+          "Allow Church to access your location to track family visit arrivals and verify you are at the visit location.",
+        NSLocationAlwaysAndWhenInUseUsageDescription:
+          "Allow Church to access your location to track family visit arrivals and verify you are at the visit location.",
       },
     },
     android: {
@@ -27,7 +31,12 @@ module.exports = {
       predictiveBackGestureEnabled: false,
       package: "ro.yuhuu.app",
       versionCode: 1,
-      permissions: ["INTERNET", "ACCESS_NETWORK_STATE"],
+      permissions: [
+        "INTERNET",
+        "ACCESS_NETWORK_STATE",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+      ],
       // Allow HTTP in non-production builds so FAT/UAT can use test endpoints without HTTPS
       usesCleartextTraffic: process.env.EXPO_PUBLIC_ENV !== "production",
     },
@@ -45,6 +54,15 @@ module.exports = {
         {
           faceIDPermission:
             "Allow Church to use Face ID for quick and secure sign-in.",
+        },
+      ],
+      [
+        "expo-location",
+        {
+          locationAlwaysAndWhenInUsePermission:
+            "Allow Church to access your location to track family visit arrivals and verify you are at the visit location.",
+          locationWhenInUsePermission:
+            "Allow Church to access your location to track family visit arrivals and verify you are at the visit location.",
         },
       ],
       [
