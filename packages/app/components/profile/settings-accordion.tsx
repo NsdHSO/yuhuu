@@ -10,7 +10,7 @@ import {
     getGlowColor,
     useGlowVariant,
 } from '@yuhuu/components';
-import type {GlowVariant} from '@yuhuu/components/src/constants/glowColors';
+import type {GlowVariant} from '@yuhuu/components';
 
 const GLOW_VARIANTS: {key: GlowVariant; label: string; color: string}[] = [
     {key: 'subtle', label: 'Subtle', color: '#94A3B8'},
