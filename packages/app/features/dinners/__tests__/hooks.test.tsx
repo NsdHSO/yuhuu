@@ -1,9 +1,9 @@
 import React from 'react';
 import {renderHook, waitFor} from '@testing-library/react-native';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import {useAddParticipantMutation, useDinnersByDateQuery} from '../hooks';
+import {useAddParticipantMutation, useCreateDinnerMutation, useDinnersByDateQuery} from '../hooks';
 import type {DinnersRepository} from '../repository';
-import type {Dinner, Participant, ParticipantInput} from '../types';
+import type {CreateDinnerInput, Dinner, Participant, ParticipantInput} from '../types';
 
 describe('dinners/hooks', () => {
     let queryClient: QueryClient;
@@ -70,6 +70,7 @@ describe('dinners/hooks', () => {
             const mockRepo: DinnersRepository = {
                 getByDate: jest.fn().mockResolvedValue(mockDinners),
                 addParticipant: jest.fn(),
+                createDinner: jest.fn(),
                 getParticipantsByDinner: jest.fn(),
             };
 
@@ -106,6 +107,7 @@ describe('dinners/hooks', () => {
             const mockRepo: DinnersRepository = {
                 getByDate: jest.fn().mockResolvedValue(mockDinners),
                 addParticipant: jest.fn(),
+                createDinner: jest.fn(),
                 getParticipantsByDinner: jest.fn(),
             };
 
@@ -125,6 +127,7 @@ describe('dinners/hooks', () => {
             const mockRepo: DinnersRepository = {
                 getByDate: jest.fn().mockResolvedValue(mockDinners),
                 addParticipant: jest.fn(),
+                createDinner: jest.fn(),
                 getParticipantsByDinner: jest.fn(),
             };
 
@@ -142,6 +145,7 @@ describe('dinners/hooks', () => {
             const mockRepo: DinnersRepository = {
                 getByDate: jest.fn(),
                 addParticipant: jest.fn(),
+                createDinner: jest.fn(),
                 getParticipantsByDinner: jest.fn(),
             };
 
@@ -160,6 +164,7 @@ describe('dinners/hooks', () => {
             const mockRepo: DinnersRepository = {
                 getByDate: jest.fn(),
                 addParticipant: jest.fn(),
+                createDinner: jest.fn(),
                 getParticipantsByDinner: jest.fn(),
             };
 
@@ -178,6 +183,7 @@ describe('dinners/hooks', () => {
             const mockRepo: DinnersRepository = {
                 getByDate: jest.fn().mockRejectedValue(error),
                 addParticipant: jest.fn(),
+                createDinner: jest.fn(),
                 getParticipantsByDinner: jest.fn(),
             };
 
@@ -227,6 +233,7 @@ describe('dinners/hooks', () => {
                         date === '2026-02-28' ? mockDinners1 : mockDinners2
                     ),
                 addParticipant: jest.fn(),
+                createDinner: jest.fn(),
                 getParticipantsByDinner: jest.fn(),
             };
 
@@ -266,6 +273,7 @@ describe('dinners/hooks', () => {
             const mockRepo: DinnersRepository = {
                 getByDate: jest.fn(),
                 addParticipant: jest.fn().mockResolvedValue(mockParticipant),
+                createDinner: jest.fn(),
                 getParticipantsByDinner: jest.fn(),
             };
 
@@ -291,6 +299,7 @@ describe('dinners/hooks', () => {
             const mockRepo: DinnersRepository = {
                 getByDate: jest.fn(),
                 addParticipant: jest.fn().mockRejectedValue(error),
+                createDinner: jest.fn(),
                 getParticipantsByDinner: jest.fn(),
             };
 
@@ -325,6 +334,7 @@ describe('dinners/hooks', () => {
             const mockRepo: DinnersRepository = {
                 getByDate: jest.fn(),
                 addParticipant: jest.fn().mockResolvedValue(mockParticipant),
+                createDinner: jest.fn(),
                 getParticipantsByDinner: jest.fn(),
             };
 
@@ -392,6 +402,7 @@ describe('dinners/hooks', () => {
             const mockRepo: DinnersRepository = {
                 getByDate: getByDateSpy,
                 addParticipant: addParticipantSpy,
+                createDinner: jest.fn(),
                 getParticipantsByDinner: jest.fn(),
             };
 
@@ -457,6 +468,7 @@ describe('dinners/hooks', () => {
             const mockRepo: DinnersRepository = {
                 getByDate: jest.fn(),
                 addParticipant: jest.fn().mockReturnValue(promise),
+                createDinner: jest.fn(),
                 getParticipantsByDinner: jest.fn(),
             };
 
@@ -496,6 +508,7 @@ describe('dinners/hooks', () => {
             const mockRepo: DinnersRepository = {
                 getByDate: jest.fn(),
                 addParticipant: jest.fn().mockResolvedValue(mockParticipant),
+                createDinner: jest.fn(),
                 getParticipantsByDinner: jest.fn(),
             };
 
@@ -513,6 +526,125 @@ describe('dinners/hooks', () => {
             await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
             expect(mockRepo.addParticipant).toHaveBeenCalledWith(42, input);
+        });
+    });
+
+    describe('useCreateDinnerMutation', () => {
+        it('should create dinner successfully', async () => {
+            const mockDinner: Dinner = {
+                id: 15,
+                dinnerDate: '2026-03-25',
+                mealType: 'Dinner',
+                description: 'Easter Fellowship Dinner',
+                location: 'Fellowship Hall',
+                maxParticipants: 50,
+                uuid: 'uuid-created',
+                recordedBy: null,
+                createdAt: '2026-03-21T10:00:00Z',
+                updatedAt: '2026-03-21T10:00:00Z',
+            };
+
+            const mockRepo: DinnersRepository = {
+                getByDate: jest.fn(),
+                addParticipant: jest.fn(),
+                createDinner: jest.fn().mockResolvedValue(mockDinner),
+                getParticipantsByDinner: jest.fn(),
+            };
+
+            const {result} = renderHook(() => useCreateDinnerMutation(mockRepo), {
+                wrapper: createWrapper(),
+            });
+
+            const input: CreateDinnerInput = {
+                dinner_date: '2026-03-25',
+                meal_type: 'Dinner',
+                description: 'Easter Fellowship Dinner',
+                location: 'Fellowship Hall',
+                max_participants: 50,
+            };
+
+            result.current.mutate(input);
+
+            await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+            expect(result.current.data).toEqual(mockDinner);
+            expect(mockRepo.createDinner).toHaveBeenCalledWith(input);
+        });
+
+        it('should invalidate dinner queries after successful creation', async () => {
+            const mockDinner: Dinner = {
+                id: 20,
+                dinnerDate: '2026-04-01',
+                mealType: 'Lunch',
+                description: null,
+                location: null,
+                maxParticipants: null,
+                uuid: 'uuid-minimal',
+                recordedBy: null,
+                createdAt: '2026-03-21T11:00:00Z',
+                updatedAt: '2026-03-21T11:00:00Z',
+            };
+
+            const mockRepo: DinnersRepository = {
+                getByDate: jest.fn(),
+                addParticipant: jest.fn(),
+                createDinner: jest.fn().mockResolvedValue(mockDinner),
+                getParticipantsByDinner: jest.fn(),
+            };
+
+            const qc = new QueryClient({
+                defaultOptions: {
+                    queries: {retry: false},
+                    mutations: {retry: false},
+                },
+            });
+
+            const invalidateSpy = jest.spyOn(qc, 'invalidateQueries');
+
+            const wrapper = ({children}: { children: React.ReactNode }) => (
+                <QueryClientProvider client={qc}>{children}</QueryClientProvider>
+            );
+
+            const {result} = renderHook(() => useCreateDinnerMutation(mockRepo), {
+                wrapper,
+            });
+
+            const input: CreateDinnerInput = {
+                dinner_date: '2026-04-01',
+                meal_type: 'Lunch',
+            };
+
+            result.current.mutate(input);
+
+            await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+            // Verify invalidateQueries WAS called (unlike addParticipant)
+            expect(invalidateSpy).toHaveBeenCalledWith({queryKey: ['dinners']});
+        });
+
+        it('should handle errors from repository', async () => {
+            const error = new Error('Failed to create dinner');
+            const mockRepo: DinnersRepository = {
+                getByDate: jest.fn(),
+                addParticipant: jest.fn(),
+                createDinner: jest.fn().mockRejectedValue(error),
+                getParticipantsByDinner: jest.fn(),
+            };
+
+            const {result} = renderHook(() => useCreateDinnerMutation(mockRepo), {
+                wrapper: createWrapper(),
+            });
+
+            const input: CreateDinnerInput = {
+                dinner_date: '2026-05-01',
+                meal_type: 'Breakfast',
+            };
+
+            result.current.mutate(input);
+
+            await waitFor(() => expect(result.current.isError).toBe(true));
+
+            expect(result.current.error).toEqual(error);
         });
     });
 });
