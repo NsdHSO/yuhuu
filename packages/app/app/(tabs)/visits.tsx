@@ -1,5 +1,5 @@
 import { GlassBackground, TabScreenWrapper, ThemedText } from "@yuhuu/components";
-import type { VisitAssignmentWithFamily } from "@yuhuu/types";
+import type { VisitAssignmentWithFamily, VisitableFamily } from "@yuhuu/types";
 import { useEffect } from "react";
 import { StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -17,13 +17,26 @@ function VisitTrackingCard({ visit }: { visit: VisitAssignmentWithFamily }) {
     ? `${visit.family.address_street}, ${visit.family.address_city}, ${visit.family.address_postal ?? ''}`
     : 'Address not available';
 
+  // BriefFamilyData doesn't have GPS coordinates, only full VisitableFamily does
+  // Type guard to check if family has GPS coordinates
+  const isFullFamilyData = (family: typeof visit.family): family is VisitableFamily => {
+    return family !== undefined && 'latitude' in family && 'longitude' in family;
+  };
+
+  let latitude: number | undefined;
+  let longitude: number | undefined;
+  if (isFullFamilyData(visit.family)) {
+    latitude = visit.family.latitude;
+    longitude = visit.family.longitude;
+  }
+
   return (
     <VisitCard
       visit={visit}
       familyName={familyName}
       address={address}
-      latitude={visit.family?.latitude}
-      longitude={visit.family?.longitude}
+      latitude={latitude}
+      longitude={longitude}
       remainingMs={remainingMs}
       canComplete={canComplete}
       onComplete={completeVisit}
